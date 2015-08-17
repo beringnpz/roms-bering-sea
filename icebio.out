@@ -1,0 +1,358 @@
+Functionals/ana_biology.h:#ifdef  ICE_BIO
+Functionals/ana_biology.h:# ifdef ICE_BIO
+Functionals/ana_biology.h:# ifdef ICE_BIO
+Functionals/ana_biology.h:#ifdef  ICE_BIO
+Functionals/ana_biology.h:#  ifdef ICE_BIO
+Functionals/ana_biology.h:#  ifdef ICE_BIO
+Functionals/ana_ice.h:#  if defined ICE_BIO  
+Functionals/ana_ice.h:#  if defined ICE_BIO  
+Functionals/ana_ice.h:#if defined BERING_10K&&defined ICE_BIO
+Functionals/ana_ice.h:#if defined BERING_10K&&defined ICE_BIO
+Functionals/analytical.F:# if defined ICE_BIO  
+Include/cppdefs.h:** ICE_BIO             use if ice algae                                      **
+Modules/mod_average.F:#ifdef ICE_BIO 
+Modules/mod_average.F:# ifdef ICE_BIO
+Modules/mod_average.F:# ifdef ICE_BIO
+Modules/mod_biology.F:# ifdef ICE_BIO
+Modules/mod_boundary.F:# if defined ICE_BIO  
+Modules/mod_boundary.F:# if defined ICE_BIO  
+Modules/mod_boundary.F:# if defined ICE_BIO  
+Modules/mod_boundary.F:# if defined ICE_BIO  
+Modules/mod_boundary.F:# if defined ICE_BIO  
+Modules/mod_boundary.F:# if defined ICE_BIO  
+Modules/mod_ice.F:#  if defined ICE_BIO  
+Modules/mod_ice.F:#  if defined ICE_BIO  
+Modules/mod_ice.F:#  if defined ICE_BIO  
+Modules/mod_ncparam.F:#    if defined ICE_BIO
+Modules/mod_ncparam.F:# if defined ICE_BIO
+Modules/mod_ncparam.F:# ifdef ICE_BIO
+Modules/mod_ocean.F:#if defined ICE_BIO
+Modules/mod_ocean.F:# if defined ICE_BIO 
+Modules/mod_ocean.F:#  if defined ICE_BIO  
+Modules/mod_param.F:# if defined ICE_BIO
+Modules/mod_param.F:# ifdef ICE_BIO
+Modules/mod_scalars.F:# ifdef ICE_BIO
+Modules/mod_scalars.F:#   ifdef ICE_BIO
+Modules/mod_scalars.F:# ifdef ICE_BIO
+Nonlinear/bestnpz.h:#if defined ICE_BIO   
+Nonlinear/bestnpz.h:#if defined ICE_BIO
+Nonlinear/bestnpz.h:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h:#if defined ICE_BIO   
+Nonlinear/bestnpz.h:#   if defined ICE_BIO
+Nonlinear/bestnpz.h:#   if defined ICE_BIO
+Nonlinear/bestnpz.h:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h:#if defined ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:# ifdef ICE_BIO
+Nonlinear/bestnpz.h:# ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h:#ifdef ICE_BIO
+Nonlinear/bestnpz.h:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#if defined ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.11.2.09:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#if defined ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.11.2.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#if defined ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.1.9.09:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#if defined ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.1.9.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1.9.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#if defined ICE_BIO   
+Nonlinear/bestnpz.h.1D:#if defined ICE_BIO
+Nonlinear/bestnpz.h.1D:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.1D:#if defined ICE_BIO   
+Nonlinear/bestnpz.h.1D:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.1D:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.1D:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#if defined ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.1D:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#if defined ICE_BIO   
+Nonlinear/bestnpz.h.2.19.10:#if defined ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.2.19.10:#if defined ICE_BIO   
+Nonlinear/bestnpz.h.2.19.10:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#if defined ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.2.19.10:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#if defined ICE_BIO   
+Nonlinear/bestnpz.h.3D:#if defined ICE_BIO
+Nonlinear/bestnpz.h.3D:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.3D:#if defined ICE_BIO   
+Nonlinear/bestnpz.h.3D:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.3D:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.3D:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#if defined ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:# if defined CLIM_ICE_1D && defined ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#ifdef  ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#if defined ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.3D.11.2.09:#if defined CLIM_ICE_1D && defined ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#if defined ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#if defined ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.3D.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.3D.11.2.09:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#if defined ICE_BIO
+Nonlinear/bestnpz.h.good:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.good:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.good:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.good:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#if defined ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.good:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#if defined ICE_BIO
+Nonlinear/bestnpz.h.L:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.L:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.L:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.L:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#if defined ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.L:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#if defined ICE_BIO
+Nonlinear/bestnpz.h.mid:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.mid:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.mid:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.mid:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#if defined ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.mid:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#if defined ICE_BIO
+Nonlinear/bestnpz.h.new:#  if defined ICE_BIO 
+Nonlinear/bestnpz.h.new:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.new:#   if defined ICE_BIO
+Nonlinear/bestnpz.h.new:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#if defined ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO      
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:# ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO	
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO	      
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO         
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#   ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#ifdef ICE_BIO
+Nonlinear/bestnpz.h.new:#   ifdef ICE_BIO
+Nonlinear/bulk_flux.F:# ifdef BEST_NPZ && defined ICE_BIO || defined CLIM_ICE_1D
+Nonlinear/bulk_flux.F:# if defined ICE_MODEL && defined BEST_NPZ && defined ICE_BIO
+Nonlinear/bulk_flux.F:#   ifdef ICE_BIO
+Nonlinear/bulk_flux.F:#   ifdef ICE_BIO
+Nonlinear/ccsm.F.gg.broke:# if defined BEST_NPZ && (defined ICE_BIO || defined CLIM_ICE_1D)
+Nonlinear/ccsm.F.gg.broke:# if defined ICE_MODEL && defined BEST_NPZ && defined ICE_BIOLOGY
+Nonlinear/ccsm.F.gg.broke:#   ifdef ICE_BIO
+Nonlinear/ccsm.F.gg.broke:#   ifdef ICE_BIO
+Nonlinear/ccsm_flux.F:# if defined BEST_NPZ && (defined ICE_BIO || defined CLIM_ICE_1D)
+Nonlinear/ccsm_flux.F:#   ifdef ICE_BIO
+Nonlinear/ccsm_flux.F.linnux:# ifdef ICE_BIO 
+Nonlinear/ccsm_flux.F.linnux:#      ifdef ICE_BIO
+Nonlinear/ccsm_flux.F.linnux:#   ifdef ICE_BIO
+Nonlinear/diffbio.out:< #if defined ICE_BIO   
+Nonlinear/diffbio.out:< #if defined ICE_BIO   
+Nonlinear/get_data.F:#    if defined ICE_BIO 
+Nonlinear/ice_bio_broke.txt:#   ifdef ICE_BIO
+Nonlinear/set_avg.F:#    ifdef ICE_BIO
+Nonlinear/set_avg.F:#  ifdef ICE_BIO
+Nonlinear/set_avg.F:#  ifdef ICE_BIO
+Nonlinear/set_avg.F:#  ifdef ICE_BIO
+Nonlinear/set_avg.F:#   ifdef ICE_BIO  
+Nonlinear/set_avg.F:#ifdef ICE_BIO
+Nonlinear/set_avg.F:#     ifdef ICE_BIO
+Nonlinear/set_avg.F:#   ifdef ICE_BIO
+Nonlinear/set_avg.F:#ifdef ICE_BIO 
+Nonlinear/set_avg.F:#  ifdef ICE_BIO
+Nonlinear/set_avg.F:#ifdef ICE_BIO
+Nonlinear/set_avg.F:#ifdef ICE_BIO
+Nonlinear/set_avg.F:#ifdef ICE_BIO 
+Nonlinear/set_avg.F:# ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:#  ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:#  ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:#  ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:#  ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:#   ifdef ICE_BIO   
+Nonlinear/set_avg.F.broke:#   ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:# if defined ICE_BIO
+Nonlinear/set_avg.F.broke:#   ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:#  ifdef ICE_BIO
+Nonlinear/set_avg.F.broke:#ifdef ICE_BIO 
+Nonlinear/set_avg.F.broke:!#ifdef ICE_BIO 
+Nonlinear/set_avg.F.broke:# ifdef ICE_BIO
+Nonlinear/set_data.F:# if defined ICE_BIO  
+Nonlinear/set_data.F:#   ifdef ICE_BIO && defined CLIM_ICE_1D     
+Nonlinear/step3d_t.F:# ifdef ICE_BIO 
+Nonlinear/step3d_t.F:#  ifdef ICE_BIO 
+Nonlinear/step3d_t.F:# ifdef ICE_BIO    
+Nonlinear/step3d_t.F:# if defined  CLIM_ICE_1D && defined ICE_BIO      
+Nonlinear/step3d_t.F:# ifdef ICE_BIO  
+Nonlinear/step3d_t.F:# if defined ICE_BIO
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_limit.F:# if defined ICE_BIO  
+SeaIce/ice_mk.h:# if defined ICE_BIO  
+SeaIce/ice_smolar.h:# if defined ICE_BIO  
+SeaIce/ice_smolar.h:#  if defined ICE_BIO  
+SeaIce/ice_smolar.h:# if defined ICE_BIO  
+SeaIce/ice_smolar.h:# if defined ICE_BIO  
+Utility/def_avg.F:#if defined ICE_BIO
+Utility/def_his.F:#  if defined ICE_BIO
+Utility/def_his.F:#if defined ICE_BIO 
+Utility/def_his.F:#if defined ICE_BIO 
+Utility/def_rst.F:#  if defined ICE_BIO
+Utility/def_rst.F:# ifdef ICE_BIO	    
+Utility/def_rst.F:# ifdef ICE_BIO
+Utility/inp_par.F:#ifdef ICE_BIO
+Utility/inp_par.F:# ifdef ICE_BIO
+Utility/wrt_avg.F:#ifdef ICE_BIO
+Utility/wrt_his.F:# if defined ICE_BIO
+Utility/wrt_rst.F:# if defined ICE_BIO

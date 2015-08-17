@@ -1,0 +1,390 @@
+
+!==================================================
+!Ice Sub Model
+!==================================================
+#   ifdef ICE_BIO
+       
+       DO i=Istr,Iend   
+	IF (ice_thick(i,j).gt.0.0)THEN   !0.02
+!ICE CAN GROW
+    
+!#if defined CLIM_ICE_1D	
+	  Temp1 = Bio(i,N(ng),itemp)
+!#endif
+!	  Temp1 = ti(i,j,1)   
+	     
+         
+      
+     
+!need to correct to use PAR in middleof light layer.maby not algae grow under the ice
+	  Par1 = PARs(i,j)
+	  aiceIfrac=(1-exp(-alphaIb*Par1))*exp(-betaI*Par1)  !light limiting 
+	  
+#ifdef CLIM_ICE_1D	   	  
+	  cff1=BioBI(i,iIceNO3)/(ksnut1+BioBI(i,iIceNO3))                  
+	  cff2=BioBI(i,iIceNH4)/(ksnut2+BioBI(i,iIceNH4))
+          	  
+	  aiceNfrac=exp(-inhib*BioBI(i,iIceNH4))             !nutrient limiting
+	  
+#elif defined BERING_10K  
+	  cff1=IceNO3(i,j,nstp)/(ksnut1+IceNO3(i,j,nstp))                  
+	  cff2=IceNH4(i,j,nstp)/(ksnut2+IceNH4(i,j,nstp))
+          	  
+	  aiceNfrac=exp(-inhib*IceNH4(i,j,nstp))    
+	   
+#endif		  
+!had to cap gesi to prevent from going negative
+!when gesi is defined I find that Ice Algae does not grow
+
+          sb=-3.9921-22.7* Temp1-1.0015*Temp1**2-0.02* Temp1**3
+	  gesi=max(0.0_r8,(1.1e-2+3.012e-2*sb+1.0342e-3*sb*sb))
+          
+	
+! growth of Ice Algae
+        
+	
+!	  grow1=mu0*exp(0.0633*Temp1)*gesi
+          grow1=mu0*exp(0.0633*Temp1)
+	 	 
+          NOup=cff1*min(aiceIfrac,aiceNfrac)
+	  NHup=cff2*aiceIfrac
+	 
+	  GROWAice=grow1*(NOup+NHup)
+	  
+#ifdef CLIM_ICE_1D 	
+ 	  DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                 &
+     &	   + GROWAice*BioBI(i,iIcePhL)* dtdays      
+#elif defined BERING_10K  
+	   DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                 &
+     &	   + GROWAice*IcePhL(i,j,nstp)* dtdays  
+	   
+#endif
+      	    !-----------------------------------------
+            !Primary production of ice algae
+            !-----------------------------------------
+#ifdef PROD2	    
+                 Prod2(i,iIAPrd) = Prod2(i,iIAPrd)            &
+     &	              + GROWAice*BioBI(i,iIcePhL)* dtdays    
+#endif	
+
+! respiration of Ice Algae	
+!          RAi0=R0i*grow1
+	  RAi0=R0i*GROWAice
+
+#ifdef CLIM_ICE_1D
+          DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                 &
+     &	   -BioBI(i,iIcePhL)*RAi0*dtdays
+#elif defined BERING_10K  
+	  DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                 &
+     &	   -IcePhL(i,j,nstp)*RAi0*dtdays
+	   
+#endif	
+	
+           
+! mortality of Ice Algae	
+	  RgAi=rg0*exp(rg*Temp1)
+# ifdef CLIM_ICE_1D
+ 	  DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)              &
+     &	        -BioBI(i,iIcePhL)*RgAi*dtdays
+     
+                                               
+       
+	  reN=annit*BioBI(i,iIceNH4) 
+		
+	  cff2=BioBI(i,iIcePhL)*(GROWAice-RAi0)
+	  cff3=BioBI(i,iIcePhL)*RAi0-reN
+	
+	
+	
+  	  DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)              &
+     &	          -grow1*NOup*BioBI(i,iIcePhL)*xi*dtdays   &
+     &	          +reN*dtdays
+	
+         DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                  &
+     &	             -grow1*NHup*BioBI(i,iIcePhL)*xi*dtdays   &
+     &               +RAi0*BioBI(i,iIcePhL)*xi*dtdays         &
+     &	             +RgAi*BioBI(i,iIcePhL)*xi*dtdays         &
+     &               -reN*dtdays  
+
+#elif defined BERING_10K  
+	  DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)              &
+     &	        -IcePhL(i,j,nstp)*RgAi*dtdays
+     
+                                               
+       
+	  reN=annit*IceNH4(i,j,nstp) 
+		
+	  cff2=IcePhL(i,j,nstp)*(GROWAice-RAi0)
+	  cff3=IcePhL(i,j,nstp)*RAi0-reN
+	
+	
+	
+  	  DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)              &
+     &	          -grow1*NOup*IcePhL(i,j,nstp)*xi*dtdays   &
+     &	          +reN*dtdays
+	
+         DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                  &
+     &	             -grow1*NHup*IcePhL(i,j,nstp)*xi*dtdays   &
+     &               +RAi0*IcePhL(i,j,nstp)*xi*dtdays         &
+     &	             +RgAi*IcePhL(i,j,nstp)*xi*dtdays         &
+     &               -reN*dtdays  
+
+	   
+#endif	
+     
+ 
+#ifdef CLIM_ICE_1D
+
+
+#if defined BIOFLUX && defined BEST_NPZ
+     
+      IF (i.eq.3.and.j.eq.3) THEN
+     bflx(NT(ng)+3,NT(ng)+5)=bflx(NT(ng)+3,NT(ng)+5)    & !PLi->NH4
+     &     +RAi0*BioBI(i,iIcePhL)*xi*dtdays             &
+     &      +RgAi*BioBI(i,iIcePhL)*xi*dtdays
+     
+     bflx(NT(ng)+5,NT(ng)+4)=bflx(NT(ng)+5,NT(ng)+4)    & !NH4->NO3
+     &      +reN*dtdays
+     
+     bflx(NT(ng)+4,NT(ng)+3)=bflx(NT(ng)+4,NT(ng)+3)    & !NO3->iPL
+     &      +grow1*NOup*BioBI(i,iIcePhL)*xi*dtdays
+     
+      bflx(NT(ng)+5,NT(ng)+3)=bflx(NT(ng)+5,NT(ng)+3)    & !NH4->iPL
+     &      +grow1*NHup*BioBI(i,iIcePhL)*xi*dtdays
+     
+       
+      ENDIF
+#endif 
+     
+#endif
+	  
+#if defined CLIM_ICE_1D	
+          
+!         dhicedt=tclm(i,j,42,1,iFe+1) - tclm(i,j,42,2,iFe+1)   
+	  dhicedt=it(i,j,nnew,iIceZ)-it(i,j,nstp,iIceZ)  
+        
+        
+#elif defined BERING_10K	 
+          cff1 = hi(i,j,nstp)/ai(i,j,nstp)
+          cff2=hi(i,j,nnew)/ai(i,j,nnew)
+          dhicedt=cff2-cff1
+
+#endif	  
+	  dhicedt=dhicedt*sec2day/dtdays !convert to m/s
+  
+  
+	  trs=9.667e-11+4.49e-6*dhicedt-1.39e-5*dhicedt**2
+	  trs=trs*86400   !convert to m/d
+	  twi=72*trs               
+	   
+	 IF (dhicedt.gt.0) THEN     
+ 
+	 trs=4.49e-6*dhicedt-1.39e-5*dhicedt**2
+	 trs=trs*86400
+	 twi=720*trs    	 
+                         
+	 ENDIF
+	  
+	 	 
+	 
+	 !----------------------------------------------
+         !Change in concentration of large phytoplankton/ Ice Algae 
+	 !due to ice growth/melt
+         !----------------------------------------------
+
+	 
+	 IF (twi.lt.0) THEN  
+	 
+#if defined CLIM_ICE_1D		  
+         DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                     &
+     &	        + BioBI(i,iIcePhL)*(twi/aidz)*86400*dtdays
+     
+         DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                &
+     &	    -twi*BioBI(i,iIcePhL)*dtdays*86400/Hz(i,j,N(ng))
+
+#elif defined BERING_10K
+     
+         DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                     &
+     &	        + BioBI(i,iIcePhL)*(twi/aidz)*86400*dtdays
+     
+
+         DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                &
+     &	    -twi*BioBI(i,iIcePhL)*dtdays*86400/Hz(i,j,N(ng))
+     
+#endif 
+
+#if defined BIOFLUX && defined BEST_NPZ
+      IF (i.eq.3.and.j.eq.3) THEN
+     
+     bflx(iPhL,NT(ng)+3)=bflx(iPhL,NT(ng)+3)    & !PL->Phi
+     &    +twi*BioBI(i,iIcePhL)*dtdays*86400/Hz(i,j,N(ng)) *xi
+         
+      ENDIF
+#endif 
+
+	  ENDIF 
+! nutrient gradient between ice and water
+#if defined CLIM_ICE_1D   
+	   cff1=twi*(Bio(i,N(ng),iNO3)-BioBI(i,iIceNO3))*dtdays
+	   cff2=twi*(Bio(i,N(ng),iNH4)-BioBI(i,iIceNH4))*dtdays
+	  
+	     IF (twi.lt.0) THEN  
+ 	   DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)                     &
+     &	                    + BioBI(i,iIceNO3)*twi*dtdays
+	   
+	   
+ 	   DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                     &
+     &	                    + BioBI(i,iIceNH4)*twi*dtdays
+	   
+#elif defined BERING_10K
+
+           cff1=twi*(Bio(i,N(ng),iNO3)-IceNO3(i,j,nstp))*dtdays
+	   cff2=twi*(Bio(i,N(ng),iNH4)-IceNH4(i,j,nstp))*dtdays
+	  
+	     IF (twi.lt.0) THEN  
+ 	   DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)                     &
+     &	                    + IceNO3(i,j,nstp)*twi*dtdays
+	   
+	   
+ 	   DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                     &
+     &	                    + IceNH4(i,j,nstp)*twi*dtdays
+
+#endif 	 
+         
+ 	   DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)+cff1/Hz(i,j,N(ng))
+ 	   DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)+cff2/Hz(i,j,N(ng))
+	   
+#if defined CLIM_ICE_1D	   
+#if defined BIOFLUX && defined BEST_NPZ
+      IF (i.eq.3.and.j.eq.3) THEN
+     
+     bflx(NT(ng)+4,iNO3)=bflx(NT(ng)+4,iNO3)    & !NH4i->NH4
+     &                  +  cff1/Hz(i,j,N(ng))
+         
+     bflx(NT(ng)+5,iNH4)=bflx(NT(ng)+5,iNH4)    & !NH4i->NH4
+     &                  +  cff2/Hz(i,j,N(ng))
+      ENDIF
+#endif 
+#endif   
+	   ELSE IF (twi.gt.0) THEN  
+	 
+
+
+ 	   DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+cff1/aidz
+ 	   DBioBI(i,iIceNH4)=DBioBI(i,iIceNO3)+cff2/aidz
+	 
+         
+ 	   DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
+ 	   DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))
+	   
+#if defined CLIM_ICE_1D		   
+#if defined BIOFLUX && defined BEST_NPZ
+     
+     IF (i.eq.3.and.j.eq.3) THEN
+      bflx(iNO3,NT(ng)+4)=bflx(iNO3,NT(ng)+4)    & !NO3->NO3i
+     &                  +cff1/aidz
+         
+      bflx(iNH4,NT(ng)+5)=bflx(iNH4,NT(ng)+5)    & !NH4->NH4i
+     &                  +  cff2/aidz
+      ENDIF
+#endif   
+#endif
+	   ENDIF
+#ifdef STATIONARY2           
+!	st2(i,j,nnew,i2Stat1)=trs
+!        st2(i,j,nnew,i2Stat2)=twi
+	
+	
+!	st2(i,j,nnew,i2Stat5)=it(i,j,nnew,iIceZ)
+!        st2(i,j,nnew,i2Stat6)=it(i,j,nstp,iIceZ)
+!	st2(i,j,nnew,i2Stat7)=tclmG(i,j,42,1,15)  
+!        st2(i,j,nnew,i2Stat8)=tclmG(i,j,42,2,15)
+#endif        
+	 
+!              ENDIF
+       	   
+        ELSE IF (ice_thick(i,j).eq.0.0)      THEN      !lt 0.02
+#if defined CLIM_ICE_1D	
+	  IF (itL(i,j,nstp,iIceLog).eq.1_r8 ) THEN
+#elif defined BERING_10K
+           IF (IceLog(i,j,nstp).eq.1_r8 ) THEN
+#endif
+
+!            IF (yday.gt.130)THEN	 !final melting  
+              
+#if defined CLIM_ICE_1D		      
+               DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)          &
+     &	             + it(i,j,nstp,iIcePhL)*aidz/Hz(i,j,N(ng))
+       
+               DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)          &
+     &	             + it(i,j,nstp,iIceNO3)*aidz/Hz(i,j,N(ng))
+               DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)          &
+     &	             + it(i,j,nstp,iIceNH4)*aidz/Hz(i,j,N(ng))
+               itL(i,j,nstp,iIceLog) =-1_r8
+               itL(i,j,nnew,iIceLog) =-1_r8
+	       
+#elif defined BERING_10K	       
+	        DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)          &
+     &	             + IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng))
+       
+               DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)          &
+     &	             + IceNO3(i,j,nstp)*aidz/Hz(i,j,N(ng))
+               DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)          &
+     &	             + IceNH4(i,j,nstp)*aidz/Hz(i,j,N(ng))
+               IceLog(i,j,nstp) =-1_r8
+               IceLog(i,j,nnew) =-1_r8
+#endif	       
+#if defined CLIM_ICE_1D	       
+#if defined BIOFLUX && defined BEST_NPZ
+        IF (i.eq.3.and.j.eq.3) THEN
+     bflx(NT(ng)+3,iPhL)=bflx(NT(ng)+3,iPhL)    & !PLi->PhL
+     &          + it(i,j,nnew,iIcePhL)*aidz/Hz(i,j,N(ng))*xi
+     
+     bflx(NT(ng)+4,iNO3)=bflx(NT(ng)+4,iNO3)    & !NO3i->NO3
+     &          + it(i,j,nnew,iIceNO3)*aidz/Hz(i,j,N(ng))
+           
+     bflx(NT(ng)+5,iNH4)=bflx(NT(ng)+5,iNH4)    & !NH4i->NH4
+     &          + it(i,j,nnew,iIceNH4)*aidz/Hz(i,j,N(ng)) 
+        ENDIF      
+#endif  
+#endif
+      
+!             IF (yday.gt.130)THEN	 !final melting
+#if defined CLIM_ICE_1D	
+                DO itrc=1,3 !NIB
+		 ibioBI=idice(itrc)
+		  DBioBI(i,ibioBI)=DBioBI(i,ibioBI)-BioBI(i,ibioBI)
+                  it(i,j,nnew,ibioBI)=0_r8
+	        END DO
+	       itL(i,j,nstp,iIceLog) =0_r8
+#elif defined BERING_10K   
+             DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)-IceNO3(i,j,nstp)
+             DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)-IceNH4(i,j,nstp)
+             DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)-IcePhL(i,j,nstp)
+           
+	     IceNO3(i,j,nnew)=0_r8
+             IceNH4(i,j,nnew)=0_r8
+             IcePhL(i,j,nnew)=0_r8
+	     IceLog(i,j,nstp) =0_r8
+#endif
+       
+!             ENDIF
+          ELSE
+         
+#if defined CLIM_ICE_1D          
+	   DO itrc=1,3 !NIB
+		 ibioBI=idice(itrc)
+	      DBioBI(i,ibioBI)=0_r8
+	   END DO    
+#elif defined BERING_10K   
+             DBioBI(i,iIceNO3)=0_r8
+             DBioBI(i,iIceNH4)=0_r8
+             DBioBI(i,iIcePhL)=0_r8
+           
+#endif	
+
+          ENDIF 
+
+	  ENDIF
+       END DO
+#   endif 

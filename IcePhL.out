@@ -1,0 +1,57 @@
+Modules/mod_ncparam.F:        integer  :: idIcePhL 
+Modules/mod_ncparam.F:         integer  :: idIcePhLbc(4)     ! ice algae boundary conditions	
+Modules/mod_ncparam.F:              CASE ('idIcePhL')
+Modules/mod_ncparam.F:                 idIcePhL=varid
+Modules/mod_ncparam.F:              CASE ('idIcePhLbc(iwest)')
+Modules/mod_ncparam.F:                idIcePhLbc(iwest)=varid
+Modules/mod_ncparam.F:              CASE ('idIcePhLbc(ieast)')
+Modules/mod_ncparam.F:                idIcePhLbc(ieast)=varid
+Modules/mod_ncparam.F:              CASE ('idIcePhLbc(isouth)')
+Modules/mod_ncparam.F:                idIcePhLbc(isouth)=varid
+Modules/mod_ncparam.F:              CASE ('idIcePhLbc(inorth)')
+Modules/mod_ncparam.F:                idIcePhLbc(inorth)=varid
+Utility/def_avg.F:        IF (Hout(idIcePhL,ng)) THEN
+Utility/def_avg.F:          Vinfo( 1)=Vname(1,idIcePhL)
+Utility/def_avg.F:          WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idIcePhL))
+Utility/def_avg.F:          Vinfo( 3)=Vname(3,idIcePhL)
+Utility/def_avg.F:          Vinfo(14)=Vname(4,idIcePhL)
+Utility/def_avg.F:          Aval(5)=REAL(Iinfo(1,idIcePhL,ng),r8)
+Utility/def_avg.F:     &                   avgVid(idIcePhL,ng), NF_FOUT,                    &
+Utility/def_his.F:        IF (Hout(idIcePhL,ng)) THEN
+Utility/def_his.F:          Vinfo( 1)=Vname(1,idIcePhL)
+Utility/def_his.F:          Vinfo( 2)=Vname(2,idIcePhL)
+Utility/def_his.F:          Vinfo( 3)=Vname(3,idIcePhL)
+Utility/def_his.F:          Vinfo(14)=Vname(4,idIcePhL)
+Utility/def_his.F:          Aval(5)=REAL(Iinfo(1,idIcePhL,ng),r8)
+Utility/def_his.F:          status=def_var(ng, iNLM, ncHISid(ng), hisVid(idIcePhL,ng),      &
+Utility/def_his.F:	  ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIcePhL))) THEN
+Utility/def_his.F:            got_var(idIcePhL)=.true.
+Utility/def_his.F:            hisVid(idIcePhL,ng)=var_id(i)
+Utility/def_his.F:        IF (.not.got_var(idIcePhL).and.Hout(idIcePhL,ng)) THEN
+Utility/def_his.F:          IF (Master) WRITE (stdout,60) TRIM(Vname(1,idIcePhL)),        &
+Utility/def_rst.F:        Vinfo( 1)=Vname(1,idIcePhL)
+Utility/def_rst.F:        Vinfo( 2)=Vname(2,idIcePhL)
+Utility/def_rst.F:        Vinfo( 3)=Vname(3,idIcePhL)
+Utility/def_rst.F:        Vinfo(14)=Vname(4,idIcePhL)
+Utility/def_rst.F:        Aval(5)=REAL(Iinfo(1,idIcePhL,ng),r8)
+Utility/def_rst.F:        status=def_var(ng, iNLM, ncRSTid(ng), rstVid(idIcePhL,ng),      &
+Utility/def_rst.F:	    ELSE IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIcePhL))) THEN
+Utility/def_rst.F:            got_var(idIcePhL)=.TRUE.
+Utility/def_rst.F:            rstVid(idIcePhL,ng)=var_id(i)
+Utility/def_rst.F:	IF (.not.got_var(idIcePhL)) THEN
+Utility/def_rst.F:          IF (Master) WRITE (stdout,40) TRIM(Vname(1,idIcePhL)),        &
+Utility/inp_par.F:           ELSE IF (TRIM(KeyWord).eq.'Hout(idIcePhL)') THEN
+Utility/inp_par.F:!g               Hout(idIcePhL,ng)=LtrcI(idIcePhL,ng)
+Utility/inp_par.F:	         Hout(idIcePhL,ng)=LtrcI(1,ng)
+Utility/inp_par.F:         IF (Sout(idIcePhL,ng)) WRITE (out,80) Sout(idIcePhL,ng),      &
+Utility/inp_par.F:     &       'Sout(idIcePhL)',                                          &
+Utility/wrt_avg.F:      IF (Hout(idIcePhL,ng)) THEN
+Utility/wrt_avg.F:        status=nf_fwrite2d(ng, iNLM, ncAVGid(ng), avgVid(idIcePhL,ng),    &
+Utility/wrt_avg.F:            WRITE (stdout,10) TRIM(Vname(1,idIcePhL)), tAVGindx(ng)
+Utility/wrt_avg.F:            WRITE (stdout,10) TRIM(Vname(1,idIcePhL)), tAVGindx(ng)
+Utility/wrt_his.F:      IF (Hout(idIcePhL,ng)) THEN
+Utility/wrt_his.F:     &                     hisVid(idIcePhL,ng),                         &
+Utility/wrt_his.F:            WRITE (stdout,10) TRIM(Vname(1,idIcePhL)),                  &
+Utility/wrt_rst.F:      IF (Hout(idIcePhL,ng)) THEN
+Utility/wrt_rst.F:      status=nf_fwrite2d(ng, iNLM, ncRSTid(ng), rstVid(idIcePhL,ng),      &
+Utility/wrt_rst.F:        WRITE (stdout,10) TRIM(Vname(1,idIcePhL)), trstindx(ng)

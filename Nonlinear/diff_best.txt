@@ -1,0 +1,382 @@
+498,499c498
+< 
+< 
+---
+>          
+508c507
+<          if (hi(i,j,nstp).gt.0.0_r8)THEN 
+---
+>          if (hi(i,j,nstp).ge.0.0_r8)THEN 
+588c587
+< 	         
+---
+> 	      
+603c602,606
+<            if (IceLog(i,j,nstp).gt.0 )THEN
+---
+>          IF (j.eq.108) THEN
+>          cff1=IcePhL(i,j,nnew)
+>          ENDIF
+> 	 
+>            if (IceLog(i,j,nstp).ge.0 )THEN
+610a614,619
+> 
+> !              IcePhL(i,j,nnew) = IcePhL(i,j,1)       
+> !              IceNO3(i,j,nnew) = IceNO3(i,j,1)      
+> !              IceNH4(i,j,nnew) = IceNH4(i,j,1)        
+> !              IceLog(i,j,nnew) = IceLog(i,j,1)
+> !g           endif
+612c621
+<               IcePhL(i,j,nstp) = IcePhL(i,j,nnew)     
+---
+>             IcePhL(i,j,nstp) =  IcePhL(i,j,nnew)     
+616c625
+<  	      
+---
+> 	      
+618,620c627,630
+<            endif
+< 	    else
+< 	      IcePhL(i,j,nstp) = 0_r8    
+---
+> 	      
+> 	   endif
+> 	   else
+> 	    IcePhL(i,j,nstp) =  0_r8    
+622c632,633
+<               IceNH4(i,j,nstp) = 0_r8  
+---
+>               IceNH4(i,j,nstp) = 0_r8     
+>              
+625,627d635
+<             
+< 	
+< 	       
+633a642
+> 
+635,637c644,646
+< 	
+< # endif
+<           endif
+---
+> # endif	      
+>             
+> 	  endif
+649a659,665
+> !#elif defined BERING_10K
+> !         DO itrc=1,3
+> !          ibioBI=idice(itrc)
+> !	   DO i=Istr,Iend
+> !           DBioBI(i,ibioBI)=0.0_r8
+> !          END DO       
+> !         END DO
+1516c1532
+<      &              + fpPhLCop * ( BioBI(i,iIcePhL)/aidz)**2 
+---
+>      &              + fpPhLCop * ( BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+1623,1624c1639,1640
+< !g#ifdef ICE_BIO
+< !g            DO i=Istr,Iend
+---
+> #ifdef ICE_BIO
+>             DO i=Istr,Iend
+1628,1637c1644,1653
+< !g
+< !g#if defined BIOFLUX && defined BEST_NPZ
+< !g          bflx(NT(ng)+3,iCop)= bflx(NT(ng)+3,iCop)             &
+< !g     &      + Hz(i,j,N(ng))*(fpPhLCop*                         &
+< !g     &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
+< !g#endif
+< !g      
+< !g              END DO
+< !g
+< !g#endif    
+---
+> 
+> #if defined BIOFLUX && defined BEST_NPZ
+>           bflx(NT(ng)+3,iCop)= bflx(NT(ng)+3,iCop)             &
+>      &      + Hz(i,j,N(ng))*(fpPhLCop*                         &
+>      &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
+> #endif
+>       
+>               END DO
+> 
+> #endif    
+1653c1669
+<      &               + fpPhLNCa * (BioBI(i,iIcePhL)/aidz)**2 
+---
+>      &               + fpPhLNCa * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+1753,1756c1769,1772
+< !g#ifdef ICE_BIO
+< !g             DO i=Istr,Iend
+< !g       
+< !g
+---
+> #ifdef ICE_BIO
+>             DO i=Istr,Iend
+>        
+> 
+1759,1770c1775,1786
+< !g
+< !g
+< !g#if defined BIOFLUX && defined BEST_NPZ		        
+< !g           bflx(NT(ng)+3,iNCaS)= bflx(NT(ng)+3,iNCaS)             &
+< !g     &      + Hz(i,j,N(ng))*(fpPhLNCa*                         &
+< !g    &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+< !g#endif
+< !g      
+< !g
+< !g
+< !g            END DO
+< !g#endif
+---
+> 
+> 
+> #if defined BIOFLUX && defined BEST_NPZ		        
+>            bflx(NT(ng)+3,iNCaS)= bflx(NT(ng)+3,iNCaS)             &
+>      &      + Hz(i,j,N(ng))*(fpPhLNCa*                         &
+>     &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+> #endif
+>       
+> 
+> 
+>             END DO
+> #endif
+1791c1807
+<      &               + fpPhLEup * (BioBI(i,iIcePhL)/aidz)**2 
+---
+>      &               + fpPhLEup * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+1897,1898c1913,1914
+< !g#ifdef ICE_BIO
+< !g          DO i=Istr,Iend
+---
+> #ifdef ICE_BIO
+>           DO i=Istr,Iend
+1902,1911c1918,1927
+< !g
+< !g
+< !g#if defined BIOFLUX && defined BEST_NPZ		        
+< !g           bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupS)            &
+< !g     &      + Hz(i,j,N(ng))*(fpPhLEup*                           &
+< !g     &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+< !g#endif
+< !g      
+< !g           END DO
+< !g#endif	   
+---
+> 
+> 
+> #if defined BIOFLUX && defined BEST_NPZ		        
+>            bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupS)            &
+>      &      + Hz(i,j,N(ng))*(fpPhLEup*                           &
+>      &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+> #endif
+>       
+>            END DO
+> #endif	   
+1931c1947
+<      &               + fpPhLNCa * (BioBI(i,iIcePhL)/aidz)**2 
+---
+>      &               + fpPhLNCa * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+2021,2022c2037,2038
+< !g#ifdef ICE_BIO         
+< !g          DO i=Istr,Iend
+---
+> #ifdef ICE_BIO         
+>           DO i=Istr,Iend
+2025,2034c2041,2050
+< !g
+< !g
+< !g#if defined BIOFLUX && defined BEST_NPZ		        
+< !g           bflx(NT(ng)+3,iNCaO)= bflx(NT(ng)+3,iNCaO)             &
+< !g     &      + Hz(i,j,N(ng))*(fpPhLNCa*                         &
+< !g     &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+< !g#endif
+< !g 
+< !g            END DO
+< !g#endif
+---
+> 
+> 
+> #if defined BIOFLUX && defined BEST_NPZ		        
+>            bflx(NT(ng)+3,iNCaO)= bflx(NT(ng)+3,iNCaO)             &
+>      &      + Hz(i,j,N(ng))*(fpPhLNCa*                         &
+>      &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+> #endif
+>  
+>             END DO
+> #endif
+2053c2069
+<      &               + fpPhLEup * (BioBI(i,iIcePhL)/aidz)**2 
+---
+>      &               + fpPhLEup * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+2150,2151c2166,2167
+< !g#ifdef ICE_BIO
+< !g          DO i=Istr,Iend
+---
+> #ifdef ICE_BIO
+>           DO i=Istr,Iend
+2154,2163c2170,2179
+< !g
+< !g
+< !g#if defined BIOFLUX && defined BEST_NPZ		        
+< !g           bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupO)             &
+< !g     &      + Hz(i,j,N(ng))*(fpPhLEup*                         &
+< !g     &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+< !g#endif
+< !g      
+< !g           END DO
+< !g#endif
+---
+> 
+> 
+> #if defined BIOFLUX && defined BEST_NPZ		        
+>            bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupO)             &
+>      &      + Hz(i,j,N(ng))*(fpPhLEup*                         &
+>      &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
+> #endif
+>       
+>            END DO
+> #endif
+3594c3610
+< 	IF (ice_thick(i,j).gt.0.02)THEN   !0.02
+---
+> 	IF (ice_thick(i,j).ge.0.02)THEN   !0.02
+3757c3773,3774
+<           dhicedt=hi(i,j,nnew)-hi(i,j,nstp)
+---
+> 	  dhicedt=hi(i,j,nstp)-hi(i,j,nnew)
+> 
+3862c3879
+<          
+---
+>        
+3892c3909
+<         ELSE IF (ice_thick(i,j).le.0.02)      THEN      !lt 0.02
+---
+>         ELSE IF (ice_thick(i,j).le.0.0)      THEN      !lt 0.02
+3895,3896c3912,3920
+< 	             DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)          &
+<      &	             + it(i,j,nstp,iIcePhL)/aidz
+---
+> #elif defined BERING_10K
+>            IF (IceLog(i,j,nstp).lt.0_r8 ) THEN
+> #endif
+> 
+> !            IF (yday.gt.130)THEN	 !final melting  
+>               
+> #if defined CLIM_ICE_1D		      
+>                DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)          &
+>      &	             + it(i,j,nstp,iIcePhL)/Hz(i,j,N(ng))
+3899c3923
+<      &	             + it(i,j,nstp,iIceNO3)/aidz)
+---
+>      &	             + it(i,j,nstp,iIceNO3)/Hz(i,j,N(ng))
+3901c3925
+<      &	             + it(i,j,nstp,iIceNH4)/aidz)
+---
+>      &	             + it(i,j,nstp,iIceNH4)/Hz(i,j,N(ng))
+3904,3907d3927
+< 	   ENDIF    
+< #elif defined BERING_10K
+<            IF (IceLog(i,j,nstp).lt.0_r8 ) THEN
+< 	   IF (IcePhL(i,j,nnew).gt.0_r8 ) THEN
+3909c3929,3930
+< 	       DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)          &
+---
+> #elif defined BERING_10K	       
+> 	        DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)          &
+3911c3932
+<        
+---
+>       
+3914c3935
+<                DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)          &
+---
+>               DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)          &
+3916,3923d3936
+<      
+< !             DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)-IceNO3(i,j,nnew)
+< !             DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)-IceNH4(i,j,nnew)
+< !             DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)-IcePhL(i,j,nnew)
+<            
+< 	     IceNO3(i,j,nstp)=0_r8
+<              IceNH4(i,j,nstp)=0_r8
+<              IcePhL(i,j,nstp)=0_r8
+3925,3931d3937
+<            ELSE
+< 	    DBioBI(i,iIceNO3)=0_r8
+<              DBioBI(i,iIceNH4)=0_r8
+<              DBioBI(i,iIcePhL)=0_r8
+< 	   
+< 	   
+< 	   ENDIF
+3948c3954
+< !             
+---
+> !             IF (yday.gt.130)THEN	 !final melting
+3956c3962,3966
+< 
+---
+> #elif defined BERING_10K   
+>              DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)-IceNO3(i,j,nnew)
+>              DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)-IceNH4(i,j,nnew)
+>              DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)-IcePhL(i,j,nnew)
+>            
+3959c3969
+<              
+---
+> !             ENDIF
+3967c3977,3980
+< 
+---
+> #elif defined BERING_10K   
+>              DBioBI(i,iIceNO3)=0_r8
+>              DBioBI(i,iIceNH4)=0_r8
+>              DBioBI(i,iIcePhL)=0_r8
+4002c4015
+<        
+---
+>                
+4021d4033
+< 
+4023,4029c4035,4041
+<               
+<  	      if (IceLog(i,j,nstp).ge.0 )THEN
+<                IcePhL(i,j,nnew) = IcePhL(i,j,nstp)+ DBioBI(i,iIcePhL)    
+<                IceNO3(i,j,nnew) =  IceNO3(i,j,nstp)+DBioBI(i,iIceNO3)     
+<                IceNH4(i,j,nnew) =  IceNH4(i,j,nstp)+DBioBI(i,iIceNH4) 
+<  	      endif      
+<               END DO
+---
+>              
+> 	            if (IceLog(i,j,nstp).ge.0 )THEN
+> 	      IcePhL(i,j,nnew) = IcePhL(i,j,nstp)+ DBioBI(i,iIcePhL)    
+>               IceNO3(i,j,nnew) =  IceNO3(i,j,nstp)+DBioBI(i,iIceNO3)     
+>               IceNH4(i,j,nnew) =  IceNH4(i,j,nstp)+DBioBI(i,iIceNH4) 
+> 	      endif      
+>              END DO
+4080c4092
+< #     if defined CLIM_ICE_1D
+---
+> #     if defined CLIM_ICE_1D	
+4101c4113,4114
+<          END DO
+---
+> 
+>           END DO
+4104,4105c4117,4119
+< #elif defined BERING_10K
+<            if (IceLog(i,j,nstp).ge.0_r8 )THEN
+---
+> 	
+> #      elif defined BERING_10K
+>              if (IceLog(i,j,nstp).ge.0_r8 )THEN
+4119,4121c4133,4135
+< 
+<            
+< 
+---
+>        
+>           
+>      

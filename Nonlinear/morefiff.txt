@@ -1,0 +1,474 @@
+85a86
+>      &                   ,CLIMA(ng) % tclmG                             &
+148a150
+>      &                            ,tclmG                                &
+280c282,285
+<       
+---
+>      
+>       real(r8), intent(inout) ::tclmG(LBi:,LBj:,:,:,:)
+>       real(r8), intent(inout) ::tclm(LBi:,LBj:,:,:)
+>   
+613c618
+< !#if defined BEST_NPZ && defined BENTHIC 
+---
+> #if defined BEST_NPZ && defined BENTHIC 
+616c621
+< !        IF (iic(ng).eq.dstart) THEN
+---
+>         IF (iic(ng).eq.dstart) THEN
+618c623
+< !#if defined BERING_10K
+---
+> #if defined BERING_10K
+641,642c646,647
+< !#endif	    
+< !            end if
+---
+> #endif	    
+>             end if
+645c650
+< !#endif
+---
+> #endif
+775c780,781
+<          DO k=1,N(ng)
+---
+> 
+>         DO k=1,N(ng)
+777,780d782
+< #ifdef CORRECT_TEMP_BIAS
+< !correct the ROMS temp for the biology only - not fed back
+<             Bio(i,k,itemp)=t(i,j,k,nstp,itemp)-1.94_r8
+< #else
+782d783
+< #endif
+854c855
+<             if (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).le.0)THEN
+---
+>            if (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).le.0)THEN
+857,863c858,863
+<            IcePhL(i,j,nstp) = Bio(i,N(ng),iPhL)  !1.1638_r8  !0.1638_r8       
+<            IceNO3(i,j,nstp) = Bio(i,N(ng),iNO3)  !5.0_r8        
+<            IceNH4(i,j,nstp) = Bio(i,N(ng),iNH4)  !1.0_r8       
+< 
+<            DBio(i,N(ng),iNO3)=DBio(i,N(ng),iNO3)-Bio(i,N(ng),iNO3)*aidz/Hz(i,j,N(ng))
+<            DBio(i,N(ng),iNH4)=DBio(i,N(ng),iNH4)-Bio(i,N(ng),iNH4)*aidz/Hz(i,j,N(ng))
+<            DBio(i,N(ng),iPhL)=DBio(i,N(ng),iPhL)-Bio(i,N(ng),iPhL)*aidz/Hz(i,j,N(ng))
+---
+>  
+> 
+>               IcePhL(i,j,nstp) = 1.1638_r8  !0.1638_r8       
+>               IceNO3(i,j,nstp) = Bio(i,N(ng),iNO3)  !5.0_r8        
+>               IceNH4(i,j,nstp) = Bio(i,N(ng),iNH4)  !1.0_r8       
+> 
+872d871
+< 	   
+959c958
+<         
+---
+>     
+961c960
+< !  George Gibsons version after Morel 1988 (in Loukos 1997) 
+---
+> !  George Blamey''s version after Morel 1988 (in Loukos 1997) 
+963c962
+< #ifdef NEW_SHADE
+---
+> 
+968,971c967,972
+< 	 cff5=(Bio(i,N(ng),iPhS)/ccr)+ (Bio(i,N(ng),iPhL)/ccrPhL)
+< 	 cff3= k_chl*(Bio(i,N(ng),iPhS)/ccr +              &
+<      &                   Bio(i,N(ng),iPhL)/ccrPhL)**(0.428_r8)
+< !	 cff3 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
+---
+> 
+>  
+> !         if((Bio(i,N(ng),iPhS)/ccr            &
+> !     &     + Bio(i,N(ng),iPhL)/ccrPhL).le.1.0_r8)     THEN 
+> 
+> !         cff3=k_chl
+973,974c974,982
+<          PAR(i,N(ng)) =  PARs(i)                           &
+<      &      * exp( -(k_extV + cff3)                        &
+---
+> !         else
+> 	 
+>          cff3= k_chl*(Bio(i,N(ng),iPhS)/ccr +              &
+>      &                   Bio(i,N(ng),iPhL)/ccrPhL)**(0.428_r8)
+> 
+> !         endif
+> 	  
+>             PAR(i,N(ng)) =  PARs(i)              &
+>      &      * exp( -(k_extV + cff3)                 &
+976,987c984,986
+<      
+<      cff0=PAR(i,N(ng))
+<      
+<         DO k=N(ng),1,-1
+<        
+<          dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+<          cff5=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
+< 	cff2 = (k_chl*(cff5)**(0.428_r8))   
+< !	cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)     &
+< !     &                **(-0.428_r8)))) 
+< 	PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+< 	cff0=cff0 * EXP(-(k_extV+cff2)*dz)
+---
+>                    
+> 	
+> 	  
+988a988,1027
+> #ifdef NEWSHADE
+> !         DO k=N(ng)-1,1,-1
+> !             DO i=Istr,Iend
+> !	     
+> !	     
+> !               cff1 = k_ext * ( z_r(i,j,k) - z_r(i,j,k+1) )
+> !	       
+> !	       cff4=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
+> !	       
+> !	       k_chlV=k_chl
+> !               cff2 = (k_chlV*(Bio(i,k+1,iPhS)/ccr +                    &
+> !     &                       Bio(i,k+1,iPhL)/ccrPhL)**-0.572_r8)        &
+> !     &                 * ( z_w(i,j,k) - z_r(i,j,k+1) )
+> !               cff3 = (k_chlV*(Bio(i,k,iPhS)/ccr +                      &
+> !     &                       Bio(i,k,iPhL)/ccrPhL)**-0.428_r8)          &
+> !                        * ( z_r(i,j,k) - z_w(i,j,k) )
+> !               PAR(i,k) = PAR(i,k+1) * EXP(cff1+cff2+cff3)
+> ! 	       
+> !            END DO
+> !           END DO
+> 
+>             
+> 		 
+> 
+> 	  cff0=PAR(i,N(ng))
+> 	     
+>           DO k=N(ng)-1,1,-1
+> 	  
+>             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+>             cff5=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
+> 	     
+> !            if(cff5.le.1.0_r8)THEN 
+> !              cff2=k_chl
+> !            else
+> 	      cff2 = (k_chl*(cff5)**(0.428_r8))        
+> !            endif
+> 	   PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+> 	   cff0=cff0 * EXP(-(k_extV+cff2)*dz)
+> 
+>           END DO
+990,991c1029,1032
+<        END DO
+<     
+---
+> 	 
+> 	 
+> 	     
+>         
+1076,1077c1117,1121
+< ! Options for alpha
+<     
+---
+> ! Options for variable alpha
+>        
+>   
+> 
+> 
+1081,1086c1125,1129
+< ! Variable -depends on light/nutrient - gradual not step       
+< !         ALPHA_N = (Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4))/ ( kN +Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4));
+< !         ALPHA_P =  PAR(i,N(ng))/ ( kP +  PAR(i,N(ng)));
+< !         cff1= (ALPHA_N* ALPHA_P);
+< !         alphaPhSv=max(1.0_r8,cff1*alphaPhS);
+< 
+---
+>   ! Depends on light/nutrient - gradual not step       
+> !g         ALPHA_N = (Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4))/ ( kN +Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4));
+> !g         ALPHA_P =  PAR(i,N(ng))/ ( kP +  PAR(i,N(ng)));
+> !g         cff1= (ALPHA_N* ALPHA_P);
+> !g         alphaPhSv=max(1.0_r8,cff1*alphaPhS);
+1088d1130
+< ! Constant
+1090a1133
+> 
+1101,1104c1144,1146
+< #if defined DIURNAL_SRFLUX
+<           !day length fraction scalar
+< 	     Pmax = Pmax * Dl / 24.0_r8	     
+< #endif
+---
+> !day length fraction scalar
+> !	     Pmax = (2.0_r8 ** Drate - 1.0_r8 ) * Dl / 24.0_r8
+> 
+1222a1265,1266
+> 
+> 
+1575c1619
+< 		 cff2 = Bio(i,k,iMZL) / (fMZL + cff1)
+---
+> 		 cff2 = eMZL * Bio(i,k,iMZL) / (fMZL + cff1)
+1579,1580c1623
+<                  cff3= eMZL *Q10MZL**((Bio(i,k,itemp)-Q10MZLT)/10.0_r8))
+< !		 cff3= max(0.6_r8,cff3)
+---
+>                  cff3= Q10MZL ** ( (Bio(i,k,itemp)-Q10MZLT) / 10.0_r8 )
+1599c1642,1660
+< 
+---
+> #ifdef STATIONARY
+>             if(i.eq.2)  THEN		
+>               if(j.eq.2) THEN 
+> 	   
+> !             Stat3(i,k,4)=  gammaMZL*cff1*cff2*cff3* dtdays
+> !          Stat3(i,k,4)= fpPhSMZL*(Bio(i,k,iPhS)**2)*cff2*cff3*dtdays
+>              endif
+>             endif
+> 	    
+> 	     if(i.eq.3)  THEN		
+>              if(j.eq.3) THEN 
+>              
+> !                Stat3(i,k,5)=                                          &
+> !     &		(fpPhSMZL * (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays) &
+> !     &         +(fpPhLMZL * (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays)
+>             endif
+>            endif
+>          
+> #endif 
+1646c1707
+< !    &              + fpMZSCop * Bio(i,k,iMZS)**2                &
+---
+> !    &              + fpMZSCop * Bio(i,k,iMZS)**2                 &
+1650c1711
+<      &   + fpPhLCop*0.1 * ( BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+---
+>      &         + fpPhLCop*0.1 * ( BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+1652c1713
+<      &   + fpPhLCop*0.1 * ( IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2
+---
+>      &         + fpPhLCop*0.1 * ( IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2
+1657c1718
+< !    &               + fpMZSCop * Bio(i,k,iMZS)**2               &
+---
+> !    &               + fpMZSCop * Bio(i,k,iMZS)**2              &
+1663c1724
+< !    &               + fpMZSCop * Bio(i,k,iMZS)**2               &
+---
+> !    &               + fpMZSCop * Bio(i,k,iMZS)**2              &
+1716c1777
+<         DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)-fpPhLCop*0.1*  &
+---
+>      		DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)-fpPhLCop*0.1*  &
+1725a1787,1817
+> #ifdef STATIONARY                  
+>           if(i.eq.4)  THEN		
+>            if(j.eq.4) THEN 
+>              
+> !	  Stat3(i,k,10)= fpMZLCop       &
+> !     &                * (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays
+> 	
+>            endif
+>           endif
+>           if(i.eq.4)  THEN		
+>            if(j.eq.4) THEN 
+> !             Stat3(i,k,11)=  cff1
+> !             Stat3(i,k,12)=  cff2
+> !             Stat3(i,k,13)=  cff3
+>           endif
+>           endif
+> 	  
+> 	  if(i.eq.3)  THEN		
+>              if(j.eq.3) THEN 
+>              
+> !                Stat3(i,k,6)=                                   &
+> !     &          (fpPhSCop * (Bio(i,k,iPhS)**2)                  &
+> !     &		+fpPhLCop *(Bio(i,k,iPhL)**2)                   &
+> !#ifdef ICE_BIO     
+> !     &		+fpPhLCop *(BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 &
+> !#endif     
+> !     &		 )* cff2 * cff3 * dtdays
+> 	
+>             endif
+>            endif
+> #endif
+1749c1841
+<      &	fpMZLCop  * (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays*xi
+---
+>      &	 fpMZLCop  * (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays*xi
+1787c1879
+< !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2               &
+---
+> !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2              &
+1790c1882
+<      &     + fpPhLNCa*0.1 * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+---
+>      &           + fpPhLNCa*0.1 * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+1792c1884
+<      &     + fpPhLNCa*0.1 * (IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2 
+---
+>      &           + fpPhLNCa*0.1 * (IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2 
+1796,1798c1888,1890
+<                   cff1 = fpPhSNCa * Bio(i,k,iPhS)**2               &
+<      &                 + fpPhLNCa * Bio(i,k,iPhL)**2               &
+< !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2               &
+---
+>                   cff1 = fpPhSNCa * Bio(i,k,iPhS)**2                 &
+>      &                 + fpPhLNCa * Bio(i,k,iPhL)**2                 &
+> !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2                &
+1804,1806c1896,1898
+<                   cff1 = fpPhSNCa * Bio(i,k,iPhS)**2               &
+<      &                 + fpPhLNCa * Bio(i,k,iPhL)**2               &
+< !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2               &
+---
+>                   cff1 = fpPhSNCa * Bio(i,k,iPhS)**2                 &
+>      &                 + fpPhLNCa * Bio(i,k,iPhL)**2                 &
+> !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2                &
+1825c1917
+<                   DBio(i,k,iNCaS) = DBio(i,k,iNCaS) +              &
+---
+>                   DBio(i,k,iNCaS) = DBio(i,k,iNCaS) +                 &
+1828a1921,1926
+> #ifdef STATIONARY                  
+>           
+>              
+> !	  Stat3(i,k,9)= gammaNCa * cff1 * cff2 * cff3 * dtdays
+> 	
+> #endif
+1835c1933
+<                  Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) +           &
+---
+>                  Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) +             &
+1863c1961,1971
+<                
+---
+>      
+> #ifdef STATIONARY                  
+>           if(i.eq.4)  THEN		
+>            if(j.eq.4) THEN 
+>              
+> !	  Stat3(i,k,11)=  fpMZLNCa * (Bio(i,k,iMZL)**2)    &
+> !     & * cff2 * cff3 *dtdays
+> 	
+>            endif
+>           endif
+> #endif                
+1927c2035
+<      &      + fpPhLEup*0.1 * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+---
+>      &            + fpPhLEup*0.1 * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+1929c2037
+<      &      + fpPhLEup*0.1 * (IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2 
+---
+>      &            + fpPhLEup*0.1 * (IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2 
+2003c2111,2122
+<                     
+---
+>      
+> #ifdef STATIONARY                  
+>           if(i.eq.2)  THEN		
+>            if(j.eq.2) THEN 
+>              
+> 	  Stat3(i,k,12)=   fpMZLEup * (Bio(i,k,iMZL)**2)   &
+>      &   * cff2 * cff3 * dtdays
+> 	
+>            endif
+>           endif
+> #endif      
+>                
+2062c2181
+< !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2               &
+---
+> !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2              &
+2065c2184
+<      &     + fpPhLNCa*0.1 * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+---
+>      &           + fpPhLNCa*0.1 * (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2 
+2067c2186
+<      &     + fpPhLNCa*0.1 * (IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2 
+---
+>      &           + fpPhLNCa*0.1 * (IcePhL(i,j,nstp)/Hz(i,j,N(ng)))**2 
+2072c2191
+< !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2               &
+---
+> !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2              &
+2079c2198
+< !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2               &
+---
+> !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2              &
+2266c2385,2397
+<       
+---
+> 
+> 
+>      
+> #ifdef STATIONARY                  
+>           if(i.eq.4)  THEN		
+>            if(j.eq.4) THEN 
+>              
+> !	  Stat3(i,k,14)= fpMZLEup * (Bio(i,k,iMZL)**2) &
+> !     & * cff2 * cff3 * dtdays
+> 	
+>            endif
+>           endif
+> #endif                
+3201c3332
+<      &	                  * Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays    
+---
+>       &	                  * Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays    
+3291c3422,3435
+<       	
+---
+>  
+> #ifdef STATIONARY2           
+> 	
+> !	Stat2(i,1)= cff11
+> !	Stat2(i,2)= cff10
+> !	Stat2(i,3)= cff5
+> !        Stat2(i,4)= cff4
+> !        Stat2(i,5)= cff6
+> !	Stat2(i,6)= cff7
+> !	Stat2(i,7)= cff8
+> !        Stat2(i,8)= cff9
+> 	
+> #endif 
+>      	
+3295,3296c3439,3440
+< !	     DBio(i,k,iDet) =DBio(i,k,iDet)- dtdays*cff7/Hz(i,j,k)
+< ! 	     DBio(i,k,iDetF)=DBio(i,k,iDetF)- dtdays*cff8/Hz(i,j,k)
+---
+> !	     DBio(i,k,iDet) =DBio(i,k,iDetF)- dtdays*cff7/Hz(i,j,k)
+> ! 	     DBio(i,k,iDetF)=DBio(i,k,iDet)- dtdays*cff8/Hz(i,j,k)
+3306,3307c3450,3451
+<          DBio(i,k,iDet) =DBio(i,k,iDet)-dtdays*cff7/grid(ng) % h(i,j)
+< 	 DBio(i,k,iDetF)=DBio(i,k,iDetF)-dtdays*cff8/grid(ng) % h(i,j)
+---
+>          DBio(i,k,iDet) =DBio(i,k,iDetF)-dtdays*cff7/grid(ng) % h(i,j)
+> 	 DBio(i,k,iDetF)=DBio(i,k,iDet)-dtdays*cff8/grid(ng) % h(i,j)
+3309,3310c3453,3460
+< 	 DBio(i,k,iPhL) =DBio(i,k,iPhL)-dtdays*cff10/grid(ng)% h(i,j)
+<         END DO
+---
+> 	 DBio(i,k,iPhL) =DBio(i,k,iPhL)-dtdays*cff10/grid(ng) % h(i,j)
+> 	 
+> !	 print*,'i=',i,'k=',k,'Hz=',Hz(i,j,k)
+> !	 print*,'PL(i,k)=',Bio(i,k,iPhL)
+> !	 print*,Hz(i,j,k)*cff10/grid(ng) % h(i,j)
+> !	 print*,'cff10=',cff10,'cff0=',cff0,'cff4=',cff4,'cff6',cff6,'Rup=',Rup
+> !	 print*,''
+> 	 END DO
+3322c3472,3478
+<     
+---
+>      
+> !                print*,cff7,cff8,cff9,cff10,cff11
+>      
+> #ifdef STATIONARY2  
+> !               Stat2(i,1)=  + (cff11)*dtdays
+> !               Stat2(i,2)=  + (cff7+cff8+cff9+cff10)*dtdays
+> #endif 
+3376a3533,3536
+> #ifdef STATIONARY2           
+> 	Stat2(i,3)=(cff1+cff2+cff3+cff4+cff5)*dtdays
+>      
+> #endif  
