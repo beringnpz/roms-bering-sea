@@ -364,16 +364,18 @@
      &                        -1.0_r8, FX, FE)
         DO j=Jstr,Jend
           DO i=Istr,Iend
-!             swdk(i,j,k)=FE(i,j)
-
-!use bio to set shortwave absorption
-      cffa1=max(1.e-3,(t(i,j,k,nstp,iPhS)/ccr)+                          & 
-     &          (t(i,j,k,nstp,iPhL)/ccrPhL))
-      cffa2= k_ext+2.00_r8*exp(z_w(i,j,0)*.05)
-      cffa3 = (k_chl*(cffa1)**(0.428_r8))   
-      FX(i,j)=z_w(i,j,N(ng))-z_w(i,j,k)
-      swdk(i,j,k)=(1.-a_frac)*EXP(-1.*FX(i,j)*(cffa2+cffa3))            &
-     &        + a_frac*EXP(-1.*FX(i,j)/a_mu1)
+#   if defined BEST_NPZ
+            ! use bio to set shortwave absorption
+            cffa1 = max(1.e-3,(t(i,j,k,nstp,iPhS)/ccr) +                & 
+     &                 (t(i,j,k,nstp,iPhL)/ccrPhL))
+            cffa2 = k_ext+2.00_r8*exp(z_w(i,j,0)*.05)
+            cffa3 = (k_chl*(cffa1)**(0.428_r8))   
+            FX(i,j) = z_w(i,j,N(ng))-z_w(i,j,k)
+            swdk(i,j,k) = (1.-a_frac)*EXP(-1.*FX(i,j)*(cffa2+cffa3))    &
+     &                  + a_frac*EXP(-1.*FX(i,j)/a_mu1)
+#   else
+            swdk(i,j,k)=FE(i,j)
+#   endif
 
           END DO
         END DO
@@ -588,14 +590,14 @@
             cff1=0.5_r8+Gamma
             cff2=0.5_r8-Gamma
           END IF
-	  
-!g	   IF ( itrc.gt.2 ) THEN
+    
+!g     IF ( itrc.gt.2 ) THEN
 !g                cff=0.0_r8
-!g		cff1=0.0_r8
-!g		cff2=0.0_r8
+!g    cff1=0.0_r8
+!g    cff2=0.0_r8
 !g           END IF
-	      
-	  
+        
+    
           DO j=Jstr,Jend
             DO i=Istr,Iend
 
@@ -795,12 +797,12 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
               cff1=cff*pm(i,j)*pn(i,j)
-	      
-!g	       IF ( itrc.gt.2 ) THEN
+        
+!g         IF ( itrc.gt.2 ) THEN
 !g                cff1=0.0_r8
 !g              END IF
-	      
-	      
+        
+        
               t(i,j,k,3,itrc)=DC(i,k)*                                  &
      &                        (t(i,j,k,3,itrc)-                         &
      &                         cff1*(FC(i,k)-FC(i,k-1)))
@@ -832,7 +834,7 @@
           ltrc=MIN(NAT,itrc)
 #ifdef LIMIT_BIO_AKT
           IF (itrc == 2) ltrc = 1
-#endif	  
+#endif    
           DO k=1,N(ng)-1
             DO i=Istr,Iend
               cff=1.0_r8/(z_r(i,j,k+1)-z_r(i,j,k))
@@ -841,7 +843,7 @@
      &                 t(i,j,k  ,nstp,itrc))
             END DO
           END DO
-	  
+    
 #  ifdef LMD_NONLOCAL
 !
 !  Add in the nonlocal transport flux for unstable (convective)
@@ -910,7 +912,7 @@
 !  Neocalanus and Euphuasiids don't experience vertical diffusion because
 !  they are big enough to swim.
 !ff              IF ( itrc.eq.iNCa .or. itrc.eq.iEup ) THEN
-	      IF ( itrc.gt.2 ) THEN
+        IF ( itrc.gt.2 ) THEN
                 cff2=0.0_r8
               END IF
 #  endif
