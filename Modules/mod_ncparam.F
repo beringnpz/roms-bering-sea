@@ -401,17 +401,17 @@
  !
  !  Ice variable IDs.
  !
-         integer  :: idUibc(4)      ! ice U-velocity boundary conditions
-         integer  :: idVibc(4)      ! ice V-velocity boundary conditions
-         integer  :: idAibc(4)      ! ice concentration boundary conditions
-         integer  :: idHibc(4)      ! ice thickness boundary conditions
-         integer  :: idHsnbc(4)     ! snow thickness boundary conditions
-         integer  :: idTibc(4)      ! ice interior temp. boundary conditions
-         integer  :: idSfwbc(4)     ! surface melt water boundary conditions
-         integer  :: idAgeicebc(4)  ! ice age boundary conditions
-         integer  :: idS11bc(4)     ! ice stress Sig11 boundary conditions
-         integer  :: idS22bc(4)     ! ice stress Sig22 boundary conditions
-         integer  :: idS12bc(4)     ! ice stress Sig12 boundary conditions
+        integer  :: idUibc(4)      ! ice U-velocity boundary conditions
+        integer  :: idVibc(4)      ! ice V-velocity boundary conditions
+        integer  :: idAibc(4)      ! ice concentration boundary conditions
+        integer  :: idHibc(4)      ! ice thickness boundary conditions
+        integer  :: idHsnbc(4)     ! snow thickness boundary conditions
+        integer  :: idTibc(4)      ! ice interior temp. boundary conditions
+        integer  :: idSfwbc(4)     ! surface melt water boundary conditions
+        integer  :: idAgeicebc(4)  ! ice age boundary conditions
+        integer  :: idS11bc(4)     ! ice stress Sig11 boundary conditions
+        integer  :: idS22bc(4)     ! ice stress Sig22 boundary conditions
+        integer  :: idS12bc(4)     ! ice stress Sig12 boundary conditions
 #endif
 #ifdef DIAGNOSTICS
 !
@@ -503,88 +503,86 @@
 !  Output NetCDF variables IDs.
 !
         integer, allocatable :: idTvar(:)     ! tracers variables
-	
+  
 
-# ifdef BEST_NPZ
+#ifdef BEST_NPZ
 
-#ifdef BIOFLUX
+# ifdef BIOFLUX
         integer, allocatable :: idTBFvar(:)    ! 3D Stationary variables
         integer, allocatable :: avgTBFid(:,:)  ! averages stationary tracer IDs
-#endif
-#ifdef STATIONARY
+# endif
+# ifdef STATIONARY
         integer, allocatable :: idTSvar(:)    ! 3D Stationary variables
         integer, allocatable :: hisTSid(:,:)  ! history St tracer IDs
         integer, allocatable :: avgTSid(:,:)  ! averages stationary tracer IDs
         integer, allocatable :: staTSid(:,:)
-#endif
+# endif
 
-#ifdef STATIONARY2
+# ifdef STATIONARY2
         integer, allocatable :: idTS2var(:)    ! 2D Stationary variables
         integer, allocatable :: hisTS2id(:,:)  ! history St tracer IDs
         integer, allocatable :: avgTS2id(:,:)  ! averages stationary tracer IDs
         integer, allocatable :: staTS2id(:,:) 
-#endif
+# endif
 
 
-#ifdef PROD3
+# ifdef PROD3
         integer, allocatable :: idPT3var(:)    ! 3D  production variables
         integer, allocatable :: hisPT3id(:,:)  ! history St tracer IDs
         integer, allocatable :: avgPT3id(:,:)  ! averages stationary tracer IDs
         integer, allocatable :: staPT3id(:,:)
-#endif
-#ifdef PROD2  
+# endif
+# ifdef PROD2  
         integer, allocatable :: idPT2var(:)    ! 2D production variables
         integer, allocatable :: hisPT2id(:,:)  ! history St tracer IDs
         integer, allocatable :: avgPT2id(:,:)  ! averages stationary tracer IDs
         integer, allocatable :: staPT2id(:,:)
-#endif
+# endif
 
-#    if defined BENTHIC
+# if defined BENTHIC
         integer, allocatable :: idBvar(:)
         integer, allocatable :: hisBid(:,:)
         integer, allocatable :: avgBid(:,:)
-	integer, allocatable :: rstBid(:,:)
-	integer, allocatable :: staBid(:,:)
-	
-#     endif
-#    if defined ICE_BIO
-# if defined CLIM_ICE_1D
+        integer, allocatable :: rstBid(:,:)
+        integer, allocatable :: staBid(:,:)
+  
+# endif
+# if defined ICE_BIO
+#  if defined CLIM_ICE_1D
         integer, allocatable :: idIceBvar(:)
         integer, allocatable :: hisIceBid(:,:)
-	integer, allocatable :: rstIceBid(:,:)
+        integer, allocatable :: rstIceBid(:,:)
         integer, allocatable :: avgIceBid(:,:)
         integer, allocatable :: idIceLogvar(:)
-#elif defined BERING_10K 
+#  elif defined BERING_10K 
         integer  :: idIcePhL 
         integer  :: idIceNO3
         integer  :: idIceNH4 
         integer  :: idIceLog 
    
-         integer  :: idIcePhLbc(4)     ! ice algae boundary conditions	
-	 integer  :: idIceNO3bc(4)     ! ice nitrate boundary conditions
-	 integer  :: idIceNH4bc(4)     ! ice ammonium boundary conditions
-	 integer  :: idIceLogbc(4)     ! ice switch boundary conditions
-	 
-     
-#     endif
-
+        integer  :: idIcePhLbc(4)     ! ice algae boundary conditions 
+        integer  :: idIceNO3bc(4)     ! ice nitrate boundary conditions
+        integer  :: idIceNH4bc(4)     ! ice ammonium boundary conditions
+        integer  :: idIceLogbc(4)     ! ice switch boundary conditions   
+          
+#  endif
 # endif
-# endif	
+#endif  
 
 #ifdef FEAST
-  integer, allocatable :: idFeastCatch(:,:)
-  integer, allocatable :: hisFeastCatchid(:,:,:)
-  integer :: fgr, fsp
-  integer, allocatable :: idFishForce(:,:)
-  integer, allocatable :: idZoopForce(:,:) 
+        integer, allocatable :: idFeastCatch(:,:)
+        integer, allocatable :: hisFeastCatchid(:,:,:)
+        integer :: fgr, fsp
+        integer, allocatable :: idFishForce(:,:)
+        integer, allocatable :: idZoopForce(:,:) 
 #endif
-	
-# ifdef BIO_GOANPZ
+  
+#ifdef BIO_GOANPZ
         integer, allocatable :: idTSvar(:)    ! Stationary production variables
         integer, allocatable :: hisTSid(:,:)  ! history St tracer IDs
         integer, allocatable :: avgTSid(:,:)  ! averages stationary tracer IDs
         integer, allocatable :: avg2TSid(:,:) ! averages stationary tracer IDs
-# endif
+#endif
         integer, allocatable :: adjTid(:,:)   ! adjoint tracers IDs
         integer, allocatable :: avgTid(:,:)   ! averages tracers IDs
         integer, allocatable :: avg2Tid(:,:)  ! averages tracers IDs
@@ -747,7 +745,7 @@
 #elif (!defined CLIM_ICE_1D && defined AKT_3D) 
         allocate ( idTclm(MT+1) )
 #else
-	  allocate ( idTclm(MT) )
+    allocate ( idTclm(MT) )
 #endif
         
         allocate ( idTerr(MT) )
@@ -758,74 +756,72 @@
         allocate ( isTvar(MT) )
         allocate ( isTsur(MT) )
 
-# ifdef BEST_NPZ
+#ifdef BEST_NPZ
 # ifdef STATIONARY
         allocate ( idTSvar(NBTS) )
         allocate ( hisTSid(NBTS,Ngrids) )
         allocate ( avgTSid(NBTS,Ngrids) )
-	allocate ( staTSid(NBTS,Ngrids) )
+  allocate ( staTSid(NBTS,Ngrids) )
 # endif
 
 # ifdef STATIONARY2
         allocate ( idTS2var(NBTS2) )
         allocate ( hisTS2id(NBTS2,Ngrids) )
         allocate ( avgTS2id(NBTS2,Ngrids) )
-	allocate ( staTS2id(NBTS2,Ngrids) )
+  allocate ( staTS2id(NBTS2,Ngrids) )
 # endif
 # ifdef PROD2
         allocate ( idPT2var(NBPT2) )
         allocate ( hisPT2id(NBPT2,Ngrids) )
         allocate ( avgPT2id(NBPT2,Ngrids) )
-	allocate ( staPT2id(NBPT2,Ngrids) ) 
+  allocate ( staPT2id(NBPT2,Ngrids) ) 
 # endif
 # ifdef PROD3
         allocate ( idPT3var(NBPT3) )
         allocate ( hisPT3id(NBPT3,Ngrids) )
         allocate ( avgPT3id(NBPT3,Ngrids) )
-	allocate ( staPT3id(NBPT3,Ngrids) ) 
+  allocate ( staPT3id(NBPT3,Ngrids) ) 
 # endif
 
 # if defined BENTHIC
         allocate ( idBvar(NBEN) )
         allocate ( hisBid(NBEN,Ngrids) )
         allocate ( avgBid(NBEN,Ngrids) )
-	allocate ( rstBid(NBEN,Ngrids) )
-	allocate ( staBid(NBEN,Ngrids) ) 
+  allocate ( rstBid(NBEN,Ngrids) )
+  allocate ( staBid(NBEN,Ngrids) ) 
 # endif
 # if defined ICE_BIO
-#   ifdef CLIM_ICE_1D
+#  ifdef CLIM_ICE_1D
         allocate ( idIceBvar(NIB) )
         allocate ( idIceLogvar(1) )
         allocate ( hisIceBid(NIB,Ngrids) )
-	allocate ( rstIceBid(NIB,Ngrids) )
+        allocate ( rstIceBid(NIB,Ngrids) )
         allocate ( avgIceBid(NIB,Ngrids) )
-# endif
-# endif
-#  if defined BIOFLUX
-       allocate ( idTBFvar(1) )
-
-        allocate ( avgTBFid(1,Ngrids) )
-
 #  endif
+# endif
+# if defined BIOFLUX
+        allocate ( idTBFvar(1) )
+        allocate ( avgTBFid(1,Ngrids) )
+# endif
 
 #endif
 
 #ifdef FEAST
-  allocate (idFeastCatch(NUM_GEARS,TOT_FEAST))
-  allocate (hisFeastCatchid(NUM_GEARS,TOT_FEAST,Ngrids))
-	idFeastCatch = 0
-  allocate (idFishForce(NFISHFORCE,TOT_FEAST))
-	idFishForce = 0
-  allocate (idZoopForce(NZOOPFORCE,NUM_PLANKTON))
-	idZoopForce = 0	
+        allocate (idFeastCatch(NUM_GEARS,TOT_FEAST))
+        allocate (hisFeastCatchid(NUM_GEARS,TOT_FEAST,Ngrids))
+        idFeastCatch = 0
+        allocate (idFishForce(NFISHFORCE,TOT_FEAST))
+        idFishForce = 0
+        allocate (idZoopForce(NZOOPFORCE,NUM_PLANKTON))
+        idZoopForce = 0 
 #endif
 
-# ifdef BIO_GOANPZ
+#ifdef BIO_GOANPZ
         allocate ( idTSvar(MST) )
         allocate ( hisTSid(MST,Ngrids) )
         allocate ( avgTSid(MST,Ngrids) )
         allocate ( avg2TSid(MST,Ngrids) )
-# endif
+#endif
 
         allocate ( adjTid(MT,Ngrids) )
         allocate ( avgTid(MT,Ngrids) )
@@ -3215,7 +3211,7 @@
 #elif defined BERING_10K 
               CASE ('idIcePhL')
                  idIcePhL=varid
-		 
+     
 
               CASE ('idIcePhLbc(iwest)')
                 idIcePhLbc(iwest)=varid
@@ -3225,10 +3221,10 @@
                 idIcePhLbc(isouth)=varid
               CASE ('idIcePhLbc(inorth)')
                 idIcePhLbc(inorth)=varid
-		
+    
               CASE ('idIceNO3')
                  idIceNO3=varid
-		
+    
               CASE ('idIceNO3bc(iwest)')
                 idIceNO3bc(iwest)=varid
               CASE ('idIceNO3bc(ieast)')
@@ -3237,11 +3233,11 @@
                 idIceNO3bc(isouth)=varid
               CASE ('idIceNO3bc(inorth)')
                 idIceNO3bc(inorth)=varid
-		
-		
+    
+    
               CASE ('idIceNH4')
                  idIceNH4=varid
-		
+    
               CASE ('idIceNH4bc(iwest)')
                 idIceNH4bc(iwest)=varid
               CASE ('idIceNH4bc(ieast)')
@@ -3253,7 +3249,7 @@
 
                 CASE ('idIceLog')
                  idIceLog=varid
-		 
+     
 # endif
 # endif
 
@@ -3732,75 +3728,75 @@
                 Iinfo(1,varid,ng)=gtype
                 Fscale(varid,ng)=scale
               END DO
-														 
+                             
 #ifdef FEAST
               SELECT CASE (TRIM(ADJUSTL(Vinfo(6))))
                 CASE ('idFeastCatch')
                   varid=varid-1 
-									DO fgr=1,NUM_GEARS
-                   DO fsp=1,TOT_FEAST
-                     varid=varid+1                   
-                     idFeastCatch(fgr,fsp) = varid
-                     DO ng=1,Ngrids
+                  DO fgr=1,NUM_GEARS
+                    DO fsp=1,TOT_FEAST
+                      varid=varid+1                   
+                      idFeastCatch(fgr,fsp) = varid
+                      DO ng=1,Ngrids
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
-                     END DO                     
-                     WRITE (Vname(1,varid),'(a,i2.2,i2.2)')             &
+                      END DO                     
+                      WRITE (Vname(1,varid),'(a,i2.2,i2.2)')            &
      &                      TRIM(ADJUSTL(Vinfo(1))), fgr,fsp
                       WRITE (Vname(2,varid),'(a,a,i2.2,a,i2.2)')        &
-     &      TRIM(ADJUSTL(Vinfo(2))),', gear ',fgr,' species ',fsp
+     &                      TRIM(ADJUSTL(Vinfo(2))),', gear ',fgr,' species ',fsp
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
                       WRITE (Vname(4,varid),'(a,a)')                    &
-     &                  TRIM(Vname(1,varid)), ', scalar, series'
+     &                      TRIM(Vname(1,varid)), ', scalar, series'
                       WRITE (Vname(5,varid),'(a,i2.2,i2.2)')            &
      &                      TRIM(ADJUSTL(Vinfo(5))),fgr,fsp
-                   END DO
+                    END DO
                   END DO
                 CASE ('idFishForce')
                   varid=varid-1 
-									DO fgr=1,NFISHFORCE
-                   DO fsp=1,TOT_FEAST
-                     varid=varid+1                   
-                     idFishForce(fgr,fsp) = varid
-                     DO ng=1,Ngrids
+                  DO fgr=1,NFISHFORCE
+                    DO fsp=1,TOT_FEAST
+                      varid=varid+1                   
+                      idFishForce(fgr,fsp) = varid
+                      DO ng=1,Ngrids
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
-                     END DO                     
-                     WRITE (Vname(1,varid),'(a,i2.2,i2.2)')             &
+                      END DO                     
+                      WRITE (Vname(1,varid),'(a,i2.2,i2.2)')            &
      &                      TRIM(ADJUSTL(Vinfo(1))), fgr,fsp
                       WRITE (Vname(2,varid),'(a,a,i2.2,a,i2.2)')        &
-     &      TRIM(ADJUSTL(Vinfo(2))),', forcing ',fgr,' species ',fsp
+     &                      TRIM(ADJUSTL(Vinfo(2))),', forcing ',fgr,' species ',fsp
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
                       WRITE (Vname(4,varid),'(a,a)')                    &
-     &                  TRIM(Vname(1,varid)), ', scalar, series'
+     &                      TRIM(Vname(1,varid)), ', scalar, series'
                       WRITE (Vname(5,varid),'(a,i2.2,i2.2)')            &
      &                      TRIM(ADJUSTL(Vinfo(5))),fgr,fsp
-                   END DO
+                    END DO
                   END DO
 
                 CASE ('idZoopForce')
                   varid=varid-1 
-									DO fgr=1,NZOOPFORCE
-                   DO fsp=1,NUM_PLANKTON
-                     varid=varid+1                   
-                     idZoopForce(fgr,fsp) = varid
-                     DO ng=1,Ngrids
+                  DO fgr=1,NZOOPFORCE
+                    DO fsp=1,NUM_PLANKTON
+                      varid=varid+1                   
+                      idZoopForce(fgr,fsp) = varid
+                      DO ng=1,Ngrids
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
-                     END DO                     
-                     WRITE (Vname(1,varid),'(a,i2.2,i2.2)')             &
+                      END DO                     
+                      WRITE (Vname(1,varid),'(a,i2.2,i2.2)')            &
      &                      TRIM(ADJUSTL(Vinfo(1))), fgr,fsp
                       WRITE (Vname(2,varid),'(a,a,i2.2,a,i2.2)')        &
-     &      TRIM(ADJUSTL(Vinfo(2))),', forcing ',fgr,' zoop ',fsp
+     &                      TRIM(ADJUSTL(Vinfo(2))),', forcing ',fgr,' zoop ',fsp
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
                       WRITE (Vname(4,varid),'(a,a)')                    &
-     &                  TRIM(Vname(1,varid)), ', scalar, series'
+     &                      TRIM(Vname(1,varid)), ', scalar, series'
                       WRITE (Vname(5,varid),'(a,i2.2,i2.2)')            &
      &                      TRIM(ADJUSTL(Vinfo(5))),fgr,fsp
-                   END DO
+                    END DO
                   END DO
 
                 END SELECT
