@@ -11002,6 +11002,7 @@
      &                                      REAL(j-1,r8)*Fdz(i,ng)
                   END IF
                 END IF
+								FLT(ng)%Ftype(nc)=Ftype(i,ng) ! AJH
                 IF (Fcoor(i,ng).eq.0) THEN
                   xfloat=Fx0(i,ng)+REAL(j-1,r8)*Fdx(i,ng)
                   FLT(ng)%Tinfo(ixgrd,nc)=MIN(MAX(0.5_r8,xfloat),       &
