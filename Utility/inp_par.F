@@ -7081,21 +7081,21 @@
             Npts=load_r(Nval, Rval, 1, dgrad)
           ELSE IF (TRIM(KeyWord).eq.'Pv0') THEN
             Npts=load_r(Nval, Rval, 1, Pv0)
-	  ELSE IF (TRIM(KeyWord).eq.'PvT') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'PvT') THEN
             Npts=load_r(Nval, Rval, 1, PvT)
-	  ELSE IF (TRIM(KeyWord).eq.'Nitr0') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'Nitr0') THEN
             Npts=load_r(Nval, Rval, 1,Nitr0)
-	  ELSE IF (TRIM(KeyWord).eq.'KnT') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'KnT') THEN
             Npts=load_r(Nval, Rval, 1,KnT)
-	  ELSE IF (TRIM(KeyWord).eq.'ToptNtr') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'ToptNtr') THEN
             Npts=load_r(Nval, Rval, 1,ToptNtr)
-	  ELSE IF (TRIM(KeyWord).eq.'ktntr') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'ktntr') THEN
             Npts=load_r(Nval, Rval, 1,ktntr)
-	  ELSE IF (TRIM(KeyWord).eq.'KNH4Nit') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'KNH4Nit') THEN
             Npts=load_r(Nval, Rval, 1,KNH4Nit)
-	  ELSE IF (TRIM(KeyWord).eq.'tI0') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'tI0') THEN
             Npts=load_r(Nval, Rval, 1,tI0)
-	  ELSE IF (TRIM(KeyWord).eq.'KI') THEN
+	        ELSE IF (TRIM(KeyWord).eq.'KI') THEN
             Npts=load_r(Nval, Rval, 1,KI)  
 	    
 	    
@@ -7103,64 +7103,64 @@
 !Benthic Parameters
 !-------------------
 #ifdef BENTHIC
-#ifdef FEAST
- !NOGRID START
-#endif
-           ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
-             Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
-            DO ng=1,Ngrids
-               DO itrc=1,NBEN
-                 i=idBvar(idben(itrc))
-                  Hout(i,ng)=Ltrc(itrc,ng)
-               END DO
-              END DO
-#ifdef FEAST
- !NOGRID END
-#endif
-           ELSE IF (TRIM(KeyWord).eq.'iremin') THEN
-            Npts=load_r(Nval, Rval, 1, iremin)
-             ELSE IF (TRIM(KeyWord).eq.'q10') THEN
-            Npts=load_r(Nval, Rval, 1, q10)
-            ELSE IF (TRIM(KeyWord).eq.'q10r') THEN
-            Npts=load_r(Nval, Rval, 1, q10r)
-             ELSE IF (TRIM(KeyWord).eq.'Rup') THEN
-            Npts=load_r(Nval, Rval, 1, Rup)
-             ELSE IF (TRIM(KeyWord).eq.'KupD') THEN
-            Npts=load_r(Nval, Rval, 1, KupD)
-             ELSE IF (TRIM(KeyWord).eq.'KupP') THEN
-            Npts=load_r(Nval, Rval, 1, KupP)
-             ELSE IF (TRIM(KeyWord).eq.'LupD') THEN
-            Npts=load_r(Nval, Rval, 1, LupD)
-             ELSE IF (TRIM(KeyWord).eq.'LupP') THEN
-            Npts=load_r(Nval, Rval, 1, LupP)
-             ELSE IF (TRIM(KeyWord).eq.'Qres') THEN
-            Npts=load_r(Nval, Rval, 1, Qres)
-             ELSE IF (TRIM(KeyWord).eq.'Rres') THEN
-            Npts=load_r(Nval, Rval, 1, Rres)
-             ELSE IF (TRIM(KeyWord).eq.'rmort') THEN
-            Npts=load_r(Nval, Rval, 1, rmort)
-             ELSE IF (TRIM(KeyWord).eq.'eex') THEN
-            Npts=load_r(Nval, Rval, 1, eex)
-             ELSE IF (TRIM(KeyWord).eq.'eexD') THEN
-            Npts=load_r(Nval, Rval, 1, eexD)
-             ELSE IF (TRIM(KeyWord).eq.'prefD') THEN
-            Npts=load_r(Nval, Rval, 1, prefD)
-             ELSE IF (TRIM(KeyWord).eq.'prefPL') THEN
-            Npts=load_r(Nval, Rval, 1, prefPL)
-            ELSE IF (TRIM(KeyWord).eq.'prefPS') THEN
-            Npts=load_r(Nval, Rval, 1, prefPS)
-             ELSE IF (TRIM(KeyWord).eq.'T0ben') THEN
-            Npts=load_r(Nval, Rval, 1, T0ben)
-            ELSE IF (TRIM(KeyWord).eq.'T0benr') THEN
-            Npts=load_r(Nval, Rval, 1, T0benr)
-            ELSE IF (TRIM(KeyWord).eq.'BenPred') THEN
-            Npts=load_r(Nval, Rval, 1, BenPred)
-            ELSE IF (TRIM(KeyWord).eq.'bmB') THEN
-            Npts=load_r(Nval, Rval, 1,bmB)
-             ELSE IF (TRIM(KeyWord).eq.'ktbmB') THEN
-            Npts=load_r(Nval, Rval, 1,ktbmB)
-             ELSE IF (TRIM(KeyWord).eq.'TrefB') THEN
-            Npts=load_r(Nval, Rval, 1,TrefB)
+# ifdef FEAST
+!        NOGRID START
+# endif
+         ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
+           Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
+           DO ng=1,Ngrids
+             DO itrc=1,NBEN
+               i=idBvar(idben(itrc))
+               Hout(i,ng)=Ltrc(itrc,ng)
+             END DO
+           END DO
+# ifdef FEAST
+!        NOGRID END
+# endif
+         ELSE IF (TRIM(KeyWord).eq.'iremin') THEN
+           Npts=load_r(Nval, Rval, 1, iremin)
+         ELSE IF (TRIM(KeyWord).eq.'q10') THEN
+           Npts=load_r(Nval, Rval, 1, q10)
+         ELSE IF (TRIM(KeyWord).eq.'q10r') THEN
+           Npts=load_r(Nval, Rval, 1, q10r)
+         ELSE IF (TRIM(KeyWord).eq.'Rup') THEN
+           Npts=load_r(Nval, Rval, 1, Rup)
+         ELSE IF (TRIM(KeyWord).eq.'KupD') THEN
+           Npts=load_r(Nval, Rval, 1, KupD)
+         ELSE IF (TRIM(KeyWord).eq.'KupP') THEN
+           Npts=load_r(Nval, Rval, 1, KupP)
+         ELSE IF (TRIM(KeyWord).eq.'LupD') THEN
+           Npts=load_r(Nval, Rval, 1, LupD)
+         ELSE IF (TRIM(KeyWord).eq.'LupP') THEN
+           Npts=load_r(Nval, Rval, 1, LupP)
+         ELSE IF (TRIM(KeyWord).eq.'Qres') THEN
+           Npts=load_r(Nval, Rval, 1, Qres)
+         ELSE IF (TRIM(KeyWord).eq.'Rres') THEN
+           Npts=load_r(Nval, Rval, 1, Rres)
+         ELSE IF (TRIM(KeyWord).eq.'rmort') THEN
+           Npts=load_r(Nval, Rval, 1, rmort)
+         ELSE IF (TRIM(KeyWord).eq.'eex') THEN
+           Npts=load_r(Nval, Rval, 1, eex)
+         ELSE IF (TRIM(KeyWord).eq.'eexD') THEN
+           Npts=load_r(Nval, Rval, 1, eexD)
+         ELSE IF (TRIM(KeyWord).eq.'prefD') THEN
+           Npts=load_r(Nval, Rval, 1, prefD)
+         ELSE IF (TRIM(KeyWord).eq.'prefPL') THEN
+           Npts=load_r(Nval, Rval, 1, prefPL)
+         ELSE IF (TRIM(KeyWord).eq.'prefPS') THEN
+           Npts=load_r(Nval, Rval, 1, prefPS)
+         ELSE IF (TRIM(KeyWord).eq.'T0ben') THEN
+           Npts=load_r(Nval, Rval, 1, T0ben)
+         ELSE IF (TRIM(KeyWord).eq.'T0benr') THEN
+           Npts=load_r(Nval, Rval, 1, T0benr)
+         ELSE IF (TRIM(KeyWord).eq.'BenPred') THEN
+           Npts=load_r(Nval, Rval, 1, BenPred)
+         ELSE IF (TRIM(KeyWord).eq.'bmB') THEN
+           Npts=load_r(Nval, Rval, 1,bmB)
+         ELSE IF (TRIM(KeyWord).eq.'ktbmB') THEN
+           Npts=load_r(Nval, Rval, 1,ktbmB)
+         ELSE IF (TRIM(KeyWord).eq.'TrefB') THEN
+           Npts=load_r(Nval, Rval, 1,TrefB)
    
 #endif
 
