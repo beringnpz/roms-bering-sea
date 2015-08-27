@@ -1,4 +1,31 @@
 #!/bin/sh
+#
+# This script provides a template for ROMS .in file.  It should be called 
+# as follows:
+# 
+#   source bering10kTemplate.sh > myfile.in
+#
+# The following variables should be defined at the time this script is 
+# run:
+#
+#	ii:			i-direction partition for ROMS grid (NtileI)
+#
+#   jj:			j-direction partition for ROMS grid (NtileJ)
+#
+#	NTIMES:		number of time steps (DT = 600 currently)
+#
+#	NRREC:		restart switch
+#
+#	DSTART:		timestamp for initial time
+#
+#	INIFILE:	Input initial conditions file (can be a restart file)
+#
+#	HISFILE: 	Output history file
+#
+#	AVGNAME:	Output averages file
+#
+#	sebsbio:    Input biological parameters file name
+
 
 # The following is the contents of the .in file (with substitutions)
 cat <<EOF
@@ -48,37 +75,34 @@ cat <<EOF
 ! Input variable information file name.  This file needs to be processed
 ! first so all information arrays can be initialized properly.
 
-!     VARNAME = /wrkdir/kate/GOA_Tides/Model/Apps/NEP/varinfo.dat
-!      VARNAME = Apps/NEP/varinfo.dat
-       VARNAME = Apps/GK_FEAST/GK_varinfo.dat
-      
-!       VARNAME = /wrkdir/blamey/kate_trunk/trunk/Apps/1DBio/varinfo.dat
+     VARNAME = Apps/GK_FEAST/GK_varinfo.dat
+
 ! Grid dimension parameters. See notes below in the Glossary for how to set
 ! these parameters correctly.
 
-          Lm == 180           ! Number of I-direction INTERIOR RHO-points
-          Mm == 256           ! Number of J-direction INTERIOR RHO-points
-           N == 10            ! Number of vertical levels
+         Lm == 180           ! Number of I-direction INTERIOR RHO-points
+         Mm == 256           ! Number of J-direction INTERIOR RHO-points
+          N == 10            ! Number of vertical levels
 
-        Nbed =  0             ! Number of sediment bed layers
+       Nbed =  0             ! Number of sediment bed layers
 
-         NAT =  2             ! Number of active tracers (usually, 2)
-         NPT =  190           ! Number of inactive passive tracers
-         NCS =  0             ! Number of cohesive (mud) sediment tracers
-         NNS =  0             ! Number of non-cohesive (sand) sediment tracers
+        NAT =  2             ! Number of active tracers (usually, 2)
+        NPT =  190           ! Number of inactive passive tracers
+        NCS =  0             ! Number of cohesive (mud) sediment tracers
+        NNS =  0             ! Number of non-cohesive (sand) sediment tracers
 
 ! Domain decomposition parameters for serial, distributed-memory or
 ! shared-memory configurations used to determine tile horizontal range
 ! indices (Istr,Iend) and (Jstr,Jend), [1:Ngrids].
 
-       NtileI == ${ii}            ! I-direction partition 
-       NtileJ == ${jj}            ! J-direction partition
+      NtileI == ${ii}            ! I-direction partition 
+      NtileJ == ${jj}            ! J-direction partition
 
 ! Time-Stepping parameters.
-    NTIMES == ${NTIMES}
 
-    DT == 600.
-    NDTFAST == 40      !30   40
+       NTIMES == ${NTIMES}
+           DT == 600.
+      NDTFAST == 40      
 
 ! Model iteration loops parameters.
 
@@ -107,14 +131,11 @@ cat <<EOF
 ! Output history, average, diagnostic files parameters.
 
      LDEFOUT == T
-        NHIS == 144 ! 432 !216   !192
-     NDEFHIS == 1440 !4320 !2160  !1920
+        NHIS == 144 
+     NDEFHIS == 1440 
       NTSAVG == 1
-        NAVG == 1008  !144 !432  !216   !192   
-     NDEFAVG == 10080 !1440 !4320 !2160
-!     NTSAVG2 == 1
-!       NAVG2 == 27
-!    NDEFAVG2 == 2880 !1920
+        NAVG == 1008  
+     NDEFAVG == 10080 
       NTSDIA == 1
         NDIA == 10
      NDEFDIA == 0
@@ -212,8 +233,6 @@ cat <<EOF
 
 ! Various parameters.
 
-!       WTYPE == 1
-
        WTYPE == 1
      LEVSFRC == 15
      LEVBFRC == 1
@@ -233,8 +252,7 @@ cat <<EOF
 ! origin for tidal forcing, and model reference time for output
 ! NetCDF units attribute.
 
-       DSTART =  ${DSTART}    
-
+      DSTART =  ${DSTART}    
   TIDE_START =  -693962.0d0                ! days
     TIME_REF =  19000101.0d0               ! yyyymmdd.dd
 
@@ -363,22 +381,22 @@ Hout(idMtls) == F                          ! turbulent length scale
 
 ! Logical switches (TRUE/FALSE) to activate writing of ice prognostic
 ! variables into HISTORY output file.
-Hout(idUice) == T
-Hout(idVice) == T
-Hout(idAice) == T
-Hout(idHice) == T
-Hout(idTice) == T
-Hout(idHsno) == T
-Hout(idTimid) == T
-Hout(idSfwat) == T
-Hout(idTauiw) == T
-Hout(idChuiw) == T
+  Hout(idUice) == T
+ Hout(idVice)  == T
+ Hout(idAice)  == T
+ Hout(idHice)  == T
+ Hout(idTice)  == T
+ Hout(idHsno)  == T
+ Hout(idTimid) == T
+ Hout(idSfwat) == T
+ Hout(idTauiw) == T
+ Hout(idChuiw) == T
 Hout(idAgeice) == T
-Hout(idSig11) == T
-Hout(idSig12) == T
-Hout(idSig22) == T
-Hout(idS0mk) == T
-Hout(idT0mk) == T
+ Hout(idSig11) == T
+ Hout(idSig12) == T
+ Hout(idSig22) == T
+  Hout(idS0mk) == T
+  Hout(idT0mk) == T
 
 ! Logical switches (TRUE/FALSE) to activate writing of extra inert passive
 ! tracers other than biological and sediment tracers. An inert passive tracer
@@ -424,14 +442,12 @@ Hout(idBott) == T T T T T T T T T F F F F F F F
 
 
      GRDNAME == /home/aydink/ncfiles/nc_in/Bering_grid_withFeast.nc
-   ININAME == ${INIFILE}
-!    ININAME == /home/aydink/ncfiles/nc_in/nep5_001_ic_1998_10layer_fish.nc
+     ININAME == ${INIFILE}
      IRPNAME == ocean_irp.nc
      IADNAME == ocean_iad.nc
-     !CLMNAME == /wrkdir/blamey/Bering_10k/Bering10k_FeClm.nc
+! 	 CLMNAME == /wrkdir/blamey/Bering_10k/Bering10k_FeClm.nc
      BRYNAME == /home/aydink/ncfiles/nc_in/run42allyrs_bering10_als_biobry_tracers_new_iron_10layer.nc
-
-     !FWDNAME == /ptmp/enrique/ROMS/NEP4/Inputs/ocean_fwd.nc
+!    FWDNAME == /ptmp/enrique/ROMS/NEP4/Inputs/ocean_fwd.nc
      ADSNAME == ocean_ads.nc
 
 ! Input forcing NetCDF file name(s).  The USER has the option to enter
@@ -448,69 +464,69 @@ Hout(idBott) == T T T T T T T T T F F F F F F F
     NFFILES == 12                          ! number of forcing files
 
          FRCNAME == /home/aydink/ncfiles/CORE2/Pair.recent.Bering.nc   
-              /home/aydink/ncfiles/CORE2/lwrad.recent.Bering.nc  
-              /home/aydink/ncfiles/CORE2/Qair.recent.Bering.nc  
-              /home/aydink/ncfiles/CORE2/swrad.recent.Bering.nc  
-              /home/aydink/ncfiles/CORE2/tair_all.Bering.nc  
-              /home/aydink/ncfiles/CORE2/Uwind.recent.Bering.nc  
-              /home/aydink/ncfiles/CORE2/Vwind.recent.Bering.nc   
-              /home/aydink/ncfiles/CORE2/runoff.daitren.iaf.10FEB2011.als.nc  
-              /home/aydink/ncfiles/CORE2/rain.1948-2006.Bering.nc  
-              /home/aydink/ncfiles/CORE2/Bering_tides_otps.nc 
-              /home/aydink/ncfiles/CORE2/sss_fill_2004.nc
-              ./catch_weekly_link.nc 
+                    /home/aydink/ncfiles/CORE2/lwrad.recent.Bering.nc  
+                    /home/aydink/ncfiles/CORE2/Qair.recent.Bering.nc  
+                    /home/aydink/ncfiles/CORE2/swrad.recent.Bering.nc  
+                    /home/aydink/ncfiles/CORE2/tair_all.Bering.nc  
+                    /home/aydink/ncfiles/CORE2/Uwind.recent.Bering.nc  
+                    /home/aydink/ncfiles/CORE2/Vwind.recent.Bering.nc   
+                    /home/aydink/ncfiles/CORE2/runoff.daitren.iaf.10FEB2011.als.nc  
+                    /home/aydink/ncfiles/CORE2/rain.1948-2006.Bering.nc  
+                    /home/aydink/ncfiles/CORE2/Bering_tides_otps.nc 
+                    /home/aydink/ncfiles/CORE2/sss_fill_2004.nc
+                    ./catch_weekly_link.nc 
                  
-!    FRCNAME == /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Pair.nc   \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_1999_lwrad_down.nc  \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Qair.nc   \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_1999_swrad.nc  \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Tair.nc   \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Uwind.nc  \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Vwind.nc  \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_Runoff.nc   \
-!               /wrkdir/blamey/Bering_10k/Files/CCSM_rain.nc  \
-!               /wrkdir/blamey/Bering_10k/Files2_26_09/Bering_tides_otps.nc  
+!        FRCNAME == /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Pair.nc   \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_1999_lwrad_down.nc  \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Qair.nc   \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_1999_swrad.nc  \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Tair.nc   \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Uwind.nc  \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_1999_Vwind.nc  \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_Runoff.nc   \
+!                   /wrkdir/blamey/Bering_10k/Files/CCSM_rain.nc  \
+!                   /wrkdir/blamey/Bering_10k/Files2_26_09/Bering_tides_otps.nc  
 
 ! Output NetCDF file names, [1:Ngrids].
-!    GSTNAME == ocean_gst.nc
-    RSTNAME == /home/aydink/ncfiles/weekly/out_rst.nc
-    HISNAME == ${HISFILE}
-!    TLMNAME == nep5_tlm.nc
-!    TLFNAME == ocean_tlf.nc
-!    ADJNAME == nep5_tlm.nc
-    AVGNAME == ${AVGFILE}
-!    !DIANAME == /wrkdir/blamey/BSmulti2_dia.nc
-    STANAME == /home/aydink/ncfiles/weekly/out_sta.nc
-    FLTNAME == /home/aydink/ncfiles/weekly/out_flt.nc
-    DIANAME == /home/aydink/ncfiles/weekly/out_dia.nc
 
+!        GSTNAME == ocean_gst.nc
+         RSTNAME == /home/aydink/ncfiles/weekly/out_rst.nc
+         HISNAME == ${HISFILE}
+!        TLMNAME == nep5_tlm.nc
+!        TLFNAME == ocean_tlf.nc
+!        ADJNAME == nep5_tlm.nc
+         AVGNAME == ${AVGFILE}
+!        DIANAME == /wrkdir/blamey/BSmulti2_dia.nc
+         STANAME == /home/aydink/ncfiles/weekly/out_sta.nc
+         FLTNAME == /home/aydink/ncfiles/weekly/out_flt.nc
+         DIANAME == /home/aydink/ncfiles/weekly/out_dia.nc
 
-    GSTNAME == /tmp/aydtmp/dumm1_gst.nc
-!     RSTNAME == /tmp/aydtmp/dumm2_rst.nc
-!     HISNAME == /tmp/aydtmp/dumm3_his.nc
-     TLMNAME == /tmp/aydtmp/dumm4_tlm.nc
-     TLFNAME == /tmp/aydtmp/dumm5_tlf.nc
-     ADJNAME == /tmp/aydtmp/dumm6_tlm.nc
-!     AVGNAME == /tmp/aydtmp/dumm7_avg.nc
-     !DIANAME == /tmp/aydtmp/dumm8_dia.nc
-!     STANAME == /tmp/aydtmp/dumm9_sta.nc
-!     FLTNAME == /tmp/aydtmp/dumm10_flt.nc
-     
+         GSTNAME == /tmp/aydtmp/dumm1_gst.nc
+!        RSTNAME == /tmp/aydtmp/dumm2_rst.nc
+!        HISNAME == /tmp/aydtmp/dumm3_his.nc
+         TLMNAME == /tmp/aydtmp/dumm4_tlm.nc
+         TLFNAME == /tmp/aydtmp/dumm5_tlf.nc
+         ADJNAME == /tmp/aydtmp/dumm6_tlm.nc
+!        AVGNAME == /tmp/aydtmp/dumm7_avg.nc
+!        DIANAME == /tmp/aydtmp/dumm8_dia.nc
+!        STANAME == /tmp/aydtmp/dumm9_sta.nc
+!        FLTNAME == /tmp/aydtmp/dumm10_flt.nc
+         
 ! Input ASCII parameter filenames.
 
-     APARNAM =  External/assimilation.in
-
-     SPOSNAM =  Apps/GK_FEAST/GK_stations_bering_10k.in
-     IPARNAM =  Apps/Bering_10k/ice.in
-     BPARNAM =  ${sebsbio}
-
-!     SPOSNAM =  Apps/FEAST/stations_bering_10k.in
-!     FPOSNAM =  Apps/FEAST/floatBS_Exp.in
-!     IPARNAM =  Apps/FEAST/ice.in
-!     BPARNAM =  Apps/FEAST/MERGE_sebs_bio.in
-
-     SPARNAM =  External/sediment.in
-     USRNAME =  External/MyFile.dat
+         APARNAM =  External/assimilation.in
+         
+         SPOSNAM =  Apps/GK_FEAST/GK_stations_bering_10k.in
+         IPARNAM =  Apps/Bering_10k/ice.in
+         BPARNAM =  ${sebsbio}
+         
+!        SPOSNAM =  Apps/FEAST/stations_bering_10k.in
+!        FPOSNAM =  Apps/FEAST/floatBS_Exp.in
+!        IPARNAM =  Apps/FEAST/ice.in
+!        BPARNAM =  Apps/FEAST/MERGE_sebs_bio.in
+         
+         SPARNAM =  External/sediment.in
+         USRNAME =  External/MyFile.dat
 !
 !  GLOSSARY:
 !  =========
