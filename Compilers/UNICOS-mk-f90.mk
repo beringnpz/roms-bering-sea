@@ -1,15 +1,15 @@
-# svn $Id: Linux-ifort.mk 1020 2009-07-10 23:10:30Z kate $
+# svn $Id: UNICOS-mk-f90.mk 895 2009-01-12 21:06:20Z kate $
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Copyright (c) 2002-2009 The ROMS/TOMS Group                           :::
 #   Licensed under a MIT/X style license                                :::
 #   See License_ROMS.txt                                                :::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Include file for Intel IFORT (version 10.1) compiler on Linux
+# Include file for UNICOS F90 compiler on CRAY
 # -------------------------------------------------------------------------
 #
 # ARPACK_LIBDIR  ARPACK libary directory
-# FC             Name of the fotran compiler to use
+# FC             Name of the fortran compiler to use
 # FFLAGS         Flags to the fortran compiler
 # CPP            Name of the C-preprocessor
 # CPPFLAGS       Flags to the C-preprocessor
@@ -23,16 +23,13 @@
 #
 # First the defaults
 #
-               FC := ifort
-#            FFLAGS := -heap-arrays -fp-model precise
-#            FFLAGS := -heap-arrays
-#            FFLAGS := -fp-model precise
-            FFLAGS := 
-              CPP := /usr/bin/cpp
-         CPPFLAGS := -P -traditional
-          LDFLAGS := -Vaxlib
+               FC := f90
+           FFLAGS := -e I -e m
+              CPP := /opt/ctl/bin/cpp
+         CPPFLAGS := -P -N
+          LDFLAGS :=
                AR := ar
-          ARFLAGS := r
+          ARFLAGS := -r
             MKDIR := mkdir -p
                RM := rm -f
            RANLIB := ranlib
@@ -46,12 +43,12 @@
 #
 
 ifdef USE_NETCDF4
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
-      HDF5_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /usr/local/netcdf4/include
+    NETCDF_LIBDIR ?= /usr/local/netcdf4/lib
+      HDF5_LIBDIR ?= /usr/local/hdf5/lib
 else
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /usr/local/include
+    NETCDF_LIBDIR ?= /usr/local/lib
 endif
              LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
 ifdef USE_NETCDF4
@@ -60,44 +57,30 @@ endif
 
 ifdef USE_ARPACK
  ifdef USE_MPI
-   PARPACK_LIBDIR ?= /opt/intelsoft/PARPACK
+   PARPACK_LIBDIR ?= /usr/local/lib
              LIBS += -L$(PARPACK_LIBDIR) -lparpack
  endif
-    ARPACK_LIBDIR ?= /opt/intelsoft/PARPACK
+    ARPACK_LIBDIR ?= /usr/local/lib
              LIBS += -L$(ARPACK_LIBDIR) -larpack
 endif
 
 ifdef USE_MPI
          CPPFLAGS += -DMPI
- ifdef USE_MPIF90
-               FC := mpif90
- else
-             LIBS += -lfmpi-pgi -lmpi-pgi 
- endif
 endif
 
 ifdef USE_OpenMP
          CPPFLAGS += -D_OPENMP
-           FFLAGS += -openmp
 endif
 
 ifdef USE_DEBUG
-#          FFLAGS += -g -check bounds -traceback
-#           FFLAGS += -g -check uninit -ftrapuv -traceback -CB
-           FFLAGS += -g -zero -CB -debug all -debug inline-debug-info -traceback
+           FFLAGS += -g
 else
-           FFLAGS += -ip -O3
- ifeq ($(CPU),i686)
-           FFLAGS += -pc80 -xW
- endif
- ifeq ($(CPU),x86_64)
-           FFLAGS += -xW
- endif
+           FFLAGS += -O3
 endif
 
 ifdef USE_MCT
-       MCT_INCDIR ?= /opt/intelsoft/mct/include
-       MCT_LIBDIR ?= /opt/intelsoft/mct/lib
+       MCT_INCDIR ?= /usr/local/mct/include
+       MCT_LIBDIR ?= /usr/local/mct/lib
            FFLAGS += -I$(MCT_INCDIR)
              LIBS += -L$(MCT_LIBDIR) -lmct -lmpeu
 endif
@@ -110,8 +93,6 @@ ifdef USE_ESMF
              LIBS += $(ESMF_F90LINKPATHS) -lesmf -lC
 endif
 
-       clean_list += ifc* work.pc*
-
 #
 # Use full path of compiler.
 #
@@ -123,18 +104,18 @@ endif
 # local directory and compilation flags inside the code.
 #
 
-$(SCRATCH_DIR)/mod_ncparam.o: FFLAGS += -free
-$(SCRATCH_DIR)/mod_strings.o: FFLAGS += -free
-$(SCRATCH_DIR)/analytical.o: FFLAGS += -free
-$(SCRATCH_DIR)/biology.o: FFLAGS += -free
+$(SCRATCH_DIR)/mod_ncparam.o: FFLAGS += -f free
+$(SCRATCH_DIR)/mod_strings.o: FFLAGS += -f free
+$(SCRATCH_DIR)/analytical.o: FFLAGS += -f free
+$(SCRATCH_DIR)/biology.o: FFLAGS += -f free
 ifdef USE_ADJOINT
-$(SCRATCH_DIR)/ad_biology.o: FFLAGS += -free
+$(SCRATCH_DIR)/ad_biology.o: FFLAGS += -f free
 endif
 ifdef USE_REPRESENTER
-$(SCRATCH_DIR)/rp_biology.o: FFLAGS += -free
+$(SCRATCH_DIR)/rp_biology.o: FFLAGS += -f free
 endif
 ifdef USE_TANGENT
-$(SCRATCH_DIR)/tl_biology.o: FFLAGS += -free
+$(SCRATCH_DIR)/tl_biology.o: FFLAGS += -f free
 endif
 
 #
@@ -144,26 +125,26 @@ endif
 
 ifdef USE_SWAN
 
-$(SCRATCH_DIR)/ocpcre.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/ocpids.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/ocpmix.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swancom1.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swancom2.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swancom3.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swancom4.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swancom5.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swanmain.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swanout1.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swanout2.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swanparll.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swanpre1.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swanpre2.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swanser.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swmod1.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/swmod2.o: FFLAGS += -nofree
-$(SCRATCH_DIR)/m_constants.o: FFLAGS += -free
-$(SCRATCH_DIR)/m_fileio.o: FFLAGS += -free
-$(SCRATCH_DIR)/mod_xnl4v5.o: FFLAGS += -free
-$(SCRATCH_DIR)/serv_xnl4v5.o: FFLAGS += -free
+$(SCRATCH_DIR)/ocpcre.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/ocpids.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/ocpmix.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swancom1.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swancom2.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swancom3.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swancom4.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swancom5.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swanmain.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swanout1.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swanout2.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swanparll.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swanpre1.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swanpre2.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swanser.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swmod1.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/swmod2.o: FFLAGS += -f fixed
+$(SCRATCH_DIR)/m_constants.o: FFLAGS += -f free
+$(SCRATCH_DIR)/m_fileio.o: FFLAGS += -f free
+$(SCRATCH_DIR)/mod_xnl4v5.o: FFLAGS += -f free
+$(SCRATCH_DIR)/serv_xnl4v5.o: FFLAGS += -f free
 
 endif

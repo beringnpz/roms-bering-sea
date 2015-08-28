@@ -9,7 +9,7 @@
 # -------------------------------------------------------------------------
 #
 # ARPACK_LIBDIR  ARPACK libary directory
-# FC             Name of the fotran compiler to use
+# FC             Name of the fortran compiler to use
 # FFLAGS         Flags to the fortran compiler
 # CPP            Name of the C-preprocessor
 # CPPFLAGS       Flags to the C-preprocessor
@@ -24,10 +24,7 @@
 # First the defaults
 #
                FC := ifort
-#            FFLAGS := -heap-arrays -fp-model precise
-#            FFLAGS := -heap-arrays
-#            FFLAGS := -fp-model precise
-            FFLAGS := 
+           FFLAGS := -heap-arrays -fp-model precise
               CPP := /usr/bin/cpp
          CPPFLAGS := -P -traditional
           LDFLAGS := -Vaxlib
@@ -46,12 +43,12 @@
 #
 
 ifdef USE_NETCDF4
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
-      HDF5_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /opt/intelsoft/netcdf4/include
+    NETCDF_LIBDIR ?= /opt/intelsoft/netcdf4/lib
+      HDF5_LIBDIR ?= /opt/intelsoft/hdf5/lib
 else
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /opt/intelsoft/netcdf/include
+    NETCDF_LIBDIR ?= /opt/intelsoft/netcdf/lib
 endif
              LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
 ifdef USE_NETCDF4
@@ -83,8 +80,7 @@ endif
 
 ifdef USE_DEBUG
 #          FFLAGS += -g -check bounds -traceback
-#           FFLAGS += -g -check uninit -ftrapuv -traceback -CB
-           FFLAGS += -g -zero -CB -debug all -debug inline-debug-info -traceback
+           FFLAGS += -g -check uninit -ftrapuv -traceback
 else
            FFLAGS += -ip -O3
  ifeq ($(CPU),i686)

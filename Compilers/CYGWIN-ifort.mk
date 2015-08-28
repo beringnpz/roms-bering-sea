@@ -1,15 +1,16 @@
-# svn $Id: Linux-ifort.mk 1020 2009-07-10 23:10:30Z kate $
+# svn $Id: CYGWIN-ifort.mk 895 2009-01-12 21:06:20Z kate $
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Copyright (c) 2002-2009 The ROMS/TOMS Group                           :::
 #   Licensed under a MIT/X style license                                :::
 #   See License_ROMS.txt                                                :::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Include file for Intel IFORT (version 10.1) compiler on Linux
+#
+# Include file for Intel compiler on Cygwin
 # -------------------------------------------------------------------------
 #
 # ARPACK_LIBDIR  ARPACK libary directory
-# FC             Name of the fotran compiler to use
+# FC             Name of the fortran compiler to use
 # FFLAGS         Flags to the fortran compiler
 # CPP            Name of the C-preprocessor
 # CPPFLAGS       Flags to the C-preprocessor
@@ -23,14 +24,14 @@
 #
 # First the defaults
 #
+
+              BIN := $(BIN).exe
+
                FC := ifort
-#            FFLAGS := -heap-arrays -fp-model precise
-#            FFLAGS := -heap-arrays
-#            FFLAGS := -fp-model precise
-            FFLAGS := 
+           FFLAGS := /align /G7 /MD
               CPP := /usr/bin/cpp
-         CPPFLAGS := -P -traditional
-          LDFLAGS := -Vaxlib
+         CPPFLAGS := -P -DCYGWIN -DCYGWIN_ifort -traditional
+          LDFLAGS := /link /stack:67108864
                AR := ar
           ARFLAGS := r
             MKDIR := mkdir -p
@@ -43,63 +44,60 @@
 
 #
 # Library locations, can be overridden by environment variables.
+# These are be specified in Unix form and will be converted as
+# necessary to Windows form for Windows-native commands. The default
+# values below assume that Cygwin mounts have been defined pointing to
+# the NETCDF and ARPACK library locations.
 #
 
 ifdef USE_NETCDF4
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
-      HDF5_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /usr/local/netcdf4/include
+    NETCDF_LIBDIR ?= /usr/local/netcdf4/lib
+      HDF5_LIBDIR ?= /usr/local/hdf5/lib
 else
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /netcdf-win32/include
+    NETCDF_LIBDIR ?= /netcdf-win32/lib
 endif
-             LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
+       NETCDF_LIB := $(NETCDF_LIBDIR)/libnetcdf.a
 ifdef USE_NETCDF4
-             LIBS += -L$(HDF5_LIBDIR) -lhdf5_hl -lhdf5 -lz
+       NETCDF_LIB += -L$(HDF5_LIBDIR) -lhdf5_hl -lhdf5 -lz
 endif
 
 ifdef USE_ARPACK
- ifdef USE_MPI
-   PARPACK_LIBDIR ?= /opt/intelsoft/PARPACK
-             LIBS += -L$(PARPACK_LIBDIR) -lparpack
- endif
-    ARPACK_LIBDIR ?= /opt/intelsoft/PARPACK
-             LIBS += -L$(ARPACK_LIBDIR) -larpack
+    ARPACK_LIBDIR ?= /arpack-win32/lib
+       ARPACK_LIB := $(ARPACK_LIBDIR)/arpack.lib
 endif
 
-ifdef USE_MPI
-         CPPFLAGS += -DMPI
- ifdef USE_MPIF90
-               FC := mpif90
- else
-             LIBS += -lfmpi-pgi -lmpi-pgi 
- endif
-endif
+#
+# Compiler flags
+#
 
 ifdef USE_OpenMP
          CPPFLAGS += -D_OPENMP
-           FFLAGS += -openmp
+           FFLAGS += /Qopenmp /Qopenmp_report1
 endif
 
 ifdef USE_DEBUG
-#          FFLAGS += -g -check bounds -traceback
-#           FFLAGS += -g -check uninit -ftrapuv -traceback -CB
-           FFLAGS += -g -zero -CB -debug all -debug inline-debug-info -traceback
+           FFLAGS += /debug:full /traceback /Od /Zi
 else
-           FFLAGS += -ip -O3
- ifeq ($(CPU),i686)
-           FFLAGS += -pc80 -xW
- endif
- ifeq ($(CPU),x86_64)
-           FFLAGS += -xW
- endif
+           FFLAGS += /Ox
+endif
+
+ifdef USE_MPI
+       MCT_LIBDIR ?= c:\\work\\models\\MCT_v2.2\\mct
+      MPEU_LIBDIR ?= c:\\work\\models\\MCT_v2.2\\mpeu
+       MPI_INCDIR ?= c:\\work\\models\\MPICH2\\include
+       MPI_LIBDIR ?= c:\\work\\models\\MPICH2\\lib
+       LIBS_WIN32 += "$(MPI_LIBDIR)\fmpich2.lib "
+         CPPFLAGS += -DMPI -I$(MPI_INCDIR)
+           FFLAGS += -I$(MPI_INCDIR)
 endif
 
 ifdef USE_MCT
-       MCT_INCDIR ?= /opt/intelsoft/mct/include
-       MCT_LIBDIR ?= /opt/intelsoft/mct/lib
-           FFLAGS += -I$(MCT_INCDIR)
-             LIBS += -L$(MCT_LIBDIR) -lmct -lmpeu
+         CPPFLAGS += -traditional-cpp
+           FFLAGS += -I$(MCT_LIBDIR) -I$(MPEU_LIBDIR) 
+           FFLAGS += /noextend_source -assume:byterecl
+       LIBS_WIN32 += "$(MCT_LIBDIR)\libmct.a" "$(MPEU_LIBDIR)\libmpeu.a"
 endif
 
 ifdef USE_ESMF
@@ -107,16 +105,36 @@ ifdef USE_ESMF
       ESMF_MK_DIR ?= $(ESMF_DIR)/lib/lib$(ESMF_BOPT)/$(ESMF_SUBDIR)
                      include $(ESMF_MK_DIR)/esmf.mk
            FFLAGS += $(ESMF_F90COMPILEPATHS)
-             LIBS += $(ESMF_F90LINKPATHS) -lesmf -lC
+       LIBS_WIN32 += $(ESMF_F90LINKPATHS) -lesmf -lC
 endif
 
-       clean_list += ifc* work.pc*
+#
+# For a Windows compiler, create variables pointing to the Windows
+# file names needed when linking. Use of the "=" sign means that
+# variables will be evaluated only when needed.
+#
+
+         BIN_WIN32 = "$$(cygpath --windows $(BIN))"
+        LIBS_WIN32 += "$$(cygpath --windows $(NETCDF_LIB))"
+        LIBS_WIN32 += "c:\cygwin\lib\gcc\i686-pc-mingw32\3.4.4\libgcc.a"
+ifdef USE_ARPACK
+        LIBS_WIN32 += "$$(cygpath --windows $(ARPACK_LIB))"
+endif
+
+        LD_WINDOWS := on
 
 #
 # Use full path of compiler.
 #
-               FC := $(shell which ${FC})
+               FC := "$(shell which ${FC})"
                LD := $(FC)
+
+#
+# For a Windows compiler, override the compilation rule
+#
+
+%.o: %.f90
+	cd $(SCRATCH_DIR); $(FC) -c $(FFLAGS) $(notdir $<) /object:$(notdir $@)
 
 #
 # Set free form format in source files to allow long string for

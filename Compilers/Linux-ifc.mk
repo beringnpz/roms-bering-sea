@@ -1,15 +1,15 @@
-# svn $Id: Linux-ifort.mk 1020 2009-07-10 23:10:30Z kate $
+# svn $Id: Linux-ifc.mk 895 2009-01-12 21:06:20Z kate $
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 # Copyright (c) 2002-2009 The ROMS/TOMS Group                           :::
 #   Licensed under a MIT/X style license                                :::
 #   See License_ROMS.txt                                                :::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
 #
-# Include file for Intel IFORT (version 10.1) compiler on Linux
+# Include file for Intel IFC (version 7.x) compiler on Linux
 # -------------------------------------------------------------------------
 #
 # ARPACK_LIBDIR  ARPACK libary directory
-# FC             Name of the fotran compiler to use
+# FC             Name of the fortran compiler to use
 # FFLAGS         Flags to the fortran compiler
 # CPP            Name of the C-preprocessor
 # CPPFLAGS       Flags to the C-preprocessor
@@ -23,11 +23,8 @@
 #
 # First the defaults
 #
-               FC := ifort
-#            FFLAGS := -heap-arrays -fp-model precise
-#            FFLAGS := -heap-arrays
-#            FFLAGS := -fp-model precise
-            FFLAGS := 
+               FC := ifc
+           FFLAGS := 
               CPP := /usr/bin/cpp
          CPPFLAGS := -P -traditional
           LDFLAGS := -Vaxlib
@@ -36,7 +33,7 @@
             MKDIR := mkdir -p
                RM := rm -f
            RANLIB := ranlib
-             PERL := perl
+	     PERL := perl
              TEST := test
 
         MDEPFLAGS := --cpp --fext=f90 --file=- --objdir=$(SCRATCH_DIR)
@@ -46,12 +43,12 @@
 #
 
 ifdef USE_NETCDF4
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
-      HDF5_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /opt/intelsoft/netcdf4/include
+    NETCDF_LIBDIR ?= /opt/intelsoft/netcdf4/lib
+      HDF5_LIBDIR ?= /opt/intelsoft/hdf5/lib
 else
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /opt/intelsoft/netcdf/include
+    NETCDF_LIBDIR ?= /opt/intelsoft/netcdf/lib
 endif
              LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
 ifdef USE_NETCDF4
@@ -70,7 +67,7 @@ endif
 ifdef USE_MPI
          CPPFLAGS += -DMPI
  ifdef USE_MPIF90
-               FC := mpif90
+               FC := /opt/intelsoft/mpich2/bin/mpif90
  else
              LIBS += -lfmpi-pgi -lmpi-pgi 
  endif
@@ -82,9 +79,7 @@ ifdef USE_OpenMP
 endif
 
 ifdef USE_DEBUG
-#          FFLAGS += -g -check bounds -traceback
-#           FFLAGS += -g -check uninit -ftrapuv -traceback -CB
-           FFLAGS += -g -zero -CB -debug all -debug inline-debug-info -traceback
+           FFLAGS += -g -CA -CB -CS -CU
 else
            FFLAGS += -ip -O3
  ifeq ($(CPU),i686)
