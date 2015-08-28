@@ -4,18 +4,17 @@
 
 
 
-# Set up compiler stuff
+# Check that we're on one of the appropriate computers, and set some 
+# compiler stuff
 
 case $HOSTNAME in
   afsc-s29.afsc.noaa.gov) # beast
   	echo "Compiling"
 	export PATH=/usr/mpi/intel/openmpi-1.4.1/bin:$PATH
-	exit 0
 	;; 
   afsc-s45.afsc.noaa.gov) # cluster1
   	echo "Compiling"
 	export PATH=/opt/intel/openmpi/163/bin:$PATH
-	exit 0
 	;;
   *)   
   	echo "Not set up to compile on this computer"
