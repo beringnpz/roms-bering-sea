@@ -3236,11 +3236,10 @@
    
             k=1
                
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + (cff11)*dtdays
-            
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff7*dtdays
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff8*dtdays
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff9*dtdays
+            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff11*dtdays
+            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff7 *dtdays
+            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff8 *dtdays
+            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff9 *dtdays
             DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff10*dtdays
 
       

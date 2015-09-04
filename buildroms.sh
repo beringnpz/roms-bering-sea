@@ -27,4 +27,5 @@ export LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/069/lib/intel64/:LD_LIBRARY_PATH
 
 # Build
 
+make clean
 make -j
