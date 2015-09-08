@@ -27,8 +27,7 @@ export LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/069/lib/intel64/:LD_LIBRARY_PATH
 
 # Checking 
 
-MYMPI = "$(which mpif90)"
-echo "Location of openmpi: ${MYMPI}"
+which mpif90
 
 # Build
 
