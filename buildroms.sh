@@ -10,11 +10,11 @@
 case $HOSTNAME in
   afsc-s29.afsc.noaa.gov) # beast
   	echo "Compiling ROMS for Bering10k"
-	export PATH=/usr/mpi/intel/openmpi-1.4.1/bin:$PATH
+	export PATH=/opt/intel/openmpi/163/bin:$PATH
 	;; 
   afsc-s45.afsc.noaa.gov) # cluster1
   	echo "Compiling ROMS for Bering10k"
-	export PATH=/opt/intel/openmpi/163/bin:$PATH
+	export PATH=/usr/mpi/intel/openmpi-1.4.1/bin:$PATH
 	;;
   *)   
   	echo "Not set up to compile on this computer"
@@ -27,7 +27,10 @@ export LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/069/lib/intel64/:LD_LIBRARY_PATH
 
 # Checking 
 
+echo "MPI location:"
 which mpif90
+
+echo "PATH: ${PATH}"
 
 # Build
 
