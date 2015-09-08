@@ -30,7 +30,7 @@
       USE mod_ice
 #endif
 #ifdef FEAST
-			USE mod_feast  
+      USE mod_feast  
 #endif
       USE mod_iounits
       USE mod_mixing
@@ -809,16 +809,18 @@
 # endif
      &                       OCEAN(ng) % t(:,:,:,NOUT,itrc))
           IF (status.ne.nf90_noerr) THEN
-						do kk=1,N(ng)
-            do ii=LBi,UBi
-            do jj=LBj,UBj
-						write (*,'(A4,A14,3I6,ES14.4)'),"BAD",   &
-						& TRIM(Vname(1,idTvar(itrc))), kk,ii,jj, &
-						& OCEAN(ng) % t(ii,jj,kk,NOUT,itrc)
-						end do
-						end do
-						end do 
-						IF (Master) THEN
+# ifdef FEAST
+            do kk=1,N(ng)
+              do ii=LBi,UBi
+                do jj=LBj,UBj
+                  write (*,'(A4,A14,3I6,ES14.4)'),"BAD",                &
+     &              TRIM(Vname(1,idTvar(itrc))), kk,ii,jj,              &
+     &              OCEAN(ng) % t(ii,jj,kk,NOUT,itrc)
+                end do
+              end do
+            end do 
+# endif
+            IF (Master) THEN
               WRITE (stdout,11) TRIM(Vname(1,idTvar(itrc))),            &
      &                          tHISindx(ng), status
             END IF
@@ -851,16 +853,16 @@
           !---------------------
           !Zero the output array
           !---------------------
-	 
-!	  print*,'st=',OCEAN(ng) % st(:,:,:,1,1)
-!	    print*,'NOUT=',NOUT
-!	    print*,'itrc=',itrc
-	
+   
+!   print*,'st=',OCEAN(ng) % st(:,:,:,1,1)
+!     print*,'NOUT=',NOUT
+!     print*,'itrc=',itrc
+  
 !          OCEAN(ng) % st(:,:,:,NOUT,itrc) = 0.0_r8
           IF (status.ne.nf90_noerr) THEN
             IF (Master) THEN
-	    
-	      WRITE (stdout,10) TRIM(Vname(1,idTSvar(itrc))),            &
+      
+        WRITE (stdout,10) TRIM(Vname(1,idTSvar(itrc))),            &
      &                          tHISindx(ng)
             END IF
             exit_flag=3
@@ -889,7 +891,7 @@
      &                       OCEAN(ng) % st2(:,:,NOUT,itrc))
           !---------------------
           !Zero the output array
-	  !---------------------
+    !---------------------
           OCEAN(ng) % st2(:,:,NOUT,itrc) = 0.0_r8
           IF (status.ne.nf90_noerr) THEN
             IF (Master) THEN
@@ -923,7 +925,7 @@
      &                       OCEAN(ng) % pt2(:,:,NOUT,itrc))
           !---------------------
           !Zero the output array
-	  !---------------------
+    !---------------------
 !          OCEAN(ng) % pt2(:,:,NOUT,itrc) = 0.0_r8
           IF (status.ne.nf90_noerr) THEN
             IF (Master) THEN
@@ -962,11 +964,11 @@
        
           !---------------------
           !Zero the output array
-	  !---------------------
+    !---------------------
 !#if !defined STATIONS
 !          OCEAN(ng) % pt3(:,:,:,NOUT,itrc) = 0.0_r8
 !#endif
-	  
+    
 !           print*, OCEAN(ng)%pt3(:,:,:,:,:)
          
           IF (status.ne.nf90_noerr) THEN
@@ -1021,14 +1023,14 @@
 
 !FEAST catch output
 #ifdef FEAST
-			
+      
 DO gr=1,NUM_GEARS
  DO sp=1,TOT_FEAST
   if (idFeastCatch(gr,sp) > 0 ) THEN
       scale=1.0_r8
       gtype=gfactor*r2dvar
           status=nf_fwrite2d(ng, iNLM, ncHISid(ng),                     &
-		 &		                      hisFeastCatchid(gr,sp,ng),              &
+     &                          hisFeastCatchid(gr,sp,ng),              &
      &                          tHISindx(ng), gtype,                    &
      &                          LBi, UBi, LBj, UBj, scale,              &
 # ifdef MASKING
