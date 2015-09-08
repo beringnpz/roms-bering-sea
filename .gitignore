@@ -42,3 +42,4 @@ Build
 ocean?
 core*
 .svn*
+Compilers/make_macros.mk
