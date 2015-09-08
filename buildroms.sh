@@ -9,11 +9,11 @@
 
 case $HOSTNAME in
   afsc-s29.afsc.noaa.gov) # beast
-  	echo "Compiling"
+  	echo "Compiling ROMS for Bering10k"
 	export PATH=/usr/mpi/intel/openmpi-1.4.1/bin:$PATH
 	;; 
   afsc-s45.afsc.noaa.gov) # cluster1
-  	echo "Compiling"
+  	echo "Compiling ROMS for Bering10k"
 	export PATH=/opt/intel/openmpi/163/bin:$PATH
 	;;
   *)   
@@ -24,6 +24,11 @@ esac
 
 source /opt/intel/Compiler/11.1/069/bin/ifortvars.sh intel64
 export LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/069/lib/intel64/:LD_LIBRARY_PATH
+
+# Checking 
+
+MYMPI = "$(which mpif90)"
+echo "Location of openmpi: ${MYMPI}"
 
 # Build
 
