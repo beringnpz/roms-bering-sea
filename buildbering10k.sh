@@ -46,8 +46,12 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 
 echo "Compiling Bering 10K: physics-only"
 
-cp GK_nep5.h-phys-floats ${MY_PROJECT_DIR}/nep5.h
+cp ${MY_PROJECT_DIR}/GK_nep5.h-phys-floats ${MY_PROJECT_DIR}/nep5.h
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
 
 make clean
 make -j
+
+mv oceanM oceanM_phys
+
+

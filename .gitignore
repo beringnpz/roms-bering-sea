@@ -38,8 +38,10 @@ Thumbs.db
 
 # ROMS-specific      #
 ###################### 
+Apps/NEP/Build*
 Build
 ocean?
+oceanM_*
 core*
 .svn*
 Compilers/make_macros.mk
