@@ -55,7 +55,10 @@ echo "  Location of mpif90"
 which mpif90
 echo "  Location of netcdf"
 which nc-config
+echo "  Environment variables"
+printenv
 echo "***********************************"
+
 
 cp ${MY_PROJECT_DIR}/GK_nep5.h-phys-floats ${MY_PROJECT_DIR}/nep5.h
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
