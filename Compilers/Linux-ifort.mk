@@ -46,12 +46,12 @@
 #
 
 ifdef USE_NETCDF4
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
-      HDF5_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /home/aydink/include
+    NETCDF_LIBDIR ?= /home/aydink/lib
+      HDF5_LIBDIR ?= /home/aydink/lib
 else
-    NETCDF_INCDIR := /home/aydink/include
-    NETCDF_LIBDIR := /home/aydink/lib
+    NETCDF_INCDIR ?= /home/aydink/include
+    NETCDF_LIBDIR ?= /home/aydink/lib
 endif
              LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
 ifdef USE_NETCDF4

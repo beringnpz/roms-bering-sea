@@ -27,15 +27,13 @@ export         USE_LARGE=on
 case $HOSTNAME in
   afsc-s45.afsc.noaa.gov) # beast
     export            PATH=/usr/mpi/intel/openmpi-1.4.1/bin:$PATH  # mpif90 location
-    export   NETCDF_INCDIR=/home/aydink/include                    # netcdf include
-    export   NETCDF_LIBDIR=/home/aydink/lib                        # netcdf lib
-    export            PATH=/home/aydink/bin:$PATH
-	export 	    NETCDFHOME= /home/aydink/bin
-	export LD_LIBRARY_PATH="/opt/gridengine/lib/lx26-amd64:/usr/mpi/intel/openmpi-1.4.1/lib64:/opt/intel/Compiler/11.1/069/lib/intel64:/home/aydink/lib"
-    ;; 
+    export   NETCDF_INCDIR=/home/aydink/includeM                   # netcdf include
+    export   NETCDF_LIBDIR=/home/aydink/libM                       # netcdf lib
+	;; 
   afsc-s29.afsc.noaa.gov) # cluster1
     export            PATH=/opt/intel/openmpi/163/bin:$PATH
-	export LD_LIBRARY_PATH=/opt/intel/Compiler/11.1/069/lib/intel64/:LD_LIBRARY_PATH
+    export   NETCDF_INCDIR=/home/aydink/include                    # netcdf include
+    export   NETCDF_LIBDIR=/home/aydink/lib                        # netcdf lib
     ;;
   *)   
     echo "Not set up to compile on this computer"
@@ -64,20 +62,10 @@ echo "***********************************"
 cp ${MY_PROJECT_DIR}/GK_nep5.h-phys-floats ${MY_PROJECT_DIR}/nep5.h
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
 
-# Some debugging
+# Some debugging prints
 
 echo "Host: $HOSTNAME"
-echo "  Location of ifort:"
-which ifort
-echo "  Location of mpif90"
-which mpif90
-echo " "
-echo "  Various flags"
-make print-NETCDF_INCDIR
-make print-NETCDF_LIBDIR
-make print-PATH
-make print-LD_LIBRARY_PATH
-make print-CPPFLAGS
+# make print-NETCDF_LIBDIR
 echo "***********************************"
 
 # Compile
