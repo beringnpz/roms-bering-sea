@@ -10,7 +10,12 @@
 *******************************************************************************
 **
 **  Options for Northeast Pacific (NEP5) simulation
+**  By default this will run a physics-only variant.  To add the BESTNPZ 
+**  biogeochmistry, add "-DBESTNPZ" to MY_CPP_FLAGS; to add the full 
+**  FEAST food web, add "-DBESTNPZ -DFEAST"
 */
+
+
 #define  BERING_10K
 
 #undef NETCDF4
@@ -27,7 +32,7 @@
 #ifdef SOLVE3D
 # undef SPLINES
 #endif
-#define FLOATS
+#undef FLOATS
 #define STATIONS
 #undef WET_DRY
 
@@ -36,10 +41,9 @@
 # define ANA_PASSIVE
 #endif
  
-
 /* salinity nudging */
-#define SCORRECTION
 
+#define SCORRECTION
 
 /* ice */
 
@@ -166,8 +170,8 @@
 #endif
  
 /* point sources (rivers, line sources) */
- 
-/* Using Runoff instead now */
+/* Using Runoff instead now             */
+
 #ifdef SOLVE3D
 # define RUNOFF
 # define UV_PSOURCE
@@ -265,9 +269,14 @@
 /*
 **  Biological model options.
 */
+
+/* In order to allow use of this header file with different biology, I'm 
+   leaving out any explicit define/undef options for BESTNPZ and FEAST.  
+   These will be defined externally via MY_CPP_FLAGS.
+*/ 
+
 #undef NEMURO
 #undef BIO_GOANPZ        /* Sarah Hinckley's 11 box model */
-#undef BEST_NPZ         /* Georgina Gibsons BEST NPZ model  */
 
 #if defined BEST_NPZ || defined BIO_GOANPZ || defined PASSIVE_TRACERS
 # undef  BIOFLUX           /* sum Nitrogen fluxes between boxes */
@@ -279,7 +288,7 @@
 #endif
 
 #if defined NEMURO
-# undef ANA_BIOLOGY       /* analytical biology initial conditions */
+# undef ANA_BIOLOGY        /* analytical biology initial conditions */
 # define ANA_BPFLUX        /* analytical bottom passive tracers fluxes */
 # define ANA_SPFLUX        /* analytical surface passive tracers fluxes */
 # define IRON_LIMIT        /* Add iron as passive 11th tracer */
@@ -298,40 +307,41 @@
 # define BIO_NUDGE_ONLY
 
 #  undef LIMIT_BIO_AKT
-#  define NEWSHADE   /*formulation for self shading in PAR calc basrd on Morel*/
-#  undef KODIAK_IRAD /* Generate irradiance with curve matching Kodiak data
-                       Else use Sarah Hinckly originl code   */
+#  define NEWSHADE         /* formulation for self shading in PAR calc basrd on Morel*/
+#  undef KODIAK_IRAD       /* Generate irradiance with curve matching Kodiak data
+                              Else use Sarah Hinckly originl code   */
 #  define JELLY
-#  define IRON_LIMIT        /* Add iron  */
-#  define BENTHIC /*FENNEL or BENTHIC or TRAP*/
+#  define IRON_LIMIT       /* Add iron  */
+#  define BENTHIC          /*FENNEL or BENTHIC or TRAP*/
 #  define ICE_BIO
 #  undef CLIM_ICE_1D
 #  define  TCLM_NUDGING    /* Nudging of tracer climatology for iron */
-#  define ANA_TCLIMA     /* analytical tracers climatology for iron */
-#  define TCLIMATOLOGY   /* Processing of tracer climatology for iron */
+#  define ANA_TCLIMA       /* analytical tracers climatology for iron */
+#  define TCLIMATOLOGY     /* Processing of tracer climatology for iron */
 #  undef   STATIONARY
 #  undef   STATIONARY2
 #  define PROD3
 #  undef  PROD2
-#  undef SINKVAR      /* for variable sinking rate*/
+#  undef SINKVAR           /* for variable sinking rate*/
 #  undef DENMAN
 #  undef CORRECT_TEMP_BIAS /* corrects ROMS temp for biology only */
 # endif
 
 # undef  OFFLINE_BIOLOGY   /* define if offline simulation of bio tracers */
 #   if defined OFFLINE_BIOLOGY
-#    define AKSCLIMATOLOGY   /* Processing of AKS climatology */
-#    undef ANA_AKSCLIMA      /* Processing of AKS climatology */
+#    define AKSCLIMATOLOGY /* Processing of AKS climatology */
+#    undef ANA_AKSCLIMA    /* Processing of AKS climatology */
 #   endif
 
+
 /* Here's the new stuff for feast*/
-#undef FEAST
+// #define FEAST
 
 #ifdef FEAST
 #  ifdef PROD3
-#    define FEAST_DAT  /* only use this if using 60-layer model */
+#    define FEAST_DAT     /* only use this if using 60-layer model */
 #  endif
-#  undef FEAST_DAT
+#  undef FEAST_DAT        /* so undef in the 10-layer model */
 #  define FEAST_FORCING
 #  define T_PASSIVE
 #  define ANA_PASSIVE
