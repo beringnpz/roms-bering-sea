@@ -335,7 +335,6 @@
 
 
 /* Here's the new stuff for feast*/
-// #define FEAST
 
 #ifdef FEAST
 #  ifdef PROD3
@@ -351,6 +350,6 @@
 #  define ANA_SPFLUX
 #  undef FEAST_NOEXCHANGE
 #endif
-/* end of new stuff for feast*/
+
 
 

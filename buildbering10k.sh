@@ -57,13 +57,16 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
 
-make clean
+make clean &>/dev/null
 echo "Compiling physics-only variant"
-make -j 2> builderr1.txt 1> buildout1.txt
+make -j &> buildouterr.txt
 if [ $? -ne 0 ]; then
-    echo "Compilation failed"
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM oceanM_phys 
+	echo "Success: oceanM_phys created"
 fi
 
 # Compile bestnpz
@@ -71,13 +74,16 @@ fi
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2
 export      MY_CPP_FLAGS="-DBESTNPZ"
 
-make clean
+make clean &>/dev/null
 echo "Compiling bestnpz variant"
-make -j 2> builderr2.txt 1> buildout2.txt
+make -j &> buildouterr.txt
 if [ $? -ne 0 ]; then
-    echo "Compilation failed"
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM oceanM_npz
+	echo "Success: oceanM_npz created"
 fi
 
 # Compile Feast
@@ -85,13 +91,16 @@ fi
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3
 export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
 
-make clean
+make clean &>/dev/null
 echo "Compiling feast variant"
-make -j 2> builderr3.txt 1> buildout3.txt
+make -j &> buildouterr.txt
 if [ $? -ne 0 ]; then
-    echo "Compilation failed"
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM oceanM_feast
+	echo "Success: oceanM_feast created"
 fi
 
 
