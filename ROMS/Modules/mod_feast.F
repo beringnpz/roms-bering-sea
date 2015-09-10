@@ -492,7 +492,7 @@ SUBROUTINE set_mixed(LBi,UBi,LBj,UBj,i,j, &
     real(r8) :: hapScaleE(LBi:Ubi,LBj:UBj) 
     real(r8) :: hapx(LBi:Ubi,LBj:UBj) 
     real(r8) :: hape(LBi:Ubi,LBj:UBj) 
-   integer NN, NS, gr, spn, spy, typeflag, MM,SS,YY,cc, ibm
+   integer :: NN, NS, gr, spn, spy, typeflag, MM,SS,YY,cc, ibm
    integer, dimension(NUM_GEARS*TOT_LINKS) :: gr_sp, gr_gr, gr_link
    integer, dimension(TOT_LINKS) :: murder
    real(r8), dimension(TOT_LINKS) :: N_all,CF_all,W_all,CAL_all  
