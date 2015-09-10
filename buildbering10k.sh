@@ -58,8 +58,13 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
 
 make clean
-make -j
-mv oceanM oceanM_phys
+echo "Compiling physics-only variant"
+make -j 2> builderr1.txt 1> buildout1.txt
+if [ $? -ne 0 ]; then
+    echo "Compilation failed"
+else
+    mv oceanM oceanM_phys 
+fi
 
 # Compile bestnpz
 
@@ -67,8 +72,13 @@ export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2
 export      MY_CPP_FLAGS="-DBESTNPZ"
 
 make clean
-make -j
-mv oceanM oceanM_npz
+echo "Compiling bestnpz variant"
+make -j 2> builderr2.txt 1> buildout2.txt
+if [ $? -ne 0 ]; then
+    echo "Compilation failed"
+else
+    mv oceanM oceanM_npz
+fi
 
 # Compile Feast
 
@@ -76,9 +86,13 @@ export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3
 export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
 
 make clean
-make -j
-
-mv oceanM oceanM_feast
+echo "Compiling feast variant"
+make -j 2> builderr3.txt 1> buildout3.txt
+if [ $? -ne 0 ]; then
+    echo "Compilation failed"
+else
+    mv oceanM oceanM_feast
+fi
 
 
 
