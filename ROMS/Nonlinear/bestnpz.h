@@ -1523,7 +1523,7 @@
 !    &             + fpMZSMZL * Bio(i,k,iMZS)**2
      
 !-----------------------------------------------------------------------
-!Food consumption
+! Food consumption
 !-----------------------------------------------------------------------
 !             cff2 = eMZL * Bio(i,k,iMZL) / (fMZL**2 + cff1)
               cff2 = Bio(i,k,iMZL) / (fMZL + cff1)
@@ -1800,8 +1800,7 @@
               DBio(i,k,iPhS) = DBio(i,k,iPhS) -                         &
      &           fpPhSNCa * (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays
                  DBio(i,k,iPhL) = DBio(i,k,iPhL) -                      &
-     &           fpPhLNCa * (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays
-     
+     &           fpPhLNCa * (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays     
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
 !    &           fpMZSNCa * (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays
                  DBio(i,k,iMZL) = DBio(i,k,iMZL) -                      &
@@ -2205,7 +2204,7 @@
               DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLEup *              &
      &          (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) - fpMZSEup *              &
-     &          (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays
+!    &          (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iMZL) = DBio(i,k,iMZL) - fpMZLEup *              &
      &          (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iCop) = DBio(i,k,iCop) - fpCopEup *              &
