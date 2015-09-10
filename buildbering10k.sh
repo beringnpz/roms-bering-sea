@@ -62,28 +62,28 @@ echo "Compiling physics-only variant"
 make -j &> buildouterr.txt
 if [ $? -ne 0 ]; then
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    echo "Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM oceanM_phys 
-	echo "Success: oceanM_phys created"
+    mv oceanM oceanM_phys
+	echo "  Success: oceanM_phys created"
 fi
 
 # Compile bestnpz
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2
-export      MY_CPP_FLAGS="-DBESTNPZ"
+export      MY_CPP_FLAGS="-DBIOLOGY -DBEST_NPZ"
 
 make clean &>/dev/null
 echo "Compiling bestnpz variant"
 make -j &> buildouterr.txt
 if [ $? -ne 0 ]; then
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    echo "Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM oceanM_npz
-	echo "Success: oceanM_npz created"
+	echo "  Success: oceanM_npz created"
 fi
 
 # Compile Feast
@@ -96,11 +96,11 @@ echo "Compiling feast variant"
 make -j &> buildouterr.txt
 if [ $? -ne 0 ]; then
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    echo "Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM oceanM_feast
-	echo "Success: oceanM_feast created"
+	echo "  Success: oceanM_feast created"
 fi
 
 
