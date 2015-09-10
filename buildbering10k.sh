@@ -53,28 +53,34 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 # Make
 #--------------
 
-echo "***********************************"
-echo "Compiling Bering 10K: physics-only"
-echo "***********************************"
+# Compile physics
 
-# Copy appropriate header file and set up scratch directory
-
-cp ${MY_PROJECT_DIR}/GK_nep5.h-phys-floats ${MY_PROJECT_DIR}/nep5.h
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
 
-# Some debugging prints
+make clean
+make -j
+mv oceanM oceanM_phys
 
-echo "Host: $HOSTNAME"
-# make print-NETCDF_LIBDIR
-echo "***********************************"
+# Compile bestnpz
 
-# Compile
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2
+export      MY_CPP_FLAGS="-DBESTNPZ"
+
+make clean
+make -j
+mv oceanM oceanM_npz
+
+# Compile Feast
+
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3
+export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
 
 make clean
 make -j
 
-# Rename compiled function
+mv oceanM oceanM_feast
 
-mv oceanM oceanM_phys
+
+
 
 
