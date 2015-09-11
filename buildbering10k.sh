@@ -72,7 +72,7 @@ fi
 # Compile bestnpz
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2
-export      MY_CPP_FLAGS="-DBIOLOGY -DBEST_NPZ"
+export      MY_CPP_FLAGS="-DBEST_NPZ"
 
 make clean &>/dev/null
 echo "Compiling bestnpz variant"

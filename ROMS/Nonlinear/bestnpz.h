@@ -406,6 +406,7 @@
       real :: CurD
 
 #endif
+      real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO ! KAK need for plain BEST_NPZ too
 
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:)
 !
