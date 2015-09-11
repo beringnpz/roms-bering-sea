@@ -365,7 +365,7 @@
       !real(r8) :: t_old(LBi:Ubi,LBj:UBj)
       real(r8) :: base_speed, diff_coeff
       real(r8) :: delN, Ftot, Fmax, BB, CC, delCF, delCAL
-      real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
+!     real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
     
       real(r8) :: diff_xiup(LBi:Ubi,LBj:UBj) 
       real(r8) :: diff_xidn(LBi:Ubi,LBj:UBj)
@@ -406,7 +406,7 @@
       real :: CurD
 
 #endif
-      real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO ! KAK need for plain BEST_NPZ too
+      real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
 
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:)
 !
@@ -2914,7 +2914,7 @@
 !-----------------------------------------------------------------------
 ! 
               DBio(i,k,iEupS) = DBio(i,k,iEupS) -                       &
-     &            TFEup*BasalMetEup*Bio(i,k,iEupS)*dtday
+     &            TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays
 
               DBio(i,k,iEupO) = DBio(i,k,iEupO) -                       &
      &            TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays
