@@ -8,24 +8,25 @@
 # The following variables should be defined at the time this script is 
 # run:
 #
-#	ii:			i-direction partition for ROMS grid (NtileI)
+#   RBSdir:   Path to roms-bering-sea clone
 #
-#   jj:			j-direction partition for ROMS grid (NtileJ)
+#   ii:       i-direction partition for ROMS grid (NtileI)
 #
-#	NTIMES:		number of time steps (DT = 600 currently)
+#   jj:       j-direction partition for ROMS grid (NtileJ)
 #
-#	NRREC:		restart switch
+#   NTIMES:   number of time steps (DT = 600 currently)
 #
-#	DSTART:		timestamp for initial time
+#   NRREC:    restart switch
 #
-#	INIFILE:	Input initial conditions file (can be a restart file)
+#   DSTART:   timestamp for initial time
 #
-#	HISFILE: 	Output history file
+#   INIFILE:  Input initial conditions file (can be a restart file)
 #
-#	AVGNAME:	Output averages file
+#   HISFILE:  Output history file
 #
-#	sebsbio:    Input biological parameters file name
-
+#   AVGNAME:  Output averages file
+#
+#   sebsbio:  Input biological parameters file name
 
 # The following is the contents of the .in file (with substitutions)
 cat <<EOF
@@ -75,7 +76,7 @@ cat <<EOF
 ! Input variable information file name.  This file needs to be processed
 ! first so all information arrays can be initialized properly.
 
-     VARNAME = Apps/GK_FEAST/GK_varinfo.dat
+     VARNAME = ${RBSdir}/Apps/NEP/GK_varinfo.dat
 
 ! Grid dimension parameters. See notes below in the Glossary for how to set
 ! these parameters correctly.
@@ -445,7 +446,7 @@ Hout(idBott) == T T T T T T T T T F F F F F F F
      ININAME == ${INIFILE}
      IRPNAME == ocean_irp.nc
      IADNAME == ocean_iad.nc
-! 	 CLMNAME == /wrkdir/blamey/Bering_10k/Bering10k_FeClm.nc
+!    CLMNAME == /wrkdir/blamey/Bering_10k/Bering10k_FeClm.nc
      BRYNAME == /home/aydink/ncfiles/nc_in/run42allyrs_bering10_als_biobry_tracers_new_iron_10layer.nc
 !    FWDNAME == /ptmp/enrique/ROMS/NEP4/Inputs/ocean_fwd.nc
      ADSNAME == ocean_ads.nc
