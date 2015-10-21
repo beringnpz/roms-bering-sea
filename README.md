@@ -4,6 +4,8 @@ This repository holds the source code for the Bering Sea ROMS domain, including 
 
 The ROMS folder holds the main source code.  The Apps/NEP folder holds most of the Bering 10k-related files.
 
+Tutorial for using git with this repo is in the works... stay tuned!
+
 ### Compiling the NEP5 ROMS code
 
 A script, `buildbering10k.sh`, is located in the top level folder of this repository, and can be used to compile code for all variants of the Bering 10k application, and is currently set up to compile 3 variants of the source code (physics-only, with BEST_NPZ, and with FEAST) on either beast or cluster1.  Additional compilation options (for example, adding FLOATS) can be modeled on this example.
