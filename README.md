@@ -19,5 +19,5 @@ I have also not added any input parameter files (ocean.in, biology.in, varinfo.d
 
 ### Tutorial
 
-If you're new to git, read [the tutorial html file](https://rawgit.com/kakearney/roms-bering-sea/master/tutorial/roms_git.html) in the tutorial folder of this repository before you get started.
+If you're new to git, read [the tutorial html file](https://cdn.rawgit.com/kakearney/roms-bering-sea/master/tutorial/roms_git.html) in the tutorial folder of this repository before you get started.
 
