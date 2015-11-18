@@ -1,0 +1,498 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="chrome=1">
+    <title>Roms-bering-sea by kakearney</title>
+
+    <link rel="stylesheet" href="stylesheets/styles.css">
+    <link rel="stylesheet" href="stylesheets/github-light.css">
+    <script src="javascripts/scale.fix.js"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=no">
+    <!--[if lt IE 9]>
+    <script src="//html5shiv.googlecode.com/svn/trunk/html5.js"></script>
+    <![endif]-->
+  </head>
+  <body>
+    <div class="wrapper">
+      <header>
+        <h1 class="header">Roms-bering-sea</h1>
+        <p class="header">ROMS source code for the Bering Sea domain, including BESTNPZ and FEAST biological modules.</p>
+
+        <ul>
+          <li class="download"><a class="buttons" href="https://github.com/kakearney/roms-bering-sea/zipball/master">Download ZIP</a></li>
+          <li class="download"><a class="buttons" href="https://github.com/kakearney/roms-bering-sea/tarball/master">Download TAR</a></li>
+          <li><a class="buttons github" href="https://github.com/kakearney/roms-bering-sea">View On GitHub</a></li>
+        </ul>
+
+        <p class="header">This project is maintained by <a class="header name" href="https://github.com/kakearney">kakearney</a></p>
+
+
+      </header>
+      <section>
+        <h2>
+<a id="the-roms-bering-sea-domain" class="anchor" href="#the-roms-bering-sea-domain" aria-hidden="true"><span class="octicon octicon-link"></span></a>The ROMS Bering Sea Domain</h2>
+
+<p>This repository holds the source code for the Bering Sea Regional Ocean Modeling System (ROMS) domain, including biological code for the BESTNPZ and FEAST models.  This is a private repository; if you are joining this research project and need access, please email Kelly Kearney to be added as a collaborator.</p>
+
+<p>The code originated in 2009 as a clone of Kate Hedstrom's branch of the ROMS code.  This git repository was initiated on 08/17/15 in an attempt to bring several slightly different versions of that code together into one cohesive set.</p>
+
+<p><img src="./images/romsberingtemperature.png" alt=""></p>
+
+<h3>
+<a id="code-overview" class="anchor" href="#code-overview" aria-hidden="true"><span class="octicon octicon-link"></span></a>Code overview</h3>
+
+<p>This repo includes all code necessary to compile the ROMS executable for this domain. A script, <code>buildbering10k.sh</code>, is located in the top level folder of this repository, and is currently set up to compile 3 variants of the source code (physics-only, with BEST_NPZ, and with FEAST) on either beast or cluster1.  Additional compilation options (for example, adding FLOATS) can be modeled on this example.</p>
+
+<p>With the exception of this build script, please try not to modify any of the files in this repository (including the makefile and nep5.h header file) unless the changes are intended to apply to all future use of the code.  Other changes, e.g. adding CPP flags for single set of experiments, should be done via the build script by adding to the <code>MY_CPP_FLAGS</code> exported variable.</p>
+
+<h3>
+<a id="not-in-this-repo" class="anchor" href="#not-in-this-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Not in this repo</h3>
+
+<p>The compiled executable is not tracked by this repository.  Each user should compile the code themselves whenever updates to the source code are downloaded. </p>
+
+<p>I have also not added any input parameter files (ocean.in, biology.in, varinfo.dat, etc.) files or any input forcing files to this repo.  There are a few legacy copies of these types of files floating around in the Apps/ folder, but those will not be updated going forward.  To keep things as clean as possible, any files that will be changed regularly for individual experiments should be kept outside the repo.  Simulations should be run in each user's own folders, outside of this repository.</p>
+
+<h2>
+<a id="tutorial" class="anchor" href="#tutorial" aria-hidden="true"><span class="octicon octicon-link"></span></a>Tutorial</h2>
+
+<p>New to Git?  Below is a quick tutorial... It's far from comprehensive, but it should cover the basics you need to get going with git and the roms-bering-sea repository.  If you're looking for a more thorough overview, I recommend the <a href="https://git-scm.com/book/en/v2">ProGit book</a>, which is free online.</p>
+
+<h3>
+<a id="git-vs-github-vs-gitlab-etc" class="anchor" href="#git-vs-github-vs-gitlab-etc" aria-hidden="true"><span class="octicon octicon-link"></span></a>Git vs GitHub vs GitLab, etc</h3>
+
+<p>First, a clarification of the different moving parts.  We'll start with a definition of git itself.  A lot of tutorials start off by discussing its architecture and how it differs from CVS and Subversion and all the other systems computer programmers have used in the past.  From the scientist's point of view (or at least this scientist's point of view), that's all irrelevant.  Git is, simply, version control.  It's a little program that adds a hidden folder to a project folder of your choice (the folder is named .git), and that folder watches over and tracks all the changes you make to the files in that folder.  Once the little .git folder is added, the folder is known as a repository, which I'll often shorten to repo.  With a repository, you can keep track of who did what when and why, and you don't need to constantly make manual copies of things to mark your place during development.</p>
+
+<p>Git also makes working as a team easier, since you can copy a repository from one place to another, and then keep changes in both locations synced.  The link is established through what's known as a remote repository, which is simply a copy of the repo that can be accessed by all the computers that need to share the code.  A remote repository can be set up anywhere.  It might be stored on a single non-networked computer, if only people using that computer need to get to it.  My Matlab code library remote repo lives in my Dropbox folder; that way I can reach it from any of my own computers (but still take advantage of the delayed add and commit workflow git offers that I couldn't get with pure Dropbox).</p>
+
+<p>When projects are shared between more than one person, it makes sense to store remote repos on a server accessible by anyone.  This is where GitHub comes in.  GitHub offers server space for any git repo, and also adds a few tools on top so you can poke around in the repository using a web browser.  It's a very convenient platform and makes it very easy to distribute and collaborate on code.  It's become such a popular place to host repos that many git tutorials just assume that's where all your remote repos live.  A few other companies, such as Bitbucket, offer similar services.  GitHub emphasizes open source, so most of its repositories are public; you can pay (or get an educational upgrade, as I did) to set up private ones instead.</p>
+
+<p>GitLab is basically the same software that GitHub uses to add the browser interface, but hosted on a private company server rather than on a public one.  AFSC has a GitLab server set up, but due to firewall and login issues we've opted for GitHub instead.</p>
+
+<h3>
+<a id="configuring-git" class="anchor" href="#configuring-git" aria-hidden="true"><span class="octicon octicon-link"></span></a>Configuring git</h3>
+
+<p>I'm going to assume that you already have git installed.  If you don't, go <a href="http://git-scm.com/book/en/v2/Getting-Started-Installing-Git">here</a> and follow the instructions for your operating system.</p>
+
+<p>Before you start using git, you want to make sure it's configured to your liking. To see which options are already set, type</p>
+
+<pre><code>$ git config --list
+</code></pre>
+
+<p>Here are the results on my MacBook:</p>
+
+<pre><code>$ git config --list
+
+user.name=Kelly Kearney
+user.email=kakearney@gmail.com
+color.ui=true
+credential.helper=osxkeychain
+</code></pre>
+
+<p>Whenever you make a commit in git, it tags the commit with your name and email address, so those are the first things you need to set.  Do so with the following commands:</p>
+
+<pre lang="git"><code>$ git config --global user.name "John Doe"
+$ git config --global user.email johndoe@example.com
+</code></pre>
+
+<p>There are a bunch of other properties you can change if you wish; a full list is <a href="http://git-scm.com/docs/git-config.html">here</a>.  I think turning on color messages is important; this makes reading lists of unmodified, modified, and staged files much easier, and also adds color to diff output (the git manual says it's on by default, but on most Unix systems I've used it seems to be off, so I always explicitly turn it on).  Git relies on the system's default editor for things like adding commit messages.  On most *nix systems, that would be vi.  If you prefer something else, change it now:</p>
+
+<pre><code>$ git config --global color.ui auto
+$ git config --global core.editor emacs
+</code></pre>
+
+<p>With those basics out of the way, you're ready to get started.  </p>
+
+<h3>
+<a id="cloning-the-repo" class="anchor" href="#cloning-the-repo" aria-hidden="true"><span class="octicon octicon-link"></span></a>Cloning the repo</h3>
+
+<p>The first step is to download the ROMS repository to your computer(s).  On the <a href="https://github.com/kakearney/roms-bering-sea">GitHub homepage for the repo</a>, at the bottom of the toobar on the right, you'll find a few links.  </p>
+
+<p><img src="./images/githomepage.png" alt=""></p>
+
+<p>The first button says "Clone in Desktop"; this is for if you're using the GitHub Desktop app for Mac or Windows.  I've heard good things about that, but I don't use it myself and it can't be installed on the Linux clusters, so we'll skip that option for now.  The second button says "Download zip"; if you just want to get a copy of the code without actually taking advantage of git source control, then that's a nice option.</p>
+
+<p>But we want the source control!  For that, we need the clone url, which is listed just above those two buttons.  There are two options to use when cloning: HTTPS and SSH (well, there's a third, Subversion, but let's ignore that for now).  HTTPS is the default for GitHub, but I prefer using SSH because I think it's less hassle password-wise.</p>
+
+<p>Before you can use SSH, you need to set up SSH keys for all the computers you'll use.  From your github homepage (<a href="https://github.com/myusername">https://github.com/myusername</a>), click on the dropdown arrow in the upper right, then choose "Settings".  In the left toolbar, click "SSH Keys."  Click "Add SSH Key", fill in a name for that key (I use the computer names), then copy your public key there.  There's a link at the top of the page that instructs how to create a public SSH key if you don't already have one in your ~/.ssh folder.  I have keys in my profile associated with the three computers I use: my Mac, beast, and cluster1.</p>
+
+<p>You should only have to do all that setup once, and it will cover you for all future use of GitHub.</p>
+
+<p>Now you're ready to clone.  In a terminal window, navigate to the folder where you want to store the code.  Then type</p>
+
+<pre><code>$ git clone git@github.com:kakearney/roms-bering-sea.git
+</code></pre>
+
+<p>You should see the following messages on your screen as it downloads:</p>
+
+<pre><code>Cloning into 'roms-bering-sea'...
+remote: Counting objects: 1072, done.
+remote: Total 1072 (delta 0), reused 0 (delta 0), pack-reused 1072
+Receiving objects: 100% (1072/1072), 2.85 MiB | 344.00 KiB/s, done.
+Resolving deltas: 100% (624/624), done.
+Checking connectivity... done.
+</code></pre>
+
+<p>Once it's complete, you'll have your own copy of the repository in a new subfolder named <code>roms-bering-sea</code>, and you're ready to start working.</p>
+
+<h3>
+<a id="basic-workflow" class="anchor" href="#basic-workflow" aria-hidden="true"><span class="octicon octicon-link"></span></a>Basic workflow</h3>
+
+<p>The first git command you want to become familiar with is the status option.  This will tell you a few bits of information, including which branch you're currently on, and if you have any changed and/or staged files.  Right now, right after the initial clone, you should see this:</p>
+
+<pre><code>$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+nothing to commit, working directory clean 
+</code></pre>
+
+<p>It tells you a few things:</p>
+
+<ul>
+<li>You're on the master branch, which is the default first branch.  For our ROMS purposes, this branch is going to be the home of our tested, ready-to-compile-and-use code.  We'll discuss other branches in the next section.</li>
+<li>Your local copy is up to date with the origin/master branch; that refers to the copy of the repository stored on GitHub.</li>
+<li>There are no uncommitted changes in your local files.</li>
+</ul>
+
+<p>My habit is to start and finish each day with this status.  You can let things go as long as you like, really, but I find that this habit is the best way to make sure you don't get too far out of sync, especially since I have a tendency to hop around between different machines.</p>
+
+<p>So at the beginning of any working session, I issue a pull.  The pull command tells git to fetch the origin copy of a branch (in this case, the master), copy any changes to your local branch, and merge them into your local master.  There are options that let you pull all branches at once, but I prefer to do them individually, just in case there are any merge issues you need to deal with.  </p>
+
+<pre><code>$ git pull origin master
+From github.com:kakearney/roms-bering-sea
+ * branch            master     -&gt; FETCH_HEAD
+Already up-to-date.
+</code></pre>
+
+<p>In this example, the pull just tells us that it didn't need to do anything, since it didn't find any differences between the origin copy and the local copy.</p>
+
+<p>Now we can start editing files.  You can do this using all your usual tools.  Edit files with whatever text editor you prefer (doesn't have to be the one git knows about).  Copy, move, create, and delete files however you wish.  Once you've made some changes, it's time to check in with git.</p>
+
+<pre><code>$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+    modified:   README.md
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+    myexample.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")  
+</code></pre>
+
+<p>Still on the master branch, still up to date with the origin, but now are a few new details.  First, it lists files that it already knew about, but which have changed since your last commit.  Here, I added a quick line to the README.md file to reference this tutorial.  The next section lists any new files that git found; here, a little text file I created for an example.</p>
+
+<p>Committing changes consists of two steps: staging and committing.  Staging tells git which files you want to add with a commit, and committing adds the new files and their change history to the repository.  </p>
+
+<p>If I wanted, I could stage all the changes I've made all at once.  The shortcut for that is </p>
+
+<pre><code>$ git add -A
+</code></pre>
+
+<p>That's helpful if you've been working on just one file, or a group of related files (i.e. fixed the same bug in a few different files).  But commit messages are most helpful to both you and your coworkers when they're as specific as possible.  So often, I'll go through the stage and commit process a few times, specifically grouping together changes that fall under a single topic.  In this example, there are two files, and the changes fall under two topics.</p>
+
+<p>Let's first stage the README:</p>
+
+<pre><code>$ git add README.md
+$ git status
+On branch master
+Your branch is up-to-date with 'origin/master'.
+Changes to be committed:
+  (use "git reset HEAD &lt;file&gt;..." to unstage)
+
+    modified:   README.md
+
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+    myexample.txt
+</code></pre>
+
+<p>The status now shows that the README.md file has moved from the unstaged to the staged group.  The myexample.txt file is still hanging out in untracked land.  Now we commit.  Every commit needs a commit message to go with it.  If our changes were pretty simple, and can be explained in a short line of text, we can include our message with the -m flag:</p>
+
+<pre><code>$ git commit -m "WIP: added statement promising a tutorial"
+</code></pre>
+
+<p>I put the letters WIP, for Work In Progress, at the beginning of any changes when I know I'm not done with changes, but still want to stamp the progress into the log.  That's entirely a personal preference, but I find it's a helpful marker when I search the log later.  Speaking of the log...</p>
+
+<pre><code>$ git log
+commit 25fc8c9d5cf554086665a77fcad1968b85cb607a
+Author: Kelly Kearney &lt;kakearney@gmail.com&gt;
+Date:   Wed Oct 21 14:14:27 2015 -0700
+
+    WIP: added statement promising a tutorial
+
+commit 32277594364b917e2fbafe9044be97b6b22a62d9
+Author: Kelly Kearney &lt;kakearney@gmail.com&gt;
+Date:   Fri Sep 11 12:33:19 2015 -0700
+
+    Updated readme
+
+commit 951793e58c239a6568037cc35ca0d3f31498651a
+Author: Kelly Kearney &lt;kakearney@gmail.com&gt;
+Date:   Fri Sep 11 11:48:08 2015 -0700
+
+    WIP: updating input files
+
+commit 36a67abc68e95ced7493a42f6a460065701d8405
+Author: Kelly Kearney &lt;kakearney@gmail.com&gt;
+Date:   Fri Sep 11 11:40:23 2015 -0700
+
+    Added Kerim's varinfo.dat file
+
+commit 3485be6e6aa544fc2eeb97bfa66bae12248b31ea
+Author: Kelly Kearney &lt;kakearney@gmail.com&gt;
+Date:   Fri Sep 11 11:34:41 2015 -0700
+</code></pre>
+
+<p>This lists the commits, in reverse chronological order, including the commit number, who made the commit, the date committed, and then the full text of the commit message.  There are lots of options for the log command, if you want to see all the details of specific commits, or commits in a certain date range, etc.; look <a href="https://git-scm.com/book/en/v2/Git-Basics-Viewing-the-Commit-History">here</a> for a list of common options.</p>
+
+<p>Going back to our status command, we have some new details:</p>
+
+<pre><code>$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 1 commit.
+  (use "git push" to publish your local commits)
+Untracked files:
+  (use "git add &lt;file&gt;..." to include in what will be committed)
+
+    myexample.txt
+
+nothing added to commit but untracked files present (use "git add" to track)
+</code></pre>
+
+<p>Now it's telling us that we're ahead of the origin copy by one commit, so our copy no longer matches the one on GitHub.  We don't have to deal with that yet.  We also still have that untracked file.  Let's stage and commit it.  As mentioned above, the <code>-A</code> flag with <code>git add</code> means "add every unstaged and untracked file to the staging area."  Handy if you're adding everything in one commit. This time, we want to add a more detailed commit message, so don't use the -m flag:</p>
+
+<pre><code>$ git add -A
+$ git commit
+</code></pre>
+
+<p>This will open your text editor, with a file with a few lines of explanatory text in it (lines beginning with # are ignored, so that text is purely for your benefit... it won't appear in the commit message).  Now you can type as long a message as you want, inserting line breaks where appropriate (and please, for the sake of your coworkers, insert line breaks!  The git log display will not soft wrap things for you if you don't, making it a pain to read).  The typical format for a commit message is to have a short summary sentence, followed by a line break, then a paragraph or two of descriptive text.  This is helpful when using tools such as the GitHub interface.  If you go to the GitHub page for the repository, you'll see a list of files, with a short sentence following each.  That sentence is the first line of the most recent commit message.  After you've written your message, save the file.  Viewing the log again, we can see those two commits we just added:</p>
+
+<pre lang="git"><code>$ git log
+commit 86ccc271041d69f9b827ab04375417864dff9ba3
+Author: Kelly Kearney &lt;kakearney@gmail.com&gt;
+Date:   Wed Oct 21 14:26:06 2015 -0700
+
+    Adding an example file
+
+    This example file is just here so I can show an example
+    of a longer commit message.  Please ignore.
+
+commit 25fc8c9d5cf554086665a77fcad1968b85cb607a
+Author: Kelly Kearney &lt;kakearney@gmail.com&gt;
+Date:   Wed Oct 21 14:14:27 2015 -0700
+
+    WIP: added statement promising a tutorial
+</code></pre>
+
+<p>Now we can go back to work.  Edit, stage, and commit as you go.  Once you're ready to share your work with the rest of the team, it's time to push changes.  Step one of pushing is to make sure your working directory is clean.</p>
+
+<pre><code>$ git status
+On branch master
+Your branch is ahead of 'origin/master' by 2 commits.
+  (use "git push" to publish your local commits)
+nothing to commit, working directory clean
+</code></pre>
+
+<p>If you have files with changes in them, you can't push.  So it's good practice to commit regularly, even if you have to make a bunch of work-in-progress commits, so you don't lose track of what was changed when.  There are ways to clean up the commit history after the fact, though I've never bothered with that.  Anyway, in this case, the working directory is clean and ahead by 2 commits, so let's push:</p>
+
+<pre><code>$ git push origin master
+Counting objects: 6, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 750 bytes | 0 bytes/s, done.
+Total 6 (delta 3), reused 0 (delta 0)
+To git@github.com:kakearney/roms-bering-sea.git
+   3227759..86ccc27  master -&gt; master
+</code></pre>
+
+<p>Like with pulling, there are shortcuts to push all branches at once, but I prefer to do it one at a time.  If we reload the GitHub page, our new changes are now reflected there.</p>
+
+<p>If I hop onto another computer (in this case, beast), I can now go to my other local copy of roms-bering-sea and grab these new changes:</p>
+
+<pre><code>[kelly.kearney@afsc-s45 roms-bering-sea]$ git pull origin master
+Warning: untrusted X11 forwarding setup failed: xauth key data not generated
+Warning: No xauth data; using fake authentication data for X11 forwarding.
+remote: Counting objects: 6, done.
+remote: Compressing objects: 100% (6/6), done.
+remote: Total 6 (delta 1), reused 0 (delta 0), pack-reused 0
+Unpacking objects: 100% (6/6), done.
+From github.com:kakearney/roms-bering-sea
+ * branch            master     -&gt; FETCH_HEAD
+Updating 3227759..86ccc27
+Fast-forward
+ README.md     | 2 ++
+ myexample.txt | 1 +
+ 2 files changed, 3 insertions(+)
+ create mode 100644 myexample.txt
+</code></pre>
+
+<p>(Pay no attention to the X11 stuff).  As it pulls down the new changes, it tells me what it found, with a number of +'s and -'s to show the relative size of the changes in each file.</p>
+
+<p>So those are the key commands you'll need to work with.  Start your session with a pull, stage and commit as you work, end the session with a push.  Nice and simple.  </p>
+
+<p>Of course, it can occasionally get complicated and messy.  Merges don't always go smoothly (and under the hood, the pull command is a combination of a fetch and a merge). If you change something in your local copy and someone else changes the same file in a slightly different way, then when you pull you may have to do a manual merge. The <a href="https://git-scm.com/book/en/v2">ProGit manual</a> covers all that much better than I could.  It's a pain, and it can get stressful.  Let's agree to not work on the same things at the same time, okay? Good.</p>
+
+<h3>
+<a id="branches" class="anchor" href="#branches" aria-hidden="true"><span class="octicon octicon-link"></span></a>Branches</h3>
+
+<p>Branches in git refer to different versions of the same project.  So far, our repository only has a single branch, called <code>master</code>.  For our purposes, this is the production branch.  Whenever one of us wants to recompile ROMS, we should do it based on the master branch code.  And because one of us might need to recompile while another person is in the middle of changing something, we'll want to make all major changes to the code using separate branches.  Fixing minor things (for example, spacing), updating documentation, etc. can be done directly on the master branch.  But anything that could affect someone else's workflow should be relegated to development branches. </p>
+
+<p>First, to see a list of the branches already in existence, and to confirm which branch you're currently on, use the <code>branch</code> command without any extra arguments:</p>
+
+<pre><code>$ git branch  
+* master
+</code></pre>
+
+<p>The single master branch is listed, and the asterisk shows that we are currently on that branch.  To create a new branch, add the name of your new branch as an argument:</p>
+
+<pre><code>$ git branch kellyexample
+</code></pre>
+
+<p>Now if I list the branches:</p>
+
+<pre><code>$ git branch
+  kellyexample
+* master
+</code></pre>
+
+<p>it lists two.  Note that the asterisk shows we're still on the master branch.  To move to the new one, use checkout:</p>
+
+<pre><code>$ git checkout kellyexample
+Switched to branch 'kellyexample'
+$ git branch
+* kellyexample
+  master
+</code></pre>
+
+<p>Now we're on the new branch that I just created.  You can combine the two steps of creating and switching to a new branch by using:</p>
+
+<pre><code>$ git checkout -b mynewbranch
+</code></pre>
+
+<p>At this point, you can begin working on your new addition.  In this branch, I went ahead and added some extra text to the myexample.txt file that we added in the previous section.  Now, if I type add the <code>-v</code> flag to <code>git branch</code>, it will list the branches alongside the most recent commit on each:</p>
+
+<pre><code>$ git branch -v
+* kellyexample 460f6ee Added lorem ipsum to myexample.txt
+  master       86ccc27 Adding an example file
+</code></pre>
+
+<p>Now let's say you've completed your work on the new bit of code.  You've tested it, and the group agrees that this code should be included in the main production code.  At this point, you need to merge the branch into the master one.  The first step is to switch to the branch that you want the changes merged <em>into</em>: in this case, the master.</p>
+
+<pre><code>$ git checkout master
+Switched to branch 'master'
+Your branch is up-to-date with 'origin/master'.
+</code></pre>
+
+<p>Now merge in the other branch:</p>
+
+<pre><code>$ git merge kellyexample
+Updating 86ccc27..460f6ee
+Fast-forward
+ myexample.txt | 4 +++-
+ 1 file changed, 3 insertions(+), 1 deletion(-)
+</code></pre>
+
+<p>The kellyexample branch is no longer needed, so to keep things clean, we can delete it now:</p>
+
+<pre><code>$ git branch -d kellyexample
+Deleted branch kellyexample (was 460f6ee).
+</code></pre>
+
+<p>Topic branches like the one above are pretty easy to manage.  In this case, I never bothered to push the details to the remote repository (though the branch history will show up there due to the merge, as I'll show in a bit).  However, you can also use long-running branches to keep separate versions of the code alive for an extended period of time.  Those branches can be pushed back to the origin repository in the same way we pushed changes to the master.  In the next example, I created another branch, and once again added a little text to the myexample.txt file (via the <code>mate</code> command, which opens my text editor), then committed those changes:</p>
+
+<pre><code>$ git checkout -b remotebranchexample
+Switched to a new branch 'remotebranchexample'
+$ git branch
+  master
+* remotebranchexample
+$ mate myexample.txt
+$ git status
+On branch remotebranchexample
+Changes not staged for commit:
+  (use "git add &lt;file&gt;..." to update what will be committed)
+  (use "git checkout -- &lt;file&gt;..." to discard changes in working directory)
+
+    modified:   myexample.txt
+
+no changes added to commit (use "git add" and/or "git commit -a")
+$ git add myexample.txt
+$ git commit -m "Remote branch example stuff"
+[remotebranchexample 3cf8203] Remote branch example stuff
+ 1 file changed, 2 insertions(+)
+$ git status
+On branch remotebranchexample
+nothing to commit, working directory clean
+</code></pre>
+
+<p>And now I'll push both branches to the remote repository on GutHub:</p>
+
+<pre><code>$ git push origin remotebranchexample
+Counting objects: 6, done.
+Delta compression using up to 8 threads.
+Compressing objects: 100% (6/6), done.
+Writing objects: 100% (6/6), 915 bytes | 0 bytes/s, done.
+Total 6 (delta 3), reused 0 (delta 0)
+To git@github.com:kakearney/roms-bering-sea.git
+ * [new branch]      remotebranchexample -&gt; remotebranchexample
+$ git push origin master
+Total 0 (delta 0), reused 0 (delta 0)
+To git@github.com:kakearney/roms-bering-sea.git
+   86ccc27..460f6ee  master -&gt; master
+</code></pre>
+
+<p>If we look at the <a href="https://github.com/kakearney/roms-bering-sea">GitHub roms-bering-sea page</a>, we'll see that the little toolbar across the top now lists the two branches available.  The also a little dropdown box above the file list, allowing you to switch between the different branches to view files and commits.  I like looking at the GitHub network graphs to see where code branches have divided and merged: in the righthand toolbar, click Graphs, then at the top, Network:</p>
+
+<p><img src="./images/githubnetwork.png" alt=""></p>
+
+<p>This one is pretty simple, but they can get more complex over time.  For example, here's the network for the model that underlies my most recent paper:</p>
+
+<p><img src="./images/githubnetwork_mixed.png" alt=""> </p>
+
+<p>When pushing and pulling from multiple branches, you need to be careful that you issue those pushes and pulls consistently in the local and origin copies.  For example, if you do this</p>
+
+<pre><code>$ git checkout remotebranchexample
+$ git pull origin master
+</code></pre>
+
+<p>you're going to get a weird mix of files (because you fetched one branch, then merged it into a different one). Don't do that!  Always make sure you're on the right branch before fetching and merging.</p>
+
+<p>As in the previous section related to pulls, merging of branches can occasionally get messy.  If you get a merge conflict message when you try to merge, I suggest you refer to the ProGit manual section on <a href="https://git-scm.com/book/en/v2/Git-Branching-Basic-Branching-and-Merging">Basic Merge Conflicts</a>.  Resolving a merge conflict involves manually going through a marked-up file, choosing which parts to keep and which to throw out.  This is one of those things that's difficult to demonstrate, so I'll leave it out of this manual for now.</p>
+
+<p>Another complication arises when you want to start working on a branch for which you don't already have a local copy (say, someone else created and pushed a new branch to the origin repo, and now you want to work on that new branch locally).  In this case, you need to create a local tracking branch.  I'll skip over that for now; there are several other online tutorials that go over this process more clearly than I'd be able to (since to date, I've only done this once).</p>
+
+<h3>
+<a id="undoing-things" class="anchor" href="#undoing-things" aria-hidden="true"><span class="octicon octicon-link"></span></a>Undoing things</h3>
+
+<p>I've bookmarked the ProGit page on <a href="https://git-scm.com/book/en/v2/Git-Basics-Undoing-Things">Undoing Things</a> on my own computer.  It explains how to go back to a previous state if you've screwed things up a little.  If you screw things up a lot, you might need to do a hard reset, which tells git to throw out everything you've done since a certain commit; be really certain that you want to do that though, since there's no undoing that undo.</p>
+
+<h3>
+<a id="gitignore" class="anchor" href="#gitignore" aria-hidden="true"><span class="octicon octicon-link"></span></a>gitignore</h3>
+
+<p>A final topic you should probably know about before working is the .gitignore file.  This file resides in the main folder, and tells git which files not to track.  I set our repository up with my default .gitignore template, which ignores compiled files, zipped/packaged files, logs, databases, and OS-specific files.  I also added the following ROMS-specific files:</p>
+
+<pre><code>Apps/NEP/Build*
+Build
+ocean?
+oceanM_*
+core*
+.svn*
+Compilers/make_macros.mk
+</code></pre>
+
+<p>Any files that meet these search criteria are ignored by git, meaning they aren't copied into the repository.  They only exist locally on your computer.  This will prevent the repo from being littered by files that change every time you recompile, as well as big binary files that can become unwieldy very quickly.</p>
+      </section>
+      <footer>
+        <p><small>Hosted on <a href="https://pages.github.com">GitHub Pages</a> using the Dinky theme</small></p>
+      </footer>
+    </div>
+    <!--[if !IE]><script>fixScale(document);</script><![endif]-->
+		
+  </body>
+</html>
