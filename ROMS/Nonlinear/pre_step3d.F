@@ -336,6 +336,8 @@
       real(r8), parameter :: a_frac = .58d0
       real(r8), parameter :: a_mu1 = .35d0
 
+      integer :: kk
+      real(r8) :: PhSsum,PhLsum,PhSave,PhLave
       real(r8) :: cffa1,cffa2,cffa3
 
 # include "set_bounds.h"
@@ -366,8 +368,17 @@
           DO i=Istr,Iend
 #   if defined BEST_NPZ
             ! use bio to set shortwave absorption
-            cffa1 = max(1.e-3,(t(i,j,k,nstp,iPhS)/ccr) +                & 
-     &                 (t(i,j,k,nstp,iPhL)/ccrPhL))
+            PhSsum=0
+            PhLsum=0
+            do kk=N(ng),k,-1
+               PhSsum = PhSsum + t(i,j,kk,nstp,iPhS)*(z_w(i,j,kk)-z_w(i,j,kk-1))
+               PhLsum = PhLsum + t(i,j,kk,nstp,iPhL)*(z_w(i,j,kk)-z_w(i,j,kk-1))
+            end do
+            PhSave = PhSsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
+            PhLave = PhLsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
+
+            cffa1 = max(1.e-3,(PhSave/ccr) +                & 
+     &                 (PhLave/ccrPhL))
             cffa2 = k_ext+2.00_r8*exp(z_w(i,j,0)*.05)
             cffa3 = (k_chl*(cffa1)**(0.428_r8))   
             FX(i,j) = z_w(i,j,N(ng))-z_w(i,j,k)
