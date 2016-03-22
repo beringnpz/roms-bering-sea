@@ -3422,46 +3422,41 @@
 !     as max sinking depth is approached
 ! 
 ! G.Gibson  July 2008        
-!
-        
-          DO k=1,N(ng)
-              DO i=Istr,Iend
-                sinkOUT(i,k)=0.0_r8
-                sinkIN(i,k)=0.0_r8
-              END DO
-          END DO   
+! K.Kearney March 2016: updated to correct mass-accumulation bug
+
+					! Note: all sinking and rising uses the subroutine BioSink, 
+					! which modifies Btmp and sinkout
+
+					! Initialize temporary arrays to 0
+
+					Btmp = 0    ! tracer profile, (1:n)
+					Hztmp = 0   ! layer thickness, (1:n)
+					zwtmp = 0   ! layer edges, (0:n)
+					sinkout = 0 ! loss out of bottom cell (1)
+
+					! Small phytoplankton: sinks, and 79% of what sinks out of the 
+					! bottom goes to benthic detritus 
+
+					DO i=Istr,Iend
+  
+					  DO k = 1,N(ng)
+							Btmp(k) = Bio(i,k,iPhS)
+					    Hztmp(k) = Hz(i,j,k)
+					  END DO
+					  DO k = 0,N(ng)
+					    zwtmp(k) = z_w(i,j,k)
+					  END DO
+  
+					  call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0r8, sinkout)
+
+					  DO k = 1,N(ng)
+							DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
+					  END DO
+						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout*0.79_r8
+  
+					END DO
 
 
-          call BIOSINK_1(ng,wPhS,Bio(:,:,iPhS),sinkIN,                  &
-     &    sinkOUT,HzL,dtdays,z_wL,1.0_r8,LBi,UBi,IminS, ImaxS)
-   
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-#ifdef TRAP
-
-              if(k.eq.1)then
-                sinkOUT(i,1)=0.0_r8
-              endif
-#endif 
-              DBio(i,k,iPhS) =DBio(i,k,iPhS) +  (sinkIN(i,k)            &
-     &           - sinkOUT(i,k))/Hz(i,j,k)
-#ifdef BENTHIC
-              if(k.eq.1) then 
-                DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)+sinkOUT(i,k)*0.79_r8
-# ifdef STATIONARY2
-!               Stat2(i,8)=Stat2(i,8)+sinkOUT(i,k)*0.79_r8
-# endif
-              endif
-#endif
-#ifdef STATIONARY
-
-              Stat3(i,k,15)=Stat3(i,k,15)+sinkOUT(i,k)
-
-#endif
-            END DO
-          END DO
 
 
           call BIOSINK_1(ng,wPhL,Bio(:,:,iPhL),sinkIN,                  &
