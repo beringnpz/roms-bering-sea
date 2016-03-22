@@ -5265,6 +5265,9 @@
       ! Modifies Btmp and sinkout in the calling program
       !------------------------------------------------------------------ 
     
+      USE mod_param
+      implicit none
+		
       integer,  intent(in) :: n
       real(r8), intent(in) :: wBio
       real(r8), intent(in) :: zlimit
@@ -5305,7 +5308,7 @@
           END IF
         END DO
       ELSE
-        DO k=0,N(ng)
+        DO k=0,n
           wBiod(k) = wBio
         END DO
       END IF
@@ -5381,7 +5384,7 @@
       DO k=2,n-2
         dltL=MAX(cff,WL(k  ))
         dltR=MAX(cff,WR(k+1))
-        qR(i,k)=(dltR*qR(k)+dltL*qL(k+1))/(dltR+dltL)
+        qR(k)=(dltR*qR(k)+dltL*qL(k+1))/(dltR+dltL)
         qL(k+1)=qR(k)
       END DO
 
