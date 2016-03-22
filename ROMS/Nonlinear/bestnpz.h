@@ -5244,8 +5244,251 @@
 
       
 !=====================================================================
-!     BIORISE
+!     BioSink: New subroutine to replace BIOSINK_1, BIORISE_1
 !=====================================================================
+
+      Subroutine BioSink(n, Btmp, wBio, HzL, dtdays, z_wL, zlimit, sinkout)
+    
+      !------------------------------------------------------------------
+      ! Computes redistribution of a tracer in the water column due to 
+      ! sinking.  After J. Warner sed sink code.
+      !
+      !   n       = # layers
+      !   Btmp    = n x 1 array, tracer concentration (bottom to top)
+      !   wBio    = sinking rate (m d^-1)
+      !   HzL     = n x 1 array, thickness of layers (m)
+      !   dtdays  = time step (d)
+      !   z_wL    = n+1 x 1 array, depth of layer edges (m, negative)
+      !   zlimit  = maximum depth for sinking (m, negative)
+      !   sinkout = amount lost out of bottom cell (concentration)
+      !
+      ! Modifies Btmp and sinkout in the calling program
+      !------------------------------------------------------------------ 
+    
+      integer,  intent(in) :: n
+      real(r8), intent(in) :: wBio
+      real(r8), intent(in) :: zlimit
+      real(r8), intent(in) :: dtdays
+      real(r8), intent(in) :: z_wL(0:n)
+      real(r8), intent(inout) :: Btmp(n)
+      real(r8), intent(in) :: HzL(n)
+      real(r8), intent(inout) :: sinkout
+  
+      integer :: i,k,ks
+      real(r8) :: aL, aR, cff1, cff2
+      real(r8) :: cffL, cffR, cu, dltL, dltR,cff
+  
+      real(r8):: dBio(0:n), wBiod(0:n)
+      real(r8) :: FC(0:n)
+   
+      real(r8) :: Hz_inv(n)
+      real(r8) :: Hz_inv2(n)
+      real(r8) :: Hz_inv3(n)
+  
+      integer :: ksource(n)
+  
+      real(r8) :: qR(n)
+      real(r8) :: qL(n)
+      real(r8) :: WL(n)
+      real(r8) :: WR(n)
+      real(r8), dimension(n) :: qc
+  
+  
+      ! Modify sinking rates as necessary 
+  
+      IF ( zlimit .lt. 0 ) THEN
+        DO k=0,n
+          IF ( z_wL(k) .ge. zlimit ) THEN
+            wBiod(k) = wBio*exp(-1*(z_wL(k)-(zlimit/2))**2/(zlimit/2)**2)
+          ELSE
+            wBiod(k) = 0.0_r8
+          END IF
+        END DO
+      ELSE
+        DO k=0,N(ng)
+          wBiod(k) = wBio
+        END DO
+      END IF
+    
+      
+      ! Compute inverse thickness to avoid repeated divisions.
+
+
+      DO k=1,n
+        Hz_inv(k)=1.0_r8/HzL(k)
+      END DO
+      DO k=1,n-1
+        Hz_inv2(k)=1.0_r8/(HzL(k)+HzL(k+1))
+      END DO
+      DO k=2,n-1
+        Hz_inv3(k)=1.0_r8/(HzL(k-1)+HzL(k)+HzL(k+1))
+      END DO
+
+      DO k=1,n
+        qc(k)=Btmp(k)
+      END DO
+
+
+      ! Reconstruct vertical profile of suspended sediment "qc" in terms
+      ! of a set of parabolic segments within each grid box. Then, 
+      ! compute semi-Lagrangian flux due to sinking.
+
+      DO k=n-1,1,-1
+          FC(k)=(qc(k+1)-qc(k))*Hz_inv2(k)
+      END DO
+
+      DO k=2,n-1
+          dltR=HzL(k)*FC(k)
+          dltL=HzL(k)*FC(k-1)
+          cff=HzL(k-1)+2.0_r8*HzL(k)+HzL(k+1)
+          cffR=cff*FC(k)
+          cffL=cff*FC(k-1)
+
+          ! Apply PPM monotonicity constraint to prevent oscillations 
+          ! within the grid box.
+
+          IF ((dltR*dltL).le.0.0_r8) THEN
+            dltR=0.0_r8
+            dltL=0.0_r8
+          ELSE IF (ABS(dltR).gt.ABS(cffL)) THEN
+            dltR=cffL
+          ELSE IF (ABS(dltL).gt.ABS(cffR)) THEN
+            dltL=cffR
+          END IF
+
+          ! Compute right and left side values (qR,qL) of parabolic 
+          ! segments within grid box Hz(k); (WR,WL) are measures of 
+          ! quadratic variations.
+          !
+          !  NOTE: Although each parabolic segment is monotonic within 
+          !        its grid box, monotonicity of the whole profile is not 
+          !        guaranteed, because qL(k+1)-qR(k) may still have 
+          !        different sign than qc(k+1)-qc(k).  This possibility 
+          !        is excluded, after qL and qR are reconciled using WENO 
+          !        procedure.
+
+          cff=(dltR-dltL)*Hz_inv3(k)
+          dltR=dltR-cff*HzL(k+1)
+          dltL=dltL+cff*HzL(k-1)
+          qR(k)=qc(k)+dltR
+          qL(k)=qc(k)-dltL
+          WR(k)=(2.0_r8*dltR-dltL)**2
+          WL(k)=(dltR-2.0_r8*dltL)**2
+      END DO
+  
+      cff=1.0E-14_r8
+  
+      DO k=2,n-2
+        dltL=MAX(cff,WL(k  ))
+        dltR=MAX(cff,WR(k+1))
+        qR(i,k)=(dltR*qR(k)+dltL*qL(k+1))/(dltR+dltL)
+        qL(k+1)=qR(k)
+      END DO
+
+
+      FC(n)=0.0_r8                  ! no-flux boundary condition
+#if defined LINEAR_CONTINUATION
+      qL(n)=qR(n-1)
+      qR(n)=2.0_r8*qc(n)-qL(n)
+#elif defined NEUMANN
+      qL(n)=qR(n-1)
+      qR(n)=1.5_r8*qc(n)-0.5_r8*qL(n)
+#else
+      qR(n)=qc(n)                   ! default strictly monotonic
+      qL(n)=qc(n)                   ! conditions
+      qR(n-1)=qc(n)
+#endif
+#if defined LINEAR_CONTINUATION 
+      qR(1)=qL(2)
+      qL(1)=2.0_r8*qc(1)-qR(1)
+#elif defined NEUMANN
+      qR(1)=qL(2)
+      qL(1)=1.5_r8*qc(1)-0.5_r8*qR(1)
+#else  
+      qL(2)=qc(1)                   ! bottom grid boxes are
+      qR(1)=qc(1)                   ! re-assumed to be
+      qL(1)=qc(1)                   ! piecewise constant.
+#endif
+
+
+      ! Apply monotonicity constraint again, since the reconciled 
+      ! interfacial values may cause a non-monotonic behavior of the 
+      ! parabolic segments inside the grid box.
+
+      DO k=1,n
+          dltR=qR(k)-qc(k)
+          dltL=qc(k)-qL(k)
+          cffR=2.0_r8*dltR
+          cffL=2.0_r8*dltL
+          IF ((dltR*dltL).lt.0.0_r8) THEN
+            dltR=0.0_r8
+            dltL=0.0_r8
+          ELSE IF (ABS(dltR).gt.ABS(cffL)) THEN
+            dltR=cffL
+          ELSE IF (ABS(dltL).gt.ABS(cffR)) THEN
+            dltL=cffR
+          END IF
+          qR(k)=qc(k)+dltR
+          qL(k)=qc(k)-dltL
+      END DO
+  
+      ! After this moment reconstruction is considered complete. The next
+      ! stage is to compute vertical advective fluxes, FC. It is expected
+      ! that sinking may occurs relatively fast, the algorithm is designed
+      ! to be free of CFL criterion, which is achieved by allowing
+      ! integration bounds for semi-Lagrangian advective flux to use as
+      ! many grid boxes in upstream direction as necessary.
+      !
+      ! In the two code segments below, WL is the z-coordinate of the
+      ! departure point for grid box interface z_w with the same indices;
+      ! FC is the finite volume flux; ksource(:,k) is index of vertical
+      ! grid box which contains the departure point (restricted by N(ng)). 
+      ! During the search: also add in content of whole grid boxes
+      ! participating in FC.
+  
+      DO k=1,n
+        cff=dtdays*ABS(wBiod(k))
+        FC(k-1)=0.0_r8
+        WL(k)=z_wL(k-1)+cff
+        WR(k)=HzL(k)*qc(k)
+        ksource(k)=k
+      END DO
+      DO k=1,n
+        DO ks=k,n-1
+          IF (WL(k).gt.z_wL(ks)) THEN
+            ksource(k)=ks+1
+            FC(k-1)=FC(k-1)+WR(ks)
+          END IF
+        END DO
+      END DO
+
+      ! Finalize computation of flux: add fractional part.
+
+      DO k=1,n
+
+        ks=ksource(k)
+        cu=MIN(1.0_r8,(WL(k)-z_wL(ks-1))*Hz_inv(ks))
+        FC(k-1)=FC(k-1)+                                                &
+     &                HzL(ks)*cu*                                       &
+     &                (qL(ks)+                                          &
+     &                 cu*(0.5_r8*(qR(ks)-qL(ks))-                      &
+     &                     (1.5_r8-cu)*                                 &
+     &                     (qR(ks)+qL(ks)-2.0_r8*qc(ks))))
+
+      END DO
+
+      ! New profile of tracer Btmp (mass per volume)
+
+      DO k=1,n
+        Btmp(k)=qc(k)+(FC(k)-FC(k-1))*Hz_inv(k)
+      END DO
+
+      ! Amount lost out of bottom cell (mass per area)
+
+      sinkout = FC(0)
+  
+      RETURN
+      END SUBROUTINE BioSink
    
 !=======================================================================
 !    DetSINK 
