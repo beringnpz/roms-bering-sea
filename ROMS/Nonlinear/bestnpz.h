@@ -535,7 +535,7 @@
 
 			real(r8), dimension(N(ng)) :: Btmp, Hztmp
 			real(r8), dimension(0:N(ng)) :: zwtmp
-			real(r8) :: sinkout   
+			real(r8) :: sinkout2   
 
            
 !----------------------
@@ -3438,7 +3438,7 @@
 					Btmp = 0    ! tracer profile, (1:n)
 					Hztmp = 0   ! layer thickness, (1:n)
 					zwtmp = 0   ! layer edges, (0:n)
-					sinkout = 0 ! loss out of bottom cell (1)
+					sinkout2 = 0 ! loss out of bottom cell (1)
 
 					! Small phytoplankton: sinks, and 79% of what sinks out of the 
 					! bottom goes to benthic detritus 
@@ -3453,292 +3453,173 @@
 					    zwtmp(k) = z_w(i,j,k)
 					  END DO
   
-					  call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0r8, sinkout)
+					  call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
 
 					  DO k = 1,N(ng)
 							DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
 					  END DO
-						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout*0.79_r8
+						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
   
 					END DO
 
 
+          ! Large phytoplankton: sinks, and 79% of what sinks out of the 
+          ! bottom goes to benthic detritus 
+					
+					DO i=Istr,Iend
+  
+					  DO k = 1,N(ng)
+							Btmp(k) = Bio(i,k,iPhL)
+					    Hztmp(k) = Hz(i,j,k)
+					  END DO
+					  DO k = 0,N(ng)
+					    zwtmp(k) = z_w(i,j,k)
+					  END DO
+  
+					  call BioSink(N(ng), Btmp, wPhL, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
 
+					  DO k = 1,N(ng)
+							DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
+					  END DO
+						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+  
+					END DO
 
-          call BIOSINK_1(ng,wPhL,Bio(:,:,iPhL),sinkIN,                  &
-     &           sinkOUT,HzL,dtdays,z_wL,1.0_r8,LBi,UBi,IminS, ImaxS) 
+          ! Slow-sinking detritus: sinks, and 79% of what sinks out of the 
+          ! bottom goes to benthic detritus 
+					
+					DO i=Istr,Iend
+  
+					  DO k = 1,N(ng)
+							Btmp(k) = Bio(i,k,iDet)
+					    Hztmp(k) = Hz(i,j,k)
+					  END DO
+					  DO k = 0,N(ng)
+					    zwtmp(k) = z_w(i,j,k)
+					  END DO
+  
+					  call BioSink(N(ng), Btmp, wDet, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+
+					  DO k = 1,N(ng)
+							DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
+					  END DO
+						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+  
+					END DO
+
+          ! Fast-sinking detritus: sinks, and 79% of what sinks out of the 
+          ! bottom goes to benthic detritus 
+					
+					DO i=Istr,Iend
+  
+					  DO k = 1,N(ng)
+							Btmp(k) = Bio(i,k,iDetF)
+					    Hztmp(k) = Hz(i,j,k)
+					  END DO
+					  DO k = 0,N(ng)
+					    zwtmp(k) = z_w(i,j,k)
+					  END DO
+  
+					  call BioSink(N(ng), Btmp, wDetF, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+
+					  DO k = 1,N(ng)
+							DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
+					  END DO
+						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+  
+					END DO
+					
+          ! On-shelf large copepods (NCaS i.e. CM): Move up and down 
+          ! based on dates set in input file.  If water is deeper than 
+          ! 400 m, stop at 400m.  If shallower, when they hit the bottom, 
+          ! the biomass is transferred to benthic detritus.  Uses zlimit 
+          ! to enforce 400-m limit when going down, and to prevent rising 
+          ! out of the surface layer on the way up
           
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-#ifdef TRAP
-              if(k.eq.1)then
-                sinkOUT(i,1)=0.0_r8
-              endif
-#endif 
-              DBio(i,k,iPhL) = DBio(i,k,iPhL) +  (sinkIN(i,k)           &
-     &          -sinkOUT(i,k))/Hz(i,j,k) 
-
-
-#ifdef BENTHIC       
-              if(k.eq.1) then 
-                DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)+ sinkOUT(i,k)*0.79_r8
-# ifdef STATIONARY2
-!               Stat2(i,8)=Stat2(i,8)+ sinkOUT(i,k)*0.79_r8
-# endif
-              endif
-#endif
-#ifdef STATIONARY
-                
-              Stat3(i,k,15)=Stat3(i,k,15)+sinkOUT(i,k)
-                 
-#endif
-            END DO
-          END DO
-
-
-          call BIOSINK_1(ng,wDet,Bio(:,:,iDet),sinkIN,                  &
-     &           sinkOUT,HzL,dtdays,z_wL,1.0_r8,LBi,UBi,IminS, ImaxS)
-    
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-
-#ifdef TRAP
-            if(k.eq.1)then
-              sinkOUT(i,1)=0.0_r8
-            endif
-#endif   
-
-            DBio(i,k,iDet) =DBio(i,k,iDet) +  (sinkIN(i,k)              &
-     &          -sinkOUT(i,k))/Hz(i,j,k) 
-#ifdef BENTHIC       
-            if(k.eq.1) then 
-              DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)+ sinkOUT(i,k)*0.79_r8
-# ifdef STATIONARY2
-!             Stat2(i,8)=Stat2(i,8)+sinkOUT(i,k)*0.79_r8
-# endif
-            endif
-#endif
-#ifdef STATIONARY
-               
-            Stat3(i,k,15)=Stat3(i,k,15)+sinkOUT(i,k)
-             
-#endif
-          END DO
-        END DO
-       
-        
-        call BIOSINK_1(ng,wDetF,Bio(:,:,iDetF),sinkIN,                  &
-     &         sinkOUT,HzL,dtdays,z_wL,1.0_r8,LBi,UBi,IminS, ImaxS)
- 
-    
-        DO k=1,N(ng)
           DO i=Istr,Iend
+            
+            if (downwardCM) then
+            
+              DO k = 1,N(ng)
+								Btmp(k) = Bio(i,k,iNCaS)
+                Hztmp(k) = Hz(i,j,k)
+              END DO
+              DO k = 0,N(ng)
+                zwtmp(k) = z_w(i,j,k)
+              END DO
+            
+              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2)
 
-
-
-#ifdef TRAP
-            if(k.eq.1)then
-              sinkOUT(i,1)=0.0_r8
-            endif
-#endif   
-            DBio(i,k,iDetF) =DBio(i,k,iDetF) +  (sinkIN(i,k)            &
-     &          - sinkOUT(i,k))/Hz(i,j,k) 
-#ifdef BENTHIC       
-            if(k.eq.1) then 
-              DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)+ sinkOUT(i,k)*0.79_r8
-# ifdef STATIONARY2
-!             Stat2(i,8)=Stat2(i,8)+ sinkOUT(i,k)*0.79_r8
-# endif
-            endif
-#endif
-#ifdef STATIONARY
-                
-            Stat3(i,k,15)=Stat3(i,k,15)+sinkOUT(i,k)
-#endif
-
-          END DO
-        END DO          
-! 
-!  Alternate sinking code -Ken
-!  Sinking code developed by C. Lewis and E. Dobbins
-!  Not sure where this came from     
-!
-
-!       call BIOSINK(ng,wPhS,Bio(LBi-1,1,iPhS),DBio(LBi-1,1,iPhS),      &
-!    &                  HzL,dtdays,z_wL,1.0_r8,LBi,UBi)
-     
-     
-!       call BIOSINK(ng,wPhL,Bio(LBi-1,1,iPhL),DBio(LBi-1,1,iPhL),      &
-!    &                  HzL,dtdays,z_wL,1.0_r8,LBi,UBi)
-
-!-----------------------------------------------------------------------
-!ROMS seems to bomb with shallow water. Use of the
-!DetSINK option seems to have problems in shallow water
-!See if it will run OK for water deeper than 60
-! (this check now happens inside DetSINK)
-!-----------------------------------------------------------------------
-! 
-!       call DetSINK(ng,wDet,Bio(LBi-1,1,iDet),DBio(LBi-1,1,iDet),      &
-!    &                       HzL,dtdays,z_wL,1.0_r8,Dens,LBi,UBi)
-
-
-!=======================================================================
-! Large Copepod Diapause
-!=======================================================================
-
-#ifdef DIAPAUSE
-
-        DO k=1,N(ng)
-          DO i=Istr,Iend
-            sinkOUT(i,k) = 0.0_r8
-            sinkIN(i,k)  = 0.0_r8
-            riseIN(i,k)  = 0.0_r8
-            riseOUT(i,k) = 0.0_r8
-          END DO
-        END DO 
-       
-      
-        IF ( downward ) THEN
-     
-!  Off-shelf lg cops (Neocalanus) diapause G. Gibson Aug 2010
-!  Rules: Dont sink deeper that 400m
-! 
-!  If the depth of the bottom layer is > 400m loss of material
-!  from sinking Neocalanus -> Benthic detritus
-      
-!  sinking subroutine adapted from J. Warner+ Dobbins zlimit
-!  G. Gibson July 2008
-  
-          call BIOSINK_1(ng,wNCsink,Bio(:,:,iNCaO),sinkIN,              &
-     &           sinkOUT,HzL,dtdays,z_wL,1.0_r8,LBi,UBi,IminS, ImaxS) 
-      
-          
-          DO  k=1,N(ng)
-            DO i=Istr,Iend
-        
-              if(z_r(i,j,k).le.-400)THEN
-                sinkOUT(i,k)=0.0_r8   !dont sink deeper that 400m
-              endif
-        
-              DBio(i,k,iNCaO) = DBio(i,k,iNCaO) +  (sinkIN(i,k)         &
-     &                          -sinkOUT(i,k))/Hz(i,j,k)
-     
-# ifdef BENTHIC 
-! 
-!  loss out of the bottom layer goes to benthic detritus
-! 
-              if(k.eq.1)THEN
-                if(z_r(i,j,1).gt.-400)THEN
-                
-                  DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)+ sinkOUT(i,k)
-        
-                endif
-              endif
-
-# endif
-
-            END DO
-          END DO
-     
-     
-        ELSE IF (upward) THEN
-     
-!  Rising code adapted from J. Warner sink code + Dobbins zlimit
-!  G. Gibson July 2008
-     
-          call BIORISE_1(ng,wNCrise,Bio(:,:,iNCaO),riseOUT,             &
-     &           riseIN,HzL,dtdays,z_wL,LBi,UBi,1.0_r8,IminS, ImaxS) 
-  
-
-!  Off shelf lg cops (Neocalanus) diapause G. Gibson Aug 2010
-!  Rules: If Neocalanus is in water >=400m then rise up. 
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-              if (z_r(i,j,1) .le. -400.0_r8) then 
-                DBio(i,k,iNCaO) =DBio(i,k,iNCaO) +  (riseIN(i,k)       &
-     &              -riseOUT(i,k))/Hz(i,j,k) 
-              endif 
-
-            END DO
-          END DO
-
-        END IF
-     
-     
-     
-        IF ( downwardCM ) THEN
-     
-!  On-shelf lg cops (C. Marshallae) diapause G. Gibson Aug 2010
-!  Rules: Dont sink out of bottom layer
-        
-  
-!  sinking subroutine adapted from J. Warner+ Dobbins zlimit
-!  G. Gibson July 2008
-
-       
-          call BIOSINK_1(ng,wNCsink,Bio(:,:,iNCaS),sinkIN,              &
-     &           sinkOUT,HzL,dtdays,z_wL,1.0_r8,LBi,UBi,IminS, ImaxS) 
-      
-          
-          DO  k=1,N(ng)
-            DO i=Istr,Iend
-        
-              if(k.eq.1)THEN
-                sinkOUT(i,k)=0.0_r8   !dont sink out of bottom layer
-              endif
-        
-              DBio(i,k,iNCaS) =DBio(i,k,iNCaS) +  (sinkIN(i,k)          &
-     &                    -sinkOUT(i,k))/Hz(i,j,k)
-     
-
-# ifdef STATIONARY
-!             Stat3(i,k,7)= 1_r8
-!             Stat3(i,k,5)= 0_r8
-!             Stat3(i,k,6)= 0_r8
-!             Stat3(i,k,7)=sinkIN(i,k) /Hz(i,j,k)
-!             Stat3(i,k,8)= sinkOUT(i,k)/Hz(i,j,k)
-# endif         
-
-            END DO
-          END DO
-     
-     
-        ELSE IF (upwardCM) THEN
-     
-!  Rising code adapted from J. Warner sink code + Dobbins zlimit
-!  G. Gibson July 2008
-     
-          call BIORISE_1(ng,wNCrise,Bio(:,:,iNCaS),riseOUT,             &
-     &      riseIN,HzL,dtdays,z_wL,LBi,UBi,1.0_r8,IminS, ImaxS) 
-  
-
-!  On shelf cops (C. Marshallae) diapause G. Gibson Aug 2010
-!  Rules: If C. Marshallae is in water <=200m then rise up. 
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-              if (z_r(i,j,1) .gt. -200.0_r8) then 
-                DBio(i,k,iNCaS) =DBio(i,k,iNCaS) +  (riseIN(i,k)       &
-     &            -riseOUT(i,k))/Hz(i,j,k) 
-              endif 
-# ifdef STATIONARY
-!             Stat3(i,k,7)= 0_r8
-!             Stat3(i,k,8)= 0_r8
-!             Stat3(i,k,5)= riseIN(i,k)
-!             Stat3(i,k,6)= riseOUT(i,k)
-    
-# endif    
-            END DO
-          END DO
-        ELSE
-        
-				END IF
-#endif
+              DO k = 1,N(ng)
+								DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
+              END DO
+            
+							DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
               
+            else if (upwardCM) then
+              
+              DO k = 1,N(ng)
+                Btmp(k) = Bio(i,N(ng)+1-k,iNCaS) ! flip
+                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
+              END DO
+              DO k = 0,N(ng)
+                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
+              END DO
+              
+              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
+              
+              DO k = 1,N(ng)
+								DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaS)) ! flip back
+              END DO
+              
+            end if
+            
+          END DO
+          
+          ! Off-shelf large copepods (NCaO i.e. NC): Same as above, but
+          ! with different dates
+          
+          DO i=Istr,Iend
+            
+            if (downward) then
+            
+              DO k = 1,N(ng)
+                Btmp(k) = Bio(i,k,iNCaO)
+                Hztmp(k) = Hz(i,j,k)
+              END DO
+              DO k = 0,N(ng)
+                zwtmp(k) = z_w(i,j,k)
+              END DO
+            
+              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2)
+
+              DO k = 1,N(ng)
+                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
+              END DO
+            
+              DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+              
+            else if (upward) then
+              
+              DO k = 1,N(ng)
+                Btmp(k) = Bio(i,N(ng)+1-k,iNCaO) ! flip
+                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
+              END DO
+              DO k = 0,N(ng)
+                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
+              END DO
+              
+              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
+              
+              DO k = 1,N(ng)
+                DBio(i,k,iNCaO) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaO)) ! flip back
+              END DO
+              
+            end if
+            
+          END DO
+
+ 
 
 !=======================================================================
 !Ice Sub Model
