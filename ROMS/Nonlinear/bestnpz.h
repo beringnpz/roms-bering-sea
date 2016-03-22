@@ -530,6 +530,12 @@
       real(r8) :: Alpha
       real(r8) :: ALPHA_N,ALPHA_P, kN, kP, alphaPhSv, alphaPhLv
       real(r8) ::respNC, respCM 
+			
+			! Vertical movement
+
+			real(r8), dimension(N(ng)) :: Btmp, Hztmp
+			real(r8), dimension(0:N(ng)) :: zwtmp
+			real(r8) :: sinkout   
 
            
 !----------------------
