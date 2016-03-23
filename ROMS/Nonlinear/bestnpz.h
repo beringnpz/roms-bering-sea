@@ -536,6 +536,8 @@
 			real(r8), dimension(N(ng)) :: Btmp, Hztmp
 			real(r8), dimension(0:N(ng)) :: zwtmp
 			real(r8) :: sinkout2   
+			
+			real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
 
            
 !----------------------
@@ -548,67 +550,58 @@
    
 
 #ifdef DIAPAUSE
-!
-!  Based on date, determine if NCa are going upwards or downwards
-!
-      downward = .false.
-      upward = .false.
-      
-      downwardCM = .false.
-      upwardCM = .false.
-      
-      IF ( ( RiseStart.lt.RiseEnd .and.                                 &
-     &       yday.ge.RiseStart .and. yday.le.RiseEnd ) .or.             &
-     &     ( RiseStart.gt.RiseEnd .and.                                 &
-     &      ( yday.ge.RiseStart .or. yday.le.RiseEnd ) ) )  THEN
-        upward = .true.
-      ELSE IF ( ( SinkStart.lt.SinkEnd .and.                            &
-     &       yday.ge.SinkStart .and. yday.le.SinkEnd ) .or.             &
-     &     ( SinkStart.gt.SinkEnd .and.                                 &
-     &      ( yday.ge.SinkStart .or. yday.le.SinkEnd ) ) )  THEN
-        downward = .true.
-      END IF
-      
-      
-      IF ( ( RiseStart+30.lt.RiseEnd+30 .and.                           &
-     &       yday.ge.RiseStart+30 .and. yday.le.RiseEnd+30) .or.        &
-     &     ( RiseStart+30.gt.RiseEnd+30 .and.                           &
-     &      ( yday.ge.RiseStart+30 .or. yday.le.RiseEnd+30)))  THEN
-        upwardCM = .true.
-      ELSE IF ( ( SinkStart+30.lt.RiseStart+30 .and.                    &
-     &       yday.ge.SinkStart+30 .and. yday.lt.RiseStart+30 ) .or.     &
-     &     ( SinkStart+30.gt.RiseStart+30.and.                          &
-     &      ( yday.ge.SinkStart+30 .or. yday.lt.RiseStart+30 ) ) )  THEN
-        downwardCM = .true.
-      END IF
-      
-      
-      
-      IF ( ( SinkStart+30.lt.RiseEnd+30 .and.                           &
-     &       yday.ge.SinkStart+30 .and. yday.le.RiseEnd+30) .or.        &
-     &     ( SinkStart+30.gt.RiseEnd+30 .and.                           &
-     &      ( yday.ge.SinkStart+30 .or. yday.le.RiseEnd+30)))  THEN
-     
-      
-        respCM=respNCa*0.3_r8
-      else 
-        respCM=respNCa
-      END IF
-       
-       
-      IF ( ( SinkStart.lt.RiseEnd .and.                                &
-     &       yday.ge.SinkStart .and. yday.le.RiseEnd) .or.             &
-     &     ( SinkStart.gt.RiseEnd .and.                                &
-     &      ( yday.ge.SinkStart .or. yday.le.RiseEnd)))  THEN
-     
-      
-        respNC=respNCa*0.3_r8
-      else 
-        respNC=respNCa
-      END IF  
-#else
-      respCM=respNCa
-      respNC=respNCa
+
+		 ! For diapause, set movement direction flags for large copepods, 
+	 	 ! and lower respiration rates if they're in the diapause phase.
+	 	 ! NCaS = CM = mostly C. melanaster, on-shelf
+	 	 ! NCaO = NC = mostly Neocalanus, off-shelf
+   
+	 	 RSNC = MOD(RiseStart, 366.0)
+	 	 RENC = MOD(RiseEnd,   366.0)
+	 	 SSNC = MOD(SinkStart, 366.0)
+	 	 SENC = MOD(SinkEnd,   366.0)
+   
+	 	 RSCM = MOD(RiseStart + 30, 366.0)
+	 	 RECM = MOD(RiseEnd   + 30, 366.0)
+	 	 SSCM = MOD(SinkStart + 30, 366.0)
+	 	 SECM = MOD(SinkEnd   + 30, 366.0)
+   
+	 	 upward =     ((RSNC.lt.RENC) .and.                                &
+	 	&              (yday.ge.RSNC .and. yday.le.RENC))                  &
+	 	&             .or.                                                 &
+	 	&             ((RSNC.gt.RENC) .and.                                &
+	 	&              (yday.ge.RSNC .or.  yday.le.RENC))
+           
+	 	 upwardCM =   ((RSCM.lt.RECM) .and.                                &
+	 	&              (yday.ge.RSCM .and. yday.le.RECM))                  &
+	 	&             .or.                                                 &
+	 	&             ((RSCM.gt.RECM) .and.                                &
+	 	&              (yday.ge.RSCM .or.  yday.le.RECM))
+            
+	 	 downward   = ((SSNC.lt.SENC) .and.                                &
+	 	&              (yday.ge.SSNC .and. yday.le.SENC))                  &
+	 	&             .or.                                                 &
+	 	&             ((SSNC.gt.SENC) .and.                                &
+	 	&              (yday.ge.SSNC .or.  yday.le.SENC))
+            
+	 	 downwardCM = ((SSCM.lt.SECM) .and.                                &
+	 	&              (yday.ge.SSCM .and. yday.le.SECM))                  &
+	 	&             .or.                                                 &
+	 	&             ((SSCM.gt.SECM) .and.                                &
+	 	&              (yday.ge.SSCM .or.  yday.le.SECM))
+   
+	 	 if (upward .or. downward) then
+	 	   respNC = respNCa * 0.3_r8
+	 	 else
+	 	   respNC = respNCa
+	 	 end if
+   
+	 	 if (upwardCM .or. downwardCM) then
+	 	   respCM = respNCa * 0.3_r8
+	 	 else
+	 	   respCM = respNCa
+	 	 end if
+		 
 #endif
 
 !
