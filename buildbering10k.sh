@@ -3,6 +3,26 @@
 # on either cluster1 or beast.  It compiles 3 separate variants: 
 # physics-only, bestnpz, and feast.  
 #
+# Syntax: 
+#   buildbering10k
+#   buildbering10k [suffix]
+#
+#		suffix: string to add on to the end of the oceanM executables.  
+#           Useful if compiling a version based on a branch without 
+#           wanting to overwrite the master-compiled version.  If not 
+#           included, the default names (oceanM_phys, oceanM_npz, and 
+#           oceanM_feast) will be used.
+
+
+if [ "$#" -ne 1 ]; then
+	physfile="oceanM_phys"
+	npzfile="oceanM_npz"
+	feastfile="oceanM_feast"
+else
+	physfile="oceanM_phys_$1"
+	npzfile="oceanM_npz_$1"
+	feastfile="oceanM_feast_$1"
+fi
 
 #--------------
 # Setup
@@ -65,8 +85,8 @@ if [ $? -ne 0 ]; then
     echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM oceanM_phys
-	echo "  Success: oceanM_phys created"
+    mv oceanM $physfile
+	echo "  Success: $physfile created"
 fi
 
 # Compile bestnpz
@@ -82,8 +102,8 @@ if [ $? -ne 0 ]; then
     echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM oceanM_npz
-	echo "  Success: oceanM_npz created"
+    mv oceanM $npzfile
+	echo "  Success: $npzfile created"
 fi
 
 # Compile Feast
@@ -99,8 +119,8 @@ if [ $? -ne 0 ]; then
     echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM oceanM_feast
-	echo "  Success: oceanM_feast created"
+    mv oceanM $feastfile
+	echo "  Success: $feastfile created"
 fi
 
 
