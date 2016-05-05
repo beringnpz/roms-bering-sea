@@ -18,10 +18,12 @@ if [ "$#" -ne 1 ]; then
 	physfile="oceanM_phys"
 	npzfile="oceanM_npz"
 	feastfile="oceanM_feast"
+	npzdbfile="oceanM_npz_db"
 else
 	physfile="oceanM_phys_$1"
 	npzfile="oceanM_npz_$1"
 	feastfile="oceanM_feast_$1"
+	npzdbfile="oceanM_npz_db_$1"
 fi
 
 #--------------
@@ -119,8 +121,8 @@ if [ $? -ne 0 ]; then
     echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM $npzfile
-	echo "  Success: $npzfile created"
+    mv oceanM $npzdbfile
+	echo "  Success: $npzdbfile created"
 fi
 
 # Compile Feast
