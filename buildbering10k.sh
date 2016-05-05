@@ -106,6 +106,23 @@ else
 	echo "  Success: $npzfile created"
 fi
 
+# Combile debugging-version of bestnpz
+
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4
+export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DUSE_DEBUG"
+
+make clean &>/dev/null
+echo "Compiling bestnpz (debugging) variant"
+make -j &> buildouterr.txt
+if [ $? -ne 0 ]; then
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+else
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanM $npzfile
+	echo "  Success: $npzfile created"
+fi
+
 # Compile Feast
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3
