@@ -18,12 +18,12 @@ if [ "$#" -ne 1 ]; then
 	physfile="oceanM_phys"
 	npzfile="oceanM_npz"
 	feastfile="oceanM_feast"
-	npzdbfile="oceanM_npz_db"
+	npzdbfile="oceanG_npz"
 else
 	physfile="oceanM_phys_$1"
 	npzfile="oceanM_npz_$1"
 	feastfile="oceanM_feast_$1"
-	npzdbfile="oceanM_npz_db_$1"
+	npzdbfile="oceanG_npz_$1"
 fi
 
 #--------------
@@ -111,7 +111,7 @@ fi
 # Combile debugging-version of bestnpz
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4
-export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DUSE_DEBUG"
+export      USE_DEBUG=on
 
 make clean &>/dev/null
 echo "Compiling bestnpz (debugging) variant"
@@ -121,7 +121,7 @@ if [ $? -ne 0 ]; then
     echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
 else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM $npzdbfile
+    mv oceanG $npzdbfile
 	echo "  Success: $npzdbfile created"
 fi
 
@@ -129,6 +129,7 @@ fi
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3
 export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
+export      USE_DEBUG=
 
 make clean &>/dev/null
 echo "Compiling feast variant"
