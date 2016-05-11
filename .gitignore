@@ -42,10 +42,8 @@ Apps/NEP/Build*
 Build
 ocean?
 oceanM_*
+oceanG_*
 core*
 .svn*
 Compilers/make_macros.mk
 
-# emacs autosave     #
-###################### 
-*~
