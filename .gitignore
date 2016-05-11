@@ -46,4 +46,5 @@ oceanG_*
 core*
 .svn*
 Compilers/make_macros.mk
+*~
 
