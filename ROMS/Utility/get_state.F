@@ -1238,7 +1238,7 @@
     
 !  Read in benthic initial conditions.
 !        if(time(ng).eq.ntstart(ng)) THEN
-        DO itrc=1,1 !,NBeT(ng)
+        DO itrc=1,NBeT(ng)
           IF (get_var(idBvar(itrc))) THEN
             foundit=find_string(var_name, n_var,                        &
      &                          TRIM(Vname(1,idBvar(itrc))), varid)
