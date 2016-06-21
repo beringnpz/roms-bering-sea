@@ -320,7 +320,7 @@
 #  define TCLIMATOLOGY     /* Processing of tracer climatology for iron */
 #  undef   STATIONARY
 #  undef   STATIONARY2
-#  undef  PROD3 /* KAK 06/19/2016 because idPT3var index is causing all sorts of trouble... TODO */
+#  define  PROD3 
 #  undef  PROD2
 #  undef SINKVAR           /* for variable sinking rate*/
 #  undef DENMAN
