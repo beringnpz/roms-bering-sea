@@ -19,11 +19,13 @@ if [ "$#" -ne 1 ]; then
 	npzfile="oceanM_npz"
 	feastfile="oceanM_feast"
 	npzdbfile="oceanG_npz"
+	feastdbfile="oceanG_feast"
 else
 	physfile="oceanM_phys_$1"
 	npzfile="oceanM_npz_$1"
 	feastfile="oceanM_feast_$1"
 	npzdbfile="oceanG_npz_$1"
+	feastdbfile="oceanG_feast_$1"
 fi
 
 #--------------
@@ -141,6 +143,24 @@ else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM $feastfile
 	echo "  Success: $feastfile created"
+fi
+
+# Compile Feast, debug mode
+
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4
+export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
+export      USE_DEBUG=on
+
+make clean &>/dev/null
+echo "Compiling feast (debugging) variant"
+make -j &> buildouterr.txt
+if [ $? -ne 0 ]; then
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+else
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanG $feastdbfile
+	echo "  Success: $feastdbfile created"
 fi
 
 
