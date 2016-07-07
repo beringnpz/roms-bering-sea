@@ -79,7 +79,7 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 
 # Compile physics
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1_phys
 
 make clean &>/dev/null
 echo "Compiling physics-only variant"
@@ -95,7 +95,7 @@ fi
 
 # Compile bestnpz
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2_npz
 export      MY_CPP_FLAGS="-DBEST_NPZ"
 
 make clean &>/dev/null
@@ -112,7 +112,7 @@ fi
 
 # Combile debugging-version of bestnpz
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4_npzdb
 export      USE_DEBUG=on
 
 make clean &>/dev/null
@@ -129,7 +129,7 @@ fi
 
 # Compile Feast
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3_feast
 export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
 export      USE_DEBUG=
 
@@ -147,7 +147,7 @@ fi
 
 # Compile Feast, debug mode
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build5_feastdb
 export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
 export      USE_DEBUG=on
 
