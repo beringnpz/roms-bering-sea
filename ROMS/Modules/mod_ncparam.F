@@ -419,17 +419,21 @@
 !
         integer, allocatable :: iDbio2(:)     ! 2D biological terms
 
-        integer  :: iCOfx                     ! air-sea CO2 flux
-        integer  :: iDNIT                     ! denitrification flux
-        integer  :: ipCO2                     ! partial pressure of CO2
-        integer  :: iO2fx                     ! air-sea O2 flux
+        integer  :: iCOfx=1                     ! air-sea CO2 flux
+!        integer  :: iDNIT                     ! denitrification flux
+        integer  :: ipCO2=2                     ! partial pressure of CO2
+!        integer  :: iO2fx                     ! air-sea O2 flux
 !
 !  Biological 3D diagnostic variable IDs.
 !
         integer, allocatable :: iDbio3(:)     ! 3D biological terms
 
         integer  :: iPPro = 1                 ! primary productivity
-        integer  :: iNO3u = 2                 ! NO3 uptake
+!        integer  :: iNO3u = 2                 ! NO3 uptake
+        integer  :: iAPro=2                  ! N uptake alk flux
+        integer  :: iResp=3                      ! respiration
+        integer  :: iGraz=4                      ! grazing flux
+        integer  :: iNit=5                    ! nitrification flux
 !
 !  Tracer/Momentum Diagnostic variable IDs.
 !
@@ -855,7 +859,7 @@
         allocate ( idVbld(NST) )
 #endif
 #ifdef DIAGNOSTICS
-# if defined BIO_FENNEL && defined DIAGNOSTICS_BIO
+# if (defined BIO_FENNEL || defined BEST_NPZ) && defined DIAGNOSTICS_BIO
         allocate ( iDbio2(NDbio2d) )
         allocate ( iDbio3(NDbio3d) )
 # endif
@@ -3185,7 +3189,50 @@
               CASE ('idTclm(iFe)')
                 idTclm(iFe)=varid
 #  endif
+# ifdef CARBON
+!              CASE ('idRtrc(iTIC_)')
+!                idRtrc(iTIC_)=varid
+!              CASE ('idRtrc(iTAlk)')
+!                idRtrc(iTAlk)=varid
+              CASE ('idTvar(iTIC_)')
+                idTvar(iTIC_)=varid
+              CASE ('idTvar(iTAlk)')
+                idTvar(iTAlk)=varid
+              CASE ('idTbry(iwest,iTIC_)')
+                idTbry(iwest,iTIC_)=varid
+              CASE ('idTbry(ieast,iTIC_)')
+                idTbry(ieast,iTIC_)=varid
+              CASE ('idTbry(isouth,iTIC_)')
+                idTbry(isouth,iTIC_)=varid
+              CASE ('idTbry(inorth,iTIC_)')
+                idTbry(inorth,iTIC_)=varid
+              CASE ('idTbry(iwest,iTAlk)')
+                idTbry(iwest,iTAlk)=varid
+              CASE ('idTbry(ieast,iTAlk)')
+                idTbry(ieast,iTAlk)=varid
+              CASE ('idTbry(isouth,iTAlk)')
+                idTbry(isouth,iTAlk)=varid
+              CASE ('idTbry(inorth,iTAlk)')
+                idTbry(inorth,iTAlk)=varid
 
+# endif
+# ifdef DIAGNOSTICS_BIO
+              CASE ('iDbio2(iCOfx)')
+                iDbio2(iCOfx)=varid
+              CASE ('iDbio2(ipCO2)')
+                iDbio2(ipCO2)=varid
+              CASE ('iDbio3(iPPro)')
+                iDbio3(iPPro)=varid
+              CASE ('iDbio3(iAPro)')
+                iDbio3(iAPro)=varid
+             CASE ('iDbio3(iResp)')
+                iDbio3(iResp)=varid
+             CASE ('iDbio3(iGraz)')
+                iDbio3(iGraz)=varid
+              CASE ('iDbio3(iNit)')
+                iDbio3(iNit)=varid
+
+# endif
 # ifdef BENTHIC
               CASE ('idBvar(iBen)')
                idBvar(iBen)=varid

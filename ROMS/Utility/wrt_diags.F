@@ -246,6 +246,59 @@
         END IF
       END DO
 # endif
+# if defined BEST_NPZ && defined DIAGNOSTICS_BIO
+!
+!  Write out 2D biological diagnostic fields.
+!
+      DO ivar=1,NDbio2d
+        ifield=iDbio2(ivar)
+        IF (Hout(ifield,ng)) THEN
+          scale=1.0_r8
+          gtype=gfactor*r2dvar
+          status=nf_fwrite2d(ng, iNLM, ncDIAid(ng), diaVid(ifield,ng),  &
+     &                       tDIAindx(ng), gtype,                       &
+     &                       LBi, UBi, LBj, UBj, scale,                 &
+#  ifdef MASKING
+     &                       GRID(ng) % rmask,                          &
+#  endif
+     &                       DIAGS(ng) % DiaBio2d(:,:,ivar))
+          IF (status.ne.nf90_noerr) THEN
+            IF (Master) THEN
+              WRITE (stdout,10) TRIM(Vname(1,ifield)), tDIAindx(ng)
+            END IF
+            exit_flag=3
+            ioerror=status
+            RETURN
+          END IF
+        END IF
+      END DO
+!
+!  Write out 3D biological diagnostic fields.
+!
+      DO ivar=1,NDbio3d
+        ifield=iDbio3(ivar)
+        IF (Hout(ifield,ng)) THEN
+          scale=1.0_r8
+          gtype=gfactor*r3dvar
+          status=nf_fwrite3d(ng, iNLM, ncDIAid(ng), diaVid(ifield,ng),  &
+     &                       tDIAindx(ng), gtype,                       &
+     &                       LBi, UBi, LBj, UBj, 1, N(ng), scale,       &
+#  ifdef MASKING
+     &                       GRID(ng) % rmask,                          &
+#  endif
+     &                       DIAGS(ng) % DiaBio3d(:,:,:,ivar))
+          IF (status.ne.nf90_noerr) THEN
+            IF (Master) THEN
+              WRITE (stdout,10) TRIM(Vname(1,ifield)), tDIAindx(ng)
+            END IF
+            exit_flag=3
+            ioerror=status
+            RETURN
+          END IF
+        END IF
+      END DO
+# endif
+
 !
 !  Synchronize time-average NetCDF file to disk to allow other processes
 !  to access data immediately after it is written.

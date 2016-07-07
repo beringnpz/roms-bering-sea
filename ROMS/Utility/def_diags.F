@@ -516,6 +516,53 @@
           END IF
         END DO
 # endif
+# ifdef BEST_NPZ
+!
+!  Define 2D biological diagnostic fields.
+!
+        DO ivar=1,NDbio2d
+          ifield=iDbio2(ivar)
+          IF (Hout(ifield,ng)) THEN
+            Vinfo( 1)=Vname(1,ifield)
+            WRITE (Vinfo( 2),'(a,1x,a)') 'averaged',                    &
+     &                                   TRIM(Vname(2,ifield))
+            Vinfo( 3)=Vname(3,ifield)
+            Vinfo(14)=Vname(4,ifield)
+            Vinfo(16)=Vname(1,idtime)
+#  if defined WRITE_WATER && defined MASKING
+            Vinfo(20)='mask_rho'
+#  endif
+            Vinfo(22)='coordinates'
+            Aval(5)=REAL(r3dvar,r8)
+            status=def_var(ng, iNLM, ncDIAid(ng), diaVid(ifield,ng),    &
+     &                     NF_FOUT, nvd3, t2dgrd, Aval, Vinfo, ncname)
+            IF (exit_flag.ne.NoError) RETURN
+          END IF
+        END DO
+!
+!  Define 3D biological diagnostic fields.
+!
+        DO ivar=1,NDbio3d
+          ifield=iDbio3(ivar)
+          IF (Hout(ifield,ng)) THEN
+            Vinfo( 1)=Vname(1,ifield)
+            WRITE (Vinfo( 2),'(a,1x,a)') 'averaged',                    &
+     &                                   TRIM(Vname(2,ifield))
+            Vinfo( 3)=Vname(3,ifield)
+            Vinfo(14)=Vname(4,ifield)
+            Vinfo(16)=Vname(1,idtime)
+#  if defined WRITE_WATER && defined MASKING
+            Vinfo(20)='mask_rho'
+#  endif
+            Vinfo(22)='coordinates'
+            Aval(5)=REAL(r3dvar,r8)
+            status=def_var(ng, iNLM, ncDIAid(ng), diaVid(ifield,ng),    &
+     &                     NF_FOUT, nvd4, t3dgrd, Aval, Vinfo, ncname)
+            IF (exit_flag.ne.NoError) RETURN
+          END IF
+        END DO
+# endif
+
 !
 !-----------------------------------------------------------------------
 !  Leave definition mode.
@@ -625,6 +672,22 @@
             END IF
           END DO
 # endif
+# ifdef BEST_NPZ
+          DO ivar=1,NDbio2d
+            ifield=iDbio2(ivar)
+            IF (TRIM(var_name(i)).eq.TRIM(Vname(1,ifield))) THEN
+              got_var(ifield)=.TRUE.
+              diaVid(ifield,ng)=var_id(i)
+            END IF
+          END DO
+          DO ivar=1,NDbio3d
+            ifield=iDbio3(ivar)
+            IF (TRIM(var_name(i)).eq.TRIM(Vname(1,ifield))) THEN
+              got_var(ifield)=.TRUE.
+              diaVid(ifield,ng)=var_id(i)
+            END IF
+          END DO
+# endif
         END DO
 !
 !  Check if diagnostics variables are available in input NetCDF file.
@@ -700,6 +763,27 @@
           END IF
         END DO
 # endif
+# ifdef BEST_NPZ
+        DO ivar=1,NDbio2d
+          ifield=iDbio2(ivar)
+          IF (.not.got_var(ifield).and.Hout(ifield,ng)) THEN
+            IF (Master) WRITE (stdout,60) TRIM(Vname(1,ifield)),        &
+     &                                    TRIM(ncname)
+            exit_flag=3
+            RETURN
+          END IF
+        END DO
+        DO ivar=1,NDbio3d
+          ifield=iDbio3(ivar)
+          IF (.not.got_var(ifield).and.Hout(ifield,ng)) THEN
+            IF (Master) WRITE (stdout,60) TRIM(Vname(1,ifield)),        &
+     &                                    TRIM(ncname)
+            exit_flag=3
+            RETURN
+          END IF
+        END DO
+# endif
+
 !
 !  Set unlimited time record dimension to the appropriate value.
 !

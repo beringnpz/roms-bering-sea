@@ -1250,7 +1250,7 @@
 #   undef DIAGNOSTICS_TS
 # endif
 #endif
-#if !defined BIO_FENNEL && defined DIAGNOSTICS_BIO
+#if !defined BIO_FENNEL && !defined BEST_NPZ && defined DIAGNOSTICS_BIO
 #  undef DIAGNOSTICS_BIO
 #endif
 #if defined DIAGNOSTICS_BIO || defined DIAGNOSTICS_TS || \

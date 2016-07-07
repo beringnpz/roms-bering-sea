@@ -53,6 +53,7 @@
          real(r8), pointer ::IceNO3(:,:,:)
          real(r8), pointer ::IceNH4(:,:,:)
          real(r8), pointer ::IceLog(:,:,:)
+         real(r8), pointer ::Aice(:,:,:)
 #  endif
 #  endif      
       
@@ -134,6 +135,8 @@
       allocate (ICE(ng) % IceNH4(LBi:UBi,LBj:UBj,2) )
      
       allocate (ICE(ng) % IceLog(LBi:UBi,LBj:UBj,2) )
+
+      allocate (ICE(ng) % Aice(LBi:UBi,LBj:UBj,2) )
 #  endif
 #  endif	      
              
@@ -282,7 +285,8 @@
 	      ICE(ng) % IceNH4(i,j,2) = IniVal
 	      ICE(ng) % IceLog(i,j,1) = -1.0_r8
 	      ICE(ng) % IceLog(i,j,2) = -1.0_r8
-	      
+	      ICE(ng) % Aice(i,j,1) = IniVal
+              ICE(ng) % Aice(i,j,2) = IniVal 
              
             END DO
           END DO

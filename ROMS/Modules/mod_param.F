@@ -440,18 +440,36 @@
 !
 !  Number of tracers for the Bering Sea ecosystem model.
 !
-#  if defined JELLY
-#    if defined IRON_LIMIT
-        integer, parameter :: NBT = 15
-#    else
-        integer, parameter :: NBT = 14
+#  if defined CARBON
+#    if defined JELLY
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 17
+#      else
+          integer, parameter :: NBT = 16
+#      endif
+#    else 
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 16
+#      else
+          integer, parameter :: NBT = 15
+#      endif
 #    endif
-#  else
 
-#    if defined IRON_LIMIT
-        integer, parameter :: NBT = 14
+#  else
+#    if defined JELLY
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 15
+#      else
+          integer, parameter :: NBT = 14
+#      endif
 #    else
-        integer, parameter :: NBT = 13
+
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 14
+#      else
+          integer, parameter :: NBT = 13
+#      endif
+
 #    endif
 
 #  endif
@@ -832,6 +850,14 @@
         NDbio2d=NDbio2d+1
 #  endif
 # endif
+# if defined BEST_NPZ && defined DIAGNOSTICS_BIO
+!
+!  Source and sink biology diagnostic terms.
+!
+        NDbio3d=5
+        NDbio2d=2
+
+#endif
 #endif
 !
 !-----------------------------------------------------------------------

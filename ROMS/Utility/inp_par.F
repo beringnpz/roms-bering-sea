@@ -7096,9 +7096,7 @@
 	        ELSE IF (TRIM(KeyWord).eq.'tI0') THEN
             Npts=load_r(Nval, Rval, 1,tI0)
 	        ELSE IF (TRIM(KeyWord).eq.'KI') THEN
-            Npts=load_r(Nval, Rval, 1,KI)  
-	    
-	    
+            Npts=load_r(Nval, Rval, 1,KI)    
 !-------------------
 !Benthic Parameters
 !-------------------
@@ -7642,8 +7640,91 @@
         !  write (out,30) line
 
 #endif      
-         
+#ifdef DIAGNOSTICS_BIO
+#ifdef CARBON
+          ELSE IF (TRIM(KeyWord).eq.'Hout(iCOfx)') THEN
+            IF (iDbio2(iCOfx).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio2(iCOfx)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio2(iCOfx)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+            END DO
 
+
+          ELSE IF (TRIM(KeyWord).eq.'Hout(ipCO2)') THEN
+            IF (iDbio2(ipCO2).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio2(ipCO2)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio2(ipCO2)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+            END DO
+
+          ELSE IF (TRIM(KeyWord).eq.'Hout(iPPro)') THEN
+            IF (iDbio3(iPPro).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio3(iPPro)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio3(iPPro)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+            END DO
+          ELSE IF (TRIM(KeyWord).eq.'Hout(iAPro)') THEN
+            IF (iDbio3(iAPro).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio3(iAPro)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio3(iAPro)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+            END DO
+         ELSE IF (TRIM(KeyWord).eq.'Hout(iResp)') THEN
+            IF (iDbio3(iResp).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio3(iResp)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio3(iResp)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+            END DO
+         ELSE IF (TRIM(KeyWord).eq.'Hout(iGraz)') THEN
+            IF (iDbio3(iGraz).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio3(iGraz)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio3(iGraz)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+           END DO
+        ELSE IF (TRIM(KeyWord).eq.'Hout(iNit)') THEN
+           IF (iDbio3(iNit).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio3(iNit)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio3(iNit)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+            END DO
+#  endif
+#  endif
+         
 	END IF 
 	 
 	 
@@ -7711,7 +7792,23 @@
      &            Hout(idTvar(i),ng), 'Hout(idTvar)',                   &
      &            'Write out tracer ', i, TRIM(Vname(1,idTvar(i)))
             END DO
-          END IF
+#  ifdef DIAGNOSTICS_BIO
+#   if (defined CARBON ) 
+            DO itrc=1,NDbio2d
+              i=iDbio2(itrc)
+              IF (Hout(i,ng)) WRITE (out,222)                           &
+     &            Hout(i,ng), 'Hout(iDbio2)', 'Diagnostics for',        &
+     &            TRIM(Vname(1,i))
+            END DO
+#   endif
+            DO itrc=1,NDbio3d
+              i=iDbio3(itrc)
+              IF (Hout(i,ng)) WRITE (out,222)                           &
+     &            Hout(i,ng), 'Hout(iDbio3)', 'Diagnostics for',        &
+     &            TRIM(Vname(1,i))
+            END DO
+#endif           
+           END IF
         END DO
       END IF
       DO ng=1,Ngrids
@@ -7741,7 +7838,7 @@
   90  FORMAT (1p,e11.4,2x,a,'(',i2.2,')',t28,a,/,t30,a,i2.2,':',1x,a)
 ! 100  FORMAT (1p,e11.4,2x,a,t28,a)
 ! 110  FORMAT (1p,e11.4,2x,a,t28,a,/,t30,a)
-
+ 222  FORMAT (10x,l1,2x,a,t30,a,1x,a)
 
 # elif defined BIO_GOANPZ
 !

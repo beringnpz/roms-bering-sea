@@ -82,6 +82,7 @@
 # define AVERAGES_FLUXES
 # undef AVERAGES_QUADRATIC
 # undef DIAGNOSTICS_TS
+# define DIAGNOSTICS
 #endif
 #undef DIAGNOSTICS_UV
  
@@ -312,6 +313,8 @@
                               Else use Sarah Hinckly originl code   */
 #  define JELLY
 #  define IRON_LIMIT       /* Add iron  */
+#  define CARBON           /* include carbon*/
+#  define DIAGNOSTICS_BIO
 #  define BENTHIC          /*FENNEL or BENTHIC or TRAP*/
 #  define ICE_BIO
 #  undef CLIM_ICE_1D
@@ -320,7 +323,7 @@
 #  define TCLIMATOLOGY     /* Processing of tracer climatology for iron */
 #  undef   STATIONARY
 #  undef   STATIONARY2
-#  undef  PROD3 
+#  define PROD3
 #  undef  PROD2
 #  undef SINKVAR           /* for variable sinking rate*/
 #  undef DENMAN
