@@ -320,7 +320,7 @@
 #  define TCLIMATOLOGY     /* Processing of tracer climatology for iron */
 #  undef   STATIONARY
 #  undef   STATIONARY2
-#  define  PROD3 
+#  undef  PROD3 
 #  undef  PROD2
 #  undef SINKVAR           /* for variable sinking rate*/
 #  undef DENMAN
