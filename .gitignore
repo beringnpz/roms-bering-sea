@@ -40,6 +40,9 @@ Thumbs.db
 ###################### 
 Apps/NEP/Build*
 Build
+buildbering10k.sh
+Compilers/Linux-ifort.mk
+makefile
 ocean?
 oceanM_*
 oceanG_*
