@@ -109,7 +109,6 @@
      &                   ,ICE(ng) % hi                                  &
      &                   ,ICE(ng) % ai                                  & 
      &                   ,ICE(ng) % ageice                              &
-     &                   ,ICE(ng) % Aice                                &
      &                   ,ICE(ng) % ui                                  &
      &                   ,ICE(ng) % vi                                  &
 # endif
@@ -184,7 +183,6 @@
      &                            ,hi                                   &  
      &                            ,ai                                   &  
      &                            ,ageice                               &
-     &                            ,Aice                                 &
      &                            ,ui,vi                                &
 # endif
 #endif
@@ -331,7 +329,6 @@
       real(r8), intent(in) :: hi(LBi:,LBj:,:)
       real(r8), intent(in) :: ai(LBi:,LBj:,:)
       real(r8), intent(in) :: ageice(LBi:,LBj:,:)
-      real(r8), intent(in) :: Aice(LBi:,LBj:,:)
       real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
@@ -403,7 +400,6 @@
       real(r8), intent(in) :: hi(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: ai(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: ageice(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in) :: Aice(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IcePhL(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNO3(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNH4(LBi:UBi,LBj:UBj,2)
@@ -4448,7 +4444,11 @@
 !!          CO2_Flux=cff3*CO2_sol*(pCO2air_secular-pCO2(i))
              if(pCO2(i).gt.0.0_r8)then
                   CO2_Flux=cff3*CO2_sol*(pCO2air-pCO2(i))*              &
-     &            (1.0_r8-Aice(i,j,nstp))
+     &            (1.0_r8-ai(i,j,nstp))
+!	     	if(ai(i,j,nstp).gt.0.8_r8)then 
+!		  print *, 'ai', ai(i,j,nstp)
+!	     	else
+!	     	endif 	
             else
                   CO2_Flux = 0.0_r8
             endif
