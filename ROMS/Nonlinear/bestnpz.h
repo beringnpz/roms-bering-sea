@@ -3179,7 +3179,9 @@
      &         +   xi*(TFEup*BasalMetEup*dtdays*Bio(i,k,iEupO))
 #ifdef JELLY
                  Bio(i,k,iTIC_)=Bio(i,k,iTIC_)+                         &
-     &         +   (TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))/12._r8
+     &             (TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))/12._r8
+		 Bio(i,k,iTAlk)=Bio(i,k,iTALK)+                         &
+     &            xi*(TFJel*BasalMetJel*dtdays*Bio(i,k,iJel)) 
 #endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
