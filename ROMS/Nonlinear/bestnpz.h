@@ -2802,8 +2802,12 @@
                     
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &          xi * TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
-     
-
+#ifdef CARBON
+	  Bio(i,k,iTIC_)=Bio(i,k,iTIC_)+                         & 
+     & 	      (TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS))/12._r8
+          Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+                                &
+     &        xi * TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
+#endif 
 !-----------------------------------------------------------------------
 !  Primary production of Small phytoplankton
 !-----------------------------------------------------------------------
@@ -2854,7 +2858,12 @@
                
                DBio(i,k,iNH4) = DBio(i,k,iNH4) +                        &
      &           xi * TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-    
+#ifdef CARBON
+          Bio(i,k,iTIC_)=Bio(i,k,iTIC_)+                         &       
+     &        (TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL))/12._r8
+          Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+                                &
+     &        xi * TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
+#endif    
 !-----------------------------------------------------------------------
 !  Primary production of Large phytoplankton
 !-----------------------------------------------------------------------
@@ -2970,9 +2979,9 @@
      &          xi*(TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL))
 #ifdef CARBON
                  Bio(i,k,iTIC_)=Bio(i,k,iTIC_)+                         &
-     &        +((TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL)))/12._r8
+     &        ((TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL)))/12._r8
           Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+                                &
-     &         + xi*(TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL))
+     &          xi*(TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL))
 # endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
