@@ -8,12 +8,12 @@
 !  This routine computes the biological sources and sinks and adds     !
 !  then the global biological fields.                                  !
 !                                                                      !
-!  Georgina Gibsons BESTNPZ Code July 2010  
+!  Georgina Gibsons BESTNPZ Code August 2016  
 !
-!  Modified from Sarah Hinckleys GOANPZ code                                   !
-!  Implemented by Craig Lewis (CVL)                                    !
-!  Modified by Liz Dobbins and Sarah Hinckley                          !
-!                                                                      !
+!  Originally modified from Sarah Hinckleys GOANPZ code which had been
+!   implemented by Craig Lewis (CVL) and modified by Liz Dobbins and Sarah Hinckley   
+!                       !
+!                                                                        !
 !=======================================================================
 
       USE mod_param
