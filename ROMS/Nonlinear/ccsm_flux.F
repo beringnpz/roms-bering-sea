@@ -436,6 +436,9 @@ contains
 
       real(r8), parameter :: eps = 1.0E-20_r8
       real(r8), parameter :: r3 = 1.0_r8/3.0_r8
+! ratio of molecular weight of water to dry air
+      real(r8), parameter :: epsilon = 0.622_r8
+
 
       real(r8) :: Bf, Ce, Ch, Hl, Hlw, Hscale, Hscale2, Hs, Hsr, IER
       real(r8) :: PairM,  RH, Taur, cff1, cff2
@@ -802,7 +805,7 @@ contains
           slp = Pair(i,j)*100._r8 !Convert back to Pascal from millibars
           cff = 611._r8*                                                &
      &      10._r8**(9.5_r8*(sfc_temp-273.16_r8)/(sfc_temp-7.66_r8))
-          Qsati=eps*cff/(slp-(1._r8-.62197_r8)*cff)
+          Qsati=epsilon*cff/(slp-(1._r8-.62197_r8)*cff)
           dq_i=Hair(i,j)-Qsati
           fqlat1=rhoAir(i)*Ce*vmag
           qlh_i = fqlat1*le_i*dq_i
@@ -870,7 +873,7 @@ contains
 # ifdef LONGWAVE
           qlwi = emmiss*StefBo*(TairK(i)**4)*                           &
      &         (0.39_r8-0.005_r8*SQRT(vap_p_i))*                        &
-     &                (1.0_r8-0.65_r8*cloud(i,j)) +                     &
+     &                (1.0_r8-0.65_r8*cloud(i,j)) -                     &
      &          4._r8*StefBo*emmiss*TairK(i)**3*(sfc_temp-TairK(i))
 
           Coef_Ice(i,j) = Coef_Ice(i,j) +                               &
@@ -880,20 +883,18 @@ contains
      &    (0.39_r8-0.005_r8*SQRT(vap_p_i))*(1.0_r8-0.65_r8*cloud(i,j))  &
      &    - 4.0_r8)
 # else
-           qlwi = lrflx(i,j)*Hscale
-           RHS_Ice(i,j) = RHS_Ice(i,j) -                                &
-     &           lrflx(i,j)*Hscale -                                    &
-     &     4._r8*StefBo*emmiss*TairK(i)**3*(sfc_temp-2._r8*TairK(i))
-
-           Coef_Ice(i,j) = Coef_Ice(i,j) +                              &
-     &            4._r8*StefBo*emmiss*TairK(i)**3
+          qlwi = lrflx(i,j)*Hscale - emmiss*StefBo*sfc_temp**4
+          Coef_Ice(i,j) = Coef_Ice(i,j) +                               &
+     &            4._r8*StefBo*emmiss*sfc_temp**3
+          RHS_Ice(i,j) = RHS_Ice(i,j) + lrflx(i,j)*Hscale +             &
+     &            3._r8*StefBo*emmiss*sfc_temp**4
 # endif
 ! Correct for Kelvin to Celsius in RHS
            RHS_Ice(i,j) = RHS_Ice(i,j) -                                &
      &            Coef_Ice(i,j)*273.16_r8      
 
 ! Net heat flux from ice to atmosphere
-           Qai(i,j) =-qsh_i - qlh_i - qswi + qlwi
+           Qai(i,j) = -qsh_i - qlh_i - qswi - qlwi
 #  endif
 # endif
           !--- heat flux ---
