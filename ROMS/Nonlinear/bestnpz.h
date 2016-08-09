@@ -964,7 +964,10 @@
             DBio(i,N(ng),iNO3)=DBio(i,N(ng),iNO3)-Bio(i,N(ng),iNO3)*aidz/Hz(i,j,N(ng))
             DBio(i,N(ng),iNH4)=DBio(i,N(ng),iNH4)-Bio(i,N(ng),iNH4)*aidz/Hz(i,j,N(ng))
             DBio(i,N(ng),iPhL)=DBio(i,N(ng),iPhL)-Bio(i,N(ng),iPhL)*aidz/Hz(i,j,N(ng))
-
+# ifdef CARBON
+	    DBio(i,N(ng),iTIC_)=DBio(i,N(ng),iTIC_)-Bio(i,N(ng),iTIC_)*aidz/Hz(i,j,N(ng))
+	    DBio(i,N(ng),iTAlk)=DBio(i,N(ng),iTAlk)-Bio(i,N(ng),iTAlk)*aidz/Hz(i,j,N(ng))
+# endif
           elseif (IceLog(i,j,nstp).le.0.and.IceLog(i,j,nnew).le.0)THEN
      
             IcePhL(i,j,nstp) = 0_r8   
@@ -4197,7 +4200,15 @@
               DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)+cff1/Hz(i,j,N(ng))
               DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)+cff2/Hz(i,j,N(ng))
     
-      
+# ifdef CARBON
+	      DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)                 &
+    &			   +cff1/Hz(i,j,N(ng))*16._r8                   &
+    &                      +cff2/Hz(i,j,N(ng))*16._r8
+	      DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)                 &
+    &                      -cff1/Hz(i,j,N(ng))                          &
+    &                      +cff2/Hz(i,j,N(ng))
+# endif
+	      
 # if defined CLIM_ICE_1D     
 #  if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
@@ -4222,6 +4233,12 @@
      
                   DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+cff1/aidz
                   DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
+# ifdef CARBON
+		  DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
+   &                      -cff1/Hz(i,j,N(ng))*16._r8
+                  DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
+   &                      +cff1/Hz(i,j,N(ng)) 
+# endif
                 endif
               else if(cff1.lt.0_r8)THEN
 # if defined BERING_10K  
@@ -4233,6 +4250,12 @@
    
                   DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+cff1/aidz
                   DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
+# ifdef CARBON
+                  DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
+   &                       -cff1/Hz(i,j,N(ng))*16._r8
+                  DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
+   &                       +cff1/Hz(i,j,N(ng))
+# endif
                 endif
               endif
 
@@ -4245,6 +4268,12 @@
 
                   DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)+cff2/aidz
                   DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))
+# ifdef CARBON
+                  DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
+    &                      -cff2/Hz(i,j,N(ng))*16._r8
+                  DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
+    &                      -cff2/Hz(i,j,N(ng))
+# endif
                 endif
              else if(cff2.lt.0_r8)THEN
 # if defined BERING_10K  
@@ -4255,7 +4284,13 @@
 # endif
  
                   DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)+cff2/aidz
-                  DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNO3)-cff2/Hz(i,j,N(ng))
+                  DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))
+# ifdef CARBON  
+                  DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
+     &                    -cff2/Hz(i,j,N(ng))*16._r8
+                  DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
+     &                    -cff2/Hz(i,j,N(ng))
+# endif
                 endif
               endif
       
@@ -4313,6 +4348,12 @@
   
                 DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)                 &
      &               + IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))
+# ifdef CARBON
+                DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)               &
+     &               + IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))*16._r8
+	        DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)               &
+     &               - IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))
+# endif 
               endif
 
               if((Bio(i,N(ng),iNH4)+IceNH4(i,j,nnew)).le.IceNH4(i,j,nnew))THEN
@@ -4320,6 +4361,12 @@
   
                 DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)                 &
      &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))
+# ifdef CARBON
+                DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)               &
+     &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))*16._r8
+                DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)               &
+     &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))
+# endif
               endif
 
               DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)-IceNO3(i,j,nstp)
