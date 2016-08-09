@@ -179,7 +179,7 @@
 ! 
          delta=abs(eone**2+e2r*etwos)
          delta=max(sqrt(delta),epso)
-         pice(i,j)=pstar(ng)*hi(i,j,liold)                              &
+         pice(i,j)=pstar(ng)*hi(i,j,liold)**2                           &
      &                *exp(-astren(ng)*(1.0_r8-ai(i,j,liold)))
          zetai(i,j)=pice(i,j)/(2.0_r8*delta)
          zmax = 2.5E+8_r8*pice(i,j)
