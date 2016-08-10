@@ -556,15 +556,15 @@
 	 	 ! NCaS = CM = mostly C. melanaster, on-shelf
 	 	 ! NCaO = NC = mostly Neocalanus, off-shelf
    
-	 	 RSNC = MOD(RiseStart, 366.0)
-	 	 RENC = MOD(RiseEnd,   366.0)
-	 	 SSNC = MOD(SinkStart, 366.0)
-	 	 SENC = MOD(SinkEnd,   366.0)
+	 	 RSNC = MOD(RiseStart, 366.0_r8)
+	 	 RENC = MOD(RiseEnd,   366.0_r8)
+	 	 SSNC = MOD(SinkStart, 366.0_r8)
+	 	 SENC = MOD(SinkEnd,   366.0_r8)
    
-	 	 RSCM = MOD(RiseStart + 30, 366.0)
-	 	 RECM = MOD(RiseEnd   + 30, 366.0)
-	 	 SSCM = MOD(SinkStart + 30, 366.0)
-	 	 SECM = MOD(SinkEnd   + 30, 366.0)
+	 	 RSCM = MOD(RiseStart + 30, 366.0_r8)
+	 	 RECM = MOD(RiseEnd   + 30, 366.0_r8)
+	 	 SSCM = MOD(SinkStart + 30, 366.0_r8)
+	 	 SECM = MOD(SinkEnd   + 30, 366.0_r8)
    
 	 	 upward =     ((RSNC.lt.RENC) .and.                                &
 	 	&              (yday.ge.RSNC .and. yday.le.RENC))                  &
