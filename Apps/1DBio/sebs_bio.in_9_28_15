@@ -1,0 +1,395 @@
+!                                                                             !
+!
+!==============================================================================
+!  Copyright (c) 2002 ROMS/TOMS Group, version 2.0                          ===
+!========================================================= Hernan G. Arango ===
+!                                                                             !
+! Input parameters can be entered in ANY order, provided that the parameter   !
+! KYWORD (usually, upper case) is typed correctly followed by "="  or "=="   !
+! symbols. Any comment lines are allowed and must begin with an exclamation   !
+! mark (!) in column one.  Comments may  appear to the right of a parameter   !
+! specification to improve documentation.  All comments will ignored during   !
+! reading.  Blank lines are also allowed and ignored. Continuation lines in   !
+! a parameter specification are allowed and must be preceded by a backslash   !
+! (\).  In some instances, more than one value is required for a parameter.   !
+! If fewer values are provided, the  last value  is assigned for the entire   !
+! parameter array.  The multiplication symbol (*),  without blank spaces in   !
+! between, is allowed for a parameter specification.  For example, in a two   !
+! grids nested application:                                                   !
+!                                                                             !
+!    AKT_BAK == 2*1.0d-6  2*5.0d-6              ! m2/s                        !
+!                                                                             !
+! indicates that the first two entries of array AKT_BAK,  in fortran column-  !
+! major order, will have the same value of "1.0d-6" for grid 1,  whereas the  !
+! next two entries will have the same value of "5.0d-6" for grid 2.           !
+!                                                                             !
+! In multiple levels of nesting and/or multiple connected domains  step-ups,  !
+! "Ngrids" entries are expected for some of these parameters.  In such case,  !
+! the order of the entries for a parameter is extremely important.  It  must  !
+! follow the same order (1:Ngrids) as in the state variable declaration. The  !
+! USER may follow the above guidelines for specifying his/her values.  These  !
+! parameters are marked by "==" plural symbol after the KEYWORD.              !
+!                                                                             !
+!==============================================================================
+!
+! NOTICE: Input parameter units are specified within brakets and default 
+! ******  values are specified within braces.
+!
+! Switch to control the computation of biology within nested and/or multiple
+! connected grids.
+     Lbiology == T
+! Maximum number of iterations to achieve convergence of the nonlinear
+! solution. (Never tried this...)
+     BioIter == 1
+
+!  Portion of irradiance that is PAR
+    PARfrac  ==   0.5d0         !GG increased+ - Baker and Frouin 1987  Jerlov (1976) says 0.43
+
+!  Biological conversions
+     xi       ==  0.0126d0	! Nitrogen:Carbon ratio (mmol N / mg C)
+     ccr      ==  38.0d0	! Carbon:Chlorophyll ratio (mg C / mg Chl-a) 60 65
+     ccrPhL   ==  16.1d0        ! Carbon:Chlorophyll ratio (mg C / mg Chl-a) 40 25
+!  Light
+     k_ext    ==   0.034d0	! Extinction coefficient due to seawater (1/m) 0.046d0
+     k_extZ   ==   2.0d0        ! Depth correction to k_ext
+     k_chlA   ==   0.1159d0	! Extinction coefficient due to Phy. (1/m) 0.121d0 .7 0.0518d0
+     k_chlB   ==   0.2829d0
+     
+     
+     a_frac   == .58d0
+     a_mu1    == .35d0
+!  Small Phytoplankton
+     alphaPhS == 10.53d0	! Slope of P-I curve (mg C/mg Chl-a/E/m2)28.0d0 10 5.6d0
+     psiPhS   ==  1.8d0
+     DiS      ==   0.8d0	! Doubling rate parameter  was 1.0 1.2 0.6
+     DpS      ==   0.0275d0	! Doubling rate exponent  0.000750 0.015
+     k1PhS    ==   0.6d0  ! Half-saturation constant for NO3 limitation
+     k2PhS    ==   0.1d0	! Half-saturation constant for NH4 limitation 0.7d0
+     respPhS == 0.02d0           ! Specific respiration rate for PhS 0.2d0  0.03 nemuro
+     TmaxPhS == 12d0
+     KtBm_PhS == 0.0519d0     !0.069d0 0.0519  nemuro
+! Large Phytoplankton
+     alphaPhL == 5.24d0	! Slope of P-I curve (mg C/mg Chl-a/E/m2) 21.0d0 10 2.20d
+     psiPhL   == 3.0d0    !3
+     DiL      ==   1.0d0	! Doubling rate parameter  0.85  2.3d 1.1
+     DpL      ==   0.0275d0     !0.000750d0	! Doubling rate exponent -was 0.0275d0
+     k1PhL    ==   0.1d0	! Half-saturation constant for NO3 limitation 0.1 
+     k2PhL    ==   0.6d0	! Half-saturation constant for NH4 limitation 0.5
+     respPhL == 0.02d0           ! Specific respiration rate for PhL        0.03 nemuro
+     TmaxPhL == 10.0d0          !10  8
+     KtBm_PhL == 0.0519d0     !0.069d0  0.0519 nemuro
+   
+	       
+!  Feeding preference of Small Microzooplankton 
+!     fpPhSMZS ==   0.0d0	! for Small Phytoplankton -was1.0
+!     fpPhLMZS ==   0.0d0	! for Large Phytoplankton was0
+!     eMZS     ==   0.0d0       !  was 3 1.07d0  ---0.4--- 
+!     Q10MZS   ==   0.0d0	! Q10 for growth rate
+!     Q10MZST  ==   0.0d0	! Temperature coefficient for Q10 (deg. C) 5.0d0 10.0d0
+!     fMZS     ==  10.0d0	! Half-saturation constant for grazing (mg C/m3)
+!     gammaMZS ==   0.7d0	! Growth efficiency        0.45d0
+!     kMZS     ==   0.7d0	! Assimilation efficiency
+!     microzoo resp    
+!     respMZS == 0.1d0           ! Specific respiration rate for MZS 0.2d0
+!     TmaxMZS == 5.0d0
+!     KtBm_MZS == 0.069d0  !
+
+
+
+!  Feeding preference of Large Microzooplankton 
+     fpPhSMZL ==   1.0d0	! for Small Phytoplankton
+     fpPhLMZL ==   0.8d0	! for Large Phytoplankton - was 1
+     fpMZSMZL ==   0.0d0        ! for Small Microzooplankton -was 1
+!  Large Microzooplankton growth
+     eMZL     ==   0.4d0	! maximum specific ingestion rate 0.4 (mg C/mg C/d)
+     Q10MZL   ==   2.0d0	! Q10 for growth rate
+     Q10MZLT  ==   10.0d0	! Temperature coefficient for Q10 (deg. C) 5 10.0d0
+     fMZL     ==   50.0d0	! Half-saturation constant for grazing (mg C/m3)
+     gammaMZL ==   0.7d0	! Growth efficiency     0.45 Straile
+!    kMZL     ==   0.7d0	! Assimilation efficiency
+     respMZL == 0.04d0           ! Specific respiration rate for MZL  0.1d0
+     TmaxMZL == 10.0d0
+     KtBm_MZL == 0.069d0   !0.069d0
+ 
+!  Feeding preference of Copepods
+     fpPhSCop ==   1.0d0	! for Small Phytoplankton
+     fpPhLCop ==   0.7d0	! for Large Phytoplankton  - was 1  .4
+     fpMZSCop ==   0.0d0	! for Small Microzooplankton -wsa 1
+     fpMZLCop ==   0.5d0	! for Large Microzooplankton - was .2
+!  Copepods growth
+!    eCop     ==   2.526d0	! maximum specific ingestion rate (mg C/mg C/d)2.526d
+     eCop     ==   0.20      !from russel 0.3 
+     Q10Cop   ==   1.37d0        !from russel
+     Q10CopT  ==   10.0d0	! Temperature coefficient for Q10 (deg. C)
+     fCop     ==  40.000d0
+     gammaCop ==   0.7d0	! Growth efficiency  0.25
+!     kCop     ==   0.5d0	! Assimilation efficiency
+     respCop == 0.05d0   !Basal metabolic rate day**-1
+     ktbmC == 0.069d0 !Temperature response degrees C**-1
+     TrefC == 15d0   !Reference temperature degrees C
+     
+!  Feeding preference of Neocalanus
+     fpPhSNCa ==   0.2d0	! for Small Phytoplankton 0.2
+     fpPhLNCa ==   1.0d0	! for Large Phytoplankton - was 1 
+!     fpMZSNCa ==   0.0d0	! for Small Microzooplankton -was 1 .5
+     fpMZLNCa ==   0.3d0	! for Large Microzooplankton -was 1
+!  Neocalanus growth
+     eNCa     ==   0.2d0	! maximum specific ingestion rate (mg C/mg C/d) 0.4 .2
+     Q10NCa   ==   1.6d0	! Q10 for growth rate
+     Q10NCaT  ==   5.0d0	! Temperature coefficient for Q10 (deg. C)
+     fNCa     ==  30.0d0	! Half-saturation constant for grazing (mg C/m3)
+     gammaNCa ==   0.7d0	! Growth efficiency  0.3
+!     kNCa     ==   0.5d0	! Assimilation efficiency
+     respNCa == 0.03d0   !Basal metabolic rate day**-1
+     ktbmN == 0.05d0 !Temperature response degrees C**-1
+     TrefN == 5d0   !Reference temperature degrees C
+     
+!  Feeding preference of Euphausiids
+     fpPhSEup ==   0.2d0	! for Large Phytoplankton - was 0.3 .2
+     fpPhLEup ==   1.0d0	! for Large Phytoplankton - was 0.3 1
+     fpMZSEup ==   0.0d0	! for Small Microzooplankton -was 1.0
+     fpMZLEup ==   0.1d0	! for Large Microzooplankton -1.0 .6
+     fpCopEup ==   0.1d0	! for Copepods -was 1
+     fpDetEup ==   0.4d0  !0.4
+     fpDetEupO ==  0.0d0 !0.2 
+       
+!  Euphausiids growth
+     eEup     ==   0.2d0	! maximum specific ingestion rate 0.1(mg C/mg C/d) -0.3d--
+     Q10Eup   ==   1.50d0	! Q10 for growth rate !0.9
+     Q10EupT  ==   5.0d0	! Temperature coefficient for Q10 (deg. C)
+     fEup     ==   40.0d0	! Half-saturation constant for grazing (mg C/m3)
+     gammaEup ==   0.7d0	! Growth efficiency  0.4d
+!     kEup     ==   0.45d0	! Assimilation efficiency
+     respEup == 0.02d0   !Basal metabolic rate day**-1 !0.02 0.044d0
+     ktbmE == 0.069d0 !Temperature response degrees C**-1
+     TrefE == 5d0   !Reference temperature degrees C
+     
+!  Small Phytoplankton senescence
+      mPhS  ==   0.0045d0	! daily linear mortality rate (1/d)
+!     mPhS  ==   0.1d0	! Maximum daily linear mortality rate (1/d)
+!     NcritPhS ==   0.6d0	! Critical NO3 for mortality
+!  Large Phytoplankton senescence
+      mPhL  ==   0.0045d0	! daily linear mortality rate (1/d)
+!     mPhL  ==   0.2d0	! Maximum daily linear mortality rate (1/d)
+!     NcritPhL ==   0.6d0	! Critical NO3 for mortality
+!  Zooplankton linear mortality
+!     mMZS     ==   0.005d0	! Daily mortality for Small Microzoo. (1/d)0.05d0
+      mMZL     ==   0.001d0	! Daily mortality for Large Microzoo. (1/d)0.05d0
+!     mCop     ==   0.002d0	! Daily mortality for Copepods (1/d)
+!     mNCa     ==   0.001d0	! Daily mortality for Neocalanus (1/d)
+!     mEup     ==   0.001d0	! Daily mortality for Euphausiids (1/d)
+!  Zooplankton nonlinear mortality / predation closure
+!     mpredMZS ==   0.001d0      ! Daily mortality for Small Microzoo. (1/d)
+!     mpredMZL ==   0.0001d0      ! Daily mortality for Large Microzoo. (1/d)
+     mpredCop ==   0.00025d0	! Daily mortality for Copepods (1/d)
+     mpredNCa ==   0.0025d0	! Daily mortality for Neocalanus (1/d)
+     mpredEup ==   0.0025d0	! Daily mortality for Euphausiids (1/d)
+!  Sinking and regeneration terms
+!     regen    ==   0.4d0	! Regeneration rate for Ammonium - was  0.4
+!     dgrad    ==   0.05d0	! Degradation rate for Detritus
+     wPhS     ==   0.50d0	! Sinking rate for Small Phytoplankton (m/d)0.00d0
+     wPhL     ==   1.00d0	! Sinking rate for Large Phytoplankton (m/d)
+     wDet     ==   10.0d0	! Sinking rate for Detritus (m/d) -was 3
+     wDetF    ==   30.0d0	! Sinking rate for Detritus (m/d) -was 3
+  
+!  Terms to define the Iron climatology field ( 2 nM = no iron limitation)
+     Feinlo   ==   2.0d0  !1.0d0        ! inshore/surface (micromol Fe m-3 or nM)
+     Feinhi   ==   4.0d0 !2.0d0        ! inshore/deep    (micromol Fe m-3 or nM)
+     Feinh    == 20.0d0        ! inshore isobath of transition (m)
+     Feofflo  ==   0.01d0       ! offshore/surface (micromol Fe m-3 or nM)
+     Feoffhi  ==   0.01d0 !0.50d0       ! offshore/deep    (micromol Fe m-3 or nM)
+     Feoffh   == 200.0d0        ! offshore isobath of transition (m)
+!  Iron limitation
+!    kfePhS   ==   0.3d0        ! half-saturation const. PhS (umol per m-3)
+     kfePhS   ==   0.3d0        ! half-saturation const. PhS (umol per m-3)0.3d0
+     kfePhL   ==   1.0d0        ! half-saturation const. PhL (umol per m-3) 1.8d0
+     FeC      ==   1.667d-4     ! Fe(umol):Carbon(mg) is 2 umol Fe : mol C
+     FeCritPS ==   0.2d0      ! Fe conc (nM) above which cells are not iron limited
+     FeCritPL ==   1.0d0      ! Fe conc (nM) above which cells are not iron limited
+!  Diapause
+     NCmaxz   == 500.0d0	! highest depth of diapausing NC (m)
+     wNCrise  ==  12.0d0	! upward velocity (m/day), tuned not data
+     wNCsink  ==  11.0d0	! downward velocity (m/day), tuned not data
+     RiseStart==  0.0d0	! Date NC begin to move upward (Day of Year) 0.0
+     RiseEnd  ==  60.0d0	! Date NC stop moving upward (Day of Year) 60
+     SinkStart== 155.0d0	! Date NC begin to move downward (Day of Year) 156
+     SinkEnd  == 366.0d0	! Date NC stop moving downward (Day of Year) 366.0
+! Zoobenthos Parameters
+       
+!     bmB == 0.04   !Basal metabolic rate day**-1
+!     ktbmB == 0.05 !Temperature response degrees C**-1
+!     TrefB == 15   !Reference temperature degrees C
+     
+     iremin   ==  0.800d0 !0.8
+     q10      ==  1.5d0 !3
+     q10r      == 1.5d0
+     Rup      ==  0.04d0  !0.5
+     KupD      == 1000d0  
+     KupP      == 10d0
+     LupD      == 292d0
+     LupP      == 1d0
+     Qres     ==0.08d0    !0.15d0
+     Rres     ==0.001d0  !0.0027d0
+     rmort    ==0.001d0
+     eex      ==0.3d0        0.3d0  
+     eexD     ==0.50d0        0.7d0
+     prefD    ==1.0d0         0.1d0
+     prefPL   ==1.0d0        0.1d0
+     prefPS   ==1.0d0         0.1d0
+     T0ben    ==5d0          !10.0d0
+     T0benr   ==5d0   !1.5
+     BenPred == 0.0000001d0  !0.01
+
+
+! Jellyfish Parameters
+     eJel        == 0.069d0   ! 1.0 0.1d0 0.04
+     gammaJel    == 1.0d0  ! greater than 1 because have unmodeled food source
+                              !13.9% large zooplankton, 71.5% small zooplankton,
+                              !0.8% jellyfish, 1% juvenile pollock, and 12.8% crab larvae
+                               !Approximately 15% un accounted for Trites 99
+!     respJel     == 2.0d0 !ref Olesen 
+        
+     mpredJel    == 0.006d0
+     fpCopJel    == 0.4d0  
+     fpNCaJel    == 1.0d0
+     fpEupJel    == 1.0d0
+     Q10Jelr      == 2.8d0
+     Q10Jele      == 2.4d0
+     Q10JelTr     ==12.0d0
+     Q10JelTe    == 12.0d0
+     fJel        ==5d0 !0.01
+     respJel == 0.02d0   !Basal metabolic rate day**-1 0- try 2 - see above
+     ktbmJ == 0.05d0 !Temperature response degrees C**-1
+     TrefJ == 10d0   !Reference temperature degrees C
+     
+!Ice Biology Params 
+!- note the original rates from Jin et al 2006 were hourly 
+!  so I converted them to daily
+!  by *24        
+     
+!     mu0  == 1.44d0        !growth rate 0.06h-1 = 1.44d0
+     alphaIb    == 0.80d0
+     betaI    == 0.018d0
+     inhib    == 1.46d0      !1.46d0
+     ksnut1    == 1.0d0
+     ksnut2    == 4.0d0
+     R0i    == 0.05d0      !respiration fraction
+     rg0    == 0.01d0     !mortality +excretion 9.23e-4 h-1
+     rg    == 0.03d0
+     annit    == 0.0149d0
+     aidz    == 0.02d0    
+     mu0  == 2.0d0        
+      
+     tI0==0.0095d0
+     KI==4d0
+     Nitr0==0.0107d0       !0.0107_r8
+     KnT==0.0693d0          !0.15_r8
+     Pv0 == 0.01d0   !PON dicompositon at 0 deg C (d-1)  0.1
+     PvT  == 0.069d0 !693d0 !Temperature coefficient (deg C-1)
+   
+     KNH4Nit==0.057d0   !Half Sat Con mg N/m3/day 0.08d0
+     ToptNtr==20d0
+
+     ktntr==0.002d0
+     
+! Lateral, constant, harmonic/biharmonic horizontal diffusion of biological
+! tracer: [1:NBT,Ngrids].
+
+        TNU2 == 15*25.0d0       5.0d0                     ! m2/s
+        TNU4 == 15*0.0d0       2.0d0                     ! m4/s
+	
+	
+
+! Vertical mixing coefficients for biological tracers: [1:NBT,Ngrids].
+
+     AKT_BAK == 15*1.0d-6   !0.0d-4                   ! m2/s
+
+! Nudging/relaxation time scales, inverse scales will be computed
+! internally: [1:NBT,Ngrids].
+!NO3, NH4 and nudged on a yearly time scale. Fe is nudged on a two week time scale
+!3D
+       TNUDG == 360.0d0 360.0d0 12*36000.0d0 360.0d0 
+       
+!1D        
+!       TNUDG == 3600 3600 12*36000.0d0  60.0d0 
+!If IRON is undefined       
+!        TNUDG == 2*360.0 11*36000.0d0  30.0d0 
+	
+	
+!       TNUDG == 14*36000.0d0  360.0d0                     ! days
+!       TNUDG == 10*360.0d0  360.0d0                     ! days
+
+! Logical switches (TRUE/FALSE) to activate writing of biological tracers
+! into HISTORY output file: [1:NBT,Ngrids].
+
+Hout(idTvar) == 15*T  
+
+!STATIONARY
+Hout(idTSvar) == 21*T 
+
+
+!BIOFLUX
+Hout(idBFvar) == 70*T 
+
+
+!STATIONARY2
+Hout(idTS2var) == 8*T 
+
+!PROD3
+Hout(idPT3var) == 10*T 
+
+
+!PROD2
+Hout(idPT2var) == 3*T 
+
+!BENTHIC
+Hout(idBvar) == 2*T  T
+
+!ICE_BIO
+Hout(idIceBvar) == 4*T 
+Hout(idIcePhL) == T
+Hout(idIceNO3) == T
+Hout(idIceNH4) == T
+Hout(idIceLog) == T
+!BIOFLUX
+!Hout(idBFvar) == 58*T
+
+!
+!  GLOSSARY:
+!  =========
+!
+!------------------------------------------------------------------------------
+! Read in Gulf of Alaska NPZ Biological Model Parameters.
+!------------------------------------------------------------------------------
+!  Lbiology  Switch to control the computation of a particular module within
+!              nested and/or multiple connected grids. By default this switch
+!              is set to TRUE in "mod_scalars" for all grids.  Ngrids values
+!              are expected. The USER has the option, for example, to compute
+!              the biology in just one of the nested grids. If so, this switch
+!              needs to be consistent with the dimension parameter NBT in
+!              "mod_param".  In order to make the model more efficient in
+!              memory usage, NBT(:) should be zero in such grids.
+!
+!  BioIter   Maximum number of iterations to achieve convergence of
+!              the nonlinear solution.
+!
+!  TNU2      Lateral, Laplacian, constant, mixing coefficient (m2/s) for
+!            biological tracer variables; [1:NBT,1:Ngrids] values are
+!            expected.  If variable horizontal diffusion is activated, TNU2
+!            is the mixing coefficient for the largest grid-cell in the domain.
+!
+!  TNU4      Lateral, biharmonic, constant, mixing coefficient (m4/s) for
+!            biological tracer variables; [1:NBT,1:Ngrids] values are
+!            expected.  If variable horizontal diffusion is activated, TNU4
+!            is the mixing coefficient for the largest grid-cell in the domain.
+!
+!  AKT_BAK   Background vertical mixing coefficient (m2/s) for biological
+!              tracer variables, [1:NBT,1:Ngrids] values are expected.
+!
+!  TNUDG     Nudging time scale (days), [1:NBT,1:Ngrids].  Inverse scale will
+!              be computed internally.
+!
+!  Hout      Logical switches to write out biological tracers into HISTORY
+!              NetCDF, [1:NBT,1:Ngrids] values are expected.
+!
+
