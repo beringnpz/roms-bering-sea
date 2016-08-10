@@ -66,14 +66,14 @@ endif
 
 ifdef USE_NETCDF4
         NC_CONFIG ?= ROMS/Bin/nc-config
-    NETCDF_INCDIR ?= /usr/local/pkg/netcdf/netcdf-4.1.pgi/include
-    NETCDF_LIBDIR ?= /usr/local/pkg/netcdf/netcdf-4.1.pgi/lib
+    NETCDF_INCDIR ?= /usr/local/include
+    NETCDF_LIBDIR ?= /usr/local/lib
     NETCDF_INCDIR ?= $(shell $(NC_CONFIG) --fflags | grep -o "\-I.*" | cut -f 1 | cut -c "3-")
              LIBS += $(shell $(NC_CONFIG) --flibs)
-      HDF5_LIBDIR ?= /usr/local/pkg/hdf5/hdf5-1.8.4.pgi/lib
+      HDF5_LIBDIR ?= /usr/local/lib
 else
-    NETCDF_INCDIR ?= /usr/local/pkg/netcdf/netcdf-4.1.pgi/include
-    NETCDF_LIBDIR ?= /usr/local/pkg/netcdf/netcdf-4.1.pgi/lib
+    NETCDF_INCDIR ?= /usr/local/include
+    NETCDF_LIBDIR ?= /usr/local/lib
              LIBS += -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf
 endif
 ifdef USE_NETCDF4
@@ -95,7 +95,7 @@ endif
 ifdef USE_MPI
          CPPFLAGS += -DMPI
  ifdef USE_MPIF90
-               FC := mpif90
+               FC := mpif90 
  else
              LIBS += -Bdynamic -lfmpi-pgi -lmpi-pgi -Bstatic
  endif
