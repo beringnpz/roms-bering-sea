@@ -27,8 +27,8 @@
 #  appropriate value from the list below.                               :::
 #                                                                       :::
 #::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::::
-
-NEED_VERSION := 3.80 3.81
+export MAKE_VERSION=3.81
+NEED_VERSION := 4.0 3.80 3.81
 $(if $(filter $(MAKE_VERSION),$(NEED_VERSION)),,        \
  $(error This makefile requires one of GNU make version $(NEED_VERSION).))
 
@@ -38,7 +38,7 @@ $(if $(filter $(MAKE_VERSION),$(NEED_VERSION)),,        \
 
   sources    := 
   libraries  :=
-
+  c_sources    :=
 #==========================================================================
 #  Start of user-defined options. In some macro definitions below: "on" or
 #  any other string means TRUE while blank (or spaces) is FALSE.
@@ -59,12 +59,12 @@ $(if $(filter $(MAKE_VERSION),$(NEED_VERSION)),,        \
 #  the .h extension. For example, the upwelling application includes the
 #  "upwelling.h" header file.  
 
-ROMS_APPLICATION := NEP5
+ROMS_APPLICATION := SEBS1D
 
 #  If application header files is not located in "ROMS/Include",
 #  provide an alternate directory FULL PATH.
 
-MY_HEADER_DIR ?= Apps/NEP
+MY_HEADER_DIR ?= Apps/1DBio
 
 #  If your application requires analytical expressions and they are
 #  not located in "ROMS/Functionals", provide an alternate directory.
@@ -74,7 +74,7 @@ MY_HEADER_DIR ?= Apps/NEP
 #  If applicable, also used this directory to place your customized
 #  biology model header file (like fennel.h, nemuro.h, ecosim.h, etc).
 
-MY_ANALYTICAL_DIR ?= Apps/NEP
+MY_ANALYTICAL_DIR ?= Apps/1DBio
 
 #  Sometimes it is desirable to activate one or more CPP options to
 #  run different variants of the same application without modifying
@@ -95,12 +95,12 @@ MY_CPP_FLAGS ?=
 
 #  Activate debugging compiler options:
 
-   USE_DEBUG ?=
+   USE_DEBUG ?= 
 
 #  If parallel applications, use at most one of these definitions
 #  (leave both definitions blank in serial applications):
 
-     USE_MPI ?=on 
+     USE_MPI ?= 
   USE_OpenMP ?=
 
 #  If distributed-memory, turn on compilation via the script "mpif90".
@@ -111,17 +111,22 @@ MY_CPP_FLAGS ?=
 #  In this, case the user need to select the desired compiler below and
 #  turn on both USE_MPI and USE_MPIF90 macros.
 
-  USE_MPIF90 ?= on
+  USE_MPIF90 ?= 
 
 #  If applicable, activate 64-bit compilation:
 
-   USE_LARGE ?=
+   USE_LARGE ?= 
 
 #  If applicable, link with NetCDF-4 library. Notice that the NetCDF-4
 #  library needs both the HDF5 and MPI libraries.
 
- USE_NETCDF4 ?= 
+ USE_NETCDF4 ?=
 
+#  If applicable, activate Data Access Protocol (like OPeNDAP) support
+#  for input NetCDF files.  This is only possible for NetCDF library
+#  version 4.1.1 or higher.
+
+     USE_DAP ?= on
 #--------------------------------------------------------------------------
 #  We are going to include a file with all the settings that depend on
 #  the system and the compiler. We are going to build up the name of the
@@ -145,13 +150,13 @@ MY_CPP_FLAGS ?=
 #  NetCDF and so on.
 #--------------------------------------------------------------------------
 
-        FORT ?= ifort
+        FORT ?= pgi
 
 #--------------------------------------------------------------------------
 #  Set directory for executable.
 #--------------------------------------------------------------------------
 
-      BINDIR ?= .
+      BINDIR ?= ./
 
 #==========================================================================
 #  End of user-defined options. See also the machine-dependent include
@@ -162,7 +167,7 @@ MY_CPP_FLAGS ?=
 #  Set directory for temporary objects.
 #--------------------------------------------------------------------------
 
-SCRATCH_DIR ?= Build
+SCRATCH_DIR ?= ./Build_1D
  clean_list := core *.ipo $(SCRATCH_DIR)
 
 ifeq "$(strip $(SCRATCH_DIR))" "."
@@ -184,7 +189,7 @@ CLEAN := ROMS/Bin/cpp_clean
 
 ifdef ROMS_APPLICATION
         HEADER := $(addsuffix .h, \
-			$(shell echo ${ROMS_APPLICATION} | tr 'A-Z' 'a-z'))
+			$(shell echo ${ROMS_APPLICATION} | tr [A-Z] [a-z]))
  ROMS_CPPFLAGS := -D$(ROMS_APPLICATION)
  ROMS_CPPFLAGS += -D'HEADER="$(HEADER)"'
  ifdef MY_HEADER_DIR
@@ -334,9 +339,9 @@ endif
 #  valid, upper-case identifiers. Attach ROMS application  CPP options.
 #--------------------------------------------------------------------------
 
-CPPFLAGS += -D$(shell echo ${OS} | tr "-" "_" | tr 'A-Z' 'a-z')
-CPPFLAGS += -D$(shell echo ${CPU} | tr "-" "_" | tr 'A-Z' 'a-z')
-CPPFLAGS += -D$(shell echo ${FORT} | tr "-" "_" | tr 'A-Z' 'a-z')
+CPPFLAGS += -D$(shell echo ${OS} | tr "-" "_" | tr [a-z] [A-Z])
+CPPFLAGS += -D$(shell echo ${CPU} | tr "-" "_" | tr [a-z] [A-Z])
+CPPFLAGS += -D$(shell echo ${FORT} | tr "-" "_" | tr [a-z] [A-Z])
 
 CPPFLAGS += -D'ROOT_DIR="$(ROOTDIR)"'
 ifdef ROMS_APPLICATION
@@ -393,8 +398,7 @@ endif
 ifdef USE_SEAICE
  modules  +=	ROMS/SeaIce
 endif
- modules  +=	ROMS/Utility \
-               ROMS/Modules
+ modules  +=	ROMS/Utility
 
  includes :=	ROMS/Include
 ifdef MY_ANALYTICAL
