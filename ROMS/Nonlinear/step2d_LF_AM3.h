@@ -2505,14 +2505,14 @@
 !
       DO j=Jstr,Jend
         DO i=IstrU,Iend
-ubar(i,j,krhs)=min( 10.,ubar(i,j,krhs))
-ubar(i,j,krhs)=max(-10.,ubar(i,j,krhs))
+           ubar(i,j,krhs)=min( 10.0_r8,ubar(i,j,krhs))
+           ubar(i,j,krhs)=max(-10.0_r8,ubar(i,j,krhs))
         END DO
       END DO
       DO j=JstrV,Jend
         DO i=Istr,Iend
-vbar(i,j,krhs)=min( 10.,vbar(i,j,krhs))
-vbar(i,j,krhs)=max(-10.,vbar(i,j,krhs))
+           vbar(i,j,krhs)=min( 10._r8,vbar(i,j,krhs))
+           vbar(i,j,krhs)=max(-10._r8,vbar(i,j,krhs))
         END DO
       END DO
 

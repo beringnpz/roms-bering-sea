@@ -377,9 +377,8 @@
             PhSave = PhSsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
             PhLave = PhLsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
 
-            cffa1 = max(1.e-3,(PhSave/ccr) +                & 
-     &                 (PhLave/ccrPhL))
-            cffa2 = k_ext+2.00_r8*exp(z_w(i,j,0)*.05)
+            cffa1 = max(1.0e-3_r8,(PhSave/ccr)+(PhLave/ccrPhL))
+            cffa2 = k_ext+2.00_r8*exp(z_w(i,j,0)*.05_r8)
             cffa3 = (k_chl*(cffa1)**(0.428_r8))   
             FX(i,j) = z_w(i,j,N(ng))-z_w(i,j,k)
             swdk(i,j,k) = (1.-a_frac)*EXP(-1.*FX(i,j)*(cffa2+cffa3))    &
