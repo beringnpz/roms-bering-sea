@@ -19,11 +19,13 @@ if [ "$#" -ne 1 ]; then
 	npzfile="oceanM_npz"
 	feastfile="oceanM_feast"
 	npzdbfile="oceanG_npz"
+	feastdbfile="oceanG_feast"
 else
 	physfile="oceanM_phys_$1"
 	npzfile="oceanM_npz_$1"
 	feastfile="oceanM_feast_$1"
 	npzdbfile="oceanG_npz_$1"
+	feastdbfile="oceanG_feast_$1"
 fi
 
 #--------------
@@ -77,7 +79,7 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 
 # Compile physics
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1_phys
 
 make clean &>/dev/null
 echo "Compiling physics-only variant"
@@ -93,7 +95,7 @@ fi
 
 # Compile bestnpz
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2_npz
 export      MY_CPP_FLAGS="-DBEST_NPZ"
 
 make clean &>/dev/null
@@ -110,7 +112,7 @@ fi
 
 # Combile debugging-version of bestnpz
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4_npzdb
 export      USE_DEBUG=on
 
 make clean &>/dev/null
@@ -127,7 +129,7 @@ fi
 
 # Compile Feast
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3_feast
 export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
 export      USE_DEBUG=
 
@@ -141,6 +143,24 @@ else
 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM $feastfile
 	echo "  Success: $feastfile created"
+fi
+
+# Compile Feast, debug mode
+
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build5_feastdb
+export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
+export      USE_DEBUG=on
+
+make clean &>/dev/null
+echo "Compiling feast (debugging) variant"
+make -j &> buildouterr.txt
+if [ $? -ne 0 ]; then
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+else
+	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanG $feastdbfile
+	echo "  Success: $feastdbfile created"
 fi
 
 

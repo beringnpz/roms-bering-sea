@@ -69,8 +69,8 @@
 !  Maximum number of variables in a generic NetCDF file (MV) and
 !  maximum number of variables in information arrays (NV).
 !
-        integer, parameter :: MV = 2400
-        integer, parameter :: NV = 2400
+        integer, parameter :: MV = 3200
+        integer, parameter :: NV = 3200
 !
 !  Input/output grid-type variables.
 !
