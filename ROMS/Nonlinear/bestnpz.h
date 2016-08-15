@@ -10,7 +10,7 @@
 !                                                                      !
 !  Georgina Gibsons BESTNPZ Code July 2010  
 !
-!  Modified from Sarah Hinckleys GOANPZ code                                   !
+!  Modified from Sarah Hinckleys GOANPZ code                           !
 !  Implemented by Craig Lewis (CVL)                                    !
 !  Modified by Liz Dobbins and Sarah Hinckley                          !
 !                                                                      !
@@ -530,14 +530,14 @@
       real(r8) :: Alpha
       real(r8) :: ALPHA_N,ALPHA_P, kN, kP, alphaPhSv, alphaPhLv
       real(r8) ::respNC, respCM 
-			
-			! Vertical movement
+      
+      ! Vertical movement
 
-			real(r8), dimension(N(ng)) :: Btmp, Hztmp
-			real(r8), dimension(0:N(ng)) :: zwtmp
-			real(r8) :: sinkout2   
-			
-			real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
+      real(r8), dimension(N(ng)) :: Btmp, Hztmp
+      real(r8), dimension(0:N(ng)) :: zwtmp
+      real(r8) :: sinkout2   
+      
+      real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
 
            
 !----------------------
@@ -551,57 +551,57 @@
 
 #ifdef DIAPAUSE
 
-		 ! For diapause, set movement direction flags for large copepods, 
-	 	 ! and lower respiration rates if they're in the diapause phase.
-	 	 ! NCaS = CM = mostly C. melanaster, on-shelf
-	 	 ! NCaO = NC = mostly Neocalanus, off-shelf
+     ! For diapause, set movement direction flags for large copepods, 
+     ! and lower respiration rates if they're in the diapause phase.
+     ! NCaS = CM = mostly C. melanaster, on-shelf
+     ! NCaO = NC = mostly Neocalanus, off-shelf
    
-	 	 RSNC = MOD(RiseStart, 366.0)
-	 	 RENC = MOD(RiseEnd,   366.0)
-	 	 SSNC = MOD(SinkStart, 366.0)
-	 	 SENC = MOD(SinkEnd,   366.0)
+     RSNC = MOD(RiseStart, 366.0)
+     RENC = MOD(RiseEnd,   366.0)
+     SSNC = MOD(SinkStart, 366.0)
+     SENC = MOD(SinkEnd,   366.0)
    
-	 	 RSCM = MOD(RiseStart + 30, 366.0)
-	 	 RECM = MOD(RiseEnd   + 30, 366.0)
-	 	 SSCM = MOD(SinkStart + 30, 366.0)
-	 	 SECM = MOD(SinkEnd   + 30, 366.0)
+     RSCM = MOD(RiseStart + 30, 366.0)
+     RECM = MOD(RiseEnd   + 30, 366.0)
+     SSCM = MOD(SinkStart + 30, 366.0)
+     SECM = MOD(SinkEnd   + 30, 366.0)
    
-	 	 upward =     ((RSNC.lt.RENC) .and.                                &
-	 	&              (yday.ge.RSNC .and. yday.le.RENC))                  &
-	 	&             .or.                                                 &
-	 	&             ((RSNC.gt.RENC) .and.                                &
-	 	&              (yday.ge.RSNC .or.  yday.le.RENC))
+     upward =     ((RSNC.lt.RENC) .and.                                &
+    &              (yday.ge.RSNC .and. yday.le.RENC))                  &
+    &             .or.                                                 &
+    &             ((RSNC.gt.RENC) .and.                                &
+    &              (yday.ge.RSNC .or.  yday.le.RENC))
            
-	 	 upwardCM =   ((RSCM.lt.RECM) .and.                                &
-	 	&              (yday.ge.RSCM .and. yday.le.RECM))                  &
-	 	&             .or.                                                 &
-	 	&             ((RSCM.gt.RECM) .and.                                &
-	 	&              (yday.ge.RSCM .or.  yday.le.RECM))
+     upwardCM =   ((RSCM.lt.RECM) .and.                                &
+    &              (yday.ge.RSCM .and. yday.le.RECM))                  &
+    &             .or.                                                 &
+    &             ((RSCM.gt.RECM) .and.                                &
+    &              (yday.ge.RSCM .or.  yday.le.RECM))
             
-	 	 downward   = ((SSNC.lt.SENC) .and.                                &
-	 	&              (yday.ge.SSNC .and. yday.le.SENC))                  &
-	 	&             .or.                                                 &
-	 	&             ((SSNC.gt.SENC) .and.                                &
-	 	&              (yday.ge.SSNC .or.  yday.le.SENC))
+     downward   = ((SSNC.lt.SENC) .and.                                &
+    &              (yday.ge.SSNC .and. yday.le.SENC))                  &
+    &             .or.                                                 &
+    &             ((SSNC.gt.SENC) .and.                                &
+    &              (yday.ge.SSNC .or.  yday.le.SENC))
             
-	 	 downwardCM = ((SSCM.lt.SECM) .and.                                &
-	 	&              (yday.ge.SSCM .and. yday.le.SECM))                  &
-	 	&             .or.                                                 &
-	 	&             ((SSCM.gt.SECM) .and.                                &
-	 	&              (yday.ge.SSCM .or.  yday.le.SECM))
+     downwardCM = ((SSCM.lt.SECM) .and.                                &
+    &              (yday.ge.SSCM .and. yday.le.SECM))                  &
+    &             .or.                                                 &
+    &             ((SSCM.gt.SECM) .and.                                &
+    &              (yday.ge.SSCM .or.  yday.le.SECM))
    
-	 	 if (upward .or. downward) then
-	 	   respNC = respNCa * 0.3_r8
-	 	 else
-	 	   respNC = respNCa
-	 	 end if
+     if (upward .or. downward) then
+       respNC = respNCa * 0.3_r8
+     else
+       respNC = respNCa
+     end if
    
-	 	 if (upwardCM .or. downwardCM) then
-	 	   respCM = respNCa * 0.3_r8
-	 	 else
-	 	   respCM = respNCa
-	 	 end if
-		 
+     if (upwardCM .or. downwardCM) then
+       respCM = respNCa * 0.3_r8
+     else
+       respCM = respNCa
+     end if
+     
 #endif
 
 !
@@ -3423,105 +3423,105 @@
 ! G.Gibson  July 2008        
 ! K.Kearney March 2016: updated to correct mass-accumulation bug
 
-					! Note: all sinking and rising uses the subroutine BioSink, 
-					! which modifies Btmp and sinkout
+          ! Note: all sinking and rising uses the subroutine BioSink, 
+          ! which modifies Btmp and sinkout
 
-					! Initialize temporary arrays to 0
+          ! Initialize temporary arrays to 0
 
-					Btmp = 0    ! tracer profile, (1:n)
-					Hztmp = 0   ! layer thickness, (1:n)
-					zwtmp = 0   ! layer edges, (0:n)
-					sinkout2 = 0 ! loss out of bottom cell (1)
+          Btmp = 0    ! tracer profile, (1:n)
+          Hztmp = 0   ! layer thickness, (1:n)
+          zwtmp = 0   ! layer edges, (0:n)
+          sinkout2 = 0 ! loss out of bottom cell (1)
 
-					! Small phytoplankton: sinks, and 79% of what sinks out of the 
-					! bottom goes to benthic detritus 
+          ! Small phytoplankton: sinks, and 79% of what sinks out of the 
+          ! bottom goes to benthic detritus 
 
-					DO i=Istr,Iend
+          DO i=Istr,Iend
   
-					  DO k = 1,N(ng)
-							Btmp(k) = Bio(i,k,iPhS)
-					    Hztmp(k) = Hz(i,j,k)
-					  END DO
-					  DO k = 0,N(ng)
-					    zwtmp(k) = z_w(i,j,k)
-					  END DO
+            DO k = 1,N(ng)
+              Btmp(k) = Bio(i,k,iPhS)
+              Hztmp(k) = Hz(i,j,k)
+            END DO
+            DO k = 0,N(ng)
+              zwtmp(k) = z_w(i,j,k)
+            END DO
   
-					  call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+            call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
 
-					  DO k = 1,N(ng)
-							DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
-					  END DO
-						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+            DO k = 1,N(ng)
+              DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
+            END DO
+            DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
   
-					END DO
+          END DO
 
 
           ! Large phytoplankton: sinks, and 79% of what sinks out of the 
           ! bottom goes to benthic detritus 
-					
-					DO i=Istr,Iend
+          
+          DO i=Istr,Iend
   
-					  DO k = 1,N(ng)
-							Btmp(k) = Bio(i,k,iPhL)
-					    Hztmp(k) = Hz(i,j,k)
-					  END DO
-					  DO k = 0,N(ng)
-					    zwtmp(k) = z_w(i,j,k)
-					  END DO
+            DO k = 1,N(ng)
+              Btmp(k) = Bio(i,k,iPhL)
+              Hztmp(k) = Hz(i,j,k)
+            END DO
+            DO k = 0,N(ng)
+              zwtmp(k) = z_w(i,j,k)
+            END DO
   
-					  call BioSink(N(ng), Btmp, wPhL, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+            call BioSink(N(ng), Btmp, wPhL, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
 
-					  DO k = 1,N(ng)
-							DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
-					  END DO
-						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+            DO k = 1,N(ng)
+              DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
+            END DO
+            DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
   
-					END DO
+          END DO
 
           ! Slow-sinking detritus: sinks, and 79% of what sinks out of the 
           ! bottom goes to benthic detritus 
-					
-					DO i=Istr,Iend
+          
+          DO i=Istr,Iend
   
-					  DO k = 1,N(ng)
-							Btmp(k) = Bio(i,k,iDet)
-					    Hztmp(k) = Hz(i,j,k)
-					  END DO
-					  DO k = 0,N(ng)
-					    zwtmp(k) = z_w(i,j,k)
-					  END DO
+            DO k = 1,N(ng)
+              Btmp(k) = Bio(i,k,iDet)
+              Hztmp(k) = Hz(i,j,k)
+            END DO
+            DO k = 0,N(ng)
+              zwtmp(k) = z_w(i,j,k)
+            END DO
   
-					  call BioSink(N(ng), Btmp, wDet, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+            call BioSink(N(ng), Btmp, wDet, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
 
-					  DO k = 1,N(ng)
-							DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
-					  END DO
-						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+            DO k = 1,N(ng)
+              DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
+            END DO
+            DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
   
-					END DO
+          END DO
 
           ! Fast-sinking detritus: sinks, and 79% of what sinks out of the 
           ! bottom goes to benthic detritus 
-					
-					DO i=Istr,Iend
+          
+          DO i=Istr,Iend
   
-					  DO k = 1,N(ng)
-							Btmp(k) = Bio(i,k,iDetF)
-					    Hztmp(k) = Hz(i,j,k)
-					  END DO
-					  DO k = 0,N(ng)
-					    zwtmp(k) = z_w(i,j,k)
-					  END DO
+            DO k = 1,N(ng)
+              Btmp(k) = Bio(i,k,iDetF)
+              Hztmp(k) = Hz(i,j,k)
+            END DO
+            DO k = 0,N(ng)
+              zwtmp(k) = z_w(i,j,k)
+            END DO
   
-					  call BioSink(N(ng), Btmp, wDetF, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+            call BioSink(N(ng), Btmp, wDetF, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
 
-					  DO k = 1,N(ng)
-							DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
-					  END DO
-						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+            DO k = 1,N(ng)
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
+            END DO
+            DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
   
-					END DO
-					
+          END DO
+          
           ! On-shelf large copepods (NCaS i.e. CM): Move up and down 
           ! based on dates set in input file.  If water is deeper than 
           ! 400 m, stop at 400m.  If shallower, when they hit the bottom, 
@@ -3534,20 +3534,18 @@
             if (downwardCM) then
             
               DO k = 1,N(ng)
-								Btmp(k) = Bio(i,k,iNCaS)
+                Btmp(k) = Bio(i,k,iNCaS)
                 Hztmp(k) = Hz(i,j,k)
               END DO
               DO k = 0,N(ng)
                 zwtmp(k) = z_w(i,j,k)
               END DO
-            
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2)
+              
+              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, max(-400.0_r8, z_w(i,j,0)-z_w(i,j,N(ng))+eps), sinkout2)
 
               DO k = 1,N(ng)
-								DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
+                DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
               END DO
-            
-							DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
               
             else if (upwardCM) then
               
@@ -3562,7 +3560,7 @@
               call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
               
               DO k = 1,N(ng)
-								DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaS)) ! flip back
+                DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaS)) ! flip back
               END DO
               
             end if
@@ -3625,7 +3623,7 @@
 # ifdef CLIM_ICE_1D
          
         IF (itL(i,j,nstp,iIceLog).gt.0.0)THEN   !0.02
-					
+          
 # elif defined BERING_10K
 
           IF (IceLog(i,j,nstp).gt.0.0_r8) THEN
@@ -3664,7 +3662,7 @@
 !   
 ! growth of Ice Algae
 !   
-	          gesi = max(0.0_r8,(1.1e-2+3.012e-2*sb                       &
+            gesi = max(0.0_r8,(1.1e-2+3.012e-2*sb                       &
      &             +1.0342e-3*sb**2                                     &
      &             -4.6033e-5*sb**3                                     &
      &             +4.926e-7*sb**4                                      &
@@ -3724,7 +3722,7 @@
 # elif defined BERING_10K  
             DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                         &
      &         + GROWAice*IcePhL(i,j,nstp)* dtdays  
-		 
+     
 !-----------------------------------------------------------------------
 !  Primary production of ice algae
 !-----------------------------------------------------------------------
@@ -4277,7 +4275,7 @@
 # elif defined BERING_10K
         DO i=Istr,Iend
           if (IceLog(i,j,nstp).ge.0_r8 )THEN
-! 						
+!             
 !  ajh added zero trap on these
 ! 
             IcePhL(i,j,nnew) = max(0.,IcePhL(i,j,nnew))  
@@ -4788,7 +4786,7 @@
 
       DO k=1,N(ng)
         DO i=LBi,UBi
-! 					
+!           
 !  The Bio variables are now updated in the main subroutine
 ! 
 !         Bio(i,k)=qc(i,k)+(FC(i,k)-FC(i,k-1))*Hz_inv(i,k)
@@ -5142,7 +5140,7 @@
     
       USE mod_param
       implicit none
-		
+    
       integer,  intent(in) :: n
       real(r8), intent(in) :: wBio
       real(r8), intent(in) :: zlimit
