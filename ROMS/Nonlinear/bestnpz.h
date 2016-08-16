@@ -1778,7 +1778,7 @@
 !-----------------------------------------------------------------------
 !      
 !             cff2 = eNCa * Bio(i,k,iNCaS) / (fNCa**2 + cff1)
-              cff2 = eNCa * Bio(i,k,iNCaS) / (fNCa + cff1)
+              cff2 = eCM * Bio(i,k,iNCaS) / (fNCa + cff1)
 !               
 !-----------------------------------------------------------------------
 !Temperature correction 
@@ -1808,11 +1808,11 @@
 ! 
               DBio(i,k,iPhS) = DBio(i,k,iPhS) -                         &
      &           fpPhSNCa * (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays
-                 DBio(i,k,iPhL) = DBio(i,k,iPhL) -                      &
+              DBio(i,k,iPhL) = DBio(i,k,iPhL) -                      &
      &           fpPhLNCa * (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays     
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
 !    &           fpMZSNCa * (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays
-                 DBio(i,k,iMZL) = DBio(i,k,iMZL) -                      &
+              DBio(i,k,iMZL) = DBio(i,k,iMZL) -                      &
      &           fpMZLNCa * (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays
 
 
@@ -2048,7 +2048,7 @@
 !-----------------------------------------------------------------------
      
 !             cff2 = eNCa * Bio(i,k,iNCaO) / (fNCa**2 + cff1)
-              cff2 = eNCa * Bio(i,k,iNCaO) / (fNCa + cff1)
+              cff2 = eNC * Bio(i,k,iNCaO) / (fNCa + cff1)
               
 !-----------------------------------------------------------------------
 !  Temperature correction 
