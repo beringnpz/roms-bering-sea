@@ -2498,13 +2498,29 @@
               predSumEupS = TFEup*(mpredEup + fpredEupS * GF%zoop_force(1,4,i,j,1))*Bio(i,k,iEupS)**2
               predSumNCaO = TFEup*(mpredNca + fpredNcaO * GF%zoop_force(1,3,i,j,1))*Bio(i,k,iNCaO)**2
               predSumEupO = TFEup*(mpredEup + fpredEupO * GF%zoop_force(1,5,i,j,1))*Bio(i,k,iEupO)**2  
+	      
 # else
-              predSumCop  = TFEup*(mpredCop)*Bio(i,k,iCop)**2
-              predSumNCaS = TFEup*(mpredNca)*Bio(i,k,iNCaS)**2     
+              if(k.eq.1.and.downward)THEN
+               cff1=0.2_r8
+	      else
+	       cff1=1.0_r8
+              end if
+	       
+	      if(k.eq.1.and.downwardCM)THEN
+               cff2=0.2_r8
+	      else
+	       cff2=1.0_r8
+              end if 
+	      
+              predSumCop  = cff1*TFEup*(mpredCop)*Bio(i,k,iCop)**2
+              predSumNCaS = cff2*TFEup*(mpredNca)*Bio(i,k,iNCaS)**2     
               predSumEupS = TFEup*(mpredEup)*Bio(i,k,iEupS)**2
               predSumNCaO = TFEup*(mpredNca)*Bio(i,k,iNCaO)**2
-              predSumEupO = TFEup*(mpredEup)*Bio(i,k,iEupO)**2  
+              predSumEupO = TFEup*(mpredEup)*Bio(i,k,iEupO)**2 
+	      
+	     
 # endif
+              
 
               DBio(i,k,iCop)  = DBio(i,k,iCop)  - predSumCop  * dtdays
               DBio(i,k,iNCaS) = DBio(i,k,iNCaS) - predSumNCaS * dtdays               
