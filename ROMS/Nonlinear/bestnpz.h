@@ -529,7 +529,7 @@
 
       real(r8) :: Alpha
       real(r8) :: ALPHA_N,ALPHA_P, kN, kP, alphaPhSv, alphaPhLv
-      real(r8) ::respNC, respCM 
+      real(r8) ::respNC, respCM,eCM,eNC 
 			
 			! Vertical movement
 
@@ -590,18 +590,27 @@
 	 	&             ((SSCM.gt.SECM) .and.                                &
 	 	&              (yday.ge.SSCM .or.  yday.le.SECM))
    
-	 	 if (upward .or. downward) then
-	 	   respNC = respNCa * 0.3_r8
-	 	 else
-	 	   respNC = respNCa
-	 	 end if
    
-	 	 if (upwardCM .or. downwardCM) then
-	 	   respCM = respNCa * 0.3_r8
-	 	 else
-	 	   respCM = respNCa
-	 	 end if
-		 
+   
+   
+   
+                if (downwardCM) THEN
+	          respCM=respNCa*0.1_r8
+	          eCM=0.0_r8
+	        else 
+	          respCM=respNCa
+	          eCM=eNCa
+                end if
+     
+     
+                if (downward) THEN
+	          respNC=respNCa*0.1_r8
+	          eNC=0.0_r8
+	        else 
+	          respNC=respNCa
+	          eNC=eNCa
+                end if
+             		 
 #endif
 
 !
