@@ -497,7 +497,8 @@
       real(r8), dimension(IminS:ImaxS,0:N(ng)) :: z_wL
       
       real(r8), dimension(IminS:ImaxS,N(ng)) :: sinkIN,sinkOUT
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: riseIN,riseOUT      
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: riseIN,riseOUT 
+      real(r8), dimension(0:N(ng)) :: FC     
 #ifdef ICE_BIO      
       real(r8) :: aiceIfrac,aiceNfrac,dhicedt,trs,cwi,twi
       real(r8) ::grow1, GROWAice,reN,fNO3,RAi0,RgAi
@@ -3448,37 +3449,39 @@
 ! G.Gibson  July 2008        
 ! K.Kearney March 2016: updated to correct mass-accumulation bug
 
-					! Note: all sinking and rising uses the subroutine BioSink, 
-					! which modifies Btmp and sinkout
+	! Note: all sinking and rising uses the subroutine BioSink, 
+	! which modifies Btmp and sinkout
 
-					! Initialize temporary arrays to 0
+	! Initialize temporary arrays to 0
 
-					Btmp = 0    ! tracer profile, (1:n)
-					Hztmp = 0   ! layer thickness, (1:n)
-					zwtmp = 0   ! layer edges, (0:n)
-					sinkout2 = 0 ! loss out of bottom cell (1)
+	Btmp = 0    ! tracer profile, (1:n)
+	Hztmp = 0   ! layer thickness, (1:n)
+	zwtmp = 0   ! layer edges, (0:n)
+	sinkout2 = 0 ! loss out of bottom cell (1)
 
-					! Small phytoplankton: sinks, and 79% of what sinks out of the 
-					! bottom goes to benthic detritus 
+!====================
+! Phytoplankton 
+!====================
+! Small phytoplankton: sinks, and 79% of what sinks out of the 
+! bottom goes to benthic detritus 
 
-					DO i=Istr,Iend
+	DO i=Istr,Iend
+  	  DO k = 1,N(ng)
+	    Btmp(k) = Bio(i,k,iPhS)
+	    Hztmp(k) = Hz(i,j,k)
+	  END DO
+	  DO k = 0,N(ng)
+	    zwtmp(k) = z_w(i,j,k)
+	  END DO
   
-					  DO k = 1,N(ng)
-							Btmp(k) = Bio(i,k,iPhS)
-					    Hztmp(k) = Hz(i,j,k)
-					  END DO
-					  DO k = 0,N(ng)
-					    zwtmp(k) = z_w(i,j,k)
-					  END DO
+	  call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
+	  DO k = 1,N(ng)
+	   DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
+	  END DO
+	print*,'FC=',FC
+	DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
   
-					  call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
-
-					  DO k = 1,N(ng)
-							DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
-					  END DO
-						DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-  
-					END DO
+	END DO
 
 
           ! Large phytoplankton: sinks, and 79% of what sinks out of the 
@@ -3494,7 +3497,7 @@
 					    zwtmp(k) = z_w(i,j,k)
 					  END DO
   
-					  call BioSink(N(ng), Btmp, wPhL, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+					  call BioSink(N(ng), Btmp, wPhL, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
 
 					  DO k = 1,N(ng)
 							DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
@@ -3516,7 +3519,7 @@
 					    zwtmp(k) = z_w(i,j,k)
 					  END DO
   
-					  call BioSink(N(ng), Btmp, wDet, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+					  call BioSink(N(ng), Btmp, wDet, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
 
 					  DO k = 1,N(ng)
 							DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
@@ -3538,7 +3541,7 @@
 					    zwtmp(k) = z_w(i,j,k)
 					  END DO
   
-					  call BioSink(N(ng), Btmp, wDetF, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+					  call BioSink(N(ng), Btmp, wDetF, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
 
 					  DO k = 1,N(ng)
 							DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
@@ -3566,7 +3569,7 @@
                 zwtmp(k) = z_w(i,j,k)
               END DO
             
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2)
+              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2,FC)
 
               DO k = 1,N(ng)
 								DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
@@ -3584,7 +3587,7 @@
                 zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
               END DO
               
-              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
+              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2,FC)
               
               DO k = 1,N(ng)
 								DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaS)) ! flip back
@@ -3609,7 +3612,7 @@
                 zwtmp(k) = z_w(i,j,k)
               END DO
             
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2)
+              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2,FC)
 
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
@@ -3627,7 +3630,7 @@
                 zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
               END DO
               
-              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
+              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2,FC)
               
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaO)) ! flip back
@@ -5147,7 +5150,7 @@
 !     BioSink: New subroutine to replace BIOSINK_1, BIORISE_1
 !=====================================================================
 
-      Subroutine BioSink(n, Btmp, wBio, HzL, dtdays, z_wL, zlimit, sinkout)
+      Subroutine BioSink(n, Btmp, wBio, HzL, dtdays, z_wL, zlimit, sinkout,FC)
     
       !------------------------------------------------------------------
       ! Computes redistribution of a tracer in the water column due to 
@@ -5182,7 +5185,7 @@
       real(r8) :: cffL, cffR, cu, dltL, dltR,cff
   
       real(r8):: dBio(0:n), wBiod(0:n)
-      real(r8) :: FC(0:n)
+      real(r8), intent(inout) :: FC(0:n)
    
       real(r8) :: Hz_inv(n)
       real(r8) :: Hz_inv2(n)
