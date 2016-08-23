@@ -553,7 +553,7 @@
 
      ! For diapause, set movement direction flags for large copepods, 
      ! and lower respiration rates if they're in the diapause phase.
-     ! NCaS = CM = mostly C. melanaster, on-shelf
+     ! NCaS = CM = mostly C. marshallae, on-shelf
      ! NCaO = NC = mostly Neocalanus, off-shelf
    
      RSNC = MOD(RiseStart, 366.0)
@@ -3431,7 +3431,7 @@
           Btmp = 0    ! tracer profile, (1:n)
           Hztmp = 0   ! layer thickness, (1:n)
           zwtmp = 0   ! layer edges, (0:n)
-          sinkout2 = 0 ! loss out of bottom cell (1)
+          sinkout2 = 0 ! loss out of bottom cell (1) 
 
           ! Small phytoplankton: sinks, and 79% of what sinks out of the 
           ! bottom goes to benthic detritus 
@@ -3523,11 +3523,9 @@
           END DO
           
           ! On-shelf large copepods (NCaS i.e. CM): Move up and down 
-          ! based on dates set in input file.  If water is deeper than 
-          ! 400 m, stop at 400m.  If shallower, when they hit the bottom, 
-          ! the biomass is transferred to benthic detritus.  Uses zlimit 
-          ! to enforce 400-m limit when going down, and to prevent rising 
-          ! out of the surface layer on the way up
+          ! based on dates set in input file, offset by 30 days.  Stop at 
+          ! either 200m or the water depth, whichever is shallower.  No 
+          ! biomass should cross the bottom boundary.  
           
           DO i=Istr,Iend
             
@@ -3541,7 +3539,7 @@
                 zwtmp(k) = z_w(i,j,k)
               END DO
               
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, max(-400.0_r8, z_w(i,j,0)-z_w(i,j,N(ng))+eps), sinkout2)
+              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, max(-200.0_r8, z_w(i,j,0)-z_w(i,j,N(ng))+eps), sinkout2)
 
               DO k = 1,N(ng)
                 DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
@@ -3567,8 +3565,10 @@
             
           END DO
           
-          ! Off-shelf large copepods (NCaO i.e. NC): Same as above, but
-          ! with different dates
+          ! Off-shelf large copepods (NCaO i.e. NC): Move up and down 
+          ! based on dates set in input file.  Diapause to 400 m.  
+          ! If water is shallower than 400m, when hit the bottom, 
+          ! transfer biomass to benthic detritus.
           
           DO i=Istr,Iend
             
@@ -3581,7 +3581,7 @@
               DO k = 0,N(ng)
                 zwtmp(k) = z_w(i,j,k)
               END DO
-            
+          
               call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2)
 
               DO k = 1,N(ng)
