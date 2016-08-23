@@ -3603,7 +3603,7 @@
               call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
               
               DO k = 1,N(ng)
-                DBio(i,k,iNCaO) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaO)) ! flip back
+                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaO)) ! flip back
               END DO
               
             end if
