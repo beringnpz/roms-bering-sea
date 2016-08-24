@@ -529,7 +529,7 @@
 
       real(r8) :: Alpha
       real(r8) :: ALPHA_N,ALPHA_P, kN, kP, alphaPhSv, alphaPhLv
-      real(r8) ::respNC, respCM 
+      real(r8) ::respNC, respCM, eCM, eNC
       
       ! Vertical movement
 
