@@ -612,6 +612,8 @@
 # else
                  respNC=respNCa
 		respCM=respNCa
+		eCM=eNCa
+		eNC=eNCa
              		 
 #endif
 
