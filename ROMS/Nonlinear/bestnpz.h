@@ -609,6 +609,9 @@
 	          respNC=respNCa
 	          eNC=eNCa
                 end if
+# else
+                 respNC=respNCa
+		respCM=respNCa
              		 
 #endif
 
@@ -2473,7 +2476,7 @@
 #endif
             END DO
           END DO
-
+           
 !=======================================================================
 !  Mesozooplankton Mortality (Closure terms)
 !=======================================================================
@@ -2833,7 +2836,7 @@
      
             END DO
           END DO
-     
+          
 !=======================================================================
 !  Mesozooplankton respiration losses
 !=======================================================================
@@ -3164,6 +3167,9 @@
 #endif
             END DO
           END DO
+         
+
+
 
 !======================================================================
 !Benthic Sub Model
@@ -3433,8 +3439,7 @@
 
 #endif
       
-
-
+          
 !
 !==================================================================
 ! Vertical Sinking of Particles(Phyto and Det) 
@@ -3577,9 +3582,7 @@
           
 	   
           DO i=Istr,Iend
-!            DO k = 1,N(ng)
-!	   DBio(i,k,iNCaS)=0.0_r8
-!	   end do
+         
             if (downwardCM) then
             
               DO k = 1,N(ng)
@@ -3675,8 +3678,7 @@
             
           END DO
 #endif
- 
-
+         
 !=======================================================================
 !Ice Sub Model
 !=======================================================================
@@ -4185,9 +4187,12 @@
           
             DO itrc=1,NBT
               ibio=idbio(itrc)
+	      
+	      
               DO k=1,N(ng)
 	     
-		      
+	   
+	       
                 Bio(i,k,ibio)=Bio(i,k,ibio)+DBio(i,k,ibio)
           
               END DO
