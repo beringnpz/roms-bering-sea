@@ -142,12 +142,20 @@
          get_var(idBvar(itrc))=.TRUE.
        END DO     
 #  endif
-#  if defined ICE_BIO
-     get_var(idIcePhL)=.TRUE.
+#  if defined ICE_BIO 
+#   if defined ANA_BIOLOGY
+     IF (nrrec(ng).ne.0) THEN
+        get_var(idIcePhL)=.TRUE.
+	get_var(idIceNO3)=.True.
+	get_var(idIceNH4)=.True.
+	END IF
+#else
+           get_var(idIcePhL)=.TRUE.
 	   get_var(idIceNO3)=.True.
 	   get_var(idIceNH4)=.True.         
 #  endif
 # endif
+#endif
 
 # if defined T_PASSIVE
 #  if defined ANA_PASSIVE

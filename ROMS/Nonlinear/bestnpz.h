@@ -277,7 +277,7 @@
 #  ifdef CLIM_ICE_1D 
       real(r8), intent(inout) :: it(LBi:,LBj:,:,:)
       real(r8), intent(inout) :: itL(LBi:,LBj:,:,:)
-      
+      real(r8), intent(inout) ::tclm(LBi:UBi,LBj:UBj,UBk,NT(ng)+2)
 #  elif defined BERING_10K
       real(r8), intent(in) :: ti(LBi:,LBj:,:)
       real(r8), intent(in) :: hi(LBi:,LBj:,:)
@@ -327,8 +327,6 @@
 #  ifdef CLIM_ICE_1D
       real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,1)
       real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
-
-      real(r8), intent(inout) ::tclmG(LBi:UBi,LBj:UBj,UBk,3,NH(ng)+2)
       real(r8), intent(inout) ::tclm(LBi:UBi,LBj:UBj,UBk,NT(ng)+2)
 #  elif defined BERING_10K     
       real(r8), intent(in) :: ti(LBi:UBi,LBj:UBj,2)
@@ -786,7 +784,7 @@
        
           END DO
     
-          if (ice_thick(i,j).gt.0.02)          THEN 
+          if (ice_thick(i,j).gt.aidz)          THEN 
             itL(i,j,nstp,iIceLog) =1.0_r8 
           else
             itL(i,j,nstp,iIceLog) =-1.0_r8

@@ -2450,8 +2450,8 @@
        iIceNH4=3
        iIceZ=4
 
-# else ifdef BERING_10k
-        iIcePhL=1
+# elif defined BERING_10K
+       iIcePhL=1
        iIceNO3=2
        iIceNH4=3
       
