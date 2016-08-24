@@ -590,16 +590,20 @@
     &             ((SSCM.gt.SECM) .and.                                &
     &              (yday.ge.SSCM .or.  yday.le.SECM))
    
-     if (upward .or. downward) then
-       respNC = respNCa * 0.3_r8
+     if (downward) then
+       respNC = respNCa * 0.1_r8
+       eNC = 0
      else
        respNC = respNCa
+       eNC = eNCa
      end if
    
-     if (upwardCM .or. downwardCM) then
-       respCM = respNCa * 0.3_r8
+     if (downwardCM) then
+       respCM = respNCa * 0.1_r8
+       eCM = 0
      else
        respCM = respNCa
+       eCM = eNCa
      end if
      
 #endif
@@ -1769,7 +1773,7 @@
 !-----------------------------------------------------------------------
 !      
 !             cff2 = eNCa * Bio(i,k,iNCaS) / (fNCa**2 + cff1)
-              cff2 = eNCa * Bio(i,k,iNCaS) / (fNCa + cff1)
+              cff2 = eCM * Bio(i,k,iNCaS) / (fNCa + cff1)
 !               
 !-----------------------------------------------------------------------
 !Temperature correction 
@@ -2039,7 +2043,7 @@
 !-----------------------------------------------------------------------
      
 !             cff2 = eNCa * Bio(i,k,iNCaO) / (fNCa**2 + cff1)
-              cff2 = eNCa * Bio(i,k,iNCaO) / (fNCa + cff1)
+              cff2 = eNC * Bio(i,k,iNCaO) / (fNCa + cff1)
               
 !-----------------------------------------------------------------------
 !  Temperature correction 
