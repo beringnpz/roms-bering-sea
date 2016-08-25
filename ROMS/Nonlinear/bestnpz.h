@@ -5126,81 +5126,113 @@
 
 !************************************************************************
 
-      Subroutine TracerSink(n, Hz, z_w, dtdays, i, j, ibio, wBio, zlimit, Bio, Bout, sinkout)
+      Subroutine TracerSink(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
+      ! Arguments:
+      ! nn:	scalar, # layers
+      ! Hz:	n x 1, layer thickness (m)
+      ! z_w:	n+1 x 1, depths of layer edges (m, negative down)
+      ! dtdays: time step (days)
+      ! wBio:	sinking rate (m d^-1)
+      ! zlimit: depth below which sinking stops (m, negative down, >=0 = no limit)
+      ! Bio:	n x 1, biomass concentration input (g m^-3)
+      ! Bout:	n x 1, biomass concentration output (g m^-3)
+      ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
       
       USE mod_param
+      implicit none
       
-      integer,  intent(in) :: n, i, j, ibio
+      integer,  intent(in) :: nn
       real(r8), intent(in) :: wBio
       real(r8), intent(in) :: zlimit
       real(r8), intent(in) :: dtdays
-      real(r8), intent(in) :: zwtmp(0:n)
-      real(r8), intent(in) :: Hztmp(n)
-      real(r8), intent(out) :: Bout(n)
-      real(r8), intent(out) :: sinkout
+      real(r8), intent(in)  :: Hz(1,1,nn)
+      real(r8), intent(in)  :: z_w(1,1,0:nn)
+      real(r8), intent(in)  :: Bio(1,nn)
       
-      real(r8), intent(in) :: Hz(LBi:,LBj:,:)
-      real(r8), intent(in) :: z_w(LBi:,LBj:,0:)
-      real(r8), intent(in) :: Bio(IminS:ImaxS,N(ng),NT(ng))
+      real(r8), intent(out) :: Bout(nn)
+      real(r8), intent(out) :: lost
       
-      ! Extract the appropriate biomass (Bio) slice, layer thickness (Hz) 
-      ! slice, and layer edges (z_w) slice
-
-      DO k = 1,N(ng)
-        Bout(k) = Bio(i,k,iPhL)
-        Hztmp(k) = Hz(i,j,k)
+      integer  :: k
+      real(r8) :: zwtmp(0:nn)
+      real(r8) :: Hztmp(nn)
+      
+      ! Pack the array slices into appropriate 1D arrays
+      
+      DO k = 1,nn
+        Bout(k) = Bio(1,k)
+        Hztmp(k) = Hz(1,1,k)
       END DO
-      DO k = 0,N(ng)
-        zwtmp(k) = z_w(i,j,k)
+      DO k = 0,nn
+        zwtmp(k) = z_w(1,1,k)
       END DO
 
-      ! Call the sinking routine.
+      ! Call the sinking routine
 
-      call BioSink(N(ng), Bout, wBio, Hztmp, dtdays, zwtmp, zlimit, sinkout)
+      call BioSink(nn, Bout, wBio, Hztmp, dtdays, zwtmp, zlimit, lost)
+      
+      RETURN
+      END SUBROUTINE TracerSink
+      
       
 !************************************************************************
 
-      Subroutine TracerRise(n, Hz, z_w, dtdays, i, j, ibio, wBio, zlimit, Bio, Bout, sinkout)
-	      
-      USE mod_param
+      Subroutine TracerRise(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
+      ! Arguments:
+      ! n:	scalar, # layers
+      ! Hz:	1 x 1 x n, slice, layer thickness array (m)
+      ! z_w:	1 x 1 x n+1 slice, depths of layer edges (m, negative down)
+      ! dtdays: time step (days)
+      ! wBio:	rising rate (m d^-1)
+      ! zlimit: depth above which rising stops (m, negative down, >=0 = no limit)
+      ! Bio:	1 x n x 1 slice, biomass concentration input (g m^-3)
+      ! Bout:	n x 1, biomass concentration output (g m^-3)
+      ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
+	          
+      USE mod_param 
+      implicit none
 
-      integer,  intent(in) :: n, i, j, ibio
-      real(r8), intent(in) :: wBio
-      real(r8), intent(in) :: zlimit
-      real(r8), intent(in) :: dtdays
-      real(r8), intent(in) :: zwtmp(0:n)
-      real(r8), intent(in) :: Hztmp(n)
-      real(r8), intent(in) :: Btmp(n)
-      real(r8), intent(out) :: Bout(n)
-      real(r8), intent(out) :: sinkout
+      integer,  intent(in)  :: nn
+      real(r8), intent(in)  :: wBio
+      real(r8), intent(in)  :: zlimit
+      real(r8), intent(in)  :: dtdays
+      real(r8), intent(in)  :: Hz(1,1,nn)
+      real(r8), intent(in)  :: z_w(1,1,0:nn)
+      real(r8), intent(in)  :: Bio(1,nn)
       
-      real(r8), intent(in) :: Hz(LBi:,LBj:,:)
-      real(r8), intent(in) :: z_w(LBi:,LBj:,0:)
-      real(r8), intent(in) :: Bio(IminS:ImaxS,N(ng),NT(ng))
+      real(r8), intent(out) :: Bout(nn)
+      real(r8), intent(out) :: lost
+      
+      integer  :: k
+      real(r8) :: zwtmp(0:nn)
+      real(r8) :: Hztmp(nn)
+      real(r8) :: Btmp(nn)
+      real(r8) :: zlimflip
 
-      ! Extract the appropriate biomass (Bio) slice, layer thickness (Hz) 
-      ! slice, and layer edges (z_w) slice.  Flip the water column upside 
-      ! down.
+      ! Flip the water column upside down.  The bottom is now at z = 0 
+      ! and the surface at water depth+free surface height.
 
-      DO k = 1,N(ng)
-        Btmp(k) = Bio(i,N(ng)+1-k,iNCaS) ! flip
-        Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
+      DO k = 1,nn
+        Btmp(k) = Bio(1,nn+1-k) ! flip
+        Hztmp(k) = Hz(1,1,nn+1-k) ! flip
       END DO
-      DO k = 0,N(ng)
-        zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
+      DO k = 0,nn
+        zwtmp(k) = z_w(1,1,0) - z_w(1,1,nn-k) ! make surface the bottom
       END DO
       
-      zlimit = z_w(i,j,0) - zlimit
+      zlimflip = z_w(1,1,0) - zlimit
 
       ! Call the sinking routine
       
-      call BioSink(N(ng), Btmp, wBio, Hztmp, dtdays, zwtmp, zlimit, sinkout)
+      call BioSink(nn, Btmp, wBio, Hztmp, dtdays, zwtmp, zlimflip, lost)
       
       ! Flip the water column back
       
-      DO k = 1,N(ng)
-        Bout(k) = (Btmp(N(ng)+1-k) ! flip back
+      DO k = 1,nn
+        Bout(k) = Btmp(nn+1-k) ! flip back
       END DO
+      
+      RETURN
+      END SUBROUTINE TracerRise
       
 !************************************************************************
       
