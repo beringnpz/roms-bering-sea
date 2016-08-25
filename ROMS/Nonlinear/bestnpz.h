@@ -3441,16 +3441,8 @@
           ! bottom goes to benthic detritus 
 
           DO i=Istr,Iend
-  
-            DO k = 1,N(ng)
-              Btmp(k) = Bio(i,k,iPhS)
-              Hztmp(k) = Hz(i,j,k)
-            END DO
-            DO k = 0,N(ng)
-              zwtmp(k) = z_w(i,j,k)
-            END DO
-  
-            call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+		  
+            call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhS, 1.0_r8, Bio(i,:,iPhS), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
@@ -3464,16 +3456,8 @@
           ! bottom goes to benthic detritus 
           
           DO i=Istr,Iend
-  
-            DO k = 1,N(ng)
-              Btmp(k) = Bio(i,k,iPhL)
-              Hztmp(k) = Hz(i,j,k)
-            END DO
-            DO k = 0,N(ng)
-              zwtmp(k) = z_w(i,j,k)
-            END DO
-  
-            call BioSink(N(ng), Btmp, wPhL, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+		  
+            call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhL, 1.0_r8, Bio(i,:,iPhL), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
@@ -3487,15 +3471,7 @@
           
           DO i=Istr,Iend
   
-            DO k = 1,N(ng)
-              Btmp(k) = Bio(i,k,iDet)
-              Hztmp(k) = Hz(i,j,k)
-            END DO
-            DO k = 0,N(ng)
-              zwtmp(k) = z_w(i,j,k)
-            END DO
-  
-            call BioSink(N(ng), Btmp, wDet, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+            call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wDet, 1.0_r8, Bio(i,:,iDet), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
@@ -3509,15 +3485,7 @@
           
           DO i=Istr,Iend
   
-            DO k = 1,N(ng)
-              Btmp(k) = Bio(i,k,iDetF)
-              Hztmp(k) = Hz(i,j,k)
-            END DO
-            DO k = 0,N(ng)
-              zwtmp(k) = z_w(i,j,k)
-            END DO
-  
-            call BioSink(N(ng), Btmp, wDetF, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2)
+            call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wDetF, 1.0_r8, Bio(i,:,iDetF), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
@@ -3529,40 +3497,24 @@
           ! On-shelf large copepods (NCaS i.e. CM): Move up and down 
           ! based on dates set in input file, offset by 30 days.  Stop at 
           ! either 200m or the water depth, whichever is shallower.  No 
-          ! biomass should cross the bottom boundary.  
+          ! biomass should cross the bottom or surface boundary.  
           
           DO i=Istr,Iend
             
             if (downwardCM) then
             
-              DO k = 1,N(ng)
-                Btmp(k) = Bio(i,k,iNCaS)
-                Hztmp(k) = Hz(i,j,k)
-              END DO
-              DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,k)
-              END DO
-              
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, max(-200.0_r8, z_w(i,j,0)-z_w(i,j,N(ng))+eps), sinkout2)
-
+	      call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), Bio(i,:,iNCaS), Btmp, sinkout2)
+	      
               DO k = 1,N(ng)
                 DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
               END DO
               
             else if (upwardCM) then
               
+	      call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaS), Btmp, sinkout2)
+	      
               DO k = 1,N(ng)
-                Btmp(k) = Bio(i,N(ng)+1-k,iNCaS) ! flip
-                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
-              END DO
-              DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
-              END DO
-              
-              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
-              
-              DO k = 1,N(ng)
-                DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaS)) ! flip back
+                DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
               END DO
               
             end if
@@ -3577,37 +3529,21 @@
           DO i=Istr,Iend
             
             if (downward) then
-            
-              DO k = 1,N(ng)
-                Btmp(k) = Bio(i,k,iNCaO)
-                Hztmp(k) = Hz(i,j,k)
-              END DO
-              DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,k)
-              END DO
-          
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2)
+		    
+	      call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, -400.0_r8, Bio(i,:,iNCaO), Btmp, sinkout2)
 
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
               END DO
             
-              DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+              DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2
               
             else if (upward) then
               
+	      call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaO), Btmp, sinkout2)
+	      
               DO k = 1,N(ng)
-                Btmp(k) = Bio(i,N(ng)+1-k,iNCaO) ! flip
-                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
-              END DO
-              DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
-              END DO
-              
-              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2)
-              
-              DO k = 1,N(ng)
-                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaO)) ! flip back
+                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
               END DO
               
             end if
