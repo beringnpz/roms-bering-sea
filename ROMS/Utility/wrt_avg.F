@@ -1033,12 +1033,13 @@
 !  Write out ice variables.
 
       DO itrc=1,NIceT(ng)
-        IF (Hout(idIceBvar(itrc),ng)) THEN
+      
+         IF (Hout(idIceBvar(itrc),ng)) THEN
           scale=1.0_r8
 
             gtype=gfactor*r2dvar
 
-
+          
         status=nf_fwrite2d(ng, iNLM, ncAVGid(ng), avgIceBid(itrc,ng),   &
      &                     tAVGindx(ng), gtype,                         &
      &                     LBi, UBi, LBj, UBj, scale,                   &
@@ -1134,6 +1135,7 @@
         END IF
       END IF
 !
+
         IF (Hout(idIceLog,ng)) THEN
 !       IF (Hout(idIceBvar,ng)) THEN
         scale=1.0_r8

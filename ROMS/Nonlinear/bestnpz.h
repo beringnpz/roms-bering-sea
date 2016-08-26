@@ -714,7 +714,7 @@
         END DO
         END DO
 #endif  
-
+        
 #ifdef STATIONARY
         DO itrc=1,NBTS
           DO i=Istr,Iend
@@ -788,7 +788,7 @@
             DBioBI(i,ibioBI)=0.0_r8
        
           END DO
-    
+          
           if (ice_thick(i,j).gt.aidz)          THEN 
             itL(i,j,nstp,iIceLog) =1.0_r8 
           else
@@ -798,14 +798,22 @@
 ! Initialize the ice biology
 !        
           if (itL(i,j,nstp,iIceLog).gt.0.and.                           &
-     &        itL(i,j,nnew,iIceLog).lt.0) THEN  ! new ice at this timestep  
+     &        itL(i,j,nnew,iIceLog).le.0) THEN  ! new ice at this timestep  
                             
-            BioBI(i,iIcePhL) = 1.1638_r8  !0.1638_r8       
+            BioBI(i,iIcePhL) = Bio(i,N(ng),iPhL)  !0.1638_r8       
             BioBI(i,iIceNO3) = Bio(i,N(ng),iNO3)  !5.0_r8        
             BioBI(i,iIceNH4) = Bio(i,N(ng),iNH4)  !1.0_r8       
             
-          elseif (itL(i,j,nstp,iIceLog).le.0.and. &
-     &            itL(i,j,nnew,iIceLog).lt.0) THEN  ! no ice 
+	        
+	   DBio(i,N(ng),iNO3)=DBio(i,N(ng),iNO3)                      &
+     &	                      -Bio(i,N(ng),iNO3)*aidz/Hz(i,j,N(ng))
+           DBio(i,N(ng),iNH4)=DBio(i,N(ng),iNH4)                      &
+     &	                      -Bio(i,N(ng),iNH4)*aidz/Hz(i,j,N(ng))
+           DBio(i,N(ng),iPhL)=DBio(i,N(ng),iPhL)                      &
+     &	                      -Bio(i,N(ng),iPhL)*aidz/Hz(i,j,N(ng))
+	
+          elseif (itL(i,j,nstp,iIceLog).le.0.0_r8.and. &
+     &            itL(i,j,nnew,iIceLog).lt.0.0_r8) THEN  ! no ice 
             BioBI(i,iIcePhL) = 0.0_r8         
             BioBI(i,iIceNO3) = 0.0_r8        
             BioBI(i,iIceNH4) = 0.0_r8  

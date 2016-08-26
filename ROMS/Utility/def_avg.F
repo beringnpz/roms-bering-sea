@@ -2729,6 +2729,103 @@
              avgTid(itrc,ng)=var_id(i)
             END IF
           END DO 
+	  
+#ifdef PROD2
+!------------------------------------------
+!  Define 2D production  variables.
+!------------------------------------------
+        DO itrc=1,NPT2(ng)
+	 IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idPT2var(itrc)))) THEN
+              got_var(idPT2var(itrc))=.TRUE.
+              avgPT2id(itrc,ng)=var_id(i)
+			 
+           END IF 
+        END DO
+#endif
+
+#ifdef PROD3
+!------------------------------------------
+!  Define 3D production variables.
+!------------------------------------------
+        DO itrc=1,NPT3(ng)
+	 IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idPT3var(itrc)))) THEN
+              got_var(idPT3var(itrc))=.TRUE.
+              avgPT3id(itrc,ng)=var_id(i)
+	END IF	      
+        END DO
+#endif
+
+#ifdef STATIONARY
+!------------------------------------------
+!  Define 3D stationary tracer type variables.
+!------------------------------------------
+        DO itrc=1,NTS(ng)
+	
+	 IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idTSvar(itrc)))) THEN
+              got_var(idTSvar(itrc))=.TRUE.
+              avgTSid(itrc,ng)=var_id(i)
+	      
+        END IF
+         END DO
+#endif
+
+#  if defined BENTHIC
+!------------------------------------------
+!  Define benthic tracer type variables.
+!------------------------------------------   
+         DO itrc=1,NBeT(ng)
+     
+            IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idBvar(itrc)))) THEN
+              got_var(idBvar(itrc))=.TRUE.
+              avgBid(itrc,ng)=var_id(i)
+	      END IF
+            END DO
+#  endif	  
+	  
+
+
+
+# if defined ICE_BIO
+
+!------------------------------
+!Write out ice bio variables
+!-----------------------------
+#     ifdef CLIM_ICE_1D
+              DO itrc=1,NIceT(ng)
+       IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceBvar(itrc)))) THEN
+              got_var(idIceBvar(itrc))=.TRUE.
+              avgIceBid(itrc,ng)=var_id(i)
+
+        END IF
+                 
+      END DO
+      
+#elif defined BERING_10K 
+     IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIcePhL))) THEN
+      got_var(idIcePhL)=.TRUE.
+      avgVid(idIcePhL,ng)=var_id(i)
+     END IF
+             
+     IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceNO3))) THEN
+      got_var(idIceNO3)=.TRUE.
+      avgVid(idIceNO3,ng)=var_id(i)
+     END IF
+       
+      IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceNH4))) THEN
+      got_var(idIceNH4)=.TRUE.
+      avgVid(idIceNH4,ng)=var_id(i)
+     END IF
+    
+      IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceLog))) THEN
+      
+       got_var(idIceLog)=.TRUE.
+       avgVid(idIceLog,ng)=var_id(i)
+      END IF
+#  endif
+#  endif	  
+	  
+	  
+	  
 #  ifdef AVERAGES_QUADRATIC
           DO itrc=1,NAT
             IF (TRIM(var_name(i)).eq.TRIM(Vname(1,iHUTav(itrc)))) THEN
@@ -3326,6 +3423,8 @@
             RETURN
           END IF
         END DO
+	
+	
 #  ifdef AVERAGES_QUADRATIC
         DO itrc=1,NAT
           IF (.not.got_var(iHUTav(itrc))) THEN

@@ -1067,7 +1067,7 @@
 !  Define 3D production variables.
 !------------------------------------------
         DO itrc=1,NPT3(ng)
-    hisPT3id(itrc,ng) = 0
+!    hisPT3id(itrc,ng) = 0
           IF (Hout(idPT3var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idPT3var(itrc))
             Vinfo( 2)=Vname(2,idPT3var(itrc))
@@ -1112,7 +1112,7 @@
 !  Define 2D production  variables.
 !------------------------------------------
         DO itrc=1,NPT2(ng)
-    hisPT2id(itrc,ng) = 0
+!    hisPT2id(itrc,ng) = 0
           IF (Hout(idPT2var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idPT2var(itrc))
             Vinfo( 2)=Vname(2,idPT2var(itrc))
@@ -1258,7 +1258,7 @@
 !  Define stationary tracer type variables.
 !------------------------------------------
         DO itrc=1,NTS(ng)
-          hisTsid(itrc,ng) = 0
+!          hisTsid(itrc,ng) = 0
           IF (Hout(idTSvar(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idTSvar(itrc))
             Vinfo( 2)=Vname(2,idTSvar(itrc))
@@ -3328,6 +3328,101 @@
 # endif
             END IF
           END DO
+	  
+#ifdef PROD2
+!------------------------------------------
+!  Define 2D production  variables.
+!------------------------------------------
+        DO itrc=1,NPT2(ng)
+	 IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idPT2var(itrc)))) THEN
+              got_var(idPT2var(itrc))=.TRUE.
+              hisPT2id(itrc,ng)=var_id(i)
+			 
+           END IF 
+        END DO
+#endif
+
+#ifdef PROD3
+!------------------------------------------
+!  Define 3D production variables.
+!------------------------------------------
+        DO itrc=1,NPT3(ng)
+	 IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idPT3var(itrc)))) THEN
+              got_var(idPT3var(itrc))=.TRUE.
+              hisPT3id(itrc,ng)=var_id(i)
+	END IF	      
+        END DO
+#endif
+
+#ifdef STATIONARY
+!------------------------------------------
+!  Define 3D stationary tracer type variables.
+!------------------------------------------
+        DO itrc=1,NTS(ng)
+	
+	 IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idTSvar(itrc)))) THEN
+              got_var(idTSvar(itrc))=.TRUE.
+              hisTSid(itrc,ng)=var_id(i)
+	      
+        END IF
+         END DO
+#endif
+
+#  if defined BENTHIC
+!------------------------------------------
+!  Define benthic tracer type variables.
+!------------------------------------------   
+         DO itrc=1,NBeT(ng)
+     
+            IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idBvar(itrc)))) THEN
+              got_var(idBvar(itrc))=.TRUE.
+              hisBid(itrc,ng)=var_id(i)
+	      END IF
+            END DO
+#  endif	  
+	  
+
+
+
+# if defined ICE_BIO
+
+!------------------------------
+!Write out ice bio variables
+!-----------------------------
+#     ifdef CLIM_ICE_1D
+              DO itrc=1,NIceT(ng)
+       IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceBvar(itrc)))) THEN
+              got_var(idIceBvar(itrc))=.TRUE.
+              hisIceBid(itrc,ng)=var_id(i)
+
+        END IF
+                 
+      END DO
+      
+#elif defined BERING_10K 
+     IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIcePhL))) THEN
+      got_var(idIcePhL)=.TRUE.
+      hisVid(idIcePhL,ng)=var_id(i)
+     END IF
+             
+     IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceNO3))) THEN
+      got_var(idIceNO3)=.TRUE.
+      hisVid(idIceNO3,ng)=var_id(i)
+     END IF
+       
+      IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceNH4))) THEN
+      got_var(idIceNH4)=.TRUE.
+      hisVid(idIceNH4,ng)=var_id(i)
+     END IF
+    
+      IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idIceLog))) THEN
+      
+       got_var(idIceLog)=.TRUE.
+       hisVid(idIceLog,ng)=var_id(i)
+      END IF
+#  endif
+#  endif	  
+	  
           DO itrc=1,NAT
             IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idTsur(itrc)))) THEN
               got_var(idTsur(itrc))=.TRUE.
