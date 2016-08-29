@@ -964,6 +964,29 @@
 
           END DO
         END DO
+#elif defined COKELET
+       
+       DO i=Istr,Iend
+	 
+	 cff10=grid(ng) % h(i,j)
+!	 k_extV= k_ext+k_extZ*exp(-cff10*.05)
+          k_extV= k_ext
+ 	 cff0=PARs(i)
+        
+         DO k=N(ng),1,-1  
+
+          dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+
+	 
+          cff5=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
+	  cff2 = (k_chlA*(cff5)**(k_chlB))   
+
+ 	  PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+	  cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
+
+         END DO
+       END DO
+ 	 
 #else
 !  Version from Sarah Hinckley old C code 
         DO k=N(ng),1,-1

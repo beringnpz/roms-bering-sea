@@ -1222,7 +1222,8 @@
 !  Bio- conversions
         real(r8) :: xi, ccr, ccrPhL
 !  extinction coefficients
-        real(r8) :: k_ext, k_chl
+        real(r8) :: k_ext, k_chl,k_extZ,k_chlA,k_chlB,k_chlC
+	real(r8) :: a_frac,a_mu1 
 !  PhS growth params
         real(r8) :: DiS, DpS,aPS
         real(r8) :: alphaPhS
