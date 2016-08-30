@@ -6867,6 +6867,10 @@
             Npts=load_r(Nval, Rval, 1, fpMZLEup)
           ELSE IF (TRIM(KeyWord).eq.'fpCopEup') THEN
             Npts=load_r(Nval, Rval, 1, fpCopEup)
+	  ELSE IF (TRIM(KeyWord).eq.'fpDetEup') THEN
+            Npts=load_r(Nval, Rval, 1, fpDetEup) 
+	  ELSE IF (TRIM(KeyWord).eq.'fpDetEupO') THEN
+            Npts=load_r(Nval, Rval, 1, fpDetEupO)    
 !-------------------------------
 !  Eup growth and feeding params
 !-------------------------------

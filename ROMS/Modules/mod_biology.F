@@ -1273,7 +1273,8 @@
         real(r8) :: gammaNCa
         real(r8) :: kNCa
 !  Eup preference params
-        real(r8) :: fpPhSEup, fpPhLEup, fpMZSEup, fpMZLEup, fpCopEup
+        real(r8) :: fpPhSEup, fpPhLEup, fpMZSEup, fpMZLEup 
+	real(r8) :: fpCopEup,fpDetEup,fpDetEupO
 !  Eup growth and feeding params
         real(r8) :: eEup
         real(r8) :: Q10Eup
