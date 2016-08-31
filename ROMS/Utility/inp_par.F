@@ -7069,6 +7069,14 @@
             Npts=load_r(Nval, Rval, 1, SinkStart)
           ELSE IF (TRIM(KeyWord).eq.'SinkEnd') THEN
             Npts=load_r(Nval, Rval, 1, SinkEnd)
+          ELSE IF (TRIM(KeyWord).eq.'RiseStartCM') THEN
+            Npts=load_r(Nval, Rval, 1, RiseStart)
+          ELSE IF (TRIM(KeyWord).eq.'RiseEndCM') THEN
+            Npts=load_r(Nval, Rval, 1, RiseEnd)
+          ELSE IF (TRIM(KeyWord).eq.'SinkStartCM') THEN
+            Npts=load_r(Nval, Rval, 1, SinkStart)
+          ELSE IF (TRIM(KeyWord).eq.'SinkEndCM') THEN
+            Npts=load_r(Nval, Rval, 1, SinkEnd)
 
 
 !-----------------------------------
