@@ -560,11 +560,26 @@
      RENC = MOD(RiseEnd,   366.0_r8)
      SSNC = MOD(SinkStart, 366.0_r8)
      SENC = MOD(SinkEnd,   366.0_r8)
-   
-     RSCM = MOD(RiseStartCM, 366.0_r8)
-     RECM = MOD(RiseEndCM,   366.0_r8)
-     SSCM = MOD(SinkStartCM, 366.0_r8)
-     SECM = MOD(SinkEndCM,   366.0_r8)
+     
+     if ((RiseStartCM .eq. 0.0_r8) .and. (RiseEndCM .eq. 0.0_r8) .and. &
+        (SinkStartCM .eq. 0.0_r8) .and. (SinkEndCM .eq. 0.0_r8)) then
+        RSCM = MOD(RiseStart + 30, 366.0_r8)
+        RECM = MOD(RiseEnd   + 30, 366.0_r8)
+        SSCM = MOD(SinkStart + 30, 366.0_r8)
+        SECM = MOD(SinkEnd   + 30, 366.0_r8)
+	
+     else
+     
+        RSCM = MOD(RiseStartCM, 366.0_r8)
+        RECM = MOD(RiseEndCM,   366.0_r8)
+        SSCM = MOD(SinkStartCM, 366.0_r8)
+        SECM = MOD(SinkEndCM,   366.0_r8)
+     
+     endif
+     
+     !write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
+     !write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SSCM
+     
    
      upward =     ((RSNC.lt.RENC) .and.                                &
     &              (yday.ge.RSNC .and. yday.le.RENC))                  &
