@@ -2526,15 +2526,15 @@
 ! 
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
 !     &                        mMZS * Bio(i,k,iMZS) * dtdays
-!             DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
-!     &                         mMZL * Bio(i,k,iMZL) * dtdays
+             DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
+     &                         mMZL * Bio(i,k,iMZL) * dtdays
 !
 !  Quadratic 
 !  
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
 !    &                         mpredMZS*dtdays*Bio(i,k,iMZS)**2
-              DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
-     &                         mpredMZL*dtdays*Bio(i,k,iMZL)**2
+!              DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
+!     &                         mpredMZL*dtdays*Bio(i,k,iMZL)**2
          
 #ifdef STATIONARY
               if(i.eq.2) THEN  
@@ -2549,13 +2549,13 @@
 ! 
 !  if linear (George)
 ! 
-!             Bio(i,k,iDet) = DBio(i,k,iDet) +                          &
-!    &                        mMZL * Bio(i,k,iMZL) * dtdays   
+             Bio(i,k,iDet) = DBio(i,k,iDet) +                          &
+    &                        mMZL * Bio(i,k,iMZL) * dtdays   
 ! 
 !  if quadratic (Ken)
 ! 
-              DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
-      &                        (mpredMZL * Bio(i,k,iMZL)**2 ) * dtdays 
+!              DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
+!      &                        (mpredMZL * Bio(i,k,iMZL)**2 ) * dtdays 
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
