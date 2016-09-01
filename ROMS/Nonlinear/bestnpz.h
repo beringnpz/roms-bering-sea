@@ -2934,68 +2934,60 @@
 !=======================================================================
           DO k=1,N(ng)
             DO i=Istr,Iend
-     
+
+!-----------------------------------------------------------------------
+!  Starvation respiration correction
+!-----------------------------------------------------------------------
+
+!     Small copepods     
               cff1 = fpPhSCop * Bio(i,k,iPhS)+ fpPhLCop * Bio(i,k,iPhL) &
      &             + fpMZLCop * Bio(i,k,iMZL)
       
-
- 
               if(cff1.lt.0.01_r8)THEN  !0.05
                 BasalMetCop= respCop*cff1/0.01_r8 
               else
                 BasalMetCop= respCop
               endif 
 
-!-----------------------------------------------------------------------
-!  Copepod respiration correction
-!-----------------------------------------------------------------------
+!      Large Copepods	      
+	      cff1 = fpPhSNCa * Bio(i,k,iPhS)+ fpPhLNCa * Bio(i,k,iPhL) &
+!    &               + fpMZSNCa * Bio(i,k,iMZS)                         &
+     &               + fpMZLNCa * Bio(i,k,iMZL)
 
-              TFCop = exp(ktbmC * (Bio(i,k,itemp) - TrefC))
-
-!-----------------------------------------------------------------------
-!  Neocalanus respiration correction
-!-----------------------------------------------------------------------
-
-              TFNCa = exp(ktbmN * (Bio(i,k,itemp) - TrefN))
-
-!-----------------------------------------------------------------------
-!  Euphausiid respiration correction
-!-----------------------------------------------------------------------
-
-              TFEup = exp(ktbmE * (Bio(i,k,itemp) - TrefE))
-
-! 
-!  starvation response  
-! 
+              if(cff1.lt.0.01_r8)THEN
+                BasalMetNC= respNC*cff1/0.01_r8 
+                BasalMetCM= respCM*cff1/0.01_r8  
+              else
+                BasalMetNC=respNC
+                BasalMetCM=respCM
+              end if 
+      	      
+!      Euphausiids	      
               cff1 = fpPhSEup * Bio(i,k,iPhS)                           &
      &               + fpPhLEup * Bio(i,k,iPhL)                         &
 !    &               + fpMZSEup * Bio(i,k,iMZS)                         &
      &               + fpMZLEup * Bio(i,k,iMZL)                         &
      &               + fpCopEup * Bio(i,k,iCop)                    
 
-              cff2 = fpPhSNCa * Bio(i,k,iPhS)+ fpPhLNCa * Bio(i,k,iPhL) &
-!    &               + fpMZSNCa * Bio(i,k,iMZS)                         &
-     &               + fpMZLNCa * Bio(i,k,iMZL)
 
-
-
-                  
               if(cff1.lt.0.01_r8)THEN
                 BasalMetEup=respEup*cff1/0.01_r8
               else
                 BasalMetEup= respEup 
               endif 
-      
+	      
+!-----------------------------------------------------------------------
+!  Temperature respiration correction
+!-----------------------------------------------------------------------
 
+!       Small copepods
+              TFCop = exp(ktbmC * (Bio(i,k,itemp) - TrefC))
+!       Large Copepods
+              TFNCa = exp(ktbmN * (Bio(i,k,itemp) - TrefN))
+!       Euphausiids 
+              TFEup = exp(ktbmE * (Bio(i,k,itemp) - TrefE))
 
-              if(cff2.lt.0.01_r8)THEN
-                BasalMetNC= respNC*cff2/0.01_r8 
-                BasalMetCM= respCM*cff2/0.01_r8  
-              else
-                BasalMetNC=respNC
-                BasalMetCM=respCM
-              end if 
-      
+     
 !-----------------------------------------------------------------------
 !  Change in concentration from small copepod respiration
 !-----------------------------------------------------------------------
