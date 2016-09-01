@@ -4169,7 +4169,7 @@
  160  FORMAT (f11.3,2x,a,t30,a,/,t32,a)
  170  FORMAT (10x,l1,2x,a,t30,a)
  180  FORMAT (10x,l1,2x,a,t30,a,i2.2,':',1x,a)
- 190  FORMAT (1p,e11.4,2x,a,'(',i2.2,')',t30,a,/,t32,a,i2.2,':',1x,a)
+ 190  FORMAT (1p,e11.4,2x,a,'(',i3.3,')',t30,a,/,t32,a,i2.2,':',1x,a)
  195  FORMAT (1p,e11.4,2x,a,t30,a,i2.2,':',1x,a)
  200  FORMAT (1p,e11.4,2x,a,t30,a)
  210  FORMAT (1p,e11.4,2x,a,t30,a,/,t32,a)
