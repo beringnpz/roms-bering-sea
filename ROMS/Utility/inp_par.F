@@ -698,9 +698,9 @@
 !                                                                      !
 !=======================================================================
 !
-#ifdef FILTERED
+# ifdef FILTERED
       USE mod_filter, ONLY: nfil,fcount,nw,dtfil,FIL
-#endif
+# endif
       USE mod_param
       USE mod_parallel
       USE mod_coupler
@@ -5745,7 +5745,7 @@
             Npts=load_r(Nval, Rval, Ngrids, setVPON)
           ELSE IF (TRIM(KeyWord).eq.'setVOpal') THEN
             Npts=load_r(Nval, Rval, Ngrids, setVOpal)
-# ifdef IRON_LIMIT
+#  ifdef IRON_LIMIT
           ELSE IF (TRIM(KeyWord).eq.'T_Fe') THEN
             Npts=load_r(Nval, Rval, Ngrids, T_Fe)
           ELSE IF (TRIM(KeyWord).eq.'A_Fe') THEN
@@ -5758,7 +5758,7 @@
             Npts=load_r(Nval, Rval, Ngrids, LK_FeC)
           ELSE IF (TRIM(KeyWord).eq.'FeRR') THEN
             Npts=load_r(Nval, Rval, Ngrids, FeRR)
-# endif
+#  endif
           ELSE IF (TRIM(KeyWord).eq.'TNU2') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
             DO ng=1,Ngrids
@@ -6882,7 +6882,7 @@
             Npts=load_r(Nval, Rval, 1, gammaEup)
           ELSE IF (TRIM(KeyWord).eq.'kEup') THEN
             Npts=load_r(Nval, Rval, 1, kEup)
-#if defined JELLY
+#  if defined JELLY
 !--------------------------
 !  Jellyfish  param
 !--------------------------
@@ -6916,7 +6916,7 @@
             Npts=load_r(Nval, Rval, 1,TrefJ)
           ELSE IF (TRIM(KeyWord).eq.'fJel') THEN
             Npts=load_r(Nval, Rval, 1,fJel)
-# endif
+#  endif
 
 !--------------------------
 !  Phytoplankton senescence
@@ -7102,10 +7102,10 @@
 !-------------------
 !Benthic Parameters
 !-------------------
-#ifdef BENTHIC
-# ifdef FEAST
+#  ifdef BENTHIC
+#   ifdef FEAST
 !        NOGRID START
-# endif
+#   endif
          ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
            Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
            DO ng=1,Ngrids
@@ -7114,9 +7114,9 @@
                Hout(i,ng)=Ltrc(itrc,ng)
              END DO
            END DO
-# ifdef FEAST
+#   ifdef FEAST
 !        NOGRID END
-# endif
+#   endif
          ELSE IF (TRIM(KeyWord).eq.'iremin') THEN
            Npts=load_r(Nval, Rval, 1, iremin)
          ELSE IF (TRIM(KeyWord).eq.'q10') THEN
@@ -7162,13 +7162,13 @@
          ELSE IF (TRIM(KeyWord).eq.'TrefB') THEN
            Npts=load_r(Nval, Rval, 1,TrefB)
    
-#endif
+#  endif
 
 !--------------
 !ice bio params
 !--------------
-#ifdef ICE_BIO
-# ifdef CLIM_ICE_1D
+#  ifdef ICE_BIO
+#   ifdef CLIM_ICE_1D
            ELSE IF (TRIM(KeyWord).eq.'Hout(idIceBvar)') THEN
              Npts=load_l(Nval, Cval,NIB*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7178,10 +7178,10 @@
                END DO
               END DO
 	      
-#elif defined BERING_10K  
-#ifdef FEAST
+#   elif defined BERING_10K  
+#    ifdef FEAST
  !NOGRID START
-#endif 
+#    endif 
           
            ELSE IF (TRIM(KeyWord).eq.'Hout(idIcePhL)') THEN
               Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
@@ -7210,11 +7210,11 @@
 !               Hout(idIceLog,ng)=LtrcI(idIceLog,ng)
 	          Hout(idIceLog,ng)=LtrcI(4,ng)
             END DO
-#ifdef FEAST
+#    ifdef FEAST
  !NOGRID END
-#endif 	    
+#    endif 	    
 	    
-# endif	      
+#   endif	      
             ELSE IF (TRIM(KeyWord).eq.'alphaIb') THEN
             Npts=load_r(Nval, Rval, 1,alphaIb)
             ELSE IF (TRIM(KeyWord).eq.'betaI') THEN
@@ -7237,10 +7237,10 @@
             Npts=load_r(Nval, Rval, 1,annit)
 	    ELSE IF (TRIM(KeyWord).eq.'aidz') THEN
             Npts=load_r(Nval, Rval, 1,aidz)
-#endif
-#ifdef FEAST
+#  endif
+#  ifdef FEAST
  !NOGRID START
-#endif 
+#  endif 
           ELSE IF (TRIM(KeyWord).eq.'TNU2') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
             DO ng=1,Ngrids
@@ -7286,7 +7286,7 @@
                 Hout(i,ng)=Ltrc(itrc,ng)
               END DO
 	    END DO
-#ifdef STATIONARY	    
+#  ifdef STATIONARY	    
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTSvar)') THEN
             Npts=load_l(Nval, Cval, NTS*Ngrids, LtrcS)
             DO ng=1,Ngrids
@@ -7296,8 +7296,8 @@
               END DO
             END DO
          
-#endif	  
-#ifdef BIOFLUX	    
+#  endif	  
+#  ifdef BIOFLUX	    
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTBFvar)') THEN
             Npts=load_l(Nval, Cval, NT*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7307,8 +7307,8 @@
 !              END DO
             END DO
          
-#endif	  
-#ifdef STATIONARY2	    
+#  endif	  
+#  ifdef STATIONARY2	    
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTS2var)') THEN
             Npts=load_l(Nval, Cval, NTS2*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7318,9 +7318,9 @@
               END DO
             END DO
          
-#endif	  
+#  endif	  
 
-#ifdef PROD3	    
+#  ifdef PROD3	    
           ELSE IF (TRIM(KeyWord).eq.'Hout(idPT3var)') THEN
             Npts=load_l(Nval, Cval, NBPT3*Ngrids, Ltrc3)
             DO ng=1,Ngrids
@@ -7330,8 +7330,8 @@
               END DO
             END DO
           
-#endif	
-#ifdef PROD2	    
+#  endif	
+#  ifdef PROD2	    
           ELSE IF (TRIM(KeyWord).eq.'Hout(idPT2var)') THEN
             Npts=load_l(Nval, Cval, NPT2*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7341,11 +7341,11 @@
               END DO
             END DO
           
-#endif	
-#ifdef FEAST
+#  endif	
+#  ifdef FEAST
  !NOGRID END
-#endif 
-#ifdef FEAST
+#  endif 
+#  ifdef FEAST
 
           ELSE IF (TRIM(KeyWord).eq.'feast_test') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)
@@ -7641,7 +7641,7 @@
         !ELSE
         !  write (out,30) line
 
-#endif      
+#  endif      
          
 
 	END IF 
@@ -7661,16 +7661,16 @@
       STOP
   20  CLOSE (inp)
 !
-#ifdef FEAST 
+#  ifdef FEAST 
    call initialize_feast
-#endif
+#  endif
 !-----------------------------------------------------------------------
 !  Report input parameters.
 !-----------------------------------------------------------------------
 !
-#ifdef FEAST
+#  ifdef FEAST
  !NOGRID START
-#endif 
+#  endif 
       IF (Lwrite) THEN
         DO ng=1,Ngrids
           IF (Lbiology(ng)) THEN
@@ -7728,9 +7728,9 @@
           END IF
         END DO
       END DO
-#ifdef FEAST    
+#  ifdef FEAST    
  !NOGRID END
-#endif 
+#  endif 
   30  FORMAT (/,' READ_BioPar - Error while processing line: ',/,a)
   40  FORMAT (/,/,' Biology Parameters, Grid: ',i2.2,                   &
      &        /,  ' ============================',/)
