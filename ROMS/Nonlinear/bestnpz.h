@@ -3780,20 +3780,22 @@
             
 # ifdef CLIM_ICE_1D
          
-        IF (itL(i,j,nstp,iIceLog).gt.0.0)THEN   !0.02
+         IF (itL(i,j,nstp,iIceLog).gt.0.0)THEN   !0.02
+	 Temp1 = Bio(i,N(ng),itemp)
+
+             
 					
 # elif defined BERING_10K
 
-          IF (IceLog(i,j,nstp).gt.0.0_r8) THEN
+         IF (IceLog(i,j,nstp).gt.0.0_r8) THEN
+	 Temp1 = ti(i,j,nstp)
 # endif 
 ! 
 !  ICE CAN GROW
 !   
-!#if defined CLIM_ICE_1D  
-            Temp1 = Bio(i,N(ng),itemp)
-!#endif
-!           Temp1 = ti(i,j,1)   
-
+ 
+!            Temp1 = Bio(i,N(ng),itemp)
+            Sal1 = Bio(i,N(ng),isalt)
             Par1 = PARs(i)
             aiceIfrac=(1-exp(-alphaIb*Par1))*exp(-betaI*Par1) !light limiting 
     
@@ -3801,47 +3803,80 @@
             cff1=BioBI(i,iIceNO3)/(ksnut1+BioBI(i,iIceNO3))                  
             cff2=BioBI(i,iIceNH4)/(ksnut2+BioBI(i,iIceNH4))
                       
-            aiceNfrac=exp(-inhib*BioBI(i,iIceNH4))   !nutrient limiting
-            sb=-3.9921-22.7* Temp1-1.0015*Temp1**2                      &
-     &         -0.02* Temp1**3
+            aiceNfrac=cff1*exp(-inhib*BioBI(i,iIceNH4))+cff2   !nutrient limiting
+
 # elif defined BERING_10K  
             cff1=IceNO3(i,j,nstp)/(ksnut1+IceNO3(i,j,nstp))                  
             cff2=IceNH4(i,j,nstp)/(ksnut2+IceNH4(i,j,nstp))
                       
-            aiceNfrac=exp(-inhib*IceNH4(i,j,nstp))    
-!      
-! salinity inhibition of ice algal growth -from Arrigo 1993
-! 
-            sb=-3.9921-22.7* ti(i,j,nstp)-1.0015*ti(i,j,nstp)**2        &
-     &         -0.02* ti(i,j,nstp)**3
-    
-# endif     
+            aiceNfrac=cff1*exp(-inhib*IceNH4(i,j,nstp))+cff2    
+# endif
+      
+!            NOup=cff1*min(aiceIfrac,aiceNfrac)
+!            NHup=cff2*aiceIfrac
 
+#ifdef BERING_10K
+! salinity inhibition of ice algal growth -from Arrigo 1993
+!  sb= brine salinity
+   
+
+	   if (ti(i,j,nstp)> -22.9_r8) THEN
+	    cff1=-3.9921
+	    cff2=-22.7
+	    cff3=-1.0015
+	    cff4=-0.019956
+	   else if (ti(i,j,nstp)> -44.0_r8  .AND. ti(i,j,nstp)< -22.9_r8) THEN
+	    cff1=206.24
+	    cff2=-1.8907
+	    cff3=-0.060868
+	    cff4=-0.0010247
+	   else
+	    cff1=-4442.1
+	    cff2=-277.86
+	    cff3=-5.501
+	    cff4=-0.03669
+	   endif
+	 
+	   sb=cff1+cff2* ti(i,j,nstp)+cff3*ti(i,j,nstp)**2 &
+     &       +cff4* ti(i,j,nstp)**3
+	 
+    
 !   
-! growth of Ice Algae
+! Salinity impact on growth of Ice Algae
 !   
-	          gesi = max(0.0_r8,(1.1e-2+3.012e-2*sb                       &
+	    gesi = max(0.0_r8,(1.1e-2+3.012e-2*sb                       &
      &             +1.0342e-3*sb**2                                     &
      &             -4.6033e-5*sb**3                                     &
      &             +4.926e-7*sb**4                                      &
      &             -1.659e-9*sb**5              ))
 
-  
-            grow1=mu0*exp(0.0633*Temp1)*gesi
+#else 
 
+           gesi=1.0_r8
+#endif
+	   
+	   grow1=mu0*exp(0.0633*Temp1)*gesi
+	   
+! Alternate temperature dependance code - need to look into more
+!
+! freezing point of seawater at sea level  
+!	  cff1=-0.0575
+!         cff2=1.710523E-3
+!         cff3=-2.154996E-4
+!         cff4=cff1*Sal1+cff2*Sal1**(3/2)+cff3*Sal1**2
+ 	
+!         grow1=mu0*exp(cff4-Temp1)*gesi
+ 	 
+	 
 
-
-   
-            NOup=cff1*min(aiceIfrac,aiceNfrac)
-            NHup=cff2*aiceIfrac
-
+          
 !gg limit NOup and NHup to amount of NO and NH present
 # ifdef CLIM_ICE_1D   
    
-            NOup=MIN(NOup,BioBI(i,iIceNO3)/                             &
-     &           (grow1*BioBI(i,iIcePhL)*xi*dtdays+1.e-10))
-            NHup=MIN(NHup,BioBI(i,iIceNH4)/                             &
-     &           (grow1*BioBI(i,iIcePhL)*xi*dtdays+1.e-10))
+!            NOup=MIN(NOup,BioBI(i,iIceNO3)/                             &
+!     &           (grow1*BioBI(i,iIcePhL)*xi*dtdays+1.e-10))
+!            NHup=MIN(NHup,BioBI(i,iIceNH4)/                             &
+!    &           (grow1*BioBI(i,iIcePhL)*xi*dtdays+1.e-10))
      
 # elif defined BERING_10K
 !           NOup=MIN(NOup,IceNO3(i,j,nstp)/dtdays)
@@ -3849,10 +3884,10 @@
 !           NOup=MAX(0.0_r8,NOup)
 !           NHup=MAX(0.0_r8,NHup)
    
-            NOup=MIN(NOup,IceNO3(i,j,nstp)/                             &
-     &           (grow1*IcePhL(i,j,nstp)*xi*dtdays+1.e-10))
-            NHup=MIN(NHup,IceNH4(i,j,nstp)/                             &
-     &           (grow1*IcePhL(i,j,nstp)*xi*dtdays+1.e-10))
+!            NOup=MIN(NOup,IceNO3(i,j,nstp)/                             &
+!     &           (grow1*IcePhL(i,j,nstp)*xi*dtdays+1.e-10))
+!            NHup=MIN(NHup,IceNH4(i,j,nstp)/                             &
+!     &           (grow1*IcePhL(i,j,nstp)*xi*dtdays+1.e-10))
 # endif
 
 # ifdef STATIONARY2           
@@ -3867,7 +3902,7 @@
 # endif 
 
 
-            GROWAice=grow1*(NOup+NHup)
+            GROWAice=grow1*min(aiceNfrac,aiceIfrac)
     
 # ifdef CLIM_ICE_1D   
             DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                         &
@@ -3893,8 +3928,8 @@
 ! 
 !  Respiration of Ice Algae  
 ! 
-            RAi0=R0i*GROWAice
-
+!            RAi0=R0i*GROWAice
+            RAi0=R0i*mu0*exp(0.0633*Temp1)
 # ifdef CLIM_ICE_1D
             DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                         &
      &         -BioBI(i,iIcePhL)*RAi0*dtdays
