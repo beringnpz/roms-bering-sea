@@ -7665,6 +7665,7 @@
             WRITE (out,40) ng
             WRITE (out,50) BioIter(ng), 'BioIter',                      &
      &            'Number of iterations for nonlinear convergence.'
+     
 #  ifdef TS_DIF2
             DO itrc=1,NBT
               i=idbio(itrc)
@@ -7701,6 +7702,15 @@
             END DO
           END IF
         END DO
+	
+	! BEST_NPZ parameters are constant across grids
+	IF (Lbiology(1))) THEN 
+	  WRITE (out,40) 0
+	  WRITE (out,70) PARfrac, 'PARfrac',                            &
+     &          'Photosynthetically-available radiation fraction'
+	ENDIF
+	
+	
       END IF
       
       !  Compute inverse nudging coefficients (1/s) used in various tasks.
@@ -7725,7 +7735,7 @@
      &        /,  ' ============================',/)
   50  FORMAT (1x,i10,2x,a,t28,a)
   60  FORMAT (10x,l1,2x,a,t28,a,i2.2,':',1x,a)
-! 70  FORMAT (f11.3,2x,a,t28,a)
+  70  FORMAT (f11.3,2x,a,t28,a)
 ! 80  FORMAT (f11.3,2x,a,t28,a,/,t30,a)
   90  FORMAT (1p,e11.4,2x,a,'(',i2.2,')',t28,a,/,t30,a,i2.2,':',1x,a)
 ! 100 FORMAT (1p,e11.4,2x,a,t28,a)
