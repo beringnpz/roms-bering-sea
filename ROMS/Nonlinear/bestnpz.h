@@ -577,8 +577,10 @@
      
      endif
      
-     !write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
-     !write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SSCM
+     write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsSt = ', RiseStart, ', RsEn = ', RiseEnd, ', SiSt = ', SinkStart, ', SiEn = ', SinkEnd
+     write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsStCM = ', RiseStartCM, ', RsEnCM = ', RiseEndCM, ', SiStCM = ', SinkStartCM, ', SiEnCM = ', SinkEndCM
+     write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
+     write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SECM
      
    
      upward =     ((RSNC.lt.RENC) .and.                                &
