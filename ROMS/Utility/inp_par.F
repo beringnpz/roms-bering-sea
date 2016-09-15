@@ -7734,8 +7734,6 @@
      &          'PhS Doubling rate exponent'
           WRITE (out,70) alphaPhS, 'alphaPhS',                          &
      &          'PhS Slope of P-I curve (mg C/mg Chl-a/E/m2)'
-          WRITE (out,70) psiPhS, 'psiPhS',                              &
-     &          '(legacy, unused)'
           WRITE (out,70) k1PhS, 'k1PhS',                                &
      &          'PhS Half-saturation constant for NO3 limitation'
           WRITE (out,70) k2PhS, 'k2PhS',                                &
@@ -7746,8 +7744,6 @@
      &          'PhL Doubling rate exponent'
           WRITE (out,70) alphaPhL, 'alphaPhL',                          &
      &          'PhL Slope of P-I curve (mg C/mg Chl-a/E/m2)'
-          WRITE (out,70) psiPhL, 'psiPhl',                              &
-     &          '(legacy, unused)'
           WRITE (out,70) k1PhL, 'k1PhL',                                &
      &          'PhL Half-saturation constant for NO3 limitation'
           WRITE (out,70) k2PhL, 'k2PhL',                                &
@@ -7842,24 +7838,12 @@
      &          'Jel Daily mortality (1/d)'
           WRITE (out,70) respJel, 'respJel',                            &
      &          'Jel Basal metabolic rate (1/d)'
-          WRITE (out,70) bmJ, 'bmJ',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) ktbmJ, 'ktbmJ',                                &
-     &          '(legacy, unused)'
           WRITE (out,70) fJel, 'fJel',                                  &
      &          'Jel Half-saturation constant for grazing (mg C/m3)'
           WRITE (out,70) mPhS, 'mPhS',                                  &
      &          'PhS daily linear mortality rate (1/d)'
           WRITE (out,70) mPhL, 'mPhL',                                  &
      &          'PhL daily linear mortality rate (1/d)'
-          WRITE (out,70) NcritPhS, 'NcritPhS',                          &
-     &          '(legacy, unused)'
-          WRITE (out,70) minmPhL, 'minmPhL',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) maxmPhL, 'maxmPhL',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) NcritPhL, 'NcritPhL',                          &
-     &          '(legacy, unused)'
           WRITE (out,70) mpredMZL, 'mpredMZL',                          &
      &          'MZL Daily mortality (1/d)'
           WRITE (out,70) mpredCop, 'mpredCop',                          &
@@ -7906,10 +7890,6 @@
      &          'PhS temperature coefficient for respiration (1/deg C)'
           WRITE (out,70) TmaxPhL, 'TmaxPhL',                            &
      &          'PhL reference temperature for respiration (deg C)'
-          WRITE (out,70) TminPhL, 'TminPhL',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) Topt_PhL, 'Topt_PhL',                          &
-     &          '(legacy, unused)'
           WRITE (out,70) KtBm_PhL, 'KtBm_PhL',                          &
      &          'PhL temperature coefficient for respiration (1/deg C)'
           WRITE (out,70) TmaxMZL, 'TmaxMZL',                            &
@@ -7968,14 +7948,8 @@
      &          'Temperature coefficient for nitrification (1/deg C)'
           WRITE (out,70) KNH4Nit, 'KNH4Nit',                            &
      &          'Half-saturation constant for nitrification (mg N/m^3/d ?)'
-          WRITE (out,70) tI0, 'tI0',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) KI, 'KI',                                      &
-     &          '(legacy, unused)'
           WRITE (out,70) iremin, 'iremin',                              &
      &          '?? related to nitrification bflx'
-          WRITE (out,70) q10, 'q10',                                    &
-     &          '(legacy, unused)'
           WRITE (out,70) q10r, 'q10r',                                  &
      &          'Ben Q10 for feeding'
           WRITE (out,70) Rup, 'Rup',                                    &
@@ -8004,8 +7978,6 @@
      &          'PhL->Ben feeding preference'
           WRITE (out,70) prefPS, 'prefPS',                              &
      &          'PhS->Ben feeding preference'
-          WRITE (out,70) T0ben, 'T0ben',                                &
-     &          '(legacy, unused)'
           WRITE (out,70) T0benr, 'T0benr',                              &
      &          'Ben Q10 Reference temperature for feeding'
           WRITE (out,70) BenPred, 'BenPred',                            &
@@ -8033,12 +8005,15 @@
           WRITE (out,70) aidz, 'aidz',                                  &
      &          'Ice thickness (m)'
      
-          WRITE (out) 'Legacy parameters...'
-          WRITE (out) '--------------------'
+          WRITE (out,45)
           WRITE (out,70) VertMixIncr, 'VertMixIncr',                    &
      &          'Vertical mixing tuning parameter (legacy, unused)'
           WRITE (out,70) aPS, 'aPS',                                    &
      &          'PhS old NH4 limitation (legacy, unused)'
+          WRITE (out,70) psiPhS, 'psiPhS',                              &
+     &          '(legacy, unused)'
+          WRITE (out,70) psiPhL, 'psiPhl',                              &
+     &          '(legacy, unused)'
           WRITE (out,70) aPL, 'aPL',                                    &
      &          '(legacy, unused)'
           WRITE (out,70) fpPhSMZS, 'fpPhSMZS',                          &
@@ -8101,6 +8076,30 @@
      &          '(legacy, unused)'
           WRITE (out,70) TrefB, 'TrefB',                                &
      &          '(legacy, unused)'
+          WRITE (out,70) TminPhL, 'TminPhL',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) Topt_PhL, 'Topt_PhL',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) NcritPhS, 'NcritPhS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) minmPhL, 'minmPhL',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) maxmPhL, 'maxmPhL',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) NcritPhL, 'NcritPhL',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) tI0, 'tI0',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) KI, 'KI',                                      &
+     &          '(legacy, unused)'
+          WRITE (out,70) q10, 'q10',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) bmJ, 'bmJ',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) ktbmJ, 'ktbmJ',                                &
+     &          '(legacy, unused)'
+          WRITE (out,70) T0ben, 'T0ben',                                &
+     &          '(legacy, unused)'
         ENDIF
 
         
@@ -8127,6 +8126,8 @@
   30  FORMAT (/,' READ_BioPar - Error while processing line: ',/,a)
   40  FORMAT (/,/,' Biology Parameters, Grid: ',i2.2,                   &
      &        /,  ' ============================',/)
+  45  FORMAT (/,/,' Biology Parameters (Legacy)',                       &
+     &        /,  ' =============================',/)
   50  FORMAT (1x,i10,2x,a,t28,a)
   60  FORMAT (10x,l1,2x,a,t28,a,i2.2,':',1x,a)
   70  FORMAT (f11.3,2x,a,t28,a)
