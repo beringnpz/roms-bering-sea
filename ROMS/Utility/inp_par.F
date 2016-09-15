@@ -7068,6 +7068,14 @@
             Npts=load_r(Nval, Rval, 1, SinkStart)
           ELSE IF (TRIM(KeyWord).eq.'SinkEnd') THEN
             Npts=load_r(Nval, Rval, 1, SinkEnd)
+          ELSE IF (TRIM(KeyWord).eq.'RiseStartCM') THEN
+            Npts=load_r(Nval, Rval, 1, RiseStartCM)
+          ELSE IF (TRIM(KeyWord).eq.'RiseEndCM') THEN
+            Npts=load_r(Nval, Rval, 1, RiseEndCM)
+          ELSE IF (TRIM(KeyWord).eq.'SinkStartCM') THEN
+            Npts=load_r(Nval, Rval, 1, SinkStartCM)
+          ELSE IF (TRIM(KeyWord).eq.'SinkEndCM') THEN
+            Npts=load_r(Nval, Rval, 1, SinkEndCM)
 
 
           !  Remineralization and Nitrification
@@ -7710,8 +7718,6 @@
           WRITE (out,40) 0
           WRITE (out,70) PARfrac, 'PARfrac',                            &
      &          'Photosynthetically-available radiation fraction'
-          WRITE (out,70) VertMixIncr, 'VertMixIncr',                    &
-     &          'Vertical mixing tuning parameter (legacy, unused)'
           WRITE (out,70) xi, 'xi',                                      &
      &          'Nitrogen:carbon ratio (molN/molC)'
           WRITE (out,70) ccr, 'ccr',                                    &
@@ -7734,8 +7740,6 @@
      &          'PhS Half-saturation constant for NO3 limitation'
           WRITE (out,70) k2PhS, 'k2PhS',                                &
      &          'PhS Half-saturation constant for NH4 limitation'
-          WRITE (out,70) aPS, 'aPS',                                    &
-     &          'PhS old NH4 limitation (legacy, unused)'
           WRITE (out,70) DiL, 'DiL',                                    &
      &          'PhL Doubling rate parameter'
           WRITE (out,70) DpL, 'DpL',                                    &
@@ -7748,24 +7752,6 @@
      &          'PhL Half-saturation constant for NO3 limitation'
           WRITE (out,70) k2PhL, 'k2PhL',                                &
      &          'PhL Half-saturation constant for NH4 limitation'
-          WRITE (out,70) aPL, 'aPL',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) fpPhSMZS, 'fpPhSMZS',                          &
-     &          'PhS->MZS Feeding preference (legacy, unused)'
-          WRITE (out,70) fpPhLMZS, 'fpPhLMZS',                          &
-     &          'PhL->MZS Feeding preference (legacy, unused)'
-          WRITE (out,70) eMZS, 'eMZS',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) Q10MZS, 'Q10MZS',                              &
-     &          '(legacy, unused)'
-          WRITE (out,70) Q10MZST, 'Q10MZST',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) fMZS, 'fMZS',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) kMZS, 'kMZS',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) gammaMZS, 'gammaMZS',                          &
-     &          '(legacy, unused)'
           WRITE (out,70) fpPhSMZL, 'fpPhSMZL',                          &
      &          'PhS->MZL Feeding preference'
           WRITE (out,70) fpPhLMZL, 'fpPhLMZL',                          &
@@ -7786,8 +7772,6 @@
      &          'PhS->Cop Feeding preference'
           WRITE (out,70) fpPhLCop, 'fpPhLCop',                          &
      &          'PhL->Cop Feeding preference'
-          WRITE (out,70) fpMZSCop, 'fpMZSCop',                          &
-     &          'MZS->Cop Feeding preference (legacy, unused)'
           WRITE (out,70) fpMZLCop, 'fpMZLCop',                          &
      &          'MZL->Cop Feeding preference'
           WRITE (out,70) eCop, 'eCop',                                  &
@@ -7800,14 +7784,10 @@
      &          'Cop Half-saturation constant for grazing (mg C/m3)'
           WRITE (out,70) gammaCop, 'gammaCop',                          &
      &          'Cop Growth efficiency'
-          WRITE (out,70) kCop, 'kCop',                                  &
-     &          '(legacy, unused)'
           WRITE (out,70) fpPhSNca, 'fpPhSNca',                          &
      &          'PhS->NCa Feeding preference'
           WRITE (out,70) fpPhLNca, 'fpPhLNca',                          &
      &          'PhL->NCa Feeding preference'
-          WRITE (out,70) fpMZSNca, 'fpMZSNca',                          &
-     &          'MZS->NCa Feeding preference (legacy, unused)'
           WRITE (out,70) fpMZLNca, 'fpMZLNca',                          &
      &          'MZL->NCa Feeding preference'
           WRITE (out,70) eNca, 'eNca',                                  &
@@ -7826,8 +7806,6 @@
      &          'PhS->Eup Feeding preference'
           WRITE (out,70) fpPhLEup, 'fpPhLEup',                          &
      &          'PhL->Eup Feeding preference'
-          WRITE (out,70) fpMZSEup, 'fpMZSEup',                          &
-     &          'MZS->Eup Feeding preference (legacy, unused)'
           WRITE (out,70) fpMZLEup, 'fpMZLEup',                          &
      &          'MZL->Eup Feeding preference'
           WRITE (out,70) fpCopEup, 'fpCopEup',                          &
@@ -7842,8 +7820,6 @@
      &          'Eup Half-saturation constant for grazing (mg C/m3)'
           WRITE (out,70) gammaEup, 'gammaEup',                          &
      &          'Eup Growth efficiency'
-          WRITE (out,70) kEup, 'kEup',                                  &
-     &          '(legacy, unused)'
           WRITE (out,70) fpCopJel, 'fpCopJel',                          &
      &          'Cop->Jel Feeding preference'
           WRITE (out,70) fpEupJel, 'fpEupJel',                          &
@@ -7870,8 +7846,6 @@
      &          '(legacy, unused)'
           WRITE (out,70) ktbmJ, 'ktbmJ',                                &
      &          '(legacy, unused)'
-          WRITE (out,70) TrefJ, 'TrefJ',                                &
-     &          'Reference temperature (deg. C) (legacy, unused)'
           WRITE (out,70) fJel, 'fJel',                                  &
      &          'Jel Half-saturation constant for grazing (mg C/m3)'
           WRITE (out,70) mPhS, 'mPhS',                                  &
@@ -7886,16 +7860,6 @@
      &          '(legacy, unused)'
           WRITE (out,70) NcritPhL, 'NcritPhL',                          &
      &          '(legacy, unused)'
-          WRITE (out,70) mMZS, 'mMZS',                                  &
-     &          'MZS Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mMZL, 'mMZL',                                  &
-     &          'MZL Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mCop, 'mCop',                                  &
-     &          'Cop Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mNca, 'mNca',                                  &
-     &          'Nca Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mEup, 'mEup',                                  &
-     &          'Eup Daily mortality (1/d) (legacy, unused)'
           WRITE (out,70) mpredMZL, 'mpredMZL',                          &
      &          'MZL Daily mortality (1/d)'
           WRITE (out,70) mpredCop, 'mpredCop',                          &
@@ -7912,8 +7876,6 @@
      &          'Det Sinking rate (m/d)'
           WRITE (out,70) wDetF, 'wDetF',                                &
      &          'DetF Sinking rate (m/d)'
-          WRITE (out,70) respMZS, 'respMZS',                            &
-     &          'MZS Specific respiration rate (1/d) (legacy, unused)'
           WRITE (out,70) respMZL, 'respMZL',                            &
      &          'MZL Specific respiration rate (1/d)'
           WRITE (out,70) respPhS, 'respPhS',                            &
@@ -7940,10 +7902,6 @@
      &          'Eup reference temperature for respiration (deg C)'
           WRITE (out,70) TmaxPhS, 'TmaxPhS',                            &
      &          'PhS reference temperature for respiration (deg C)'
-          WRITE (out,70) TminPhS, 'TminPhS',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) Topt_PhS, 'Topt_PhS',                          &
-     &          '(legacy, unused)'
           WRITE (out,70) KtBm_PhS, 'KtBm_PhS',                          &
      &          'PhS temperature coefficient for respiration (1/deg C)'
           WRITE (out,70) TmaxPhL, 'TmaxPhL',                            &
@@ -7954,10 +7912,6 @@
      &          '(legacy, unused)'
           WRITE (out,70) KtBm_PhL, 'KtBm_PhL',                          &
      &          'PhL temperature coefficient for respiration (1/deg C)'
-          WRITE (out,70) TmaxMZS, 'TmaxMZS',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) KtBm_MZS, 'KtBm_MZS',                          &
-     &          '(legacy, unused)'
           WRITE (out,70) TmaxMZL, 'TmaxMZL',                            &
      &          'MZL reference temperature for respiration (deg C)'
           WRITE (out,70) KtBm_MZL, 'KtBm_MZL',                          &
@@ -7994,18 +7948,20 @@
      &          'NCaO Day of year to begin downward movement'
           WRITE (out,70) SinkEnd, 'SinkEnd',                            &
      &          'NCaO Day of year to end downward movement'
-          WRITE (out,70) regen, 'regen',                                &
-     &          'NH4 Regeneration rate (legacy, unused)'
-          WRITE (out,70) dgrad, 'dgrad',                                &
-     &          'Det Degradation rate (legacy, unused)'
+          WRITE (out,70) RiseStartCM, 'RiseStartCM',                    &
+     &          'NCaS Day of year to begin upward movement'
+          WRITE (out,70) RiseEndCM, 'RiseEndCM',                        &
+     &          'NCaS Day of year to end upward movement'
+          WRITE (out,70) SinkStartCM, 'SinkStartCM',                    &
+     &          'NCaS Day of year to begin downward movement'
+          WRITE (out,70) SinkEndCM, 'SinkEndCM',                        &
+     &          'NCaS Day of year to end downward movement'
           WRITE (out,70) Pv0, 'Pv0',                                    &
      &          'PON decompositon rate at 0 deg C (1/d)'
           WRITE (out,70) PvT, 'PvT',                                    &
      &          'Temperature coefficient for decomposition (1/deg C)'
           WRITE (out,70) Nitr0, 'Nitr0',                                &
      &          'Nitrification rate at 0 deg C (1/d)'
-          WRITE (out,70) KnT, 'KnT',                                    &
-     &          'Temperature coefficient for nitrification (1/deg C) (legacy, unused)'
           WRITE (out,70) ToptNtr, 'ToptNtr',                            &
      &          'Reference temperature for nitrification (deg C)'
           WRITE (out,70) ktntr, 'ktntr',                                &
@@ -8054,12 +8010,6 @@
      &          'Ben Q10 Reference temperature for feeding'
           WRITE (out,70) BenPred, 'BenPred',                            &
      &          'Ben mortality rate due to undefined predation (1/d)'
-          WRITE (out,70) bmB, 'bmB',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) ktbmB, 'ktbmB',                                &
-     &          '(legacy, unused)'
-          WRITE (out,70) TrefB, 'TrefB',                                &
-     &          '(legacy, unused)'
           WRITE (out,70) alphaIb, 'alphaIb',                            &
      &          'IcePhL Chl-a specific attenuation coefficient (W^-1 m^-2)'
           WRITE (out,70) betaI, 'betaI',                                &
@@ -8068,7 +8018,7 @@
      &          'IcePhL NH4 inhibition on NO3 uptake (m^3/mmol N)'
           WRITE (out,70) ksnut1, 'ksnut1',                              &
      &          'IcePhL half-saturation constant for NO3 (mmolN/m^3)'
-          WRITE (out,70) ksmut2, 'ksnut2',                              &
+          WRITE (out,70) ksnut2, 'ksnut2',                              &
      &          'IcePhL half-saturation constant for NH4 (mmolN/m^3)'
           WRITE (out,70) mu0, 'mu0',                                    &
      &          'IcePhL maximum growth rate at 0 deg C (1/d)'
@@ -8082,6 +8032,75 @@
      &          'IcePhL nitrification factor (1/d)'
           WRITE (out,70) aidz, 'aidz',                                  &
      &          'Ice thickness (m)'
+     
+          WRITE (out) 'Legacy parameters...'
+	  WRITE (out) '--------------------'
+          WRITE (out,70) VertMixIncr, 'VertMixIncr',                    &
+     &          'Vertical mixing tuning parameter (legacy, unused)'
+          WRITE (out,70) aPS, 'aPS',                                    &
+     &          'PhS old NH4 limitation (legacy, unused)'
+          WRITE (out,70) aPL, 'aPL',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) fpPhSMZS, 'fpPhSMZS',                          &
+     &          'PhS->MZS Feeding preference (legacy, unused)'
+          WRITE (out,70) fpPhLMZS, 'fpPhLMZS',                          &
+     &          'PhL->MZS Feeding preference (legacy, unused)'
+          WRITE (out,70) eMZS, 'eMZS',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) Q10MZS, 'Q10MZS',                              &
+     &          '(legacy, unused)'
+          WRITE (out,70) Q10MZST, 'Q10MZST',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) fMZS, 'fMZS',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) kMZS, 'kMZS',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) gammaMZS, 'gammaMZS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) fpMZSCop, 'fpMZSCop',                          &
+     &          'MZS->Cop Feeding preference (legacy, unused)'
+          WRITE (out,70) kCop, 'kCop',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) fpMZSNca, 'fpMZSNca',                          &
+     &          'MZS->NCa Feeding preference (legacy, unused)'
+          WRITE (out,70) fpMZSEup, 'fpMZSEup',                          &
+     &          'MZS->Eup Feeding preference (legacy, unused)'
+          WRITE (out,70) kEup, 'kEup',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) TrefJ, 'TrefJ',                                &
+     &          'Reference temperature (deg. C) (legacy, unused)'
+          WRITE (out,70) mMZS, 'mMZS',                                  &
+     &          'MZS Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mMZL, 'mMZL',                                  &
+     &          'MZL Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mCop, 'mCop',                                  &
+     &          'Cop Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mNca, 'mNca',                                  &
+     &          'Nca Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mEup, 'mEup',                                  &
+     &          'Eup Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) respMZS, 'respMZS',                            &
+     &          'MZS Specific respiration rate (1/d) (legacy, unused)'
+          WRITE (out,70) TminPhS, 'TminPhS',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) Topt_PhS, 'Topt_PhS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) TmaxMZS, 'TmaxMZS',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) KtBm_MZS, 'KtBm_MZS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) regen, 'regen',                                &
+     &          'NH4 Regeneration rate (legacy, unused)'
+          WRITE (out,70) dgrad, 'dgrad',                                &
+     &          'Det Degradation rate (legacy, unused)'
+          WRITE (out,70) KnT, 'KnT',                                    &
+     &          'Temperature coefficient for nitrification (1/deg C) (legacy, unused)'
+          WRITE (out,70) bmB, 'bmB',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) ktbmB, 'ktbmB',                                &
+     &          '(legacy, unused)'
+          WRITE (out,70) TrefB, 'TrefB',                                &
+     &          '(legacy, unused)'
         ENDIF
 
         
