@@ -1324,6 +1324,7 @@
         real(r8) :: NCmaxz
         real(r8) :: wNCrise,wNCsink
         real(r8) :: RiseStart, RiseEnd, SinkStart, SinkEnd
+        real(r8) :: RiseStartCM, RiseEndCM, SinkStartCM, SinkEndCM
 # ifdef BENTHIC
         real(r8) :: bmB,ktbmB,TrefB
         real(r8) :: iremin

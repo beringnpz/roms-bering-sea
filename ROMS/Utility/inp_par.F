@@ -7712,8 +7712,8 @@
         END DO
         
         ! BEST_NPZ parameters are constant across grids, print in log as 
-	! Grid 0 for convenience
-	
+        ! Grid 0 for convenience
+        
         IF (Lbiology(1)) THEN 
           WRITE (out,40) 0
           WRITE (out,70) PARfrac, 'PARfrac',                            &
@@ -8034,7 +8034,7 @@
      &          'Ice thickness (m)'
      
           WRITE (out) 'Legacy parameters...'
-	  WRITE (out) '--------------------'
+          WRITE (out) '--------------------'
           WRITE (out,70) VertMixIncr, 'VertMixIncr',                    &
      &          'Vertical mixing tuning parameter (legacy, unused)'
           WRITE (out,70) aPS, 'aPS',                                    &
