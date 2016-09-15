@@ -698,9 +698,9 @@
 !                                                                      !
 !=======================================================================
 !
-#ifdef FILTERED
+# ifdef FILTERED
       USE mod_filter, ONLY: nfil,fcount,nw,dtfil,FIL
-#endif
+# endif
       USE mod_param
       USE mod_parallel
       USE mod_coupler
@@ -1291,11 +1291,11 @@
           ELSE IF (TRIM(KeyWord).eq.'NFLT') THEN
             Npts=load_i(Nval, Rval, Ngrids, nFLT)
 
-#ifdef NEMURO	    
+#ifdef NEMURO       
           ELSE IF (TRIM(KeyWord).eq.'NFISHES') THEN
             Npts=load_i(Nval, Rval, Ngrids, nFISHES)
 #endif
-          ELSE IF (TRIM(KeyWord).eq.'NINFO') THEN	 
+          ELSE IF (TRIM(KeyWord).eq.'NINFO') THEN        
             Npts=load_i(Nval, Rval, Ngrids, ninfo)
           ELSE IF (TRIM(KeyWord).eq.'LDEFOUT') THEN
             Npts=load_l(Nval, Cval, Ngrids, ldefout)
@@ -2690,13 +2690,13 @@
      &      (nFLT(ng).eq.0)) THEN
           LdefFLT(ng)=.FALSE.
         END IF
-#ifdef NEMURO	
+#ifdef NEMURO   
         IF (((nrrec(ng).eq.0).and.(nFISHES(ng).gt.ntimes(ng))).or.         &
      &      (nFISHES(ng).eq.0)) THEN
           LdefFISH(ng)=.FALSE.
         END IF
 #endif
-	
+        
         IF (((nrrec(ng).eq.0).and.(nHIS(ng).gt.ntimes(ng))).or.         &
      &      (nHIS(ng).eq.0)) THEN
           LdefHIS(ng)=.FALSE.
@@ -4169,7 +4169,7 @@
  160  FORMAT (f11.3,2x,a,t30,a,/,t32,a)
  170  FORMAT (10x,l1,2x,a,t30,a)
  180  FORMAT (10x,l1,2x,a,t30,a,i2.2,':',1x,a)
- 190  FORMAT (1p,e11.4,2x,a,'(',i2.2,')',t30,a,/,t32,a,i2.2,':',1x,a)
+ 190  FORMAT (1p,e11.4,2x,a,'(',i3.3,')',t30,a,/,t32,a,i3.3,':',1x,a)
  195  FORMAT (1p,e11.4,2x,a,t30,a,i2.2,':',1x,a)
  200  FORMAT (1p,e11.4,2x,a,t30,a)
  210  FORMAT (1p,e11.4,2x,a,t30,a,/,t32,a)
@@ -4426,9 +4426,9 @@
       character (len=160), dimension(300) :: Cval
 
 #ifdef FEAST
-     real(r8),dimension(300) :: FeastVal
-     integer,dimension(300) :: FeastInt
-     integer :: sp
+      real(r8),dimension(300) :: FeastVal
+      integer,dimension(300) :: FeastInt
+      integer :: sp
 #endif
 
 # if defined BIO_FENNEL
@@ -5745,7 +5745,7 @@
             Npts=load_r(Nval, Rval, Ngrids, setVPON)
           ELSE IF (TRIM(KeyWord).eq.'setVOpal') THEN
             Npts=load_r(Nval, Rval, Ngrids, setVOpal)
-# ifdef IRON_LIMIT
+#  ifdef IRON_LIMIT
           ELSE IF (TRIM(KeyWord).eq.'T_Fe') THEN
             Npts=load_r(Nval, Rval, Ngrids, T_Fe)
           ELSE IF (TRIM(KeyWord).eq.'A_Fe') THEN
@@ -5758,7 +5758,7 @@
             Npts=load_r(Nval, Rval, Ngrids, LK_FeC)
           ELSE IF (TRIM(KeyWord).eq.'FeRR') THEN
             Npts=load_r(Nval, Rval, Ngrids, FeRR)
-# endif
+#  endif
           ELSE IF (TRIM(KeyWord).eq.'TNU2') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
             DO ng=1,Ngrids
@@ -5785,9 +5785,9 @@
             END DO
           ELSE IF (TRIM(KeyWord).eq.'TNUDG') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
-	    
+            
 
-	     
+             
             DO ng=1,Ngrids
               DO itrc=1,NBT
                 i=idbio(itrc)
@@ -6703,30 +6703,30 @@
             Npts=load_i(Nval, Rval, Ngrids, BioIter)
           ELSE IF (TRIM(KeyWord).eq.'PARfrac') THEN
             Npts=load_r(Nval, Rval, Ngrids, Parfrac)
-!----------------------------------
-!  Vertical mixing tuning parameter
-!----------------------------------
+
+          !  Vertical mixing tuning parameter
+
           ELSE IF (TRIM(KeyWord).eq.'VertMixIncr') THEN 
             Npts=load_r(Nval, Rval, 1, VertMixIncr)         
-!------------------
-!  Bio- conversions
-!------------------
+
+          !  Bio- conversions
+
           ELSE IF (TRIM(KeyWord).eq.'xi') THEN
             Npts=load_r(Nval, Rval, 1, xi)
           ELSE IF (TRIM(KeyWord).eq.'ccr') THEN
             Npts=load_r(Nval, Rval, 1, ccr)
           ELSE IF (TRIM(KeyWord).eq.'ccrPhL') THEN 
             Npts=load_r(Nval, Rval, 1, ccrPhL)
-!-------------------------
-!  extinction coefficients
-!-------------------------
+
+          !  extinction coefficients
+
           ELSE IF (TRIM(KeyWord).eq.'k_ext') THEN
             Npts=load_r(Nval, Rval, 1, k_ext)
           ELSE IF (TRIM(KeyWord).eq.'k_chl') THEN
             Npts=load_r(Nval, Rval, 1, k_chl)
-!-------------------
-!  PhS growth params
-!-------------------
+
+          !  PhS growth params
+
           ELSE IF (TRIM(KeyWord).eq.'DiS') THEN
             Npts=load_r(Nval, Rval, 1, DiS)
           ELSE IF (TRIM(KeyWord).eq.'DpS') THEN
@@ -6741,9 +6741,9 @@
             Npts=load_r(Nval, Rval, 1, k2PhS)
           ELSE IF (TRIM(KeyWord).eq.'aPS') THEN
             Npts=load_r(Nval, Rval, 1, aPS)
-!-------------------
-!  PhL growth params
-!-------------------
+
+          !  PhL growth params
+
           ELSE IF (TRIM(KeyWord).eq.'DiL') THEN
             Npts=load_r(Nval, Rval, 1, DiL)
           ELSE IF (TRIM(KeyWord).eq.'DpL') THEN
@@ -6758,16 +6758,16 @@
             Npts=load_r(Nval, Rval, 1, k2PhL)
           ELSE IF (TRIM(KeyWord).eq.'aPL') THEN
             Npts=load_r(Nval, Rval, 1, aPL)
-!-----------------------
-!  MZS preference params
-!-----------------------
+
+          !  MZS preference params
+
           ELSE IF (TRIM(KeyWord).eq.'fpPhSMZS') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSMZS)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLMZS') THEN
             Npts=load_r(Nval, Rval, 1, fpPhLMZS)
-!-------------------------------
-!  MZS growth and feeding params
-!-------------------------------
+
+          !  MZS growth and feeding params
+
           ELSE IF (TRIM(KeyWord).eq.'eMZS') THEN
             Npts=load_r(Nval, Rval, 1, eMZS)
           ELSE IF (TRIM(KeyWord).eq.'Q10MZS') THEN
@@ -6780,16 +6780,16 @@
             Npts=load_r(Nval, Rval, 1, kMZS)
           ELSE IF (TRIM(KeyWord).eq.'gammaMZS') THEN
             Npts=load_r(Nval, Rval, 1, gammaMZS)
-!-----------------------
-!  MZL preference params
-!-----------------------
+
+          !  MZL preference params
+
           ELSE IF (TRIM(KeyWord).eq.'fpPhSMZL') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSMZL)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLMZL') THEN
             Npts=load_r(Nval, Rval, 1, fpPhLMZL)
-!-------------------------------
-!  MZL growth and feeding params
-!-------------------------------
+
+          !  MZL growth and feeding params
+
           ELSE IF (TRIM(KeyWord).eq.'eMZL') THEN
             Npts=load_r(Nval, Rval, 1, eMZL)
           ELSE IF (TRIM(KeyWord).eq.'Q10MZL') THEN
@@ -6802,9 +6802,9 @@
             Npts=load_r(Nval, Rval, 1, kMZL)
           ELSE IF (TRIM(KeyWord).eq.'gammaMZL') THEN
             Npts=load_r(Nval, Rval, 1, gammaMZL)
-!-----------------------
-!  Cop preference params
-!-----------------------
+
+          !  Cop preference params
+
           ELSE IF (TRIM(KeyWord).eq.'fpPhSCop') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSCop)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLCop') THEN
@@ -6813,9 +6813,9 @@
             Npts=load_r(Nval, Rval, 1, fpMZSCop)
           ELSE IF (TRIM(KeyWord).eq.'fpMZLCop') THEN
             Npts=load_r(Nval, Rval, 1, fpMZLCop)
-!-------------------------------
-!  Cop growth and feeding params
-!-------------------------------
+
+          !  Cop growth and feeding params
+
           ELSE IF (TRIM(KeyWord).eq.'eCop') THEN
             Npts=load_r(Nval, Rval, 1, eCop)
           ELSE IF (TRIM(KeyWord).eq.'Q10Cop') THEN
@@ -6828,9 +6828,9 @@
             Npts=load_r(Nval, Rval, 1, gammaCop)
           ELSE IF (TRIM(KeyWord).eq.'kCop') THEN
             Npts=load_r(Nval, Rval, 1, kCop)
-!-----------------------
-!  NCa preference params
-!-----------------------
+
+          !  NCa preference params
+
           ELSE IF (TRIM(KeyWord).eq.'fpPhSNCa') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSNCa)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLNCa') THEN
@@ -6839,9 +6839,9 @@
             Npts=load_r(Nval, Rval, 1, fpMZSNCa)
           ELSE IF (TRIM(KeyWord).eq.'fpMZLNCa') THEN
             Npts=load_r(Nval, Rval, 1, fpMZLNCa)
-!-------------------------------
-!  NCa growth and feeding params
-!-------------------------------
+
+          !  NCa growth and feeding params
+
           ELSE IF (TRIM(KeyWord).eq.'eNCa') THEN
             Npts=load_r(Nval, Rval, 1, eNCa)
           ELSE IF (TRIM(KeyWord).eq.'Q10NCa') THEN
@@ -6854,9 +6854,9 @@
             Npts=load_r(Nval, Rval, 1, gammaNCa)
           ELSE IF (TRIM(KeyWord).eq.'kNCa') THEN
             Npts=load_r(Nval, Rval, 1, kNCa)
-!-----------------------
-!  Eup preference params
-!-----------------------
+
+          !  Eup preference params
+
           ELSE IF (TRIM(KeyWord).eq.'fpPhSEup') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSEup)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLEup') THEN
@@ -6867,9 +6867,9 @@
             Npts=load_r(Nval, Rval, 1, fpMZLEup)
           ELSE IF (TRIM(KeyWord).eq.'fpCopEup') THEN
             Npts=load_r(Nval, Rval, 1, fpCopEup)
-!-------------------------------
-!  Eup growth and feeding params
-!-------------------------------
+
+          !  Eup growth and feeding params
+
           ELSE IF (TRIM(KeyWord).eq.'eEup') THEN
             Npts=load_r(Nval, Rval, 1, eEup)
           ELSE IF (TRIM(KeyWord).eq.'Q10Eup') THEN
@@ -6882,10 +6882,10 @@
             Npts=load_r(Nval, Rval, 1, gammaEup)
           ELSE IF (TRIM(KeyWord).eq.'kEup') THEN
             Npts=load_r(Nval, Rval, 1, kEup)
-#if defined JELLY
-!--------------------------
-!  Jellyfish  param
-!--------------------------
+#  if defined JELLY
+
+          !  Jellyfish  param
+
           ELSE IF (TRIM(KeyWord).eq.'fpCopJel') THEN
             Npts=load_r(Nval, Rval, 1, fpCopJel)
           ELSE IF (TRIM(KeyWord).eq.'fpEupJel') THEN
@@ -6916,11 +6916,11 @@
             Npts=load_r(Nval, Rval, 1,TrefJ)
           ELSE IF (TRIM(KeyWord).eq.'fJel') THEN
             Npts=load_r(Nval, Rval, 1,fJel)
-# endif
+#  endif
 
-!--------------------------
-!  Phytoplankton senescence
-!--------------------------
+
+          !  Phytoplankton senescence
+
           ELSE IF (TRIM(KeyWord).eq.'mPhS') THEN
             Npts=load_r(Nval, Rval, 1, mPhS)
           ELSE IF (TRIM(KeyWord).eq.'mPhL') THEN
@@ -6933,9 +6933,9 @@
             Npts=load_r(Nval, Rval, 1, maxmPhL)
           ELSE IF (TRIM(KeyWord).eq.'NcritPhL') THEN
             Npts=load_r(Nval, Rval, 1, NcritPhL)
-!-----------------------
-!  Zoopkankton mortality
-!-----------------------
+
+          !  Zoopkankton mortality
+
           ELSE IF (TRIM(KeyWord).eq.'mMZS') THEN
             Npts=load_r(Nval, Rval, 1, mMZS)
           ELSE IF (TRIM(KeyWord).eq.'mMZL') THEN
@@ -6946,21 +6946,20 @@
             Npts=load_r(Nval, Rval, 1, mNCa)
           ELSE IF (TRIM(KeyWord).eq.'mEup') THEN
             Npts=load_r(Nval, Rval, 1, mEup)
-!-------------------
-!  predation closure
-!-------------------
-         ELSE IF (TRIM(KeyWord).eq.'mpredMZL') THEN
-            Npts=load_r(Nval, Rval, 1, mpredMZL)
 
+          !  predation closure
+
+          ELSE IF (TRIM(KeyWord).eq.'mpredMZL') THEN
+            Npts=load_r(Nval, Rval, 1, mpredMZL)
           ELSE IF (TRIM(KeyWord).eq.'mpredCop') THEN
             Npts=load_r(Nval, Rval, 1, mpredCop)
           ELSE IF (TRIM(KeyWord).eq.'mpredNCa') THEN
             Npts=load_r(Nval, Rval, 1, mpredNCa)
           ELSE IF (TRIM(KeyWord).eq.'mpredEup') THEN
             Npts=load_r(Nval, Rval, 1, mpredEup)
-!--------------------------------
-!  sinking 
-!--------------------------------
+
+          !  sinking 
+
         
           ELSE IF (TRIM(KeyWord).eq.'wPhS') THEN
             Npts=load_r(Nval, Rval, 1, wPhS)
@@ -6968,11 +6967,11 @@
             Npts=load_r(Nval, Rval, 1, wPhL)
           ELSE IF (TRIM(KeyWord).eq.'wDet') THEN
             Npts=load_r(Nval, Rval, 1, wDet)
-	  ELSE IF (TRIM(KeyWord).eq.'wDetF') THEN
+          ELSE IF (TRIM(KeyWord).eq.'wDetF') THEN
             Npts=load_r(Nval, Rval, 1, wDetF)
-!------------------------
-!  Respiration parameters
-!------------------------
+
+          !  Respiration parameters
+
           ELSE IF (TRIM(KeyWord).eq.'respMZS') THEN
             Npts=load_r(Nval, Rval, 1, respMZS)
           ELSE IF (TRIM(KeyWord).eq.'respMZL') THEN
@@ -6987,22 +6986,22 @@
             Npts=load_r(Nval, Rval, 1, respNCa)
           ELSE IF (TRIM(KeyWord).eq.'respEup') THEN
             Npts=load_r(Nval, Rval, 1, respEup)
-	    
-	        
+            
+                
           ELSE IF (TRIM(KeyWord).eq.'ktbmC') THEN
             Npts=load_r(Nval, Rval, 1,ktbmC)
-	  ELSE IF (TRIM(KeyWord).eq.'TrefC') THEN
+          ELSE IF (TRIM(KeyWord).eq.'TrefC') THEN
             Npts=load_r(Nval, Rval, 1,TrefC)
-	  ELSE IF (TRIM(KeyWord).eq.'ktbmN') THEN
+          ELSE IF (TRIM(KeyWord).eq.'ktbmN') THEN
             Npts=load_r(Nval, Rval, 1,ktbmN)
-	  ELSE IF (TRIM(KeyWord).eq.'TrefN') THEN
+          ELSE IF (TRIM(KeyWord).eq.'TrefN') THEN
             Npts=load_r(Nval, Rval, 1,TrefN)
-	    
-	  ELSE IF (TRIM(KeyWord).eq.'ktbmE') THEN
+            
+          ELSE IF (TRIM(KeyWord).eq.'ktbmE') THEN
             Npts=load_r(Nval, Rval, 1,ktbmE)
-	  ELSE IF (TRIM(KeyWord).eq.'TrefE') THEN
+          ELSE IF (TRIM(KeyWord).eq.'TrefE') THEN
             Npts=load_r(Nval, Rval, 1,TrefE)
-	    
+            
           ELSE IF (TRIM(KeyWord).eq.'TmaxPhS') THEN
             Npts=load_r(Nval, Rval, 1, TmaxPhS)
           ELSE IF (TRIM(KeyWord).eq.'TminPhS') THEN
@@ -7024,13 +7023,13 @@
             Npts=load_r(Nval, Rval, 1, TmaxMZS)
           ELSE IF (TRIM(KeyWord).eq.'KtBm_MZS') THEN
             Npts=load_r(Nval, Rval, 1,KtBm_MZS)
-	  ELSE IF (TRIM(KeyWord).eq.'TmaxMZL') THEN
+          ELSE IF (TRIM(KeyWord).eq.'TmaxMZL') THEN
             Npts=load_r(Nval, Rval, 1, TmaxMZL)
-	  ELSE IF (TRIM(KeyWord).eq.'KtBm_MZL') THEN
+          ELSE IF (TRIM(KeyWord).eq.'KtBm_MZL') THEN
             Npts=load_r(Nval, Rval, 1,KtBm_MZL)
-!------------------------
-!  Iron climatology terms
-!------------------------
+
+          !  Iron climatology terms
+
           ELSE IF (TRIM(KeyWord).eq.'Feinlo') THEN
             Npts=load_r(Nval, Rval, 1, Feinlo)
           ELSE IF (TRIM(KeyWord).eq.'Feinhi') THEN
@@ -7043,18 +7042,18 @@
             Npts=load_r(Nval, Rval, 1, Feoffhi)
           ELSE IF (TRIM(KeyWord).eq.'Feoffh') THEN
             Npts=load_r(Nval, Rval, 1, Feoffh)
-!-----------------------
-!  Iron limitation terms
-!-----------------------
+
+          !  Iron limitation terms
+
           ELSE IF (TRIM(KeyWord).eq.'kfePhS') THEN
             Npts=load_r(Nval, Rval, 1, kfePhS)
           ELSE IF (TRIM(KeyWord).eq.'kfePhL') THEN
             Npts=load_r(Nval, Rval, 1, kfePhL)
           ELSE IF (TRIM(KeyWord).eq.'FeC') THEN
             Npts=load_r(Nval, Rval, 1, FeC)
-!----------
-!  Diapause
-!----------
+
+          !  Diapause
+
           ELSE IF (TRIM(KeyWord).eq.'NCmaxz') THEN
             Npts=load_r(Nval, Rval, 1, NCmaxz)
           ELSE IF (TRIM(KeyWord).eq.'wNCrise') THEN
@@ -7070,18 +7069,16 @@
           ELSE IF (TRIM(KeyWord).eq.'SinkEnd') THEN
             Npts=load_r(Nval, Rval, 1, SinkEnd)
           ELSE IF (TRIM(KeyWord).eq.'RiseStartCM') THEN
-            Npts=load_r(Nval, Rval, 1, RiseStart)
+            Npts=load_r(Nval, Rval, 1, RiseStartCM)
           ELSE IF (TRIM(KeyWord).eq.'RiseEndCM') THEN
-            Npts=load_r(Nval, Rval, 1, RiseEnd)
+            Npts=load_r(Nval, Rval, 1, RiseEndCM)
           ELSE IF (TRIM(KeyWord).eq.'SinkStartCM') THEN
-            Npts=load_r(Nval, Rval, 1, SinkStart)
+            Npts=load_r(Nval, Rval, 1, SinkStartCM)
           ELSE IF (TRIM(KeyWord).eq.'SinkEndCM') THEN
-            Npts=load_r(Nval, Rval, 1, SinkEnd)
+            Npts=load_r(Nval, Rval, 1, SinkEndCM)
 
 
-!-----------------------------------
-!Remineralization and Nitrification
-!----------------------------------
+          !  Remineralization and Nitrification
 
           ELSE IF (TRIM(KeyWord).eq.'regen') THEN
             Npts=load_r(Nval, Rval, 1, regen)
@@ -7089,166 +7086,164 @@
             Npts=load_r(Nval, Rval, 1, dgrad)
           ELSE IF (TRIM(KeyWord).eq.'Pv0') THEN
             Npts=load_r(Nval, Rval, 1, Pv0)
-	        ELSE IF (TRIM(KeyWord).eq.'PvT') THEN
+          ELSE IF (TRIM(KeyWord).eq.'PvT') THEN
             Npts=load_r(Nval, Rval, 1, PvT)
-	        ELSE IF (TRIM(KeyWord).eq.'Nitr0') THEN
+          ELSE IF (TRIM(KeyWord).eq.'Nitr0') THEN
             Npts=load_r(Nval, Rval, 1,Nitr0)
-	        ELSE IF (TRIM(KeyWord).eq.'KnT') THEN
+          ELSE IF (TRIM(KeyWord).eq.'KnT') THEN
             Npts=load_r(Nval, Rval, 1,KnT)
-	        ELSE IF (TRIM(KeyWord).eq.'ToptNtr') THEN
+          ELSE IF (TRIM(KeyWord).eq.'ToptNtr') THEN
             Npts=load_r(Nval, Rval, 1,ToptNtr)
-	        ELSE IF (TRIM(KeyWord).eq.'ktntr') THEN
+          ELSE IF (TRIM(KeyWord).eq.'ktntr') THEN
             Npts=load_r(Nval, Rval, 1,ktntr)
-	        ELSE IF (TRIM(KeyWord).eq.'KNH4Nit') THEN
+          ELSE IF (TRIM(KeyWord).eq.'KNH4Nit') THEN
             Npts=load_r(Nval, Rval, 1,KNH4Nit)
-	        ELSE IF (TRIM(KeyWord).eq.'tI0') THEN
+          ELSE IF (TRIM(KeyWord).eq.'tI0') THEN
             Npts=load_r(Nval, Rval, 1,tI0)
-	        ELSE IF (TRIM(KeyWord).eq.'KI') THEN
+          ELSE IF (TRIM(KeyWord).eq.'KI') THEN
             Npts=load_r(Nval, Rval, 1,KI)  
-	    
-	    
-!-------------------
-!Benthic Parameters
-!-------------------
-#ifdef BENTHIC
-# ifdef FEAST
-!        NOGRID START
-# endif
-         ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
-           Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
-           DO ng=1,Ngrids
-             DO itrc=1,NBEN
-               i=idBvar(idben(itrc))
-               Hout(i,ng)=Ltrc(itrc,ng)
-             END DO
-           END DO
-# ifdef FEAST
-!        NOGRID END
-# endif
-         ELSE IF (TRIM(KeyWord).eq.'iremin') THEN
-           Npts=load_r(Nval, Rval, 1, iremin)
-         ELSE IF (TRIM(KeyWord).eq.'q10') THEN
-           Npts=load_r(Nval, Rval, 1, q10)
-         ELSE IF (TRIM(KeyWord).eq.'q10r') THEN
-           Npts=load_r(Nval, Rval, 1, q10r)
-         ELSE IF (TRIM(KeyWord).eq.'Rup') THEN
-           Npts=load_r(Nval, Rval, 1, Rup)
-         ELSE IF (TRIM(KeyWord).eq.'KupD') THEN
-           Npts=load_r(Nval, Rval, 1, KupD)
-         ELSE IF (TRIM(KeyWord).eq.'KupP') THEN
-           Npts=load_r(Nval, Rval, 1, KupP)
-         ELSE IF (TRIM(KeyWord).eq.'LupD') THEN
-           Npts=load_r(Nval, Rval, 1, LupD)
-         ELSE IF (TRIM(KeyWord).eq.'LupP') THEN
-           Npts=load_r(Nval, Rval, 1, LupP)
-         ELSE IF (TRIM(KeyWord).eq.'Qres') THEN
-           Npts=load_r(Nval, Rval, 1, Qres)
-         ELSE IF (TRIM(KeyWord).eq.'Rres') THEN
-           Npts=load_r(Nval, Rval, 1, Rres)
-         ELSE IF (TRIM(KeyWord).eq.'rmort') THEN
-           Npts=load_r(Nval, Rval, 1, rmort)
-         ELSE IF (TRIM(KeyWord).eq.'eex') THEN
-           Npts=load_r(Nval, Rval, 1, eex)
-         ELSE IF (TRIM(KeyWord).eq.'eexD') THEN
-           Npts=load_r(Nval, Rval, 1, eexD)
-         ELSE IF (TRIM(KeyWord).eq.'prefD') THEN
-           Npts=load_r(Nval, Rval, 1, prefD)
-         ELSE IF (TRIM(KeyWord).eq.'prefPL') THEN
-           Npts=load_r(Nval, Rval, 1, prefPL)
-         ELSE IF (TRIM(KeyWord).eq.'prefPS') THEN
-           Npts=load_r(Nval, Rval, 1, prefPS)
-         ELSE IF (TRIM(KeyWord).eq.'T0ben') THEN
-           Npts=load_r(Nval, Rval, 1, T0ben)
-         ELSE IF (TRIM(KeyWord).eq.'T0benr') THEN
-           Npts=load_r(Nval, Rval, 1, T0benr)
-         ELSE IF (TRIM(KeyWord).eq.'BenPred') THEN
-           Npts=load_r(Nval, Rval, 1, BenPred)
-         ELSE IF (TRIM(KeyWord).eq.'bmB') THEN
-           Npts=load_r(Nval, Rval, 1,bmB)
-         ELSE IF (TRIM(KeyWord).eq.'ktbmB') THEN
-           Npts=load_r(Nval, Rval, 1,ktbmB)
-         ELSE IF (TRIM(KeyWord).eq.'TrefB') THEN
-           Npts=load_r(Nval, Rval, 1,TrefB)
-   
-#endif
 
-!--------------
-!ice bio params
-!--------------
-#ifdef ICE_BIO
-# ifdef CLIM_ICE_1D
-           ELSE IF (TRIM(KeyWord).eq.'Hout(idIceBvar)') THEN
-             Npts=load_l(Nval, Cval,NIB*Ngrids, Ltrc)
+            !  Benthic Parameters
+
+#  ifdef BENTHIC
+#   ifdef FEAST
+!           NOGRID START
+#   endif
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
+            Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
             DO ng=1,Ngrids
-               DO itrc=1,NIB
-                 i=idIceBvar(idice(itrc))
-                  Hout(i,ng)=Ltrc(itrc,ng)
-               END DO
+              DO itrc=1,NBEN
+                i=idBvar(idben(itrc))
+                Hout(i,ng)=Ltrc(itrc,ng)
               END DO
-	      
-#elif defined BERING_10K  
-#ifdef FEAST
+            END DO
+#   ifdef FEAST
+!           NOGRID END
+#   endif
+          ELSE IF (TRIM(KeyWord).eq.'iremin') THEN
+            Npts=load_r(Nval, Rval, 1, iremin)
+          ELSE IF (TRIM(KeyWord).eq.'q10') THEN
+            Npts=load_r(Nval, Rval, 1, q10)
+          ELSE IF (TRIM(KeyWord).eq.'q10r') THEN
+            Npts=load_r(Nval, Rval, 1, q10r)
+          ELSE IF (TRIM(KeyWord).eq.'Rup') THEN
+            Npts=load_r(Nval, Rval, 1, Rup)
+          ELSE IF (TRIM(KeyWord).eq.'KupD') THEN
+            Npts=load_r(Nval, Rval, 1, KupD)
+          ELSE IF (TRIM(KeyWord).eq.'KupP') THEN
+            Npts=load_r(Nval, Rval, 1, KupP)
+          ELSE IF (TRIM(KeyWord).eq.'LupD') THEN
+            Npts=load_r(Nval, Rval, 1, LupD)
+          ELSE IF (TRIM(KeyWord).eq.'LupP') THEN
+            Npts=load_r(Nval, Rval, 1, LupP)
+          ELSE IF (TRIM(KeyWord).eq.'Qres') THEN
+            Npts=load_r(Nval, Rval, 1, Qres)
+          ELSE IF (TRIM(KeyWord).eq.'Rres') THEN
+            Npts=load_r(Nval, Rval, 1, Rres)
+          ELSE IF (TRIM(KeyWord).eq.'rmort') THEN
+            Npts=load_r(Nval, Rval, 1, rmort)
+          ELSE IF (TRIM(KeyWord).eq.'eex') THEN
+            Npts=load_r(Nval, Rval, 1, eex)
+          ELSE IF (TRIM(KeyWord).eq.'eexD') THEN
+            Npts=load_r(Nval, Rval, 1, eexD)
+          ELSE IF (TRIM(KeyWord).eq.'prefD') THEN
+            Npts=load_r(Nval, Rval, 1, prefD)
+          ELSE IF (TRIM(KeyWord).eq.'prefPL') THEN
+            Npts=load_r(Nval, Rval, 1, prefPL)
+          ELSE IF (TRIM(KeyWord).eq.'prefPS') THEN
+            Npts=load_r(Nval, Rval, 1, prefPS)
+          ELSE IF (TRIM(KeyWord).eq.'T0ben') THEN
+            Npts=load_r(Nval, Rval, 1, T0ben)
+          ELSE IF (TRIM(KeyWord).eq.'T0benr') THEN
+            Npts=load_r(Nval, Rval, 1, T0benr)
+          ELSE IF (TRIM(KeyWord).eq.'BenPred') THEN
+            Npts=load_r(Nval, Rval, 1, BenPred)
+          ELSE IF (TRIM(KeyWord).eq.'bmB') THEN
+            Npts=load_r(Nval, Rval, 1,bmB)
+          ELSE IF (TRIM(KeyWord).eq.'ktbmB') THEN
+            Npts=load_r(Nval, Rval, 1,ktbmB)
+          ELSE IF (TRIM(KeyWord).eq.'TrefB') THEN
+            Npts=load_r(Nval, Rval, 1,TrefB)
+   
+#  endif
+
+
+          !  ice bio params
+
+#  ifdef ICE_BIO
+#   ifdef CLIM_ICE_1D
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceBvar)') THEN
+            Npts=load_l(Nval, Cval,NIB*Ngrids, Ltrc)
+            DO ng=1,Ngrids
+              DO itrc=1,NIB
+                i=idIceBvar(idice(itrc))
+                Hout(i,ng)=Ltrc(itrc,ng)
+              END DO
+            END DO
+              
+#   elif defined BERING_10K  
+#    ifdef FEAST
  !NOGRID START
-#endif 
+#    endif 
           
-           ELSE IF (TRIM(KeyWord).eq.'Hout(idIcePhL)') THEN
-              Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIcePhL)') THEN
+            Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
             DO ng=1,Ngrids
-!g               Hout(idIcePhL,ng)=LtrcI(idIcePhL,ng)
-	         Hout(idIcePhL,ng)=LtrcI(1,ng)
+!g            Hout(idIcePhL,ng)=LtrcI(idIcePhL,ng)
+              Hout(idIcePhL,ng)=LtrcI(1,ng)
             END DO
-	    
-	    ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNO3)') THEN
+            
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNO3)') THEN
 !              Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
             DO ng=1,Ngrids
-               Hout(idIceNO3,ng)=LtrcI(2,ng)
-!g	        Hout(idIceNO3,ng)=LtrcI(idIceNO3,ng)
+              Hout(idIceNO3,ng)=LtrcI(2,ng)
+!g            Hout(idIceNO3,ng)=LtrcI(idIceNO3,ng)
             END DO
-	    
-	    ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNH4)') THEN
-!              Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
+            
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNH4)') THEN
+!           Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
             DO ng=1,Ngrids
-!g               Hout(idIceNH4,ng)=LtrcI(idIceNH4,ng)
-	        Hout(idIceNH4,ng)=LtrcI(3,ng)
+!g            Hout(idIceNH4,ng)=LtrcI(idIceNH4,ng)
+              Hout(idIceNH4,ng)=LtrcI(3,ng)
             END DO
-	    
-	    ELSE IF (TRIM(KeyWord).eq.'Hout(idIceLog)') THEN
-!              Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
+            
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceLog)') THEN
+!           Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
             DO ng=1,Ngrids
-!               Hout(idIceLog,ng)=LtrcI(idIceLog,ng)
-	          Hout(idIceLog,ng)=LtrcI(4,ng)
+!             Hout(idIceLog,ng)=LtrcI(idIceLog,ng)
+              Hout(idIceLog,ng)=LtrcI(4,ng)
             END DO
-#ifdef FEAST
- !NOGRID END
-#endif 	    
-	    
-# endif	      
-            ELSE IF (TRIM(KeyWord).eq.'alphaIb') THEN
+#    ifdef FEAST
+!           NOGRID END
+#    endif          
+            
+#   endif             
+          ELSE IF (TRIM(KeyWord).eq.'alphaIb') THEN
             Npts=load_r(Nval, Rval, 1,alphaIb)
-            ELSE IF (TRIM(KeyWord).eq.'betaI') THEN
+          ELSE IF (TRIM(KeyWord).eq.'betaI') THEN
             Npts=load_r(Nval, Rval, 1,betaI)
-            ELSE IF (TRIM(KeyWord).eq.'inhib') THEN
+          ELSE IF (TRIM(KeyWord).eq.'inhib') THEN
             Npts=load_r(Nval, Rval, 1,inhib)
-            ELSE IF (TRIM(KeyWord).eq.'ksnut1') THEN
+          ELSE IF (TRIM(KeyWord).eq.'ksnut1') THEN
             Npts=load_r(Nval, Rval, 1,ksnut1)
-	    ELSE IF (TRIM(KeyWord).eq.'ksnut2') THEN
+          ELSE IF (TRIM(KeyWord).eq.'ksnut2') THEN
             Npts=load_r(Nval, Rval, 1,ksnut2)
-            ELSE IF (TRIM(KeyWord).eq.'mu0') THEN
+          ELSE IF (TRIM(KeyWord).eq.'mu0') THEN
             Npts=load_r(Nval, Rval, 1,mu0)
-	    ELSE IF (TRIM(KeyWord).eq.'R0i') THEN
+          ELSE IF (TRIM(KeyWord).eq.'R0i') THEN
             Npts=load_r(Nval, Rval, 1,R0i)
-            ELSE IF (TRIM(KeyWord).eq.'rg0') THEN
+          ELSE IF (TRIM(KeyWord).eq.'rg0') THEN
             Npts=load_r(Nval, Rval, 1,rg0)
-	    ELSE IF (TRIM(KeyWord).eq.'rg') THEN
+          ELSE IF (TRIM(KeyWord).eq.'rg') THEN
             Npts=load_r(Nval, Rval, 1,rg)
-	    ELSE IF (TRIM(KeyWord).eq.'annit') THEN
+          ELSE IF (TRIM(KeyWord).eq.'annit') THEN
             Npts=load_r(Nval, Rval, 1,annit)
-	    ELSE IF (TRIM(KeyWord).eq.'aidz') THEN
+          ELSE IF (TRIM(KeyWord).eq.'aidz') THEN
             Npts=load_r(Nval, Rval, 1,aidz)
-#endif
-#ifdef FEAST
- !NOGRID START
-#endif 
+#  endif
+#  ifdef FEAST
+!           NOGRID START
+#  endif 
           ELSE IF (TRIM(KeyWord).eq.'TNU2') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
             DO ng=1,Ngrids
@@ -7275,11 +7270,11 @@
             END DO
           ELSE IF (TRIM(KeyWord).eq.'TNUDG') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
-	    
+            
 
-!!Hard wired this in for now as wasnt reading correctly from input file	   
-!	    Rbio(15,1)=360_r8
-	    
+!!Hard wired this in for now as wasnt reading correctly from input file    
+!           Rbio(15,1)=360_r8
+            
             DO ng=1,Ngrids
               DO itrc=1,NBT
                 i=idbio(itrc)
@@ -7293,8 +7288,8 @@
                 i=idTvar(idbio(itrc))
                 Hout(i,ng)=Ltrc(itrc,ng)
               END DO
-	    END DO
-#ifdef STATIONARY	    
+            END DO
+#  ifdef STATIONARY         
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTSvar)') THEN
             Npts=load_l(Nval, Cval, NTS*Ngrids, LtrcS)
             DO ng=1,Ngrids
@@ -7304,8 +7299,8 @@
               END DO
             END DO
          
-#endif	  
-#ifdef BIOFLUX	    
+#  endif          
+#  ifdef BIOFLUX            
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTBFvar)') THEN
             Npts=load_l(Nval, Cval, NT*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7315,8 +7310,8 @@
 !              END DO
             END DO
          
-#endif	  
-#ifdef STATIONARY2	    
+#  endif          
+#  ifdef STATIONARY2        
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTS2var)') THEN
             Npts=load_l(Nval, Cval, NTS2*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7326,9 +7321,9 @@
               END DO
             END DO
          
-#endif	  
+#  endif          
 
-#ifdef PROD3	    
+#  ifdef PROD3      
           ELSE IF (TRIM(KeyWord).eq.'Hout(idPT3var)') THEN
             Npts=load_l(Nval, Cval, NBPT3*Ngrids, Ltrc3)
             DO ng=1,Ngrids
@@ -7338,8 +7333,8 @@
               END DO
             END DO
           
-#endif	
-#ifdef PROD2	    
+#  endif        
+#  ifdef PROD2      
           ELSE IF (TRIM(KeyWord).eq.'Hout(idPT2var)') THEN
             Npts=load_l(Nval, Cval, NPT2*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7349,18 +7344,18 @@
               END DO
             END DO
           
-#endif	
-#ifdef FEAST
- !NOGRID END
-#endif 
-#ifdef FEAST
+#  endif        
+#  ifdef FEAST
+!           NOGRID END
+#  endif 
+#  ifdef FEAST
 
           ELSE IF (TRIM(KeyWord).eq.'feast_test') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)
-						feast_test=FeastVal(1)   
+                                                feast_test=FeastVal(1)   
           ELSE IF (TRIM(KeyWord).eq.'force_ration') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)
-						force_ration=FeastVal(1)   
+                                                force_ration=FeastVal(1)   
           ELSE IF (TRIM(KeyWord).eq.'force_vonB') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)   
             force_vonB=FeastVal(1)
@@ -7397,264 +7392,257 @@
           ELSE IF (TRIM(KeyWord).eq.'feast_age_view') THEN 
             Npts=load_i(Nval, Rval, 1, FeastInt)
             feast_age_view=FeastInt(1)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_Zoop_JperG') THEN
-       !Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_Zoop_JperG)
-       ELSE IF (TRIM(KeyWord).eq.'fpredCop') THEN
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_Zoop_JperG') THEN
+!           Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_Zoop_JperG)
+          ELSE IF (TRIM(KeyWord).eq.'fpredCop') THEN
             Npts=load_r(Nval, Rval, 1, FeastVal)   
             fpredCop=FeastVal(1)
-       ELSE IF (TRIM(KeyWord).eq.'fpredNcaS') THEN
+          ELSE IF (TRIM(KeyWord).eq.'fpredNcaS') THEN
             Npts=load_r(Nval, Rval, 1, FeastVal)   
             fpredNcaS=FeastVal(1)
-       ELSE IF (TRIM(KeyWord).eq.'fpredNcaO') THEN
+          ELSE IF (TRIM(KeyWord).eq.'fpredNcaO') THEN
             Npts=load_r(Nval, Rval, 1, FeastVal)   
             fpredNcaO=FeastVal(1)
-       ELSE IF (TRIM(KeyWord).eq.'fpredEupS') THEN
+          ELSE IF (TRIM(KeyWord).eq.'fpredEupS') THEN
             Npts=load_r(Nval, Rval, 1, FeastVal)   
             fpredEupS=FeastVal(1)
-       ELSE IF (TRIM(KeyWord).eq.'fpredEupO') THEN
+          ELSE IF (TRIM(KeyWord).eq.'fpredEupO') THEN
             Npts=load_r(Nval, Rval, 1, FeastVal)   
             fpredEupO=FeastVal(1)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_Lsize') THEN
-       Npts=load_i(Nval, Rval, TOT_LENGTHED, fsh_Lsize)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_base_prey') THEN
-       Npts=load_i(Nval, Rval, TOT_LENGTHED, fsh_base_prey)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_Lsize') THEN
+            Npts=load_i(Nval, Rval, TOT_LENGTHED, fsh_Lsize)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_base_prey') THEN
+            Npts=load_i(Nval, Rval, TOT_LENGTHED, fsh_base_prey)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_age_offset') THEN
+            Npts=load_i(Nval, Rval, NUM_AGES+1, FeastInt) 
+            DO sp=1,NUM_AGES
+              fsh_age_offset(FeastInt(1),sp) = FeastInt(sp+1)
+            END DO
+          ELSE IF (TRIM(KeyWord).eq.'fsh_a_T') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_a_T)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_b_T') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_b_T)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_c_T') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_c_T)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_A_L') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_L)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_L') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_L)
 
-       ELSE IF (TRIM(KeyWord).eq.'fsh_age_offset') THEN
-         Npts=load_i(Nval, Rval, NUM_AGES+1, FeastInt) 
-         DO sp=1,NUM_AGES
-            fsh_age_offset(FeastInt(1),sp) = FeastInt(sp+1)
-         END DO
-
-       ELSE IF (TRIM(KeyWord).eq.'fsh_a_T') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_a_T)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_b_T') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_b_T)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_c_T') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_c_T)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_A_L') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_L)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_L') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_L)
-
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_A_C') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_C)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_B_C') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_C)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_CQ') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_CQ)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_H') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_H)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_theta') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_theta)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_A_C') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_C)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_B_C') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_C)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_CQ') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_CQ)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_H') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_H)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_theta') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_theta)
        
-       ELSE IF (TRIM(KeyWord).eq.'fsh_A_S') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_S)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_S') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_S)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_A_S') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_S)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_S') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_S)
        
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_A_Q') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_Q)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_B_Q') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Q)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_A_Q') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_Q)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_B_Q') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Q)
        
-       ELSE IF (TRIM(KeyWord).eq.'fsh_C_TM') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_C_TM)       
-       ELSE IF (TRIM(KeyWord).eq.'fsh_C_T0') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_C_T0)       
-       ELSE IF (TRIM(KeyWord).eq.'fsh_C_Q') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_C_Q)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_C_TM') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_C_TM)       
+          ELSE IF (TRIM(KeyWord).eq.'fsh_C_T0') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_C_T0)       
+          ELSE IF (TRIM(KeyWord).eq.'fsh_C_Q') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_C_Q)
+          
+          ELSE IF (TRIM(KeyWord).eq.'fsh_Bv_min') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_Bv_min)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_Lzero') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Lzero)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_Lone') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Lone)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_Lpow') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Lpow)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_A_enc') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_enc)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_enc') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_enc)                                          
+                                
+          ELSE IF (TRIM(KeyWord).eq.'fsh_ED_m') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_ED_m)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_ED_b') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_ED_b)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_A_R') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_R)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_R') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_R)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_F_A') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_F_A)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_U_A') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_U_A)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_SDA') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_SDA)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_R_TM') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_R_TM)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_R_T0') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_R_T0)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_R_Q') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_R_Q)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_omega') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_omega)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_mu') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_mu)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_zeta') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_zeta)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_smallomega') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_smallomega)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_g_W') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_g_W)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_lambda') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_lambda)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_phi') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_phi)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_D') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_D)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_kappa') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_kappa)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_chi') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_chi)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_z_N') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_N)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_z_muL') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_muL)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_z_sdL') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_sdL)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_z_sday') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_sday)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_z_eday') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_eday)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_sp_sday') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_sp_sday)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_sp_eday') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_sp_eday)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_mat_a') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_mat_a)       
+          ELSE IF (TRIM(KeyWord).eq.'fsh_mat_b') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_mat_b)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_fec_a') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fec_a)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_fec_b') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fec_b)       
+          ELSE IF (TRIM(KeyWord).eq.'fsh_fec_max') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fec_max)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_fem_prop') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fem_prop)                       
+          ELSE IF (TRIM(KeyWord).eq.'fsh_rec_prop') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_rec_prop)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_A_enc') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_enc)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_B_enc') THEN
+            Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_enc)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_A_v') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_v)                                
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_B_v') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_v)
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_minACT') THEN
+!           Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_minACT)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_max_speed') THEN
+            Npts=load_r(Nval, Rval, TOT_FEAST, fsh_max_speed)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_happy_01') THEN
+            Npts=load_r(Nval, Rval, TOT_FEAST, fsh_happy_01)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_happy_99') THEN
+            Npts=load_r(Nval, Rval, TOT_FEAST, fsh_happy_99)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_simple_len') THEN
+            Npts=load_r(Nval, Rval, NUM_SIMPLE_SPECIES, fsh_simple_len)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_simple_wt') THEN
+            Npts=load_r(Nval, Rval, NUM_SIMPLE_SPECIES, fsh_simple_wt)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_simple_JperG') THEN
+            Npts=load_r(Nval, Rval, NUM_SIMPLE_SPECIES, fsh_simple_JperG)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_zoop_len') THEN
+            Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_zoop_len)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_zoop_wt') THEN
+            Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_zoop_wt)
+          ELSE IF (TRIM(KeyWord).eq.'fsh_zoop_JperG') THEN
+            Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_zoop_JperG)                                                              
+          ELSE IF (TRIM(KeyWord).eq.'fsh_q_G') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
+            DO sp=1,TOT_FEAST
+              fsh_q_G(FeastInt(1),sp) = FeastVal(sp+1)
+            END DO
 
-       ELSE IF (TRIM(KeyWord).eq.'fsh_Bv_min') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_Bv_min)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_Lzero') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Lzero)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_Lone') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Lone)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_Lpow') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_Lpow)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_A_enc') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_enc)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_enc') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_enc)			 			 
-			        
-			 ELSE IF (TRIM(KeyWord).eq.'fsh_ED_m') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_ED_m)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_ED_b') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_ED_b)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_A_R') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_R)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_R') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_R)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_F_A') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_F_A)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_U_A') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_U_A)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_SDA') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_SDA)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_R_TM') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_R_TM)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_R_T0') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_R_T0)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_R_Q') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_R_Q)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_omega') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_omega)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_mu') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_mu)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_zeta') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_zeta)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_smallomega') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_smallomega)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_g_W') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_g_W)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_lambda') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_lambda)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_phi') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_phi)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_D') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_D)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_kappa') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_kappa)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_chi') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_chi)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_z_N') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_N)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_z_muL') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_muL)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_z_sdL') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_sdL)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_z_sday') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_sday)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_z_eday') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_z_eday)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_sp_sday') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_sp_sday)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_sp_eday') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_sp_eday)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_mat_a') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_mat_a)       
-       ELSE IF (TRIM(KeyWord).eq.'fsh_mat_b') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_mat_b)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_fec_a') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fec_a)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_fec_b') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fec_b)       
-       ELSE IF (TRIM(KeyWord).eq.'fsh_fec_max') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fec_max)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_fem_prop') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_fem_prop)			 
-       ELSE IF (TRIM(KeyWord).eq.'fsh_rec_prop') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_rec_prop)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_A_enc') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_enc)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_B_enc') THEN
-       Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_enc)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_A_v') THEN
-       
-       
-			 !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_A_v)			        
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_B_v') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_B_v)
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_minACT') THEN
-       !Npts=load_r(Nval, Rval, TOT_LENGTHED, fsh_minACT)
-       
-       ELSE IF (TRIM(KeyWord).eq.'fsh_max_speed') THEN
-       Npts=load_r(Nval, Rval, TOT_FEAST, fsh_max_speed)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_happy_01') THEN
-       Npts=load_r(Nval, Rval, TOT_FEAST, fsh_happy_01)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_happy_99') THEN
-       Npts=load_r(Nval, Rval, TOT_FEAST, fsh_happy_99)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_simple_len') THEN
-       Npts=load_r(Nval, Rval, NUM_SIMPLE_SPECIES, fsh_simple_len)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_simple_wt') THEN
-       Npts=load_r(Nval, Rval, NUM_SIMPLE_SPECIES, fsh_simple_wt)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_simple_JperG') THEN
-       Npts=load_r(Nval, Rval, NUM_SIMPLE_SPECIES, fsh_simple_JperG)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_zoop_len') THEN
-       Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_zoop_len)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_zoop_wt') THEN
-       Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_zoop_wt)
-       ELSE IF (TRIM(KeyWord).eq.'fsh_zoop_JperG') THEN
-       Npts=load_r(Nval, Rval, NUM_PLANKTON, fsh_zoop_JperG)
-			 			 			        
-       ELSE IF (TRIM(KeyWord).eq.'fsh_q_G') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
-         DO sp=1,TOT_FEAST
-            fsh_q_G(FeastInt(1),sp) = FeastVal(sp+1)
-         END DO
+          ELSE IF (TRIM(KeyWord).eq.'fsh_q_Gz') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, NUM_PLANKTON+1, FeastVal)
+            DO sp=1,NUM_PLANKTON
+               fsh_q_G(FeastInt(1),sp+TOT_FEAST) = FeastVal(sp+1)
+            END DO
+          
+          ELSE IF (TRIM(KeyWord).eq.'fsh_alpha_G') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
+            DO sp=1,TOT_FEAST
+               fsh_alpha_G(FeastInt(1),sp) = FeastVal(sp+1)
+            END DO
+          
+          ELSE IF (TRIM(KeyWord).eq.'fsh_alpha_Gz') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, NUM_PLANKTON+1, FeastVal)
+            DO sp=1,NUM_PLANKTON
+               fsh_alpha_G(FeastInt(1),sp+TOT_FEAST) = FeastVal(sp+1)
+            END DO
+          
+          ELSE IF (TRIM(KeyWord).eq.'fsh_beta_G') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
+            DO sp=1,TOT_FEAST
+               fsh_beta_G(FeastInt(1),sp) = FeastVal(sp+1)
+            END DO
+          
+          ELSE IF (TRIM(KeyWord).eq.'fsh_beta_Gz') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, NUM_PLANKTON+1, FeastVal)
+            DO sp=1,NUM_PLANKTON
+               fsh_beta_G(FeastInt(1),sp+TOT_FEAST) = FeastVal(sp+1)
+            END DO
 
-       ELSE IF (TRIM(KeyWord).eq.'fsh_q_Gz') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, NUM_PLANKTON+1, FeastVal)
-         DO sp=1,NUM_PLANKTON
-            fsh_q_G(FeastInt(1),sp+TOT_FEAST) = FeastVal(sp+1)
-         END DO
+          ELSE IF (TRIM(KeyWord).eq.'fsh_catch_sel') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
+            DO sp=1,TOT_FEAST
+               fsh_catch_sel(FeastInt(1),sp) = FeastVal(sp+1)
+            END DO
+          
+          ELSE IF (TRIM(KeyWord).eq.'fsh_catch_01') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
+            DO sp=1,TOT_FEAST
+               fsh_catch_01(FeastInt(1),sp) = FeastVal(sp+1)
+            END DO
 
-       ELSE IF (TRIM(KeyWord).eq.'fsh_alpha_G') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
-         DO sp=1,TOT_FEAST
-            fsh_alpha_G(FeastInt(1),sp) = FeastVal(sp+1)
-         END DO
-
-       ELSE IF (TRIM(KeyWord).eq.'fsh_alpha_Gz') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, NUM_PLANKTON+1, FeastVal)
-         DO sp=1,NUM_PLANKTON
-            fsh_alpha_G(FeastInt(1),sp+TOT_FEAST) = FeastVal(sp+1)
-         END DO
-
-       ELSE IF (TRIM(KeyWord).eq.'fsh_beta_G') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
-         DO sp=1,TOT_FEAST
-            fsh_beta_G(FeastInt(1),sp) = FeastVal(sp+1)
-         END DO
-
-       ELSE IF (TRIM(KeyWord).eq.'fsh_beta_Gz') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, NUM_PLANKTON+1, FeastVal)
-         DO sp=1,NUM_PLANKTON
-            fsh_beta_G(FeastInt(1),sp+TOT_FEAST) = FeastVal(sp+1)
-         END DO
-
-       ELSE IF (TRIM(KeyWord).eq.'fsh_catch_sel') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
-         DO sp=1,TOT_FEAST
-            fsh_catch_sel(FeastInt(1),sp) = FeastVal(sp+1)
-         END DO
-
-       ELSE IF (TRIM(KeyWord).eq.'fsh_catch_01') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
-         DO sp=1,TOT_FEAST
-            fsh_catch_01(FeastInt(1),sp) = FeastVal(sp+1)
-         END DO
-
-       !ELSE IF (TRIM(KeyWord).eq.'fsh_catch_050') THEN
-       !  Npts=load_i(Nval, Rval, 1, FeastInt) 
-			 !  Npts=load_r(Nval, Rval, TOT_FEAST+NUM_PLANKTON+1, FeastVal)
-       !  DO sp=1,TOT_FEAST+NUM_PLANKTON
-       !     fsh_catch_050(FeastInt(1),sp) = FeastVal(sp+1)
-       !  END DO
+!         ELSE IF (TRIM(KeyWord).eq.'fsh_catch_050') THEN
+!           Npts=load_i(Nval, Rval, 1, FeastInt) 
+!           Npts=load_r(Nval, Rval, TOT_FEAST+NUM_PLANKTON+1, FeastVal)
+!           DO sp=1,TOT_FEAST+NUM_PLANKTON
+!             fsh_catch_050(FeastInt(1),sp) = FeastVal(sp+1)
+!           END DO
          
-       ELSE IF (TRIM(KeyWord).eq.'fsh_catch_99') THEN
-         Npts=load_i(Nval, Rval, 1, FeastInt) 
-				 Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
-         DO sp=1,TOT_FEAST
-            fsh_catch_99(FeastInt(1),sp) = FeastVal(sp+1)
-         END DO
-        !ELSE
-        !  write (out,30) line
+          ELSE IF (TRIM(KeyWord).eq.'fsh_catch_99') THEN
+            Npts=load_i(Nval, Rval, 1, FeastInt) 
+            Npts=load_r(Nval, Rval, TOT_FEAST+1, FeastVal)
+            DO sp=1,TOT_FEAST
+               fsh_catch_99(FeastInt(1),sp) = FeastVal(sp+1)
+            END DO
+!         ELSE
+!           write (out,30) line
 
-#endif      
+#  endif      
          
-
-	END IF 
-	 
-	 
+          END IF 
+         
+          
           IF ( Lwrite .and.                                             &
      &         TRIM(KeyWord).ne.'TNU2' .and.                            &
      &         TRIM(KeyWord).ne.'TNU4' .and.                            &
@@ -7669,22 +7657,23 @@
       STOP
   20  CLOSE (inp)
 !
-#ifdef FEAST 
+#  ifdef FEAST 
    call initialize_feast
-#endif
+#  endif
 !-----------------------------------------------------------------------
 !  Report input parameters.
 !-----------------------------------------------------------------------
 !
-#ifdef FEAST
- !NOGRID START
-#endif 
+#  ifdef FEAST
+!     NOGRID START
+#  endif 
       IF (Lwrite) THEN
         DO ng=1,Ngrids
           IF (Lbiology(ng)) THEN
             WRITE (out,40) ng
             WRITE (out,50) BioIter(ng), 'BioIter',                      &
      &            'Number of iterations for nonlinear convergence.'
+     
 #  ifdef TS_DIF2
             DO itrc=1,NBT
               i=idbio(itrc)
@@ -7721,14 +7710,410 @@
             END DO
           END IF
         END DO
+        
+        ! BEST_NPZ parameters are constant across grids, print in log as 
+        ! Grid 0 for convenience
+        
+        IF (Lbiology(1)) THEN 
+          WRITE (out,40) 0
+          WRITE (out,70) PARfrac, 'PARfrac',                            &
+     &          'Photosynthetically-available radiation fraction'
+          WRITE (out,70) xi, 'xi',                                      &
+     &          'Nitrogen:carbon ratio (molN/molC)'
+          WRITE (out,70) ccr, 'ccr',                                    &
+     &          'PhS Carbon:chlorophyll ratio (mg C/mg Chl-a)'
+          WRITE (out,70) ccrPhL, 'ccrPhL',                              &
+     &          'PhL Carbon:chlorophyll ratio (mg C/mg Chl-a)'
+          WRITE (out,70) k_ext, 'k_ext',                                &
+     &          'Extinction coefficient due to seawater (1/m)'
+          WRITE (out,70) k_chl, 'k_chl',                                &
+     &          'Extinction coefficient due to phytoplankton (1/m)'
+          WRITE (out,70) DiS, 'DiS',                                    &
+     &          'PhS Doubling rate parameter'
+          WRITE (out,70) Dps, 'DpS',                                    &
+     &          'PhS Doubling rate exponent'
+          WRITE (out,70) alphaPhS, 'alphaPhS',                          &
+     &          'PhS Slope of P-I curve (mg C/mg Chl-a/E/m2)'
+          WRITE (out,70) psiPhS, 'psiPhS',                              &
+     &          '(legacy, unused)'
+          WRITE (out,70) k1PhS, 'k1PhS',                                &
+     &          'PhS Half-saturation constant for NO3 limitation'
+          WRITE (out,70) k2PhS, 'k2PhS',                                &
+     &          'PhS Half-saturation constant for NH4 limitation'
+          WRITE (out,70) DiL, 'DiL',                                    &
+     &          'PhL Doubling rate parameter'
+          WRITE (out,70) DpL, 'DpL',                                    &
+     &          'PhL Doubling rate exponent'
+          WRITE (out,70) alphaPhL, 'alphaPhL',                          &
+     &          'PhL Slope of P-I curve (mg C/mg Chl-a/E/m2)'
+          WRITE (out,70) psiPhL, 'psiPhl',                              &
+     &          '(legacy, unused)'
+          WRITE (out,70) k1PhL, 'k1PhL',                                &
+     &          'PhL Half-saturation constant for NO3 limitation'
+          WRITE (out,70) k2PhL, 'k2PhL',                                &
+     &          'PhL Half-saturation constant for NH4 limitation'
+          WRITE (out,70) fpPhSMZL, 'fpPhSMZL',                          &
+     &          'PhS->MZL Feeding preference'
+          WRITE (out,70) fpPhLMZL, 'fpPhLMZL',                          &
+     &          'PhL->MZL Feeding preference'
+          WRITE (out,70) eMZL, 'eMZL',                                  &
+     &          'MZL maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) Q10MZL, 'Q10MZL',                              &
+     &          'MZL Q10 for growth rate'
+          WRITE (out,70) Q10MZLT, 'Q10MZLT',                            &
+     &          'MZL Temperature coefficient for Q10 (deg. C)'
+          WRITE (out,70) fMZL, 'fMZL',                                  &
+     &          'MZL Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) kMZL, 'kMZL',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) gammaMZL, 'gammaMZL',                          &
+     &          'MZL Growth efficiency'
+          WRITE (out,70) fpPhSCop, 'fpPhSCop',                          &
+     &          'PhS->Cop Feeding preference'
+          WRITE (out,70) fpPhLCop, 'fpPhLCop',                          &
+     &          'PhL->Cop Feeding preference'
+          WRITE (out,70) fpMZLCop, 'fpMZLCop',                          &
+     &          'MZL->Cop Feeding preference'
+          WRITE (out,70) eCop, 'eCop',                                  &
+     &          'Cop maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) Q10Cop, 'Q10Cop',                              &
+     &          'Cop Q10 for growth rate'
+          WRITE (out,70) Q10CopT, 'Q10CopT',                            &
+     &          'Cop Temperature coefficient for Q10 (deg. C)'
+          WRITE (out,70) fCop, 'fCop',                                  &
+     &          'Cop Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) gammaCop, 'gammaCop',                          &
+     &          'Cop Growth efficiency'
+          WRITE (out,70) fpPhSNca, 'fpPhSNca',                          &
+     &          'PhS->NCa Feeding preference'
+          WRITE (out,70) fpPhLNca, 'fpPhLNca',                          &
+     &          'PhL->NCa Feeding preference'
+          WRITE (out,70) fpMZLNca, 'fpMZLNca',                          &
+     &          'MZL->NCa Feeding preference'
+          WRITE (out,70) eNca, 'eNca',                                  &
+     &          'NCa maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) Q10Nca, 'Q10Nca',                              &
+     &          'NCa Q10 for growth rate'
+          WRITE (out,70) Q10NcaT, 'Q10NcaT',                            &
+     &          'NCa Temperature coefficient for Q10 (deg. C)'
+          WRITE (out,70) fNca, 'fNca',                                  &
+     &          'NCa Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) gammaNca, 'gammaNca',                          &
+     &          'NCa Growth efficiency'
+          WRITE (out,70) kNca, 'kNca',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) fpPhSEup, 'fpPhSEup',                          &
+     &          'PhS->Eup Feeding preference'
+          WRITE (out,70) fpPhLEup, 'fpPhLEup',                          &
+     &          'PhL->Eup Feeding preference'
+          WRITE (out,70) fpMZLEup, 'fpMZLEup',                          &
+     &          'MZL->Eup Feeding preference'
+          WRITE (out,70) fpCopEup, 'fpCopEup',                          &
+     &          'Cop->Eup Feeding preference'
+          WRITE (out,70) eEup, 'eEup',                                  &
+     &          'Eup maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) Q10Eup, 'Q10Eup',                              &
+     &          'Eup Q10 for growth rate'
+          WRITE (out,70) Q10EupT, 'Q10EupT',                            &
+     &          'Eup Temperature coefficient for Q10 (deg. C)'
+          WRITE (out,70) fEup, 'fEup',                                  &
+     &          'Eup Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) gammaEup, 'gammaEup',                          &
+     &          'Eup Growth efficiency'
+          WRITE (out,70) fpCopJel, 'fpCopJel',                          &
+     &          'Cop->Jel Feeding preference'
+          WRITE (out,70) fpEupJel, 'fpEupJel',                          &
+     &          'Eup->Jel Feeding preference'
+          WRITE (out,70) fpNCaJel, 'fpNCaJel',                          &
+     &          'NCa->Jel Feeding preference'
+          WRITE (out,70) eJel, 'eJel',                                  &
+     &          'Jel maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) Q10Jelr, 'Q10Jelr',                            &
+     &          'Jel Q10 for respiration rate'
+          WRITE (out,70) Q10JelTr, 'Q10JelTr',                          &
+     &          'Jel Temperature coefficient for resp Q10 (deg. C)'
+          WRITE (out,70) Q10Jele, 'Q10Jele',                            &
+     &          'Jel Q10 for growth rate'
+          WRITE (out,70) Q10JelTe, 'Q10JelTe',                          &
+     &          'Jel Temperature coefficient for growth Q10 (deg. C)'
+          WRITE (out,70) gammaJel, 'gammaJel',                          &
+     &          'Jel Growth efficiency'
+          WRITE (out,70) mpredJel, 'mpredJel',                          &
+     &          'Jel Daily mortality (1/d)'
+          WRITE (out,70) respJel, 'respJel',                            &
+     &          'Jel Basal metabolic rate (1/d)'
+          WRITE (out,70) bmJ, 'bmJ',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) ktbmJ, 'ktbmJ',                                &
+     &          '(legacy, unused)'
+          WRITE (out,70) fJel, 'fJel',                                  &
+     &          'Jel Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) mPhS, 'mPhS',                                  &
+     &          'PhS daily linear mortality rate (1/d)'
+          WRITE (out,70) mPhL, 'mPhL',                                  &
+     &          'PhL daily linear mortality rate (1/d)'
+          WRITE (out,70) NcritPhS, 'NcritPhS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) minmPhL, 'minmPhL',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) maxmPhL, 'maxmPhL',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) NcritPhL, 'NcritPhL',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) mpredMZL, 'mpredMZL',                          &
+     &          'MZL Daily mortality (1/d)'
+          WRITE (out,70) mpredCop, 'mpredCop',                          &
+     &          'Cop Daily mortality (1/d)'
+          WRITE (out,70) mpredNCa, 'mpredNCa',                          &
+     &          'Nca Daily mortality (1/d)'
+          WRITE (out,70) mpredEup, 'mpredEup',                          &
+     &          'Eup Daily mortality (1/d)'
+          WRITE (out,70) wPhS, 'wPhS',                                  &
+     &          'PhS Sinking rate (m/d)'
+          WRITE (out,70) wPhL, 'wPhL',                                  &
+     &          'PhL Sinking rate (m/d)'
+          WRITE (out,70) wDet, 'wDet',                                  &
+     &          'Det Sinking rate (m/d)'
+          WRITE (out,70) wDetF, 'wDetF',                                &
+     &          'DetF Sinking rate (m/d)'
+          WRITE (out,70) respMZL, 'respMZL',                            &
+     &          'MZL Specific respiration rate (1/d)'
+          WRITE (out,70) respPhS, 'respPhS',                            &
+     &          'PhS Specific respiration rate (1/d)'
+          WRITE (out,70) respPhL, 'respPhL',                            &
+     &          'PhL Specific respiration rate (1/d)'
+          WRITE (out,70) respCop, 'respCop',                            &
+     &          'Cop Specific respiration rate (1/d)'
+          WRITE (out,70) respNCa, 'respNCa',                            &
+     &          'NCa Specific respiration rate (1/d)'
+          WRITE (out,70) respEup, 'respEup',                            &
+     &          'Eup Specific respiration rate (1/d)'
+          WRITE (out,70) ktbmC, 'ktbmC',                                &
+     &          'Cop temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) TrefC, 'TrefC',                                &
+     &          'Cop reference temperature for respiration (deg C)'
+          WRITE (out,70) ktbmN, 'ktbmN',                                &
+     &          'NCa temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) TrefN, 'TrefN',                                &
+     &          'NCa reference temperature for respiration (deg C)'
+          WRITE (out,70) ktbmE, 'ktbmE',                                &
+     &          'Eup temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) TrefE, 'TrefE',                                &
+     &          'Eup reference temperature for respiration (deg C)'
+          WRITE (out,70) TmaxPhS, 'TmaxPhS',                            &
+     &          'PhS reference temperature for respiration (deg C)'
+          WRITE (out,70) KtBm_PhS, 'KtBm_PhS',                          &
+     &          'PhS temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) TmaxPhL, 'TmaxPhL',                            &
+     &          'PhL reference temperature for respiration (deg C)'
+          WRITE (out,70) TminPhL, 'TminPhL',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) Topt_PhL, 'Topt_PhL',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) KtBm_PhL, 'KtBm_PhL',                          &
+     &          'PhL temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) TmaxMZL, 'TmaxMZL',                            &
+     &          'MZL reference temperature for respiration (deg C)'
+          WRITE (out,70) KtBm_MZL, 'KtBm_MZL',                          &
+     &          'MZL temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) Feinlo, 'Feinlo',                              &
+     &          'Inshore surface Fe concentration (umol Fe/m^3)'
+          WRITE (out,70) Feinhi, 'Feinhi',                              &
+     &          'Inshore deep Fe concentration (umol Fe/m^3)'
+          WRITE (out,70) Feinh, 'Feinh',                                &
+     &          'Inshore isobath of transition for Fe (m)'
+          WRITE (out,70) Feofflo, 'Feofflo',                            &
+     &          'Offshore surface Fe concentration (umol Fe/m^3)'
+          WRITE (out,70) Feoffhi, 'Feoffhi',                            &
+     &          'Offshore deep Fe concentration (umol Fe/m^3)'
+          WRITE (out,70) Feoffh, 'Feoffh',                              &
+     &          'Offshore isobath of transition for Fe (m)'
+          WRITE (out,70) kfePhS, 'kfePhS',                              &
+     &          'PhS Half-saturation constant for iron (umol/m^3)'
+          WRITE (out,70) kfePhL, 'kfePhL',                              &
+     &          'PhL Half-saturation constant for iron (umol/m^3)'
+          WRITE (out,70) FeC, 'FeC',                                    &
+     &          'Fe:C ratio (umol Fe/mg C ??)'
+          WRITE (out,70) NCmaxz, 'NCmaxz',                              &
+     &          'NCa highest depth of diapausing (m) (legacy, unused)'
+          WRITE (out,70) wNCrise, 'wNCrise',                            &
+     &          'NCa upward speed during diapause (m/d)'
+          WRITE (out,70) wNCsink, 'wNCsink',                            &
+     &          'NCa downward speed during diapause (m/d)'
+          WRITE (out,70) RiseStart, 'RiseStart',                        &
+     &          'NCaO Day of year to begin upward movement'
+          WRITE (out,70) RiseEnd, 'RiseEnd',                            &
+     &          'NCaO Day of year to end upward movement'
+          WRITE (out,70) SinkStart, 'SinkStart',                        &
+     &          'NCaO Day of year to begin downward movement'
+          WRITE (out,70) SinkEnd, 'SinkEnd',                            &
+     &          'NCaO Day of year to end downward movement'
+          WRITE (out,70) RiseStartCM, 'RiseStartCM',                    &
+     &          'NCaS Day of year to begin upward movement'
+          WRITE (out,70) RiseEndCM, 'RiseEndCM',                        &
+     &          'NCaS Day of year to end upward movement'
+          WRITE (out,70) SinkStartCM, 'SinkStartCM',                    &
+     &          'NCaS Day of year to begin downward movement'
+          WRITE (out,70) SinkEndCM, 'SinkEndCM',                        &
+     &          'NCaS Day of year to end downward movement'
+          WRITE (out,70) Pv0, 'Pv0',                                    &
+     &          'PON decompositon rate at 0 deg C (1/d)'
+          WRITE (out,70) PvT, 'PvT',                                    &
+     &          'Temperature coefficient for decomposition (1/deg C)'
+          WRITE (out,70) Nitr0, 'Nitr0',                                &
+     &          'Nitrification rate at 0 deg C (1/d)'
+          WRITE (out,70) ToptNtr, 'ToptNtr',                            &
+     &          'Reference temperature for nitrification (deg C)'
+          WRITE (out,70) ktntr, 'ktntr',                                &
+     &          'Temperature coefficient for nitrification (1/deg C)'
+          WRITE (out,70) KNH4Nit, 'KNH4Nit',                            &
+     &          'Half-saturation constant for nitrification (mg N/m^3/d ?)'
+          WRITE (out,70) tI0, 'tI0',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) KI, 'KI',                                      &
+     &          '(legacy, unused)'
+          WRITE (out,70) iremin, 'iremin',                              &
+     &          '?? related to nitrification bflx'
+          WRITE (out,70) q10, 'q10',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) q10r, 'q10r',                                  &
+     &          'Ben Q10 for feeding'
+          WRITE (out,70) Rup, 'Rup',                                    &
+     &          'Ben Feeding rate (1/d)'
+          WRITE (out,70) KupD, 'KupD',                                  &
+     &          'Ben Half-saturation constant for feeding on pelagic food (mg C/m^2)'
+          WRITE (out,70) KupP, 'KupP',                                  &
+     &          'Ben Half-saturation constant for feeding on benthic detritus (mg C/m^2)'
+          WRITE (out,70) LupD, 'LupD',                                  &
+     &          'Ben Lower threshold for feeding on benthic detritus (mg C/m^2)'
+          WRITE (out,70) LupP, 'LupP',                                  &
+     &          'Ben Lower threshold for feeding on pelagic food (mg C/m^2)'
+          WRITE (out,70) Qres, 'Qres',                                  &
+     &          'Ben Active metabolism reference? (1/d)'                                             
+          WRITE (out,70) Rres, 'Rres',                                  &
+     &          'Ben Basal metabolism reference? (1/d)'
+          WRITE (out,70) rmort, 'rmort',                                &
+     &          'Ben mortality rate (1/d)'
+          WRITE (out,70) eex, 'eex',                                    &
+     &          'Ben fraction of pelagic food excreted'
+          WRITE (out,70) eexD, 'eexD',                                  &
+     &          'Ben fraction of detrital food excreted'
+          WRITE (out,70) prefD, 'prefD',                                &
+     &          'BenDet->Ben feeding preference'
+          WRITE (out,70) prefPL, 'prefPL',                              &
+     &          'PhL->Ben feeding preference'
+          WRITE (out,70) prefPS, 'prefPS',                              &
+     &          'PhS->Ben feeding preference'
+          WRITE (out,70) T0ben, 'T0ben',                                &
+     &          '(legacy, unused)'
+          WRITE (out,70) T0benr, 'T0benr',                              &
+     &          'Ben Q10 Reference temperature for feeding'
+          WRITE (out,70) BenPred, 'BenPred',                            &
+     &          'Ben mortality rate due to undefined predation (1/d)'
+          WRITE (out,70) alphaIb, 'alphaIb',                            &
+     &          'IcePhL Chl-a specific attenuation coefficient (W^-1 m^-2)'
+          WRITE (out,70) betaI, 'betaI',                                &
+     &          'IcePhL photosynthetic efficiency (W^-1 m^-2)'
+          WRITE (out,70) inhib, 'inhib',                                &
+     &          'IcePhL NH4 inhibition on NO3 uptake (m^3/mmol N)'
+          WRITE (out,70) ksnut1, 'ksnut1',                              &
+     &          'IcePhL half-saturation constant for NO3 (mmolN/m^3)'
+          WRITE (out,70) ksnut2, 'ksnut2',                              &
+     &          'IcePhL half-saturation constant for NH4 (mmolN/m^3)'
+          WRITE (out,70) mu0, 'mu0',                                    &
+     &          'IcePhL maximum growth rate at 0 deg C (1/d)'
+          WRITE (out,70) R0i, 'R0i',                                    &
+     &          'IcePhL respiration rate (1/d)'
+          WRITE (out,70) rg0, 'rg0',                                    &
+     &          'IcePhL mortality rate at 0 deg C (1/d)'
+          WRITE (out,70) rg, 'rg',                                      &
+     &          'IcePhL temperature coefficient for mortality (1/deg C)'
+          WRITE (out,70) annit, 'annit',                                &
+     &          'IcePhL nitrification factor (1/d)'
+          WRITE (out,70) aidz, 'aidz',                                  &
+     &          'Ice thickness (m)'
+     
+          WRITE (out) 'Legacy parameters...'
+          WRITE (out) '--------------------'
+          WRITE (out,70) VertMixIncr, 'VertMixIncr',                    &
+     &          'Vertical mixing tuning parameter (legacy, unused)'
+          WRITE (out,70) aPS, 'aPS',                                    &
+     &          'PhS old NH4 limitation (legacy, unused)'
+          WRITE (out,70) aPL, 'aPL',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) fpPhSMZS, 'fpPhSMZS',                          &
+     &          'PhS->MZS Feeding preference (legacy, unused)'
+          WRITE (out,70) fpPhLMZS, 'fpPhLMZS',                          &
+     &          'PhL->MZS Feeding preference (legacy, unused)'
+          WRITE (out,70) eMZS, 'eMZS',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) Q10MZS, 'Q10MZS',                              &
+     &          '(legacy, unused)'
+          WRITE (out,70) Q10MZST, 'Q10MZST',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) fMZS, 'fMZS',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) kMZS, 'kMZS',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) gammaMZS, 'gammaMZS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) fpMZSCop, 'fpMZSCop',                          &
+     &          'MZS->Cop Feeding preference (legacy, unused)'
+          WRITE (out,70) kCop, 'kCop',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) fpMZSNca, 'fpMZSNca',                          &
+     &          'MZS->NCa Feeding preference (legacy, unused)'
+          WRITE (out,70) fpMZSEup, 'fpMZSEup',                          &
+     &          'MZS->Eup Feeding preference (legacy, unused)'
+          WRITE (out,70) kEup, 'kEup',                                  &
+     &          '(legacy, unused)'
+          WRITE (out,70) TrefJ, 'TrefJ',                                &
+     &          'Reference temperature (deg. C) (legacy, unused)'
+          WRITE (out,70) mMZS, 'mMZS',                                  &
+     &          'MZS Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mMZL, 'mMZL',                                  &
+     &          'MZL Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mCop, 'mCop',                                  &
+     &          'Cop Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mNca, 'mNca',                                  &
+     &          'Nca Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) mEup, 'mEup',                                  &
+     &          'Eup Daily mortality (1/d) (legacy, unused)'
+          WRITE (out,70) respMZS, 'respMZS',                            &
+     &          'MZS Specific respiration rate (1/d) (legacy, unused)'
+          WRITE (out,70) TminPhS, 'TminPhS',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) Topt_PhS, 'Topt_PhS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) TmaxMZS, 'TmaxMZS',                            &
+     &          '(legacy, unused)'
+          WRITE (out,70) KtBm_MZS, 'KtBm_MZS',                          &
+     &          '(legacy, unused)'
+          WRITE (out,70) regen, 'regen',                                &
+     &          'NH4 Regeneration rate (legacy, unused)'
+          WRITE (out,70) dgrad, 'dgrad',                                &
+     &          'Det Degradation rate (legacy, unused)'
+          WRITE (out,70) KnT, 'KnT',                                    &
+     &          'Temperature coefficient for nitrification (1/deg C) (legacy, unused)'
+          WRITE (out,70) bmB, 'bmB',                                    &
+     &          '(legacy, unused)'
+          WRITE (out,70) ktbmB, 'ktbmB',                                &
+     &          '(legacy, unused)'
+          WRITE (out,70) TrefB, 'TrefB',                                &
+     &          '(legacy, unused)'
+        ENDIF
+
+        
+        
       END IF
+      
+      !  Compute inverse nudging coefficients (1/s) used in various tasks.
+      
       DO ng=1,Ngrids
         DO itrc=1,NBT
           i=idbio(itrc)
           tnu4(i,ng)=SQRT(ABS(tnu4(i,ng)))
-!
-!  Compute inverse nudging coefficients (1/s) used in various tasks.
-!
+          
           IF (Tnudg(i,ng).gt.0.0_r8) THEN
             Tnudg(i,ng)=1.0_r8/(Tnudg(i,ng)*86400.0_r8)
           ELSE
@@ -7736,19 +8121,19 @@
           END IF
         END DO
       END DO
-#ifdef FEAST    
- !NOGRID END
-#endif 
+#  ifdef FEAST    
+!     NOGRID END
+#  endif 
   30  FORMAT (/,' READ_BioPar - Error while processing line: ',/,a)
   40  FORMAT (/,/,' Biology Parameters, Grid: ',i2.2,                   &
      &        /,  ' ============================',/)
   50  FORMAT (1x,i10,2x,a,t28,a)
   60  FORMAT (10x,l1,2x,a,t28,a,i2.2,':',1x,a)
-!  70  FORMAT (f11.3,2x,a,t28,a)
-!  80  FORMAT (f11.3,2x,a,t28,a,/,t30,a)
+  70  FORMAT (f11.3,2x,a,t28,a)
+! 80  FORMAT (f11.3,2x,a,t28,a,/,t30,a)
   90  FORMAT (1p,e11.4,2x,a,'(',i2.2,')',t28,a,/,t30,a,i2.2,':',1x,a)
-! 100  FORMAT (1p,e11.4,2x,a,t28,a)
-! 110  FORMAT (1p,e11.4,2x,a,t28,a,/,t30,a)
+! 100 FORMAT (1p,e11.4,2x,a,t28,a)
+! 110 FORMAT (1p,e11.4,2x,a,t28,a,/,t30,a)
 
 
 # elif defined BIO_GOANPZ
@@ -11010,7 +11395,7 @@
      &                                      REAL(j-1,r8)*Fdz(i,ng)
                   END IF
                 END IF
-								FLT(ng)%Ftype(nc)=Ftype(i,ng) ! AJH
+                                                                FLT(ng)%Ftype(nc)=Ftype(i,ng) ! AJH
                 IF (Fcoor(i,ng).eq.0) THEN
                   xfloat=Fx0(i,ng)+REAL(j-1,r8)*Fdx(i,ng)
                   FLT(ng)%Tinfo(ixgrd,nc)=MIN(MAX(0.5_r8,xfloat),       &
@@ -11145,16 +11530,16 @@
               END DO
             END DO
 #if defined PROD3
-	   ELSE IF (TRIM(KeyWord).eq.'Sout(idPT3var)') THEN
+           ELSE IF (TRIM(KeyWord).eq.'Sout(idPT3var)') THEN
             Npts=load_l(Nval, Cval,NBPT3*Ngrids, Ltrc3)
             DO ng=1,Ngrids
               DO itrc=1,NBPT3
                 Sout(idPT3var(itrc),ng)=Ltrc3(itrc,ng)
               END DO
             END DO  
-#endif	    
+#endif      
 #if defined STATIONARY
-	   ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN
+           ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN
             Npts=load_l(Nval, Cval,NTS*Ngrids, Lsta)
             DO ng=1,Ngrids
               DO itrc=1,NTS(ng)
@@ -11162,17 +11547,17 @@
               END DO
             END DO 
 #endif 
-#if defined PROD2	    
-	  ELSE IF (TRIM(KeyWord).eq.'Sout(idPT2var)') THEN
+#if defined PROD2           
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idPT2var)') THEN
             Npts=load_l(Nval, Cval,NBPT2*Ngrids, Lsta)
             DO ng=1,Ngrids
               DO itrc=1,NPT2(ng)
                 Sout(idPT2var(itrc),ng)=Lsta(itrc,ng)
               END DO
             END DO 
-#endif	       
+#endif         
 #if defined BENTHIC
-	  ELSE IF (TRIM(KeyWord).eq.'Sout(idBvar)') THEN
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idBvar)') THEN
             Npts=load_l(Nval, Cval,NBeT*Ngrids, Lsta)
             DO ng=1,Ngrids
               DO itrc=1,NBeT(ng)
@@ -11345,14 +11730,14 @@
             Npts=load_l(Nval, Cval, Ngrids, Sout(idWio,1))
           ELSE IF (TRIM(KeyWord).eq.'Sout(idWro)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idWro,1))
-#ifdef ICE_BIO	  
-	  ELSE IF (TRIM(KeyWord).eq.'Sout(idIcePhL)') THEN
+#ifdef ICE_BIO    
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idIcePhL)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idIcePhL,1))
-	    ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNO3)') THEN
+            ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNO3)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idIceNO3,1))
-	    ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNH4)') THEN
+            ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNH4)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idIceNH4,1))  
-#endif	
+#endif  
 # endif
           ELSE IF (TRIM(KeyWord).eq.'NSTATION') THEN
             Npts=load_i(Nval, Rval, Ngrids, Nstation)
@@ -11632,8 +12017,8 @@
          IF (Sout(idIcePhL,ng)) WRITE (out,80) Sout(idIcePhL,ng),      &
      &       'Sout(idIcePhL)',                                          &
      &        'Write out average ice algae.'                             
-# endif	
-# endif	                                                
+# endif 
+# endif                                                 
   
           IF (Sout(idTice,ng)) WRITE (out,80) Sout(idTice,ng),          &
      &       'Sout(idTice)',                                            &
