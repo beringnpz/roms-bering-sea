@@ -567,7 +567,7 @@
         RECM = MOD(RiseEnd   + 30, 366.0_r8)
         SSCM = MOD(SinkStart + 30, 366.0_r8)
         SECM = MOD(SinkEnd   + 30, 366.0_r8)
-	
+        
      else
      
         RSCM = MOD(RiseStartCM, 366.0_r8)
@@ -3457,7 +3457,7 @@
           ! bottom goes to benthic detritus 
 
           DO i=Istr,Iend
-		  
+                  
             call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhS, 1.0_r8, Bio(i,:,iPhS), Btmp, sinkout2)
 
             DO k = 1,N(ng)
@@ -3472,7 +3472,7 @@
           ! bottom goes to benthic detritus 
           
           DO i=Istr,Iend
-		  
+                  
             call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhL, 1.0_r8, Bio(i,:,iPhL), Btmp, sinkout2)
 
             DO k = 1,N(ng)
@@ -3511,24 +3511,24 @@
           END DO
           
           ! On-shelf large copepods (NCaS i.e. CM): Move up and down 
-          ! based on dates set in input file, offset by 30 days.  Stop at 
-          ! either 200m or the water depth, whichever is shallower.  No 
-          ! biomass should cross the bottom or surface boundary.  
+          ! based on dates set in input file.  Stop at either 200m or the 
+          ! water depth, whichever is shallower.  No biomass should cross 
+          ! the bottom or surface boundary.  
           
           DO i=Istr,Iend
             
             if (downwardCM) then
             
-	      call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), Bio(i,:,iNCaS), Btmp, sinkout2)
-	      
+              call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), Bio(i,:,iNCaS), Btmp, sinkout2)
+              
               DO k = 1,N(ng)
                 DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
               END DO
               
             else if (upwardCM) then
               
-	      call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaS), Btmp, sinkout2)
-	      
+              call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaS), Btmp, sinkout2)
+              
               DO k = 1,N(ng)
                 DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
               END DO
@@ -3539,14 +3539,14 @@
           
           ! Off-shelf large copepods (NCaO i.e. NC): Move up and down 
           ! based on dates set in input file.  Diapause to 400 m.  
-          ! If water is shallower than 400m, when hit the bottom, 
-          ! transfer biomass to benthic detritus.
+          ! If water is shallower than 400m, assume they die when they 
+          ! hit the bottom, and transfer biomass to benthic detritus.
           
           DO i=Istr,Iend
             
             if (downward) then
-		    
-	      call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, -400.0_r8, Bio(i,:,iNCaO), Btmp, sinkout2)
+                    
+              call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, -400.0_r8, Bio(i,:,iNCaO), Btmp, sinkout2)
 
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
@@ -3556,8 +3556,8 @@
               
             else if (upward) then
               
-	      call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaO), Btmp, sinkout2)
-	      
+              call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaO), Btmp, sinkout2)
+              
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
               END DO
@@ -5080,14 +5080,14 @@
 
       Subroutine TracerSink(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
       ! Arguments:
-      ! nn:	scalar, # layers
-      ! Hz:	n x 1, layer thickness (m)
-      ! z_w:	n+1 x 1, depths of layer edges (m, negative down)
+      ! nn:     scalar, # layers
+      ! Hz:     n x 1, layer thickness (m)
+      ! z_w:    n+1 x 1, depths of layer edges (m, negative down)
       ! dtdays: time step (days)
-      ! wBio:	sinking rate (m d^-1, positive down)
+      ! wBio:   sinking rate (m d^-1, positive down)
       ! zlimit: depth below which sinking stops (m, negative down, >=0 = no limit)
-      ! Bio:	n x 1, biomass concentration input (g m^-3)
-      ! Bout:	n x 1, biomass concentration output (g m^-3)
+      ! Bio:    n x 1, biomass concentration input (g m^-3)
+      ! Bout:   n x 1, biomass concentration output (g m^-3)
       ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
       
       USE mod_param
@@ -5130,16 +5130,16 @@
 
       Subroutine TracerRise(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
       ! Arguments:
-      ! n:	scalar, # layers
-      ! Hz:	1 x 1 x n, slice, layer thickness array (m)
-      ! z_w:	1 x 1 x n+1 slice, depths of layer edges (m, negative down)
+      ! n:      scalar, # layers
+      ! Hz:     1 x 1 x n, slice, layer thickness array (m)
+      ! z_w:    1 x 1 x n+1 slice, depths of layer edges (m, negative down)
       ! dtdays: time step (days)
-      ! wBio:	rising rate (m d^-1, positive up)
+      ! wBio:   rising rate (m d^-1, positive up)
       ! zlimit: depth above which rising stops (m, negative down, >=0 = no limit)
-      ! Bio:	1 x n x 1 slice, biomass concentration input (g m^-3)
-      ! Bout:	n x 1, biomass concentration output (g m^-3)
+      ! Bio:    1 x n x 1 slice, biomass concentration input (g m^-3)
+      ! Bout:   n x 1, biomass concentration output (g m^-3)
       ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
-	          
+                  
       USE mod_param 
       implicit none
 
