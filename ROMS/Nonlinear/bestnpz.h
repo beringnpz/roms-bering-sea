@@ -1142,7 +1142,7 @@
 ! limitation following Lomas (marine Biology 1999)    
 ! 
                 NOLim = (Bio(i,k,iNO3)/ ( k1PhS +Bio(i,k,iNO3))) &
-     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(k2PhS + Bio(i,k,iNH4))));  
+     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(psiPhS + Bio(i,k,iNH4))));  
 ! 
 ! Limitation following Vallina and Quere (Ecological Modelling 2008)
 !               NOLim = Bio(i,k,iNO3) *                                 &
@@ -1159,8 +1159,8 @@
 ! Iron Limitation - disabled at concs of 2 micromol Fe m-3
 !-----------------------------------------------------------------------
 ! 
-                IronLim = eps + Bio(i,k,iFe) / (kfePhS + Bio(i,k,iFe)) *&
-     &                  (kfePhS + FeCritPS) / FeCritPS
+                IronLim = min(1.0_r8,eps + Bio(i,k,iFe) / (kfePhS + &
+     &		Bio(i,k,iFe)) * (kfePhS + FeCritPS) / FeCritPS)
 #endif
                  
 !-----------------------------------------------------------------------
@@ -1296,8 +1296,8 @@
 !=========================================================================
 !  Nutrient uptake by Large Phytoplankton
 !=========================================================================
-          kN=0;
-          kP=48;
+!          kN=0;
+!          kP=48;
 !         
 ! Coyle step alpha function   
 ! 
@@ -1374,7 +1374,7 @@
 
 ! limitation following Lomas (marine Biology 1999) 
                 NOLim = (Bio(i,k,iNO3)/ ( k1PhL +Bio(i,k,iNO3)))        &
-     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(k2PhL + Bio(i,k,iNH4))));
+     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(psiPhL + Bio(i,k,iNH4))));
 
 ! Limitation following Vallina and Quere (Ecological Modelling 2008)
 !               NOLim = Bio(i,k,iNO3) *                                 &
@@ -1388,8 +1388,8 @@
 !  Iron Limitation - disabled at cons of 2 micromol Fe m-3
 !-----------------------------------------------------------------------
 
-                IronLim = eps + Bio(i,k,iFe) / (kfePhL + Bio(i,k,iFe))  &
-     &                           * (kfePhL + FeCritPL) / FeCritPL
+                IronLim = min(1.0_r8,eps + Bio(i,k,iFe) / (kfePhL +     &
+     &             Bio(i,k,iFe)) * (kfePhL + FeCritPL) / FeCritPL)
 #endif
 ! 
 !-----------------------------------------------------------------------

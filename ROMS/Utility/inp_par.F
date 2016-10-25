@@ -7056,6 +7056,10 @@
             Npts=load_r(Nval, Rval, 1, kfePhL)
           ELSE IF (TRIM(KeyWord).eq.'FeC') THEN
             Npts=load_r(Nval, Rval, 1, FeC)
+	  ELSE IF (TRIM(KeyWord).eq.'FeCritPS') THEN
+            Npts=load_r(Nval, Rval, 1, FeCritPS)
+	  ELSE IF (TRIM(KeyWord).eq.'FeCritPL') THEN
+            Npts=load_r(Nval, Rval, 1, FeCritPL)  
 !----------
 !  Diapause
 !----------
