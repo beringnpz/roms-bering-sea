@@ -135,7 +135,7 @@
 #endif
 #endif
 #   ifdef BIOFLUX
-          real(r8), pointer :: bflx(:,:)
+          real(r8), pointer :: bflx(:,:,:,:,:)
 #   endif
 # endif
 
@@ -399,17 +399,19 @@
 # ifdef BENTHIC
       allocate ( OCEAN(ng) % bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng)) )
 # endif
+
 # if defined ICE_BIO 
-# ifdef CLIM_ICE_1D
+#  ifdef CLIM_ICE_1D
       allocate ( OCEAN(ng) % it(LBi:UBi,LBj:UBj,3,NIceT(ng)) )
       allocate ( OCEAN(ng) % itL(LBi:UBi,LBj:UBj,3, NIceLog(ng)) )
+#  endif
 # endif
-# endif
+
 # ifdef BIOFLUX
       ! Add a 3D  biology flux array
-       allocate ( OCEAN(ng) % bflx(NT(ng),NT(ng)))
-#    endif
+       allocate ( OCEAN(ng) % bflx(LBi:UBi,LBj:UBj,N(ng),3,NBF(ng)) )
 # endif
+#endif
 
 
 
@@ -837,11 +839,15 @@
 #  endif
 
 #  ifdef BIOFLUX
-          DO itrc=1,NT(ng)
-            DO itrc2=1,NT(ng)
-              OCEAN(ng) % bflx(itrc,itrc2) = IniVal
+          DO itrc=1,NBF(ng)
+            DO k=1,N(ng)
+              DO i=Imin,Imax
+              OCEAN(ng) % bflx(i,j,k,1,itrc) = IniVal
+	      OCEAN(ng) % bflx(i,j,k,2,itrc) = IniVal
+	      OCEAN(ng) % bflx(i,j,k,3,itrc) = IniVal
             END DO
           END DO
+	  END DO
 #  endif
 # endif
 # ifdef BIO_GOANPZ

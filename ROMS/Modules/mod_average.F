@@ -147,7 +147,7 @@
 # endif  
 #endif
 #  if defined BIOFLUX
-        real(r8), pointer :: avgbflx(:,:) 
+        real(r8), pointer :: avgbflx(:,:,:,:) 
 #  endif      
 
 # endif
@@ -340,7 +340,7 @@
 #   endif
 #   endif
 # ifdef BIOFLUX
-        allocate ( AVERAGE(ng) % avgbflx(NAT+NBT,NAT+NBT) )
+        allocate ( AVERAGE(ng) % avgbflx(LBi:UBi,LBj:UBj,N(ng),NBF(ng)))
 # endif
 #endif
 
@@ -696,11 +696,14 @@
 # endif
 # endif
 # ifdef BIOFLUX
-        DO itrc=1,NT(ng)
-         DO itrc2=1,NT(ng)
-            AVERAGE(ng) % avgbflx(itrc,itrc2) = IniVal
+        
+	DO itrc=1,NT(ng)
+         DO k=1,N(ng)
+	   DO i=Imin,Imax
+            AVERAGE(ng) % avgbflx(i,j,k,itrc) = IniVal
           END DO
-        END DO
+         END DO
+	END DO
 # endif
 
 #endif

@@ -18,10 +18,7 @@
       USE mod_ncparam
       USE mod_netcdf
       USE mod_scalars
-#if defined BIOFLUX
-      USE mod_biology
-#endif
-!
+
       implicit none
 !
 !  Local variable declarations.
@@ -33,53 +30,7 @@
       integer :: ifile
 #endif
 
-#if defined BIOFLUX
-      integer :: j
-      real(r8) :: dtdays
-!
-!---------------------------------------------------------------------
-!  Write biological fluxes to standard out.
-!---------------------------------------------------------------------
-!
-      
-      write(stdout,*) ' '
-      write(stdout,*) ' '
-      write(stdout,134) ' Cumulative biological fluxes'
-      DO ng=1,Ngrids
-        IF (Master) THEN
 
-#if defined BIOFLUX && defined BEST_NPZ
-!         Scale fluxes by maximum
-          xi = 0.0_r8
-          DO i = itemp,iDet
-            DO j = itemp,iDet
-              xi = MAX(xi, bflx(i,j))
-            END DO
-          END DO
-          xi = 10.0_r8/xi
-          write(stdout,134) ' To  :  From:'
-          write(stdout,131) 'NO3','NH4','PhS','PhL','MZS','MZL','Cop',  &
-     &                      'NCa','Eup','Det'
-          write(stdout,132) 'NO3 : ', (xi*bflx(i,iNO3), i=iNO3,IDet)
-          write(stdout,132) 'NH4 : ', (xi*bflx(i,iNH4), i=iNO3,IDet)
-          write(stdout,132) 'PhS : ', (xi*bflx(i,iPhS), i=iNO3,IDet)
-          write(stdout,132) 'PhL : ', (xi*bflx(i,iPhL), i=iNO3,IDet)
-          write(stdout,132) 'MZS : ', (xi*bflx(i,iMZS), i=iNO3,IDet)
-          write(stdout,132) 'MZL : ', (xi*bflx(i,iMZL), i=iNO3,IDet)
-          write(stdout,132) 'Cop : ', (xi*bflx(i,iCop), i=iNO3,IDet)
-          write(stdout,132) 'NCa : ', (xi*bflx(i,iNCa), i=iNO3,IDet)
-          write(stdout,132) 'Eup : ', (xi*bflx(i,iEup), i=iNO3,IDet)
-          write(stdout,132) 'Det : ', (xi*bflx(i,iDet), i=iNO3,IDet)
-          write(stdout,133) 'pred: ', (xi*bflx(i,itemp), i=iCop,iEup)
-          write(stdout,*) ' '
- 131  format('BIOFLUX  ',7x,10a6)      
- 132  format('BIOFLUX  ',a7,10f6.1)      
- 133  format('BIOFLUX  ',a7,36x,3f6.1)      
- 134  format('BIOFLUX  ',a)      
-# endif
-        END IF
-      END DO
-#endif
 !
       SourceFile='close_io.F'
 !

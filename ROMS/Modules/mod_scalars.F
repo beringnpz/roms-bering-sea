@@ -215,9 +215,7 @@
 #  endif
         integer :: iDet               ! Detritus
         integer :: iDetF              ! Fast Sinking Detritus
-#  ifdef BIOFLUX
-        integer :: iBF
-#  endif
+
 # ifdef CLIM_ICE_1D
        integer :: i1CI
 # endif
@@ -298,6 +296,96 @@
 #  ifdef JELLY
         integer :: iJelPrd            ! Jellyfish  production
 #  endif
+# ifdef BIOFLUX
+        integer, pointer :: idbiobf(:)
+        integer :: iBF1
+        integer :: iBF2
+        integer :: iBF3
+        integer :: iBF4
+        integer :: iBF5
+        integer :: iBF6
+        integer :: iBF7
+        integer :: iBF8
+        integer :: iBF9
+        integer :: iBF10
+        integer :: iBF11
+        integer :: iBF12
+        integer :: iBF13
+        integer :: iBF14
+        integer :: iBF15
+        integer :: iBF16
+        integer :: iBF17
+        integer :: iBF18
+        integer :: iBF19
+        integer :: iBF20
+	integer :: iBF21
+        integer :: iBF22
+        integer :: iBF23
+        integer :: iBF24
+        integer :: iBF25
+        integer :: iBF26
+        integer :: iBF27
+        integer :: iBF28
+        integer :: iBF29
+        integer :: iBF30
+	integer :: iBF31
+        integer :: iBF32
+        integer :: iBF33
+        integer :: iBF34
+        integer :: iBF35
+        integer :: iBF36
+        integer :: iBF37
+        integer :: iBF38
+        integer :: iBF39
+        integer :: iBF40
+	integer :: iBF41
+        integer :: iBF42
+        integer :: iBF43
+        integer :: iBF44
+        integer :: iBF45
+        integer :: iBF46
+        integer :: iBF47
+        integer :: iBF48
+        integer :: iBF49
+        integer :: iBF50
+	integer :: iBF51
+        integer :: iBF52
+        integer :: iBF53
+        integer :: iBF54
+        integer :: iBF55
+        integer :: iBF56
+        integer :: iBF57
+        integer :: iBF58
+        integer :: iBF59
+        integer :: iBF60
+	integer :: iBF61
+        integer :: iBF62
+        integer :: iBF63
+        integer :: iBF64
+        integer :: iBF65
+        integer :: iBF66
+        integer :: iBF67
+        integer :: iBF68
+        integer :: iBF69
+        integer :: iBF70
+	integer :: iBF71
+        integer :: iBF72
+        integer :: iBF73
+        integer :: iBF74
+        integer :: iBF75
+        integer :: iBF76
+        integer :: iBF77
+        integer :: iBF78
+        integer :: iBF79
+        integer :: iBF80
+        integer :: iBF81
+	integer :: iBF82
+        integer :: iBF83
+        integer :: iBF84
+        integer :: iBF85
+        integer :: iBF86
+        integer :: iBF87
+# endif
 # ifdef FEAST
         integer :: iFCopMort
         integer :: iFNCaSMort
@@ -2009,7 +2097,9 @@
 #   ifdef PROD3
       allocate ( idbioP3(NBPT3) )
 #   endif
-
+#   ifdef BIOFLUX
+      allocate ( idbiobf(NBTS) )
+#  endif 
 #   ifdef BENTHIC
        allocate ( idben(NBEN) )
 #   endif
@@ -2347,7 +2437,98 @@
 # endif
 
 #  ifdef BIOFLUX
-        iBF=1
+        iBF1=1
+	iBF2=2
+	iBF3=3
+	iBF4=4	
+	iBF1=1
+	iBF2=2
+	iBF3=3
+	iBF4=4	
+        iBF5=5
+	iBF6=6
+	iBF7=7
+	iBF8=8	
+        iBF9=9
+	iBF10=10
+        iBF11=11
+	iBF12=12
+	iBF13=13
+	iBF14=14	
+        iBF15=15
+	iBF16=16
+	iBF17=17
+	iBF18=18	
+        iBF19=19
+	iBF20=20
+        iBF21=21
+	iBF22=22
+	iBF23=23
+	iBF24=24	
+        iBF25=25
+	iBF26=26
+	iBF27=27
+	iBF28=28	
+        iBF29=29
+	iBF30=30
+        iBF31=31
+	iBF32=32
+	iBF33=33
+	iBF34=34	
+        iBF35=35
+	iBF36=36
+	iBF37=37
+	iBF38=38	
+        iBF39=39
+	iBF40=40
+        iBF41=41
+	iBF42=42
+	iBF43=43
+	iBF44=44	
+        iBF45=45
+	iBF46=46
+	iBF47=47
+	iBF48=48	
+        iBF49=49
+	iBF50=50
+        iBF51=51
+	iBF52=52
+	iBF53=53
+	iBF54=54	
+        iBF55=55
+	iBF56=56
+	iBF57=57
+	iBF58=58	
+        iBF59=59
+	iBF60=60
+        iBF61=61
+	iBF62=62
+	iBF63=63
+	iBF64=64	
+        iBF65=65
+	iBF66=66
+	iBF67=67
+	iBF68=68	
+        iBF69=69
+	iBF70=70
+        iBF71=71
+	iBF72=72
+	iBF73=73
+	iBF74=74	
+        iBF75=75
+	iBF76=76
+	iBF77=77
+	iBF78=78	
+        iBF79=79
+	iBF80=80
+        iBF81=81
+	iBF82=82
+	iBF83=83
+	iBF84=84	
+        iBF85=85
+	iBF86=86
+	iBF87=87
+
 #  endif
 
 # ifdef STATIONARY

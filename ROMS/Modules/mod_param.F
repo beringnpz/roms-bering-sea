@@ -530,6 +530,11 @@
 #   endif
 # endif
 
+# if defined BIOFLUX
+        integer, dimension(Ngrids) :: NBF
+        integer,parameter :: NBioF=87
+        
+# endif
 #endif
 
 
@@ -905,6 +910,14 @@
            NIceLog(ng) =1
       END DO
 # endif
+
+# ifdef BIOFLUX
+
+        DO ng=1,Ngrids
+          NBF(ng) = NBioF
+        END DO
+# endif
+
 #endif
 
 

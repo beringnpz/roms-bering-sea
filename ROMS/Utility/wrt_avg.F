@@ -821,36 +821,33 @@
 !---------------------------------------------
 !  Write out bioflux arrays.
 !---------------------------------------------
-      DO itrc=1,NT(ng)
-        DO itrc2=1,NT(ng)
-!g        !print *, 'XXX',ncAVGid(ng),avgTSid(itrc,ng),tAVGindx(ng)
-!g       !print *, 'xxx',Hout(idTSvar(itrc),ng)
-        IF (Hout(idTBFvar(itrc),ng)) THEN
+     DO itrc=1,NBF(ng)
+
+        IF (Hout(idBFvar(itrc),ng)) THEN
           scale=1.0_r8
-          gtype=gfactor*r2dvar
-	  
-	  status=nf_fwrite2d(ng, iNLM, ncAVGid(ng), avgTBFid(itrc,ng),  &
-     &                     tAVGindx(ng), gtype,                         &
-     &                     1,NT(ng),1, NT(ng), scale,                   &
-     
+          gtype=gfactor*r3dvar
+          status=nf_fwrite3d(ng, iNLM, ncAVGid(ng), avgBFid(itrc,ng),   &
+     &                       tAVGindx(ng), gtype,                       &
+     &                       LBi, UBi, LBj, UBj, 1, N(ng), scale,       &
 #  ifdef MASKING
-     &                       GRID(ng) % rmask,                 &
+     &                       GRID(ng) % rmask,                          &
 #  endif
-     &                       AVERAGE(ng) % avgbflx(:,:))
+     &                       AVERAGE(ng) % avgbflx(:,:,:,itrc))
+     
+    
+ 
+	    
           IF (status.ne.nf90_noerr) THEN
             IF (Master) THEN
-              WRITE (stdout,10) TRIM(Vname(1,idTBFvar(itrc))),          &
+              WRITE (stdout,10) TRIM(Vname(1,idBFvar(itrc))),            &
      &                        tAVGindx(ng)
             END IF
             exit_flag=3
             ioerror=status
-	    
-
             RETURN
           END IF
         END IF
       END DO
-        END DO
 #endif
 
 
@@ -858,10 +855,8 @@
 !---------------------------------------------
 !  Write out 3D stationary variable array.
 !---------------------------------------------
-      DO itrc=1,NBTS
+      DO itrc=1,NTS(ng)
 
-	!print *, 'XXX',ncAVGid(ng),avgTSid(itrc,ng),tAVGindx(ng)
-	!print *, 'xxx',Hout(idTSvar(itrc),ng)
         IF (Hout(idTSvar(itrc),ng)) THEN
           scale=1.0_r8
           gtype=gfactor*r3dvar
@@ -872,6 +867,11 @@
      &                       GRID(ng) % rmask,                          &
 #  endif
      &                       AVERAGE(ng) % avgst(:,:,:,itrc))
+     
+     
+     
+
+	    
           IF (status.ne.nf90_noerr) THEN
             IF (Master) THEN
               WRITE (stdout,10) TRIM(Vname(1,idTSvar(itrc))),            &
@@ -888,7 +888,7 @@
 !---------------------------------------------
 !  Write out 2D stationary variable array.
 !---------------------------------------------
-      DO itrc=1,NBTS2
+      DO itrc=1,NTS2(ng)
 	
         IF (Hout(idTS2var(itrc),ng)) THEN
           scale=1.0_r8
@@ -920,8 +920,7 @@
 !  Write 3D production variables.
 !---------------------------------------------
       DO itrc=1,NPT3(ng)
-	!print *, 'XXX',ncAVGid(ng),avgPT3id(itrc,ng),tAVGindx(ng)
-	!print *, 'xxx',Hout(idPT3var(itrc),ng)
+	
         IF (Hout(idPT3var(itrc),ng)) THEN
           scale=1.0_r8
           gtype=gfactor*r3dvar

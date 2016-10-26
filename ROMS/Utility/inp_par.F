@@ -4415,6 +4415,9 @@
 #ifdef STATIONARY      
       logical, dimension(NBTS,Ngrids) :: LtrcS
 #endif
+#ifdef BIOFLUX     
+      logical, dimension(NBioF,Ngrids) :: LtrcB
+#endif
 #ifdef ICE_BIO      
       logical, dimension(NIB,Ngrids) :: LtrcI
 #endif      
@@ -7306,13 +7309,14 @@
          
 #endif	  
 #ifdef BIOFLUX	    
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idTBFvar)') THEN
-            Npts=load_l(Nval, Cval, NT*Ngrids, Ltrc)
+         ELSE IF (TRIM(KeyWord).eq.'Hout(idBFvar)') THEN
+            Npts=load_l(Nval, Cval, NBF*Ngrids, LtrcB)
             DO ng=1,Ngrids
-!              DO itrc=1, NT(ng)   
-                i=idTBFvar(iBF)
-                Hout(i,ng)=Ltrc(iBF,ng)
-!              END DO
+              DO itrc=1,NBioF   
+                i=idBFvar(itrc)
+		print*,itrc, idBFvar(itrc)
+		Hout(i,ng)=LtrcB(itrc,ng)
+              END DO
             END DO
          
 #endif	  

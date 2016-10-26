@@ -753,22 +753,21 @@
 !-------------------------
 !bioflux Array
 !--------------------------
-!        DO itrc=1,NT(ng)
-!	 DO itrc2=1,NT(ng)
-          IF (Hout(idTBFvar(iBF),ng)) THEN
-            Vinfo( 1)=Vname(1,idTBFvar(iBF))
+ DO itrc=1,NBioF
+	    IF (Hout(idBFvar(itrc),ng)) THEN
+            Vinfo( 1)=Vname(1,idBFvar(itrc))
             WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
-     &                                   TRIM(Vname(2,idTBFvar(iBF)))
-            Vinfo( 3)=Vname(3,idTBFvar(iBF))
-            Vinfo(14)=Vname(4,idTBFvar(iBF))
+     &                                   TRIM(Vname(2,idBFvar(itrc)))
+            Vinfo( 3)=Vname(3,idBFvar(itrc))
+            Vinfo(14)=Vname(4,idBFvar(itrc))
             Vinfo(16)=Vname(1,idtime)
             Vinfo(22)='coordinates'
-            Aval(5)=REAL(r2dvar,r8)
-            status=def_var(ng, model,ncAVGid(ng),avgTBFid(iBF,ng),     &
-     &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
+            Aval(5)=REAL(r3dvar,r8)
+            status=def_var(ng, model,ncAVGid(ng),avgBFid(itrc,ng),      &
+     &                     NF_FOUT,nvd4,t3dgrd,Aval,Vinfo,ncname)
           END IF
-!        END DO
-!	END DO
+
+	END DO
 #endif
 #ifdef PROD3
 !-------------------------------

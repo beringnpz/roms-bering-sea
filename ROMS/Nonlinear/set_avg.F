@@ -671,9 +671,7 @@
 #   endif  
 
 #   ifdef BIOFLUX
-!      real(r8), intent(in) :: bflx(LBi:,LBj:,:,:,:,:)
-
-      real(r8), intent(in) :: bflx(:,:)
+      real(r8), intent(in) :: bflx(LBi:,LBj:,:,:,:)
 #   endif    
 # endif      
       
@@ -827,7 +825,7 @@
 #  endif
 #endif
 #   ifdef BIOFLUX
-       real(r8), intent(inout) :: avgbflx(:,:)
+       real(r8), intent(inout) :: avgbflx(LBi:,LBj:,:,:)
 #   endif
 # endif
 
@@ -999,7 +997,7 @@
 
 #     endif
 #     ifdef BIOFLUX
-      real(r8), intent(in)::bflx(NT(ng),NT(ng))
+      real(r8), intent(in)::bflx(LBi:UBi,LBj:UBj,N(ng),3,NBF(ng))
 #     endif
 
 # endif
@@ -1150,7 +1148,7 @@
       real(r8), intent(inout) :: avgit(LBi:UBi,LBj:UBj,NIceT(ng))
 #   endif
 #   ifdef BIOFLUX
-      real(r8), intent(inout) :: avgbflx(NT(ng),NT(ng))
+      real(r8), intent(inout) :: avgbflx(LBi:UBi,LBJ:UBj,N(ng),NBF(ng))
 #   endif
 #  endif
 
@@ -1614,9 +1612,14 @@
           END DO
 #  endif
 #  ifdef BIOFLUX
-        DO itrc=1,NT(ng)
-        DO itrc2=1,NT(ng)
-                avgbflx(itrc,itrc2)=bflx(itrc,itrc2)
+        
+        DO itrc=1,NBF(ng)
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgbflx(i,j,k,itrc)=bflx(i,j,k,Nout,itrc)
+              END DO
+            END DO
           END DO
         END DO
 #  endif
@@ -1984,9 +1987,13 @@
 
 #endif
 #ifdef BIOFLUX
-         DO itrc=1,NT(ng)
-         DO itrc2=1,NT(ng)
-            avgbflx(itrc,itrc2)=bflx(itrc,itrc2)
+        DO itrc=1,NBF(ng)
+           DO k=1,N(ng)
+             DO j=JstrR,JendR
+               DO i=IstrR,IendR
+                 avgbflx(i,j,k,itrc)=bflx(i,j,k,Nout,itrc)
+               END DO
+             END DO
            END DO
          END DO
 #endif

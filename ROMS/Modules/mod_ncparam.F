@@ -508,8 +508,13 @@
 #ifdef BEST_NPZ
 
 # ifdef BIOFLUX
-        integer, allocatable :: idTBFvar(:)    ! 3D Stationary variables
-        integer, allocatable :: avgTBFid(:,:)  ! averages stationary tracer IDs
+        	
+	integer, allocatable :: idBFvar(:)    ! 3D bioflux variables
+        integer, allocatable :: hisBFid(:,:)  ! history bioflx tracer IDs
+        integer, allocatable :: avgBFid(:,:)  ! averages bioflux tracer IDs
+        integer, allocatable :: staBFid(:,:)
+	integer, allocatable :: fltBFid(:,:)  !bioflux float tracer IDs
+	integer, allocatable :: rstBFid(:,:)
 # endif
 # ifdef STATIONARY
         integer, allocatable :: idTSvar(:)    ! 3D Stationary variables
@@ -800,8 +805,12 @@
 #  endif
 # endif
 # if defined BIOFLUX
-        allocate ( idTBFvar(1) )
-        allocate ( avgTBFid(1,Ngrids) )
+        allocate ( idBFvar(NBioF) )
+        allocate ( hisBFid(NBioF,Ngrids) )
+        allocate ( avgBFid(NBioF,Ngrids) )
+	allocate ( staBFid(NBioF,Ngrids) )
+	allocate ( fltBFid(NBioF,Ngrids) )
+	allocate ( rstBFid(NBioF,Ngrids) )
 # endif
 
 #endif
@@ -3392,8 +3401,191 @@
              !-----------------------------
              !bio flux Array
              !-----------------------------
-              CASE ('idTBFvar(iBF)')
-                idTBFvar(iBF) = varid
+             CASE ('idBFvar(iBF1)')
+                idBFvar(iBF1) = varid
+              CASE ('idBFvar(iBF2)')
+	        idBFvar(iBF2) = varid
+	      CASE ('idBFvar(iBF3)')
+                idBFvar(iBF3) = varid
+              CASE ('idBFvar(iBF4)')
+	        idBFvar(iBF4) = varid
+		CASE ('idBFvar(iBF5)')
+                idBFvar(iBF5) = varid
+              CASE ('idBFvar(iBF6)')
+	        idBFvar(iBF6) = varid
+	      CASE ('idBFvar(iBF7)')
+                idBFvar(iBF7) = varid
+              CASE ('idBFvar(iBF8)')
+	        idBFvar(iBF8) = varid
+		CASE ('idBFvar(iBF9)')
+                idBFvar(iBF9) = varid
+              CASE ('idBFvar(iBF10)')
+	        idBFvar(iBF10) = varid
+		
+		
+		 CASE ('idBFvar(iBF11)')
+                idBFvar(iBF11) = varid
+              CASE ('idBFvar(iBF12)')
+	        idBFvar(iBF12) = varid
+	      CASE ('idBFvar(iBF13)')
+                idBFvar(iBF13) = varid
+              CASE ('idBFvar(iBF14)')
+	        idBFvar(iBF14) = varid
+		CASE ('idBFvar(iBF15)')
+                idBFvar(iBF15) = varid
+              CASE ('idBFvar(iBF16)')
+	        idBFvar(iBF16) = varid
+	      CASE ('idBFvar(iBF17)')
+                idBFvar(iBF17) = varid
+              CASE ('idBFvar(iBF18)')
+	        idBFvar(iBF18) = varid
+	      CASE ('idBFvar(iBF19)')
+                idBFvar(iBF19) = varid
+              CASE ('idBFvar(iBF20)')
+	        idBFvar(iBF20) = varid
+		
+		 CASE ('idBFvar(iBF21)')
+                idBFvar(iBF21) = varid
+              CASE ('idBFvar(iBF22)')
+	        idBFvar(iBF22) = varid
+	      CASE ('idBFvar(iBF23)')
+                idBFvar(iBF23) = varid
+              CASE ('idBFvar(iBF24)')
+	        idBFvar(iBF24) = varid
+		CASE ('idBFvar(iBF25)')
+                idBFvar(iBF25) = varid
+              CASE ('idBFvar(iBF26)')
+	        idBFvar(iBF26) = varid
+	      CASE ('idBFvar(iBF27)')
+                idBFvar(iBF27) = varid
+              CASE ('idBFvar(iBF28)')
+	        idBFvar(iBF28) = varid
+	      CASE ('idBFvar(iBF29)')
+                idBFvar(iBF29) = varid
+              CASE ('idBFvar(iBF30)')
+	        idBFvar(iBF30) = varid
+		
+		 CASE ('idBFvar(iBF31)')
+                idBFvar(iBF31) = varid
+              CASE ('idBFvar(iBF32)')
+	        idBFvar(iBF32) = varid
+	      CASE ('idBFvar(iBF33)')
+                idBFvar(iBF33) = varid
+              CASE ('idBFvar(iBF34)')
+	        idBFvar(iBF34) = varid
+		CASE ('idBFvar(iBF35)')
+                idBFvar(iBF35) = varid
+              CASE ('idBFvar(iBF36)')
+	        idBFvar(iBF36) = varid
+	      CASE ('idBFvar(iBF37)')
+                idBFvar(iBF37) = varid
+              CASE ('idBFvar(iBF38)')
+	        idBFvar(iBF38) = varid
+	      CASE ('idBFvar(iBF39)')
+                idBFvar(iBF39) = varid
+              CASE ('idBFvar(iBF40)')
+	        idBFvar(iBF40) = varid
+		
+		 CASE ('idBFvar(iBF41)')
+                idBFvar(iBF41) = varid
+              CASE ('idBFvar(iBF42)')
+	        idBFvar(iBF42) = varid
+	      CASE ('idBFvar(iBF43)')
+                idBFvar(iBF43) = varid
+              CASE ('idBFvar(iBF44)')
+	        idBFvar(iBF44) = varid
+		CASE ('idBFvar(iBF45)')
+                idBFvar(iBF45) = varid
+              CASE ('idBFvar(iBF46)')
+	        idBFvar(iBF46) = varid
+	      CASE ('idBFvar(iBF47)')
+                idBFvar(iBF47) = varid
+              CASE ('idBFvar(iBF48)')
+	        idBFvar(iBF48) = varid
+	      CASE ('idBFvar(iBF49)')
+                idBFvar(iBF49) = varid
+              CASE ('idBFvar(iBF50)')
+	        idBFvar(iBF50) = varid
+		
+		 CASE ('idBFvar(iBF51)')
+                idBFvar(iBF51) = varid
+              CASE ('idBFvar(iBF52)')
+	        idBFvar(iBF52) = varid
+	      CASE ('idBFvar(iBF53)')
+                idBFvar(iBF53) = varid
+              CASE ('idBFvar(iBF54)')
+	        idBFvar(iBF54) = varid
+		CASE ('idBFvar(iBF55)')
+                idBFvar(iBF55) = varid
+              CASE ('idBFvar(iBF56)')
+	        idBFvar(iBF56) = varid
+	      CASE ('idBFvar(iBF57)')
+                idBFvar(iBF57) = varid
+             CASE ('idBFvar(iBF58)')
+	        idBFvar(iBF58) = varid
+	      CASE ('idBFvar(iBF59)')
+                idBFvar(iBF59) = varid
+              CASE ('idBFvar(iBF60)')
+	        idBFvar(iBF60) = varid
+		
+	      CASE ('idBFvar(iBF61)')
+                idBFvar(iBF61) = varid
+              CASE ('idBFvar(iBF62)')
+	        idBFvar(iBF62) = varid
+	      CASE ('idBFvar(iBF63)')
+                idBFvar(iBF63) = varid
+              CASE ('idBFvar(iBF64)')
+	        idBFvar(iBF64) = varid
+		CASE ('idBFvar(iBF65)')
+                idBFvar(iBF65) = varid
+              CASE ('idBFvar(iBF66)')
+	        idBFvar(iBF66) = varid
+	      CASE ('idBFvar(iBF67)')
+                idBFvar(iBF67) = varid
+              CASE ('idBFvar(iBF68)')
+	        idBFvar(iBF68) = varid
+	      CASE ('idBFvar(iBF69)')
+                idBFvar(iBF69) = varid
+              CASE ('idBFvar(iBF70)')
+	        idBFvar(iBF70) = varid
+		
+		 CASE ('idBFvar(iBF71)')
+                idBFvar(iBF71) = varid
+              CASE ('idBFvar(iBF72)')
+	        idBFvar(iBF72) = varid
+	      CASE ('idBFvar(iBF73)')
+                idBFvar(iBF73) = varid
+              CASE ('idBFvar(iBF74)')
+	        idBFvar(iBF74) = varid
+		CASE ('idBFvar(iBF75)')
+                idBFvar(iBF75) = varid
+              CASE ('idBFvar(iBF76)')
+	        idBFvar(iBF76) = varid
+	      CASE ('idBFvar(iBF77)')
+                idBFvar(iBF77) = varid
+              CASE ('idBFvar(iBF78)')
+	        idBFvar(iBF78) = varid
+	      CASE ('idBFvar(iBF79)')
+                idBFvar(iBF79) = varid
+             CASE ('idBFvar(iBF80)')
+	        idBFvar(iBF80) = varid
+		
+		
+		 CASE ('idBFvar(iBF81)')
+                idBFvar(iBF81) = varid
+              CASE ('idBFvar(iBF82)')
+	        idBFvar(iBF82) = varid
+	      CASE ('idBFvar(iBF83)')
+                idBFvar(iBF83) = varid
+              CASE ('idBFvar(iBF84)')
+	        idBFvar(iBF84) = varid
+		CASE ('idBFvar(iBF85)')
+                idBFvar(iBF85) = varid
+              CASE ('idBFvar(iBF86)')
+	        idBFvar(iBF86) = varid
+	      CASE ('idBFvar(iBF87)')
+                idBFvar(iBF87) = varid
+              
 
 #endif
 # endif

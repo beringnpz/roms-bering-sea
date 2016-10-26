@@ -76,16 +76,17 @@
      &                       OCEAN(ng) % st2,                           &
      &                       NTS2(ng),                                  &
 # endif
-# ifdef PROD3R
+# ifdef PROD3D
      &                       OCEAN(ng) % pt3,                           &
      &                       NPT3(ng),                                  &
 # endif
-# ifdef PROD2R
+# ifdef PROD2D
      &                       OCEAN(ng) % pt2,                           &
      &                       NPT2(ng),                                  &
 # endif
 # ifdef BIOFLUX
      &                       OCEAN(ng) % bflx,                          &
+     &                       NBF(ng),                                   &
 # endif
 #endif
 
@@ -137,16 +138,17 @@
      &                             st2,                                 &
      &                             UBst2 ,                              &
 # endif
-# ifdef PROD3R
+# ifdef PROD3D
      &                             pt3,                                 &
      &                             UBpt3 ,                              &
 # endif
-# ifdef PROD2R
+# ifdef PROD2D
      &                             pt2,                                 &
      &                             UBpt2,                               &
 # endif
 # ifdef BIOFLUX
      &                             bflx,                                &
+     &                             UBbf ,                               &
 # endif
 #endif
 
@@ -184,17 +186,18 @@
       real(r8), intent(inout) :: st2(LBi:,LBj:,:,:)
       integer, intent(in) :: UBst2
 #  endif
-#  ifdef PROD3R
+#  ifdef PROD3D
       real(r8), intent(inout) :: pt3(LBi:,LBj:,:,:,:)
       integer, intent(in) :: UBpt3
 #  endif
-#  ifdef PROD2R
+#  ifdef PROD2D
       real(r8), intent(inout) :: pt2(LBi:,LBj:,:,:)
       integer, intent(in) :: UBpt2
 #  endif
 
 #  ifdef BIOFLUX
-      real(r8), intent(inout) :: bflx(:,:)
+       real(r8), intent(inout) :: bflx(LBi:,LBj:,:,:,:)
+      integer, intent(in) :: UBbf
 #  endif
 
 #  ifdef ICE_BIO
@@ -238,17 +241,18 @@
       real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,UBst2)
       integer, intent(in) :: UBst2
 #   endif
-#   ifdef PROD3R
+#   ifdef PROD3D
       real(r8), intent(inout) :: pt3(LBi:UBi,LBj:UBj,UBk,3,UBpt3)
       integer, intent(in) :: UBpt3
 #   endif
-#   ifdef PROD2R
+#   ifdef PROD2D
       real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,UBpt2)
       integer, intent(in) :: UBpt2
 #   endif
 
 #   ifdef BIOFLUX
-      real(r8), intent(inout) :: bflx(NT(ng),NT(ng))
+      real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj,UBk,3,UBst)
+      integer, intent(in) :: UBbf
 #   endif
 
 #  ifdef ICE_BIO

@@ -292,7 +292,7 @@
 #  endif      
 
 #  ifdef BIOFLUX
-      real(r8), intent(inout) :: bflx(:,:)
+      real(r8), intent(inout) :: bflx(LBi:,LBj:,:,:,:)
 #  endif
 # endif      
       
@@ -342,7 +342,7 @@
 #  endif     
 # endif      
 # ifdef BIOFLUX      
-      real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj,UBk,3,NBF(ng))
 # endif      
 #endif
 #if defined FEAST
@@ -468,7 +468,7 @@
       real(r8), dimension(IminS:ImaxS,NIceT(ng)) :: Bio_bakBI
 #endif      
 #if defined BIOFLUX      
-      real(r8), dimension(NT(ng),NT(ng)) :: BioFlx
+      real(r8),dimension(IminS:ImaxS,N(ng),NBioF) :: BioFlx
 #endif      
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv2
@@ -750,6 +750,20 @@
         END DO
 #endif
 
+#ifdef BIOFLUX
+        
+	
+	 DO itrc=1,NBioF
+            DO i=Istr,Iend
+	     DO k=1,N(ng)
+      
+               BioFlx(i,k,itrc)=0.0_r8
+              END DO
+         END DO
+	END DO
+	
+#endif
+
         DO k=1,N(ng)
           DO i=Istr,Iend
 #ifdef CORRECT_TEMP_BIAS
@@ -871,19 +885,7 @@
         END DO
 #endif 
 
-#ifdef BIOFLUX
-        IF (i.eq.3.and.j.eq.3) THEN
-          DO itrc=1,UBst
-            ibio=idbio3(itrc)
-            DO itrc2=1,UBst
-              ibio2=idbio3(itrc)
-!             DO i=Istr,Iend
-              BioFlx(ibio,ibio)=bflx(ibio,ibio2)
-!             END DO
-            END DO
-          END DO
-        ENDIF
-#endif         
+      
 !
 !-----------------------------------------------------------------------
 !  Calculate Day Length and Surface PAR
@@ -1284,13 +1286,7 @@
 !               Stat3(i,k,6) = -999
               endif    
 #endif
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                
-                bflx(iNO3,iPhS) = bflx(iNO3,iPhS) + NOup*xi* dtdays
-                bflx(iNH4,iPhS) = bflx(iNH4,iPhS) + NHup*xi* dtdays
-              ENDIF
-#endif
+
             END DO
           END DO
 !=========================================================================
@@ -1503,12 +1499,7 @@
 !-----------------------------------------------------------------------
               DBio(i,k,iFe) = DBio(i,k,iFe) - FeC * NOup * dtdays
 #endif
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iNO3,iPhL) = bflx(iNO3,iPhL) + NOup*xi* dtdays 
-                bflx(iNH4,iPhL) = bflx(iNH4,iPhL) + NHup*xi* dtdays
-              END IF
-#endif
+
             END DO
           END DO
 
@@ -1564,20 +1555,7 @@
 !             DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
 !    &              (1.0_r8 - gammaMZS) * cff1 * cff2 * cff3 * dtdays
 !     
-!#if defined BIOFLUX && defined BEST_NPZ
-!             IF (i.eq.3.and.j.eq.3) THEN
-!
-!               bflx(iPhS,iMZS) = bflx(iPhS,iMZS) +                     &            
-!    &          fpPhSMZS * (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi
-!     
-!               bflx(iPhL,iMZS) = bflx(iPhL,iMZS) +                     &
-!    &          fpPhLMZS * (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays*xi
-!       
-!     
-!               bflx(iMZS,iDet) = bflx(iMZS,iDet)  +                    &
-!    &          ( 1.0_r8-gammaMZS )*cff1*cff2* cff3 * dtdays*xi
-!             END IF
-!#endif
+
 
 !           END DO
 !         END DO
@@ -1638,22 +1616,7 @@
               DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
      &          (1.0_r8 - gammaMZL) * cff1 * cff2 * cff3 * dtdays
      
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iMZL) = bflx(iPhS,iMZL) +                     &
-     &          fpPhSMZL * (Bio(i,k,iPhS)**2) * cff2 * cff3* dtdays*xi
-     
-                bflx(iPhL,iMZL) = bflx(iPhL,iMZL) +                     &
-     &          fpPhLMZL *  (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays*xi
-!                    bflx(iMZS,iMZL) = bflx(iPhL,iMZL) +                &
-!    &               fpMZSMZL * (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays*xi
-        
-  
 
-                bflx(iMZL,iDet) = bflx(iMZL,iDet)  +                    &
-     &                ( 1.0_r8-gammaMZL )*cff1*cff2* cff3 * dtdays*xi
-              END IF
-#endif
             END DO
           END DO
 
@@ -1762,24 +1725,7 @@
 
 
      
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iCop)=bflx(iPhS,iCop) + fpPhSCop *            &
-     &              (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi
-     
-                bflx(iPhL,iCop)=bflx(iPhL,iCop) + fpPhLCop  *           &
-     &              (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays*xi
-        
-                bflx(iMZS,iCop)=bflx(iMZS,iCop)+fpMZSCop  *             &
-     &              (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays*xi
 
-                bflx(iMZL,iCop)=bflx(iMZL,iCop)+fpMZLCop  *             &
-     &              (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays*xi
-                    
-                bflx(iCop,iDetF) = bflx(iCop,iDetF) +                   &
-     &              ( 1.0_r8-gammaCop )*cff1*cff2*cff3 * dtdays*xi
-              END IF
-#endif
             END DO
           END DO
 
@@ -1789,11 +1735,7 @@
 !g   &         - Hz(i,j,N(ng))*(fpPhLCop*                               &
 !g   &         (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ
-!g         bflx(NT(ng)+3,iCop)= bflx(NT(ng)+3,iCop)                     &
-!g   &         + Hz(i,j,N(ng))*(fpPhLCop*                               &
-!g   &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
-!g#endif
+
 !g      
 !g        END DO
 !g
@@ -1897,21 +1839,7 @@
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaNCa) * cff1 * cff2 * cff3 * dtdays
      
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iNCaS) = bflx(iPhS,iNCaS) + fpPhSNCa *        &
-     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays*xi
-                bflx(iPhL,iNCaS) = bflx(iPhL,iNCaS) + fpPhLNCa *        &
-     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays*xi
-                bflx(iMZS,iNCaS) = bflx(iMZS,iNCaS) + fpMZSNCa *        & 
-     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays*xi
-                bflx(iMZL,iNCaS) = bflx(iMZL,iNCaS) + fpMZLNCa *        &
-     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays*xi
-                
-               bflx(iNCaS,iDetF) = bflx(iNCaS,iDetF) +                 &
-     &             ( 1.0_r8-gammaNCa )*cff1*cff2* cff3 * dtdays*xi
-              END IF
-#endif
+
             END DO
           END DO
 
@@ -1922,11 +1850,7 @@
 !g            (fpPhLNCa*(BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 *      &
 !g            cff3 * dtdays)
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
-!g          bflx(NT(ng)+3,iNCaS)= bflx(NT(ng)+3,iNCaS)                  &
-!g   &        + Hz(i,j,N(ng))*(fpPhLNCa*                                &
-!g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
-!g#endif
+
 !g      
 !g
 !g
@@ -2050,23 +1974,7 @@
      
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                 &
      &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3* cff4 * dtdays
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iEupS) = bflx(iPhS,iEupS) + fpPhSEup *        &
-     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi
-                bflx(iPhL,iEupS) = bflx(iPhL,iEupS) + fpPhLEup *        &
-     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays*xi
-                bflx(iMZS,iEupS) = bflx(iMZS,iEupS) + fpMZSEup *        &
-     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays*xi
-                bflx(iMZL,iEupS) = bflx(iMZL,iEupS) + fpMZLEup *        &
-     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays*xi
-                bflx(iCop,iEupS) = bflx(iCop,iEupS) + fpCopEup *        &
-     &            (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays*xi
-                   
-                bflx(iEupS,iDetF) = bflx(iEupS,iDetF) +                 &
-     &            ( 1.0_r8-gammaEup )*cff1*cff2* cff3 * dtdays*xi
-              END IF
-#endif
+
             END DO
           END DO
      
@@ -2076,11 +1984,7 @@
 !g   &        Hz(i,j,N(ng))*(fpPhLEup*                                  &
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
-!g          bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupS)                  &
-!g   &        + Hz(i,j,N(ng))*(fpPhLEup*                                &
-!g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
-!g#endif
+
 !g      
 !g        END DO
 !g#endif     
@@ -2183,21 +2087,7 @@
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaNCa) * cff1 * cff2 * cff3 * dtdays
      
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iNCaO) = bflx(iPhS,iNCaO) + fpPhSNCa *        &
-     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays*xi          
-                bflx(iPhL,iNCaO) = bflx(iPhL,iNCaO) + fpPhLNCa *        &
-     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays *xi        
-                bflx(iMZS,iNCaO) = bflx(iMZS,iNCaO) + fpMZSNCa *        &
-     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays *xi       
-                bflx(iMZL,iNCaO) = bflx(iMZL,iNCaO) + fpMZLNCa *        &
-     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays*xi          
-               
-                bflx(iNCaO,iDetF) = bflx(iNCaO,iDetF) +                 &
-     &               ( 1.0_r8-gammaNCa )*cff1*cff2* cff3 * dtdays*xi
-              END IF
-#endif
+
             END DO
           END DO
 
@@ -2208,11 +2098,7 @@
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
 !g
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
-!g          bflx(NT(ng)+3,iNCaO)= bflx(NT(ng)+3,iNCaO)                  &
-!g   &        + Hz(i,j,N(ng))*(fpPhLNCa*                                &
-!g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
-!g#endif
+
 !g 
 !g        END DO
 !g#endif
@@ -2331,23 +2217,7 @@
               Bio(i,k,iDetF) = DBio(i,k,iDetF) +                        &
      &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3 * cff4* dtdays
      
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iEupO) = bflx(iPhS,iEupO) + fpPhSEup *        &
-     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi               
-                bflx(iPhL,iEupO) = bflx(iPhL,iEupO) + fpPhLEup *        &
-     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays  *xi             
-                bflx(iMZS,iEupO) = bflx(iMZS,iEupO) + fpMZSEup *        &
-     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays  *xi            
-                bflx(iMZL,iEupO) = bflx(iMZL,iEupO) + fpMZLEup *        &
-     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays *xi             
-                bflx(iCop,iEupO) = bflx(iCop,iEupO) + fpCopEup *        &
-     &            (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays*xi             
-              
-                bflx(iEupO,iDetF) = bflx(iEupO,iDetF) +                 &
-     &                 ( 1.0_r8-gammaEup )*cff1*cff2* cff3 * dtdays*xi
-              END IF
-#endif
+
             END DO
           END DO    
 
@@ -2358,11 +2228,7 @@
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays) 
 !g
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
-!g          bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupO)                  &
-!g   &        + Hz(i,j,N(ng))*(fpPhLEup*                                &
-!g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
-!g#endif
+
 !g      
 !g        END DO
 #endif
@@ -2445,23 +2311,7 @@
               DBio(i,k,iDetF)=DBio(i,k,iDetF) +(1-gammaJel)             &
      &             * cff1 * cff2 * cff3 * Bio(i,k,iJel)*dtdays
 
-# if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iCop,iJel)  = bflx(iCop,iJel)  + fpCopJel *        &
-     &            Bio(i,k,iCop)**2*Bio(i,k,iJel)* cff2 * cff3 * dtdays*xi           
-                bflx(iNCaS,iJel) = bflx(iNCaS,iJel) + fpNCaJel *        &
-     &            Bio(i,k,iNCaS)**2*Bio(i,k,iJel)*cff2 * cff3 * dtdays*xi
-                bflx(iEupS,iJel) = bflx(iEupS,iJel) + fpEupJel *        &
-     &            Bio(i,k,iEupS)**2*Bio(i,k,iJel)*cff2 * cff3 * dtdays*xi
-                bflx(iNCaO,iJel) = bflx(iNCaO,iJel) + fpNCaJel *        &
-     &            Bio(i,k,iNCaO)**2*Bio(i,k,iJel)*cff2 * cff3 * dtdays*xi
-                bflx(iEupO,iJel) = bflx(iEupO,iJel) + fpEupJel *        &
-     &            Bio(i,k,iEupO)*Bio(i,k,iJel)* cff2 * cff3 * dtdays*xi  
-                bflx(iJel,iDetF) = bflx(iJel,iDetF) +                   &
-     &            ( 1.0_r8-gammaJel) * cff1 * cff2 * cff3 *             &
-     &            Bio(i,k,iJel) * dtdays*xi
-              END IF
-# endif
+
 
             END DO
           END DO
@@ -2504,14 +2354,7 @@
      &                         ( mPhS * Bio(i,k,iPhS)) * dtdays
               DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
      &                         ( mPhL * Bio(i,k,iPhL)) * dtdays
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iDet) = bflx(iPhS,iDet)                       &
-     &            + mPhS*Bio(i,k,iPhS)* dtdays*xi
-                bflx(iPhL,iDetF) = bflx(iPhL,iDetF)                     &
-     &            + mPhL*Bio(i,k,iPhL)* dtdays*xi
-              END IF
-#endif
+
             END DO
           END DO
 !           
@@ -2558,15 +2401,7 @@
 !              DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
 !      &                        (mpredMZL * Bio(i,k,iMZL)**2 ) * dtdays 
 
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-!               bflx(iMZS,iDet)= bflx(iMZS,iDet)                        &
-!     &           + mMZS * Bio(i,k,iMZS) * dtdays*xi  
-      
-                bflx(iMZL,iDet)= bflx(iMZL,iDet)                        &
-     &            + mpredMZL*( Bio(i,k,iMZL)**2) * dtdays*xi  
-              END IF
-#endif
+
             END DO
           END DO
            
@@ -2672,15 +2507,7 @@
                
 #endif
                 
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iCop,iDetF)= bflx(iCop,iDetF)  + dtdays*xi*predSumCop     
-                bflx(iNcaS,iDetF)= bflx(iNCaS,iDetF)+ dtdays*xi*predSumNCaS                                
-                bflx(iEupS,iDetF)= bflx(iEupS,iDetF)+ dtdays*xi*predSumEupS             
-                bflx(iNcaO,iDetF)= bflx(iNCaO,iDetF)+ dtdays*xi*predSumNCaO                                 
-                bflx(iEupO,iDetF)= bflx(iEupO,iDetF)+ dtdays*xi*predSumEupO                     
-              END IF
-#endif
+
 
 #if defined JELLY
               DBio(i,k,iJel) = DBio(i,k,iJel) - mpredJel *              &
@@ -2694,12 +2521,7 @@
               DBio(i,k,iDetF) = DBio(i,k,iDetF)                         &
      &                   + mpredJel * Bio(i,k,iJel)**2  * dtdays
                
-# if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iJel,iDet)= bflx(iJel,iDet)+                       &
-     &                           mpredJel*dtdays*Bio(i,k,iJel)*xi
-              END IF
-# endif      
+     
      
 # ifdef STATIONARY    
               IF (i.eq.3.and.j.eq.3) THEN
@@ -2814,15 +2636,7 @@
 #endif     
 
 
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iNH4)= bflx(iPhS,iNH4)+                       &
-     &            TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)*xi 
-           
-                bflx(iPhL,iNH4)= bflx(iPhL,iNH4)+                       &
-     &            TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)*xi
-              END IF
-#endif
+
 
             END DO
           END DO
@@ -2917,15 +2731,7 @@
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                        &
 !    &          xi*(TempFuncMZL(i,k)*BasalMetMZL*dtdays*Bio(i,k,iMZL))
      &          xi*(TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL))
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-!               bflx(iMZS,iNH4)= bflx(iMZS,iNH4) + TempFuncMZS(i,k) *   &
-!    &            BasalMetMZL*dtdays*Bio(i,k,iMZS)*xi
-                bflx(iMZL,iNH4)= bflx(iMZL,iNH4) + xi * (TFMZL*         &
-     &            BasalMetMZL*dtdays*Bio(i,k,iMZL))
-                  
-              END IF
-#endif
+
      
             END DO
           END DO
@@ -3086,22 +2892,7 @@
      
 #endif
      
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iCop,iNH4)  = bflx(iCop,iNH4)  +                   &
-     &              TFCop*BasalMetCop*Bio(i,k,iCop) *dtdays*xi
-                bflx(iNCaS,iNH4) = bflx(iNCaS,iNH4) +                   &
-     &              TFNCa*BasalMetNCa*Bio(i,k,iNCaS)*dtdays*xi
-                bflx(iNCaO,iNH4) = bflx(iNCaO,iNH4) +                   &
-     &              TFNCa*BasalMetNCa*Bio(i,k,iNCaO)*dtdays*xi
-                bflx(iEupS,iNH4) = bflx(iEupS,iNH4) +                   &
-     &              TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays*xi 
-                bflx(iEupO,iNH4) = bflx(iEupO,iNH4) +                   &
-     &              TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays*xi        
-                bflx(iJel,iNH4)  = bflx(iJel,iNH4)  +                   &
-     &              TFJel*BasalMetJel*Bio(i,k,iJel) *dtdays*xi                                 
-              END IF
-#endif
+
             END DO
           END DO
 !=========================================================================
@@ -3126,12 +2917,7 @@
 !g            DBio(i,k,iEupO) = DBio(i,k,iEupO) - cff1 * dtdays
 !g     
     
-!g#if defined BIOFLUX && defined BEST_NPZ
-!g            IF (i.eq.3.and.j.eq.3) THEN
-!g              bflx(iEupS,iDet)= bflx(iEupS,iDet) + cff1* dtdays*xi
-!g              bflx(iEupO,iDet)= bflx(iEupO,iDet) + cff1* dtdays*xi
-!g            END IF
-!g#endif
+
 !g          END DO
 !g        END DO
 
@@ -3161,12 +2947,7 @@
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
      
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iDet,iNH4)= bflx(iDet,iNH4) +                      &
-     &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-              END IF
-#endif
+
      
               PON = Bio(i,k,iDetF)*xi  !Particulate organic nitrogen
         
@@ -3177,12 +2958,7 @@
      
         
     
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iDetF,iNH4)= bflx(iDetF,iNH4) +                    &
-     &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-              END IF
-#endif
+
             END DO
           END DO
 !=========================================================================
@@ -3244,12 +3020,7 @@
               DBio(i,k,iNO3) = DBio(i,k,iNO3) + NitrifMax *             &
      &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays    
 
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iNH4,iNO3)= bflx(iNH4,iNO3) +                      &
-     &            NitrifMax  * Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays   
-              END IF
-#endif
+
             END DO
           END DO
          
@@ -3368,12 +3139,7 @@
 !           END DO
    
       
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+2,NT(ng)+1)=bflx(NT(ng)+2,NT(ng)+1)           &
-     &            +dtdays*cff9*xi
-            ENDIF
-# endif      
+ 
     
 !-----------------------------------------------------------------------
 ! Benthic Production
@@ -3384,18 +3150,7 @@
             Prod2(i,iBenPrd)=Prod2(i,iBenPrd) + (cff7+cff8+cff9+cff10)*dtdays
 # endif
 
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-         
-              bflx(iDet,NT(ng)+1) = bflx(iDet,NT(ng)+1) +               &
-    &             dtdays*cff6/Hz(i,j,k)*xi
-              bflx(iPhL,NT(ng)+1) = bflx(iPhL,NT(ng)+1) +               &
-    &             dtdays*cff7/Hz(i,j,k)*xi
-              bflx(iPhS,NT(ng)+1) = bflx(iPhS,NT(ng)+1) +               &
-    &             dtdays*cff8/Hz(i,j,k)*xi
-      
-            END IF
-# endif   
+
 !-----------------------------------------------------------------------
 !  Excretion
 !-----------------------------------------------------------------------
@@ -3421,12 +3176,7 @@
      &         *(cff1+cff2+cff3+cff4+cff5)*0.5_r8
 
              
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
-     &          + (cff6+cff7+cff8+cff9+cff10)*dtdays*xi
-            ENDIF
-# endif     
+    
 !----------------------------------------------------------------------- 
 !  Respiration
 !-----------------------------------------------------------------------
@@ -3451,12 +3201,7 @@
 # endif  
 
 
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+1,iNH4)=bflx(NT(ng)+1,iNH4)                   &
-     &          +xi*dtdays*cff6/Hz(i,j,k)
-            ENDIF
-# endif
+
 !-----------------------------------------------------------------------
 !  Benthic Production
 !-----------------------------------------------------------------------
@@ -3475,12 +3220,7 @@
   
             Stat2(i,6)= cff1 * dtdays
 # endif 
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
-     &          + cff1*dtdays*xi
-            ENDIF
-# endif 
+
 
 !-----------------------------------------------------------------------
 !  Predation
@@ -3519,12 +3259,7 @@
      &           + (cff1)*dtdays
       
      
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+2,iNH4)=bflx(NT(ng)+2,iNH4)                   &
-     &            +  iremin*(cff1)*dtdays 
-            ENDIF
-# endif         
+     
 
           END DO
 
@@ -3983,23 +3718,7 @@
 # ifdef CLIM_ICE_1D
 
 
-#  if defined BIOFLUX && defined BEST_NPZ
-     
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+3,NT(ng)+5)=bflx(NT(ng)+3,NT(ng)+5)           & !PLi->NH4
-     &          +RAi0*BioBI(i,iIcePhL)*xi*dtdays                        &
-     &          +RgAi*BioBI(i,iIcePhL)*xi*dtdays
-     
-              bflx(NT(ng)+5,NT(ng)+4)=bflx(NT(ng)+5,NT(ng)+4)           & !NH4->NO3
-     &          +reN*dtdays
-     
-              bflx(NT(ng)+4,NT(ng)+3)=bflx(NT(ng)+4,NT(ng)+3)           & !NO3->iPL
-     &          +grow1*NOup*BioBI(i,iIcePhL)*xi*dtdays
-     
-              bflx(NT(ng)+5,NT(ng)+3)=bflx(NT(ng)+5,NT(ng)+3)           & !NH4->iPL
-     &          +grow1*NHup*BioBI(i,iIcePhL)*xi*dtdays  
-            ENDIF
-#  endif 
+
      
 # endif
     
@@ -4057,14 +3776,7 @@
      
 # endif 
 
-# if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-     
-                bflx(iPhL,NT(ng)+3)=bflx(iPhL,NT(ng)+3)                 & !PL->Phi
-     &            +twi*BioBI(i,iIcePhL)*dtdays*86400/Hz(i,j,N(ng)) *xi
-         
-              ENDIF
-# endif 
+ 
 
             ENDIF 
 ! nutrient gradient between ice and water
@@ -4101,14 +3813,7 @@
       
 # if defined CLIM_ICE_1D     
 #  if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-     
-                bflx(NT(ng)+4,iNO3)=bflx(NT(ng)+4,iNO3)                   & !NH4i->NH4
-     &                  +  cff1/Hz(i,j,N(ng))
-         
-                bflx(NT(ng)+5,iNH4)=bflx(NT(ng)+5,iNH4)                   & !NH4i->NH4
-     &                  +  cff2/Hz(i,j,N(ng))
-              ENDIF
+
 #  endif 
 # endif   
             ELSE IF (twi.gt.0) THEN  
@@ -4525,6 +4230,19 @@
 # endif    
         END DO
 #endif
+
+#ifdef BIOFLUX
+        DO k=1,N(ng)
+          DO i=Istr,Iend
+	  DO itrc=1,NBioF
+            bflx(i,j,k,nnew,itrc) =bflx(i,j,k,nstp,itrc)+                 &
+     &	    BioFlx(i,k,itrc)
+          END DO
+          END DO
+	END DO
+#endif 
+
+
 #ifdef PROD3
         DO k=1,N(ng)
           DO i=Istr,Iend
@@ -4548,6 +4266,10 @@
             pt3(i,j,k,nnew,iJelPrd) = pt3(i,j,k,nstp,iJelPrd) +         &
      &                             Prod(i,k,iJelPrd)
 # endif
+
+
+   
+
 # ifdef FEAST
 ! 
 !  Note that fish zoopmort are lagged by one timestep due to state update
