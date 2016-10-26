@@ -855,9 +855,9 @@
  
           elseif (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).gt.0)THEN 
             !ajh added zero trap on these
-            IcePhL(i,j,nstp) = max(0.,IcePhL(i,j,nstp))     
-            IceNO3(i,j,nstp) = max(0.,IceNO3(i,j,nstp))      
-            IceNH4(i,j,nstp) = max(0.,IceNH4(i,j,nstp)) 
+            IcePhL(i,j,nstp) = max(0.0_r8,IcePhL(i,j,nstp))     
+            IceNO3(i,j,nstp) = max(0.0_r8,IceNO3(i,j,nstp))      
+            IceNH4(i,j,nstp) = max(0.0_r8,IceNH4(i,j,nstp)) 
                  
           endif
      
@@ -1908,8 +1908,8 @@
                 bflx(iMZL,iNCaS) = bflx(iMZL,iNCaS) + fpMZLNCa *        &
      &            (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays*xi
                 
-     &          bflx(iNCaS,iDetF) = bflx(iNCaS,iDetF) +                 &
-                  ( 1.0_r8-gammaNCa )*cff1*cff2* cff3 * dtdays*xi
+               bflx(iNCaS,iDetF) = bflx(iNCaS,iDetF) +                 &
+     &             ( 1.0_r8-gammaNCa )*cff1*cff2* cff3 * dtdays*xi
               END IF
 #endif
             END DO
@@ -4451,13 +4451,13 @@
 ! 						
 !  ajh added zero trap on these
 ! 
-            IcePhL(i,j,nnew) = max(0.,IcePhL(i,j,nnew))  
-            IceNO3(i,j,nnew) =  max(0.,IceNO3(i,j,nnew))     
-            IceNH4(i,j,nnew) =  max(0.,IceNH4(i,j,nnew))    
+            IcePhL(i,j,nnew) = max(0.0_r8,IcePhL(i,j,nnew))  
+            IceNO3(i,j,nnew) = max(0.0_r8,IceNO3(i,j,nnew))     
+            IceNH4(i,j,nnew) = max(0.0_r8,IceNH4(i,j,nnew))    
           else
-            IcePhL(i,j,nnew) =0_r8 
-            IceNO3(i,j,nnew) =  0_r8     
-            IceNH4(i,j,nnew) =  0_r8 
+            IcePhL(i,j,nnew) = 0_r8 
+            IceNO3(i,j,nnew) = 0_r8     
+            IceNH4(i,j,nnew) = 0_r8 
           endif
      
 #  ifdef MASKING
