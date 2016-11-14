@@ -3325,9 +3325,9 @@
 !-----------------------------------------------------------------------
       
             cff3=cff0*BioB(i,k,iBen)*Rres 
-            cff4=Qres*(((1_r8-eexD)*cff1) + ((1_r8-eexD)*cff2) +        &
-    &            ((1_r8-eex)*cff3) + ((1_r8-eex)*cff4) +                &
-    &            ((1_r8-eexD)*cff5))
+            cff4=Qres*(((1_r8-eexD)*cff7) + ((1_r8-eexD)*cff8) +        &
+    &            ((1_r8-eex)*cff9) + ((1_r8-eex)*cff10) +               &
+    &            ((1_r8-eexD)*cff11))
 
 
             
