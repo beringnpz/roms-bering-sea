@@ -854,7 +854,7 @@
           elseif (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).gt.0)THEN 
             !ajh added zero trap on these
             IcePhL(i,j,nstp) = max(0.0_r8,IcePhL(i,j,nstp))
-            IceNO3(i,j,nstp) = max(0.0_r8.,IceNO3(i,j,nstp))
+            IceNO3(i,j,nstp) = max(0.0_r8,IceNO3(i,j,nstp))
             IceNH4(i,j,nstp) = max(0.0_r8,IceNH4(i,j,nstp))
                  
           endif
