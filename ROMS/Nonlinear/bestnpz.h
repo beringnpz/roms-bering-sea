@@ -3776,13 +3776,9 @@
               DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                       &
      &            -(1.0_r8-fNO3)*cff2*xi*dtdays
      
-
-# ifdef CLIM_ICE_1D
-
-
-
-     
-# endif
+              !------------------------------
+              ! Ice/water convective exchange
+              !------------------------------
     
 # if defined CLIM_ICE_1D  
         
@@ -3801,144 +3797,170 @@
      
               IF (dhicedt.lt.0) THEN     
             
-                trs=4.49e-6*dhicedt-1.39e-5*dhicedt**2
+                trs=4.49e-6*ABS(dhicedt)-1.39e-5*ABS(dhicedt)**2
                 trs=trs*86400
                 twi=720*trs       
                                   
               ENDIF
-   
-   
-!-----------------------------------------------------------------------
-!  Change in concentration of large phytoplankton/ Ice Algae 
-!  due to ice growth/melt
-!-----------------------------------------------------------------------
-   
-              IF (twi.lt.0) THEN  
-   
-# if defined CLIM_ICE_1D      
-                DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                     &
-     &            + BioBI(i,iIcePhL)*(twi/aidz)*dtdays
-   
-#  ifdef STATIONARY2           
-  
-!               Stat2(i,6)= BioBI(i,iIcePhL)*(twi/aidz)
-!               Stat2(i,7)= BioBI(i,iIcePhL)*twi/Hz(i,j,N(ng))
-#  endif  
-
-                DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                 &
-     &            -twi*BioBI(i,iIcePhL)*dtdays/Hz(i,j,N(ng))
-         
+              
+              ! IcePhL can get washed out of ice, but not in, so assume 
+              ! [PhL] = 0 for this exchange
+              
+# if defined CLIM_ICE_1D              
+              DBioBI(i,iIcePhL)  = DBioBI(i,iIcePhL)  + (twi * -BioBI(i,iIcePhL)/aidz)*dtdays
+              DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL) + (twi * BioBI(i,iIcePhL)/Hz(i,j,N(ng)))*dtdays
 # elif defined BERING_10K
-     
-                DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                     &
-     &            + IcePhL(i,j,nstp)*(twi/aidz)*dtdays
-   
-                DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                 &
-     &            -twi*IcePhL(i,j,nstp)*dtdays/Hz(i,j,N(ng))
-     
-# endif 
-
- 
-
-              ENDIF 
-! nutrient gradient between ice and water
-# if defined CLIM_ICE_1D   
-              cff1=twi*(Bio(i,N(ng),iNO3)-BioBI(i,iIceNO3))*dtdays
-              cff2=twi*(Bio(i,N(ng),iNH4)-BioBI(i,iIceNH4))*dtdays
-
-              IF (twi.lt.0) THEN  
-                DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)                     &
-     &                      + BioBI(i,iIceNO3)*twi*dtdays
-     
-     
-                DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                     &
-     &                      + BioBI(i,iIceNH4)*twi*dtdays
-     
+              DBioBI(i,iIcePhL)  = DBioBI(i,iIcePhL)  + (twi * -IcePhL(i,j,nstp)/aidz)*dtdays
+              DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL) + (twi * IcePhL(i,j,nstp)/Hz(i,j,N(ng)))*dtdays
+# endif
+  
+              ! NO3 and NH4 have two-way exchange, based on gradient 
+              ! across the ice/water interface
+              
+# if defined CLIM_ICE_1D  
+              DBioBI(i,iIceNO3)  = DBioBI(i,iIceNO3)  + (twi * (Bio(i,N(ng),iNO3) - BioBI(i,iIceNO3))/aidz)*dtdays
+              DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3) + (twi * (BioBI(i,iIceNO3)) - Bio(i,N(ng),iNO3)/Hz(i,j,N(ng)))*dtdays
+              
+              DBioBI(i,iIceNH4)  = DBioBI(i,iIceNH4)  + (twi * (Bio(i,N(ng),iNH4) - BioBI(i,iIceNH4))/aidz)*dtdays
+              DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4) + (twi * (BioBI(i,iIceNH4)) - Bio(i,N(ng),iNH4)/Hz(i,j,N(ng)))*dtdays
+              
 # elif defined BERING_10K
-
-              cff1=twi*(Bio(i,N(ng),iNO3)-IceNO3(i,j,nstp))*dtdays
-              cff2=twi*(Bio(i,N(ng),iNH4)-IceNH4(i,j,nstp))*dtdays
-    
-              IF (twi.lt.0) THEN  
-                DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)                     &
-     &                      + IceNO3(i,j,nstp)*twi*dtdays
-     
-     
-                DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                     &
-     &                      + IceNH4(i,j,nstp)*twi*dtdays
-!               Stat2(i,1)= IceNO3(i,j,nstp)*twi*dtdays
-# endif    
-         
-                DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)+cff1/Hz(i,j,N(ng))
-                DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)+cff2/Hz(i,j,N(ng))
-    
-      
-# if defined CLIM_ICE_1D     
-#  if defined BIOFLUX && defined BEST_NPZ
-
-#  endif 
-# endif   
-              ELSE IF (twi.gt.0) THEN  
-                if(cff1.gt.0_r8)THEN
-# if defined BERING_10K  
-                  if(( IceNO3(i,j,nstp)+cff1/aidz).lt.Bio(i,N(ng),iNO3))THEN
-       
-# elif defined CLIM_ICE_1D          
-                  if((BioBI(i,iIceNO3)+cff1/aidz).lt.Bio(i,N(ng),iNO3))THEN
-# endif
-
-     
-                    DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+cff1/aidz
-                    DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
-                  endif
-                else if(cff1.lt.0_r8)THEN
-# if defined BERING_10K  
-                  if((Bio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))).lt.IceNO3(i,j,nstp))THEN
-# elif defined CLIM_ICE_1D          
-                  if((Bio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))).lt.BioBI(i,iIceNO3))THEN
-# endif
-                    DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+cff1/aidz
-                    DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
-                  endif
-                endif
-
-                if(cff2.gt.0_r8)THEN
-# if defined BERING_10K      
-                  if((IceNH4(i,j,nstp)+cff2/aidz).lt.Bio(i,N(ng),iNH4))THEN
-# elif defined CLIM_ICE_1D       
-                  if((BioBI(i,iIceNH4)+cff2/aidz).lt.Bio(i,N(ng),iNH4))THEN
-# endif
-                    DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)+cff2/aidz
-                    DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))
-                  endif
-                else if(cff2.lt.0_r8)THEN
-# if defined BERING_10K  
-                 if((Bio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))).lt.IceNH4(i,j,nstp))THEN
-# elif defined CLIM_ICE_1D          
-                 if((Bio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))).lt.BioBI(i,iIceNH4))THEN
-# endif
-                    DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)+cff2/aidz
-                    DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNO3)-cff2/Hz(i,j,N(ng))
-                  endif
-                endif
-!    endif
-         
+              DBioBI(i,iIceNO3)  = DBioBI(i,iIceNO3)  + (twi * (Bio(i,N(ng),iNO3) - IceNO3(i,j,nstp))/aidz)*dtdays
+              DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3) + (twi * (IceNO3(i,j,nstp)) - Bio(i,N(ng),iNO3)/Hz(i,j,N(ng)))*dtdays
+              
+              DBioBI(i,iIceNH4)  = DBioBI(i,iIceNH4)  + (twi * (Bio(i,N(ng),iNH4) - IceNH4(i,j,nstp))/aidz)*dtdays
+              DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4) + (twi * (IceNH4(i,j,nstp)) - Bio(i,N(ng),iNH4)/Hz(i,j,N(ng)))*dtdays
+              
+# endif             
   
-# if defined CLIM_ICE_1D       
-#  if defined BIOFLUX && defined BEST_NPZ
-                IF (i.eq.3.and.j.eq.3) THEN
-                  bflx(iNO3,NT(ng)+4)=bflx(iNO3,NT(ng)+4)               & !NO3->NO3i
-     &                  + cff1/aidz
-         
-                  bflx(iNH4,NT(ng)+5)=bflx(iNH4,NT(ng)+5)               & !NH4->NH4i
-     &                  + cff2/aidz
-                ENDIF
-#  endif   
-# endif
-              ENDIF
-  
-!             DBioBI(i,iIcePhL)=10_r8
-!           ENDIF
+              ! TODO: add bflux associated with ice/water exchange
+   
+!               IF (twi.lt.0) THEN
+!
+! # if defined CLIM_ICE_1D
+!                 DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                     &
+!      &            + BioBI(i,iIcePhL)*(twi/aidz)*dtdays
+!
+! #  ifdef STATIONARY2
+!
+! !               Stat2(i,6)= BioBI(i,iIcePhL)*(twi/aidz)
+! !               Stat2(i,7)= BioBI(i,iIcePhL)*twi/Hz(i,j,N(ng))
+! #  endif
+!
+!                 DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                 &
+!      &            -twi*BioBI(i,iIcePhL)*dtdays/Hz(i,j,N(ng))
+!
+! # elif defined BERING_10K
+!
+!                 DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                     &
+!      &            + IcePhL(i,j,nstp)*(twi/aidz)*dtdays
+!
+!                 DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                 &
+!      &            -twi*IcePhL(i,j,nstp)*dtdays/Hz(i,j,N(ng))
+!
+! # endif
+!
+!
+!
+!               ENDIF
+! ! nutrient gradient between ice and water
+! # if defined CLIM_ICE_1D
+!               cff1=twi*(Bio(i,N(ng),iNO3)-BioBI(i,iIceNO3))*dtdays
+!               cff2=twi*(Bio(i,N(ng),iNH4)-BioBI(i,iIceNH4))*dtdays
+!
+!               IF (twi.lt.0) THEN
+!                 DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)                     &
+!      &                      + BioBI(i,iIceNO3)*twi*dtdays
+!
+!
+!                 DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                     &
+!      &                      + BioBI(i,iIceNH4)*twi*dtdays
+!
+! # elif defined BERING_10K
+!
+!               cff1=twi*(Bio(i,N(ng),iNO3)-IceNO3(i,j,nstp))*dtdays
+!               cff2=twi*(Bio(i,N(ng),iNH4)-IceNH4(i,j,nstp))*dtdays
+!
+!               IF (twi.lt.0) THEN
+!                 DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)                     &
+!      &                      + IceNO3(i,j,nstp)*twi*dtdays
+!
+!
+!                 DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                     &
+!      &                      + IceNH4(i,j,nstp)*twi*dtdays
+! !               Stat2(i,1)= IceNO3(i,j,nstp)*twi*dtdays
+! # endif
+!
+!                 DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)+cff1/Hz(i,j,N(ng))
+!                 DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)+cff2/Hz(i,j,N(ng))
+!
+!
+! # if defined CLIM_ICE_1D
+! #  if defined BIOFLUX && defined BEST_NPZ
+!
+! #  endif
+! # endif
+!               ELSE IF (twi.gt.0) THEN
+!                 if(cff1.gt.0_r8)THEN
+! # if defined BERING_10K
+!                   if(( IceNO3(i,j,nstp)+cff1/aidz).lt.Bio(i,N(ng),iNO3))THEN
+!
+! # elif defined CLIM_ICE_1D
+!                   if((BioBI(i,iIceNO3)+cff1/aidz).lt.Bio(i,N(ng),iNO3))THEN
+! # endif
+!
+!
+!                     DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+cff1/aidz
+!                     DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
+!                   endif
+!                 else if(cff1.lt.0_r8)THEN
+! # if defined BERING_10K
+!                   if((Bio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))).lt.IceNO3(i,j,nstp))THEN
+! # elif defined CLIM_ICE_1D
+!                   if((Bio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))).lt.BioBI(i,iIceNO3))THEN
+! # endif
+!                     DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+cff1/aidz
+!                     DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
+!                   endif
+!                 endif
+!
+!                 if(cff2.gt.0_r8)THEN
+! # if defined BERING_10K
+!                   if((IceNH4(i,j,nstp)+cff2/aidz).lt.Bio(i,N(ng),iNH4))THEN
+! # elif defined CLIM_ICE_1D
+!                   if((BioBI(i,iIceNH4)+cff2/aidz).lt.Bio(i,N(ng),iNH4))THEN
+! # endif
+!                     DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)+cff2/aidz
+!                     DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))
+!                   endif
+!                 else if(cff2.lt.0_r8)THEN
+! # if defined BERING_10K
+!                  if((Bio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))).lt.IceNH4(i,j,nstp))THEN
+! # elif defined CLIM_ICE_1D
+!                  if((Bio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))).lt.BioBI(i,iIceNH4))THEN
+! # endif
+!                     DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)+cff2/aidz
+!                     DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNO3)-cff2/Hz(i,j,N(ng))
+!                   endif
+!                 endif
+! !    endif
+!
+!
+! # if defined CLIM_ICE_1D
+! #  if defined BIOFLUX && defined BEST_NPZ
+!                 IF (i.eq.3.and.j.eq.3) THEN
+!                   bflx(iNO3,NT(ng)+4)=bflx(iNO3,NT(ng)+4)               & !NO3->NO3i
+!      &                  + cff1/aidz
+!
+!                   bflx(iNH4,NT(ng)+5)=bflx(iNH4,NT(ng)+5)               & !NH4->NH4i
+!      &                  + cff2/aidz
+!                 ENDIF
+! #  endif
+! # endif
+!               ENDIF
+!
+! !             DBioBI(i,iIcePhL)=10_r8
+! !           ENDIF
              
 # if defined CLIM_ICE_1D  
             ELSE IF(itL(i,j,nstp,iIceLog).lt.0_r8.and.itL(i,j,nnew,iIceLog).gt.0_r8) THEN
