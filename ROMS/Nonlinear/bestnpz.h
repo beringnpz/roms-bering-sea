@@ -3780,13 +3780,12 @@
               ! Ice/water convective exchange
               !------------------------------
     
+              ! Convective exchange rate is based on a polynomial fit to 
+              ! ice growth/melting rate
+              
 # if defined CLIM_ICE_1D  
-        
               dhicedt=it(i,j,nnew,iIceZ)-it(i,j,nstp,iIceZ)  
-        
-        
 # elif defined BERING_10K  
-
               dhicedt=hi(i,j,nstp)-hi(i,j,nnew)
 # endif   
               dhicedt=dhicedt*sec2day/dtdays !convert to m/s
