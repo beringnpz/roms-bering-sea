@@ -121,8 +121,8 @@
 #endif
       RETURN
       END SUBROUTINE biology
-!
-!-----------------------------------------------------------------------
+
+!************************************************************************
       SUBROUTINE biology_tile (ng, tile,                                &
      &                         LBi, UBi, LBj, UBj,                      &
      &                         IminS, ImaxS, JminS, JmaxS,              &
@@ -179,8 +179,10 @@
      
      &                                  )    
  
-!-----------------------------------------------------------------------
-!
+     !==================================================================
+     !  VARIABLE DECLARATIONS 
+     !==================================================================
+
       USE mod_param
       USE mod_biology
       USE mod_scalars
@@ -214,11 +216,10 @@
       USE mod_clima
 #endif
 
-!
       implicit none
-!
-!  Imported variable declarations.
-!
+
+      !  Imported variable declarations.
+
       integer, intent(in) :: ng, tile
       integer, intent(in) :: LBi, UBi, LBj, UBj
       integer, intent(in) :: IminS, ImaxS, JminS, JmaxS
@@ -409,9 +410,9 @@
       real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
 
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:)
-!
-!  Local variable declarations.
-!   
+
+      !  Local variable declarations. 
+
       integer :: i, j, k, ibio, ibio2,itr, itrmx, itrc, itrc2
       real(r8) :: cff5,cff6,cff6b,cff7,cff8,cff9,cff10,cff11
 #ifdef FEAST
@@ -540,13 +541,20 @@
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
 
            
-!----------------------
+      !==================================================================
+      !  SOME SETUP APPLICABLE TO ALL GRID CELLS
+      !==================================================================
+
 #include "set_bounds.h"
 
+      ! Extract year, yday, month, day, and hour
 
       CALL caldate (r_date, tdays(ng), year, yday, month, iday, hour)
-      dtdays = dt(ng)*sec2day/REAL(BioIter(ng),r8)
-      k_phy = k_chl / ccr
+      
+      ! A few parameters...
+      
+      dtdays = dt(ng)*sec2day/REAL(BioIter(ng),r8)  ! time step, in days
+      k_phy = k_chl / ccr ! Light attenuation coefficient (mg Chl-a mg C^-1 m^-1) (? never used)
    
 
 #ifdef DIAPAUSE
@@ -624,13 +632,14 @@
      
 #endif
 
-!
-!-----------------------------------------------------------------------
-! Begin HORIZONTAL INDEX LOOPING
-!-----------------------------------------------------------------------
-!
+
+      !==================================================================
+      !  JLOOP: BEGIN HORIZONTAL LOOP
+      !==================================================================
+
       J_LOOP : DO j=Jstr,Jend
              
+        ! Initialize production arrays to 0 (if applicable)
     
         IF ((iic(ng).gt.ntstart(ng)).and.                             &
      &        (MOD(iic(ng)-1,nHIS(ng)).eq.0)) THEN
@@ -654,6 +663,8 @@
 #endif       
           END IF
         END IF
+        
+        ! Calculate inverse layer thickness
        
         DO k=1,N(ng)
           DO i=Istr,Iend
@@ -670,7 +681,8 @@
             Hz_inv3(i,k)=1.0_r8/(Hz(i,j,k-1)+Hz(i,j,k)+Hz(i,j,k+1))
           END DO
         END DO
-
+        
+        ! Calculate ice thickness
 
 #ifdef ICE_BIO
         DO i=Istr,Iend
@@ -687,12 +699,13 @@
 # endif
         END DO
 #endif
-!
-!  Extract biological variables from tracer arrays, and
-!  restrict their values to be positive definite.  Removed CVL''s
-!  conservation of mass correction because conflicted with SPLINES.
-!  For ROMS 2.2+, convert from "flux form" to concentrations by
-!  dividing by grid cell thickness.
+
+        !  Extract biological variables from tracer arrays, and
+        !  restrict their values to be positive definite.  Removed CVL''s
+        !  conservation of mass correction because conflicted with SPLINES.
+        !  For ROMS 2.2+, convert from "flux form" to concentrations by
+        !  dividing by grid cell thickness.
+        
         DO itrc=1,NBT
           ibio=idbio(itrc)
           DO k=1,N(ng)
@@ -759,9 +772,9 @@
         DO k=1,N(ng)
           DO i=Istr,Iend
 #ifdef CORRECT_TEMP_BIAS
-!
-!  correct the ROMS temp for the biology only - not fed back
-!
+
+            !  correct the ROMS temp for the biology only - not fed back
+
             Bio(i,k,itemp)=t(i,j,k,nstp,itemp)-1.94_r8
 #else
             Bio(i,k,itemp)=t(i,j,k,nstp,itemp)
@@ -801,9 +814,9 @@
           else
             itL(i,j,nstp,iIceLog) =-1.0_r8
           endif     
-!               
-! Initialize the ice biology
-!        
+         
+          ! Initialize the ice biology
+       
           if (itL(i,j,nstp,iIceLog).gt.0.and.                           &
      &        itL(i,j,nnew,iIceLog).lt.0) THEN  ! new ice at this timestep  
                             
@@ -832,9 +845,9 @@
 
           IceLog(i,j,nnew)=cff2
           IceLog(i,j,nstp)=cff1
-!   
-! Initialize the ice biology
-! 
+
+          ! Initialize the ice biology
+
           if (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).le.0)THEN
 
             IcePhL(i,j,nstp) = Bio(i,N(ng),iPhL)  !1.1638_r8  !0.1638_r8       
@@ -5422,6 +5435,8 @@
   
       RETURN
       END SUBROUTINE BioSink
+			
+!************************************************************************
    
 !=======================================================================
 !    DetSINK 
