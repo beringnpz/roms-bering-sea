@@ -8,7 +8,7 @@
 !  This routine computes the biological sources and sinks and adds     !
 !  then the global biological fields.                                  !
 !                                                                      !
-!  Georgina Gibsons BESTNPZ Code July 2010  
+!  Georgina Gibsons BESTNPZ Code July 2010
 !
 !  Modified from Sarah Hinckleys GOANPZ code                           !
 !  Implemented by Craig Lewis (CVL)                                    !
@@ -24,27 +24,27 @@
       USE mod_stepping
       USE mod_mixing
 
-#if defined BERING_10K  
-#if defined ICE_BIO   
+#if defined BERING_10K
+#if defined ICE_BIO
       USE mod_ice
 #endif
 #if defined FEAST
       USE mod_feast
-#endif 
+#endif
 #endif
 # if defined CLIM_ICE_1D
       USE mod_clima
 #endif
-      
+
       integer, intent(in) :: ng, tile
 
 #include "tile.h"
 !
 !  Set header file name.
-! 
+!
 #ifdef DISTRIBUTE
       IF (Lbiofile(iNLM)) THEN
-       
+
 #else
       IF (Lbiofile(iNLM).and.(tile.eq.0)) THEN
 #endif
@@ -84,38 +84,38 @@
 # elif defined BERING_10K
      &                   ,ICE(ng) % IcePhL                              &
      &                   ,ICE(ng) % IceNO3                              &
-     &                   ,ICE(ng) % IceNH4                              &  
-     &                   ,ICE(ng) % IceLog                              &  
+     &                   ,ICE(ng) % IceNH4                              &
+     &                   ,ICE(ng) % IceLog                              &
      &                   ,ICE(ng) % ti                                  &
      &                   ,ICE(ng) % hi                                  &
-     &                   ,ICE(ng) % ai                                  & 
+     &                   ,ICE(ng) % ai                                  &
      &                   ,ICE(ng) % ageice                              &
      &                   ,ICE(ng) % ui                                  &
      &                   ,ICE(ng) % vi                                  &
 # endif
 #endif
 #ifdef STATIONARY
-     &                   ,OCEAN(ng) % st                                & 
+     &                   ,OCEAN(ng) % st                                &
      &                   ,NTS(ng)                                       &
-#endif 
+#endif
 #ifdef STATIONARY2
-     &                   ,OCEAN(ng) % st2                               &  
-     &                   ,NTS2(ng)                                      & 
-#endif 
+     &                   ,OCEAN(ng) % st2                               &
+     &                   ,NTS2(ng)                                      &
+#endif
 #ifdef PROD3
      &                   ,OCEAN(ng) % pt3                               &
-     &                   ,NPT3(ng)                                      &  
-#endif   
+     &                   ,NPT3(ng)                                      &
+#endif
 #ifdef PROD2
-     &                   ,OCEAN(ng) % pt2                               &  
+     &                   ,OCEAN(ng) % pt2                               &
      &                   ,NPT2(ng)                                      &
-#endif 
+#endif
 #ifdef BIOFLUX
      &                  ,OCEAN(ng) % bflx                               &
 #endif
      &                  ,MIXING(ng) % Akt                               &
-     &                              )     
- 
+     &                              )
+
 #ifdef PROFILE
       CALL wclock_off (ng, iNLM, 15)
 #endif
@@ -131,7 +131,7 @@
 #ifdef MASKING
      &                         rmask,                                   &
 #endif
-     &                         Hz, z_r, z_w, srflx, t                   & 
+     &                         Hz, z_r, z_w, srflx, t                   &
 #if defined BENTHIC
      &                            ,bt                                   &
 #endif
@@ -139,19 +139,19 @@
      &                           ,u,v                                   &
      &                           ,GF                                &
 #endif
-#if defined ICE_BIO 
+#if defined ICE_BIO
 # ifdef CLIM_ICE_1D
      &                            ,it                                   &
      &                            ,itL                                  &
      &                            ,tclm                                 &
-# elif defined BERING_10K    
+# elif defined BERING_10K
      &                            , IcePhL                              &
      &                            , IceNO3                              &
      &                            , IceNH4                              &
      &                            , IceLog                              &
      &                            ,ti                                   &
-     &                            ,hi                                   &  
-     &                            ,ai                                   &  
+     &                            ,hi                                   &
+     &                            ,ai                                   &
      &                            ,ageice                               &
      &                            ,ui,vi                                &
 # endif
@@ -159,28 +159,28 @@
 #ifdef STATIONARY
      &                          ,st                                     &
      &                          ,UBst                                   &
-#endif   
+#endif
 #ifdef STATIONARY2
      &                          ,st2                                    &
      &                          ,UBst2                                  &
-#endif    
+#endif
 #ifdef PROD3
      &                          ,pt3                                    &
      &                          ,UBpt3                                  &
-#endif   
+#endif
 #ifdef PROD2
      &                          ,pt2                                    &
      &                          ,UBpt2                                  &
 #endif
 #ifdef BIOFLUX
      &                          ,bflx                                   &
-#endif   
-     &                          ,Akt                                    & 
-     
-     &                                  )    
- 
+#endif
+     &                          ,Akt                                    &
+
+     &                                  )
+
      !==================================================================
-     !  VARIABLE DECLARATIONS 
+     !  VARIABLE DECLARATIONS
      !==================================================================
 
       USE mod_param
@@ -190,22 +190,22 @@
       USE mod_grid
 #if defined FEAST
       USE mod_feast
-#endif   
-#if defined BERING_10K  
+#endif
+#if defined BERING_10K
 
-# if defined ICE_BIO  
-#  ifdef BERING_10K  
-      USE mod_ice    
+# if defined ICE_BIO
+#  ifdef BERING_10K
+      USE mod_ice
       USE IcePhLbc_mod, ONLY : IcePhLbc_tile
       USE IceNO3bc_mod, ONLY : IceNO3bc_tile
       USE IceNH4bc_mod, ONLY : IceNH4bc_tile
 #  endif
 # endif
- 
+
 # ifdef DISTRIBUTE
       USE mp_exchange_mod
-     
-# endif 
+
+# endif
 
 #endif
 #if defined EW_PERIODIC || defined NS_PERIODIC
@@ -226,18 +226,18 @@
       integer, intent(in) :: UBk, UBt
       integer, intent(in) :: nnew, nstp
 !
-#ifdef STATIONARY 
+#ifdef STATIONARY
       integer, intent(in) :: UBst
 #endif
-#if defined STATIONARY2    
+#if defined STATIONARY2
       integer, intent(in) :: UBst2
-#endif       
+#endif
 #if defined PROD3
       integer, intent(in) :: UBpt3
 #endif
-#if defined PROD2    
+#if defined PROD2
       integer, intent(in) :: UBpt2
-#endif 
+#endif
 
 #ifdef ASSUMED_SHAPE
 # ifdef MASKING
@@ -248,7 +248,7 @@
       real(r8), intent(in) :: z_w(LBi:,LBj:,0:)
       real(r8), intent(in) :: srflx(LBi:,LBj:)
       real(r8), intent(inout) :: t(LBi:,LBj:,:,:,:)
-      
+
 # ifdef STATIONARY
       real(r8), intent(inout) :: st(LBi:,LBj:,:,:,:)
 # endif
@@ -275,10 +275,10 @@
       !real(r8), intent(inout) :: incatch (LBi:UBi,LBj:UBj,NUM_GEARS,TOT_FEAST)
 # endif
 # if defined ICE_BIO
-#  ifdef CLIM_ICE_1D 
+#  ifdef CLIM_ICE_1D
       real(r8), intent(inout) :: it(LBi:,LBj:,:,:)
       real(r8), intent(inout) :: itL(LBi:,LBj:,:,:)
-      
+
 #  elif defined BERING_10K
       real(r8), intent(in) :: ti(LBi:,LBj:,:)
       real(r8), intent(in) :: hi(LBi:,LBj:,:)
@@ -287,16 +287,16 @@
       real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
-      real(r8), intent(inout) :: IceLog(LBi:,LBj:,:) 
+      real(r8), intent(inout) :: IceLog(LBi:,LBj:,:)
       real(r8), intent(in)    :: ui(LBi:,LBj:,:)
-      real(r8), intent(in)    :: vi(LBi:,LBj:,:) 
-#  endif      
+      real(r8), intent(in)    :: vi(LBi:,LBj:,:)
+#  endif
 
 #  ifdef BIOFLUX
       real(r8), intent(inout) :: bflx(:,:)
 #  endif
-# endif      
-      
+# endif
+
 #else
 # ifdef MASKING
       real(r8), intent(in) :: rmask(LBi:UBi,LBj:UBj)
@@ -306,16 +306,16 @@
       real(r8), intent(in) :: z_w(LBi:UBi,LBj:UBj,0:UBk)
       real(r8), intent(in) :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
-# ifdef STATIONARY      
+# ifdef STATIONARY
       real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,NTS(ng))
 # endif
-# ifdef STATIONARY2      
+# ifdef STATIONARY2
       real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,NTS2(ng))
 # endif
-# ifdef PROD3      
+# ifdef PROD3
       real(r8), intent(inout) :: pt3(LBi:UBi,LBj:UBj,UBk,3,NPT3(ng))
 # endif
-# ifdef PROD2      
+# ifdef PROD2
       real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
 # endif
 # if defined BENTHIC
@@ -331,7 +331,7 @@
 
       real(r8), intent(inout) ::tclmG(LBi:UBi,LBj:UBj,UBk,3,NH(ng)+2)
       real(r8), intent(inout) ::tclm(LBi:UBi,LBj:UBj,UBk,NT(ng)+2)
-#  elif defined BERING_10K     
+#  elif defined BERING_10K
       real(r8), intent(in) :: ti(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: hi(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: ai(LBi:UBi,LBj:UBj,2)
@@ -342,11 +342,11 @@
       real(r8), intent(inout) :: IceLog(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in)    :: ui(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2)
-#  endif     
-# endif      
-# ifdef BIOFLUX      
+#  endif
+# endif
+# ifdef BIOFLUX
       real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj)
-# endif      
+# endif
 #endif
 #if defined FEAST
 
@@ -367,21 +367,21 @@
       real(r8) :: base_speed, diff_coeff
       real(r8) :: delN, Ftot, Fmax, BB, CC, delCF, delCAL
 !     real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
-    
-      real(r8) :: diff_xiup(LBi:Ubi,LBj:UBj) 
+
+      real(r8) :: diff_xiup(LBi:Ubi,LBj:UBj)
       real(r8) :: diff_xidn(LBi:Ubi,LBj:UBj)
-      real(r8) :: diff_etup(LBi:Ubi,LBj:UBj) 
-      real(r8) :: diff_etdn(LBi:Ubi,LBj:UBj) 
+      real(r8) :: diff_etup(LBi:Ubi,LBj:UBj)
+      real(r8) :: diff_etdn(LBi:Ubi,LBj:UBj)
       real(r8) :: u_move(LBi:Ubi,LBj:UBj)
       real(r8) :: v_move(LBi:Ubi,LBj:UBj)
       real(r8) :: u_up(LBi:Ubi,LBj:UBj)
       real(r8) :: u_dn(LBi:Ubi,LBj:UBj)
       real(r8) :: v_up(LBi:Ubi,LBj:UBj)
-      real(r8) :: v_dn(LBi:Ubi,LBj:UBj)    
+      real(r8) :: v_dn(LBi:Ubi,LBj:UBj)
 
-      real(r8), dimension(LBi:Ubi,LBj:UBj) :: t_left, CFmat, CAmat, CA_left, CF_left, CFnew, CAnew    
-      real(r8), dimension(LBi:Ubi,LBj:UBj) :: gT_u_up, gT_u_dn, gT_v_up, gT_v_dn 
-      real(r8), dimension(LBi:Ubi,LBj:UBj) :: gCF_u_up, gCF_u_dn, gCF_v_up, gCF_v_dn 
+      real(r8), dimension(LBi:Ubi,LBj:UBj) :: t_left, CFmat, CAmat, CA_left, CF_left, CFnew, CAnew
+      real(r8), dimension(LBi:Ubi,LBj:UBj) :: gT_u_up, gT_u_dn, gT_v_up, gT_v_dn
+      real(r8), dimension(LBi:Ubi,LBj:UBj) :: gCF_u_up, gCF_u_dn, gCF_v_up, gCF_v_dn
       real(r8), dimension(LBi:Ubi,LBj:UBj) :: gCA_u_up, gCA_u_dn, gCA_v_up, gCA_v_dn
       integer :: nfeast,nng, feast_calls
       !integer :: dilo,dihi,djlo,djhi
@@ -411,7 +411,7 @@
 
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:)
 
-      !  Local variable declarations. 
+      !  Local variable declarations.
 
       integer :: i, j, k, ibio, ibio2,itr, itrmx, itrc, itrc2
       real(r8) :: cff5,cff6,cff6b,cff7,cff8,cff9,cff10,cff11
@@ -419,14 +419,14 @@
       integer :: iv, spn,lcp,elder,younger
 #endif
 #if defined BENTHIC
-      integer :: ibioB     
+      integer :: ibioB
       real(r8) :: bf,fbase,TSS,Ifs,atss,btss,SF
-      real(r8) ::avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum  
+      real(r8) ::avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum
       real(r8) ::sumD,sumDF,sumPL
 #endif
 #ifdef ICE_BIO
       integer :: ibioBI
-#endif      
+#endif
       integer :: Iter,is
       integer :: iday, month, year
 
@@ -438,15 +438,15 @@
       real(r8) :: hour,yday,lat,k_phy,Dl,Par1,k_extV,k_chlV
       real(r8) :: Sal1,Temp1
       real(r8) :: ParMax,BasalMetMZL, BasalMetCop
-      real(r8) :: BasalMetCM,BasalMetNC,BasalMetEup     
+      real(r8) :: BasalMetCM,BasalMetNC,BasalMetEup
       real(r8) :: Iron1,kfePh,respPh,BasalMet,BasalMetJel
       real(r8) :: PON,Dep1,Nitrif,NH4R
       real(r8) :: NitrifMax,DLNitrif
-       
+
       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: Bio
       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: DBio
       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: Bio_bak
-#if defined PROD3    
+#if defined PROD3
       real(r8), dimension(IminS:ImaxS,N(ng),NBPT3) :: Prod
 #endif
 #if defined PROD2
@@ -463,20 +463,20 @@
       real(r8), dimension(IminS:ImaxS,NBL(ng),NBeT(ng)) :: BioB
       real(r8), dimension(IminS:ImaxS,NBL(ng),NBeT(ng)) :: DBioB
       real(r8), dimension(IminS:ImaxS,NBL(ng),NBeT(ng)) :: Bio_bakB
-#endif 
+#endif
 #if defined ICE_BIO
       real(r8), dimension(IminS:ImaxS,NIceT(ng)) :: BioBI
       real(r8), dimension(IminS:ImaxS,NIceT(ng)) :: DBioBI
       real(r8), dimension(IminS:ImaxS,NIceT(ng)) :: Bio_bakBI
-#endif      
-#if defined BIOFLUX      
+#endif
+#if defined BIOFLUX
       real(r8), dimension(NT(ng),NT(ng)) :: BioFlx
-#endif      
+#endif
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv2
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv3
       real(r8), dimension(IminS:ImaxS) :: PARs
-      
+
       real(r8), dimension(IminS:ImaxS,N(ng)) :: PAR
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Dens
       real(r8), dimension(N(ng)) :: DensV
@@ -491,21 +491,21 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncNeo
       real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncEup
 
-#ifdef JELLY      
+#ifdef JELLY
       real(r8),dimension(PRIVATE_1D_SCRATCH_ARRAY,N(ng))::TempFuncJel
-#endif      
+#endif
       real(r8), dimension(IminS:ImaxS,N(ng)) :: HzL
       real(r8), dimension(IminS:ImaxS,0:N(ng)) :: z_wL
-      
+
       real(r8), dimension(IminS:ImaxS,N(ng)) :: sinkIN,sinkOUT
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: riseIN,riseOUT      
-#ifdef ICE_BIO      
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: riseIN,riseOUT
+#ifdef ICE_BIO
       real(r8) :: aiceIfrac,aiceNfrac,dhicedt,trs,cwi,twi
       real(r8) ::grow1, GROWAice,reN,fNO3,RAi0,RgAi
       real(r8) :: sb, gesi
       real(r8), dimension(PRIVATE_1D_SCRATCH_ARRAY,N(ng),3):: aib
       real(r8), dimension(PRIVATE_2D_SCRATCH_ARRAY) :: ice_thick
-#endif     
+#endif
 !
 #ifdef DISTRIBUTE
 # ifdef EW_PERIODIC
@@ -531,16 +531,16 @@
       real(r8) :: Alpha
       real(r8) :: ALPHA_N,ALPHA_P, kN, kP, alphaPhSv, alphaPhLv
       real(r8) ::respNC, respCM, eCM, eNC
-      
+
       ! Vertical movement
 
       real(r8), dimension(N(ng)) :: Btmp, Hztmp
       real(r8), dimension(0:N(ng)) :: zwtmp
-      real(r8) :: sinkout2   
-      
+      real(r8) :: sinkout2
+
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
 
-           
+
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
       !==================================================================
@@ -550,70 +550,70 @@
       ! Extract year, yday, month, day, and hour
 
       CALL caldate (r_date, tdays(ng), year, yday, month, iday, hour)
-      
+
       ! A few parameters...
-      
+
       dtdays = dt(ng)*sec2day/REAL(BioIter(ng),r8)  ! time step, in days
       k_phy = k_chl / ccr ! Light attenuation coefficient (mg Chl-a mg C^-1 m^-1) (? never used)
-   
+
 
 #ifdef DIAPAUSE
 
-     ! For diapause, set movement direction flags for large copepods, 
+     ! For diapause, set movement direction flags for large copepods,
      ! and lower respiration rates if they're in the diapause phase.
      ! NCaS = CM = mostly C. marshallae, on-shelf
      ! NCaO = NC = mostly Neocalanus, off-shelf
-   
+
      RSNC = MOD(RiseStart, 366.0_r8)
      RENC = MOD(RiseEnd,   366.0_r8)
      SSNC = MOD(SinkStart, 366.0_r8)
      SENC = MOD(SinkEnd,   366.0_r8)
-     
+
      if ((RiseStartCM .eq. 0.0_r8) .and. (RiseEndCM .eq. 0.0_r8) .and. &
         (SinkStartCM .eq. 0.0_r8) .and. (SinkEndCM .eq. 0.0_r8)) then
         RSCM = MOD(RiseStart + 30, 366.0_r8)
         RECM = MOD(RiseEnd   + 30, 366.0_r8)
         SSCM = MOD(SinkStart + 30, 366.0_r8)
         SECM = MOD(SinkEnd   + 30, 366.0_r8)
-        
+
      else
-     
+
         RSCM = MOD(RiseStartCM, 366.0_r8)
         RECM = MOD(RiseEndCM,   366.0_r8)
         SSCM = MOD(SinkStartCM, 366.0_r8)
         SECM = MOD(SinkEndCM,   366.0_r8)
-     
+
      endif
-     
-!      write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsSt = ', RiseStart, ', RsEn = ', RiseEnd, ', SiSt = ', SinkStart, ', SiEn = ', SinkEnd
-!      write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsStCM = ', RiseStartCM, ', RsEnCM = ', RiseEndCM, ', SiStCM = ', SinkStartCM, ', SiEnCM = ', SinkEndCM
-!      write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
-!      write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SECM
-   
+
+!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsSt = ', RiseStart, ', RsEn = ', RiseEnd, ', SiSt = ', SinkStart, ', SiEn = ', SinkEnd
+!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsStCM = ', RiseStartCM, ', RsEnCM = ', RiseEndCM, ', SiStCM = ', SinkStartCM, ', SiEnCM = ', SinkEndCM
+!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
+!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SECM
+
      upward =     ((RSNC.lt.RENC) .and.                                &
     &              (yday.ge.RSNC .and. yday.le.RENC))                  &
     &             .or.                                                 &
     &             ((RSNC.gt.RENC) .and.                                &
     &              (yday.ge.RSNC .or.  yday.le.RENC))
-           
+
      upwardCM =   ((RSCM.lt.RECM) .and.                                &
     &              (yday.ge.RSCM .and. yday.le.RECM))                  &
     &             .or.                                                 &
     &             ((RSCM.gt.RECM) .and.                                &
     &              (yday.ge.RSCM .or.  yday.le.RECM))
-            
+
      downward   = ((SSNC.lt.SENC) .and.                                &
     &              (yday.ge.SSNC .and. yday.le.SENC))                  &
     &             .or.                                                 &
     &             ((SSNC.gt.SENC) .and.                                &
     &              (yday.ge.SSNC .or.  yday.le.SENC))
-            
+
      downwardCM = ((SSCM.lt.SECM) .and.                                &
     &              (yday.ge.SSCM .and. yday.le.SECM))                  &
     &             .or.                                                 &
     &             ((SSCM.gt.SECM) .and.                                &
     &              (yday.ge.SSCM .or.  yday.le.SECM))
-   
+
      if (downward) then
        respNC = respNCa * 0.1_r8
        eNC = 0
@@ -621,7 +621,7 @@
        respNC = respNCa
        eNC = eNCa
      end if
-   
+
      if (downwardCM) then
        respCM = respNCa * 0.1_r8
        eCM = 0
@@ -629,7 +629,7 @@
        respCM = respNCa
        eCM = eNCa
      end if
-     
+
 #endif
 
 
@@ -638,34 +638,34 @@
       !==================================================================
 
       J_LOOP : DO j=Jstr,Jend
-             
+
         ! Initialize production arrays to 0 (if applicable)
-    
+
         IF ((iic(ng).gt.ntstart(ng)).and.                             &
      &        (MOD(iic(ng)-1,nHIS(ng)).eq.0)) THEN
           IF (nrrec(ng).eq.0.or.iic(ng).ne.ntstart(ng)) THEN
 
 #ifdef PROD3
             DO itrc=1,NPT3(ng)
-                    
-              OCEAN(ng) % pt3(:,:,:,nstp,itrc) = 0.0_r8 
+
+              OCEAN(ng) % pt3(:,:,:,nstp,itrc) = 0.0_r8
             END DO
-       
+
 #endif
 
 #ifdef PROD2
 
             DO itrc=1,NPT2(ng)
-                     
+
               OCEAN(ng) % pt2(:,:,nstp,itrc) = 0.0_r8
             END DO
-    
-#endif       
+
+#endif
           END IF
         END IF
-        
+
         ! Calculate inverse layer thickness
-       
+
         DO k=1,N(ng)
           DO i=Istr,Iend
             Hz_inv(i,k)=1.0_r8/Hz(i,j,k)
@@ -681,17 +681,17 @@
             Hz_inv3(i,k)=1.0_r8/(Hz(i,j,k-1)+Hz(i,j,k)+Hz(i,j,k+1))
           END DO
         END DO
-        
+
         ! Calculate ice thickness
 
 #ifdef ICE_BIO
         DO i=Istr,Iend
-  
-# if defined CLIM_ICE_1D  
-          ice_thick(i,j) = MAX(0.0_r8,tclm(3,3,N(ng),i1CI)) 
-# elif defined BERING_10K   
 
-          if (hi(i,j,nstp).gt.0.0_r8)THEN 
+# if defined CLIM_ICE_1D
+          ice_thick(i,j) = MAX(0.0_r8,tclm(3,3,N(ng),i1CI))
+# elif defined BERING_10K
+
+          if (hi(i,j,nstp).gt.0.0_r8)THEN
             ice_thick(i,j) = hi(i,j,nstp)
           else
             ice_thick(i,j)=0.0_r8
@@ -701,11 +701,11 @@
 #endif
 
         !  Extract biological variables from tracer arrays, and
-        !  restrict their values to be positive definite.  Removed CVL''s
+        !  restrict their values to be positive definite.  Removed CVL's
         !  conservation of mass correction because conflicted with SPLINES.
         !  For ROMS 2.2+, convert from "flux form" to concentrations by
         !  dividing by grid cell thickness.
-        
+
         DO itrc=1,NBT
           ibio=idbio(itrc)
           DO k=1,N(ng)
@@ -725,21 +725,21 @@
              END DO
           END DO
         END DO
-#endif        
-         
+#endif
+
 #ifdef PROD2
-         DO itrc=1,NBPT2
-            DO i=Istr,Iend
-        Prod2(i,itrc)=0.0_r8
+        DO itrc=1,NBPT2
+          DO i=Istr,Iend
+            Prod2(i,itrc)=0.0_r8
+          END DO
         END DO
-        END DO
-#endif  
+#endif
 
 #ifdef STATIONARY
         DO itrc=1,NBTS
           DO i=Istr,Iend
             DO k=1,N(ng)
-      
+
               Stat3(i,k,itrc)=0.0_r8
             END DO
           END DO
@@ -747,7 +747,7 @@
 #endif
 #ifdef STATIONARY2
         DO itrc=1,UBst2
-   
+
           ibio=idbio2(itrc)
           DO i=Istr,Iend
             Stat2(i,ibio)=0.0_r8
@@ -760,20 +760,22 @@
           DO k=1,NBL(ng)
             DO i=Istr,Iend
               Bio_bakB(i,k,ibioB)=max(bt(i,j,k,nstp,ibioB),0.0_r8)
-              
-              BioB(i,k,ibioB)=bt(i,j,k,nstp,ibioB)   
+
+              BioB(i,k,ibioB)=bt(i,j,k,nstp,ibioB)
               DBioB(i,k,ibioB)=0.0_r8
-             
+
             END DO
           END DO
         END DO
 #endif
 
+        ! Extract temperature and salinity from tracer arrays
+
         DO k=1,N(ng)
           DO i=Istr,Iend
 #ifdef CORRECT_TEMP_BIAS
 
-            !  correct the ROMS temp for the biology only - not fed back
+            ! correct the ROMS temp for the biology only - not fed back
 
             Bio(i,k,itemp)=t(i,j,k,nstp,itemp)-1.94_r8
 #else
@@ -793,51 +795,54 @@
             END IF
           END DO
         END DO
-  
+
 #ifdef ICE_BIO
+
+        ! Extract ice variables from tracer arrays
+
         DO i=Istr,Iend
 
 # ifdef CLIM_ICE_1D
 
-      
+
           DO itrc=1,3
             ibioBI=idice(itrc)
 
             Bio_bakBI(i,ibioBI)=max(it(i,j,nstp,ibioBI),0.0_r8)
-                  
+
             DBioBI(i,ibioBI)=0.0_r8
-       
+
           END DO
-    
-          if (ice_thick(i,j).gt.0.02)          THEN 
-            itL(i,j,nstp,iIceLog) =1.0_r8 
+
+          if (ice_thick(i,j).gt.0.02)          THEN
+            itL(i,j,nstp,iIceLog) =1.0_r8
           else
             itL(i,j,nstp,iIceLog) =-1.0_r8
-          endif     
-         
+          endif
+
           ! Initialize the ice biology
-       
+
           if (itL(i,j,nstp,iIceLog).gt.0.and.                           &
-     &        itL(i,j,nnew,iIceLog).lt.0) THEN  ! new ice at this timestep  
-                            
-            BioBI(i,iIcePhL) = 1.1638_r8  !0.1638_r8       
-            BioBI(i,iIceNO3) = Bio(i,N(ng),iNO3)  !5.0_r8        
-            BioBI(i,iIceNH4) = Bio(i,N(ng),iNH4)  !1.0_r8       
-            
+     &        itL(i,j,nnew,iIceLog).lt.0) THEN  ! new ice at this timestep
+
+            BioBI(i,iIcePhL) = 1.1638_r8  !0.1638_r8
+            BioBI(i,iIceNO3) = Bio(i,N(ng),iNO3)  !5.0_r8
+            BioBI(i,iIceNH4) = Bio(i,N(ng),iNH4)  !1.0_r8
+
           elseif (itL(i,j,nstp,iIceLog).le.0.and. &
-     &            itL(i,j,nnew,iIceLog).lt.0) THEN  ! no ice 
-            BioBI(i,iIcePhL) = 0.0_r8         
-            BioBI(i,iIceNO3) = 0.0_r8        
-            BioBI(i,iIceNH4) = 0.0_r8  
-      
-          else 
-         
-            BioBI(i,iIcePhL)=Bio_bakBI(i,iIcePhL) !continuing ice presence 
+     &            itL(i,j,nnew,iIceLog).lt.0) THEN  ! no ice
+            BioBI(i,iIcePhL) = 0.0_r8
+            BioBI(i,iIceNO3) = 0.0_r8
+            BioBI(i,iIceNH4) = 0.0_r8
+
+          else
+
+            BioBI(i,iIcePhL)=Bio_bakBI(i,iIcePhL) !continuing ice presence
             BioBI(i,iIceNO3)=Bio_bakBI(i,iIceNO3)
             BioBI(i,iIceNH4)=Bio_bakBI(i,iIceNH4)
           endif
-        
-        
+
+
 # elif defined BERING_10K
 
           cff1=IceLog(i,j,nnew)
@@ -850,29 +855,29 @@
 
           if (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).le.0)THEN
 
-            IcePhL(i,j,nstp) = Bio(i,N(ng),iPhL)  !1.1638_r8  !0.1638_r8       
-            IceNO3(i,j,nstp) = Bio(i,N(ng),iNO3)  !5.0_r8        
-            IceNH4(i,j,nstp) = Bio(i,N(ng),iNH4)  !1.0_r8       
+            IcePhL(i,j,nstp) = Bio(i,N(ng),iPhL)  !1.1638_r8  !0.1638_r8
+            IceNO3(i,j,nstp) = Bio(i,N(ng),iNO3)  !5.0_r8
+            IceNH4(i,j,nstp) = Bio(i,N(ng),iNH4)  !1.0_r8
 
             DBio(i,N(ng),iNO3)=DBio(i,N(ng),iNO3)-Bio(i,N(ng),iNO3)*aidz/Hz(i,j,N(ng))
             DBio(i,N(ng),iNH4)=DBio(i,N(ng),iNH4)-Bio(i,N(ng),iNH4)*aidz/Hz(i,j,N(ng))
             DBio(i,N(ng),iPhL)=DBio(i,N(ng),iPhL)-Bio(i,N(ng),iPhL)*aidz/Hz(i,j,N(ng))
 
           elseif (IceLog(i,j,nstp).le.0.and.IceLog(i,j,nnew).le.0)THEN
-     
-            IcePhL(i,j,nstp) = 0_r8   
-            IceNO3(i,j,nstp) = 0_r8     
-            IceNH4(i,j,nstp) = 0_r8 
- 
-          elseif (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).gt.0)THEN 
+
+            IcePhL(i,j,nstp) = 0_r8
+            IceNO3(i,j,nstp) = 0_r8
+            IceNH4(i,j,nstp) = 0_r8
+
+          elseif (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).gt.0)THEN
             !ajh added zero trap on these
             IcePhL(i,j,nstp) = max(0.0_r8,IcePhL(i,j,nstp))
             IceNO3(i,j,nstp) = max(0.0_r8,IceNO3(i,j,nstp))
             IceNH4(i,j,nstp) = max(0.0_r8,IceNH4(i,j,nstp))
-                 
+
           endif
-     
-           
+
+
           DO itrc=1,3
             ibioBI=idice(itrc)
             DBioBI(i,ibioBI)=0.0_r8
@@ -880,7 +885,7 @@
 # endif
 
         END DO
-#endif 
+#endif
 
 #ifdef BIOFLUX
         IF (i.eq.3.and.j.eq.3) THEN
@@ -894,23 +899,27 @@
             END DO
           END DO
         ENDIF
-#endif         
-!
-!-----------------------------------------------------------------------
-!  Calculate Day Length and Surface PAR
-!-----------------------------------------------------------------------
-!
-!  Calculate Day Length
+#endif
+
+        !-------------------------------------
+        ! Calculate Day Length and Surface PAR
+        !-------------------------------------
+
+        ! Calculate Day Length
+
         DO i=Istr,Iend
 #if defined DIURNAL_SRFLUX
-!  Day Length is already accounted for in ANA_SWRAD so disable correction
+          ! Day Length is already accounted for in ANA_SWRAD so disable
+          ! correction
           Dl = 24.0_r8
 #else
-!  Day Length calculation (orig from R. Davis) from latitude and declination.
-!  cff2 is Solar declination from Oberhuber (1988) (COADS documentation)
-!
-!         lat = 58.00  orig from C code
-!         lat = 45.00_r8  test for EPOC
+          ! Day Length calculation (orig from R. Davis) from latitude and
+          ! declination.
+          ! cff2 is Solar declination from Oberhuber (1988) (COADS
+          ! documentation)
+
+          !lat = 58.00  orig from C code
+          !lat = 45.00_r8  test for EPOC
           lat = GRID(ng) % latr(i,j)
           cff1 = 2.0_r8 * pi * ( yday-1.0_r8 ) / 365.0_r8
           cff2 = 0.006918_r8 - 0.399912_r8*cos(cff1)                    &
@@ -929,125 +938,123 @@
             END IF
           END IF
 #endif
-!
-!  Calculate PAR at the surface
-!
+
+          ! Calculate PAR at the surface
+
 #ifdef KODIAK_IRAD
-!
-!  For PAR, Eyeball fit of data from Hinckley''s ezeroday.dat (E d-1 m-2)
-!
+
+          ! For PAR, Eyeball fit of data from Hinckley''s ezeroday.dat (E d-1 m-2)
+
           cff2 = 41.0_r8 - 35.0_r8                                      &
      &           * COS( ( 12.0_r8 + yday) * 2.0_r8 * pi / 365.0_r8 )
 #else
-!
-!  For PAR, use Shortwave radiation ( = surface solar irradiance)
-!  converted from deg C m/s to E/m2/day   rho0=1025 Cp=3985
-!             
-    
+
+          ! For PAR, use Shortwave radiation ( = surface solar irradiance)
+          ! converted from deg C m/s to E/m2/day   rho0=1025 Cp=3985
+
+
           PARs(i) =PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
-    
+
 #endif
         END DO
 
-! 
-!  Calculate light decay in the water column    
-!   
-!----------------------------------------------------------------------- 
-!  George Gibsons version after Morel 1988 (in Loukos 1997) 
-!-----------------------------------------------------------------------
+        !------------------------------------------
+        ! Calculate light decay in the water column
+        !------------------------------------------
+
 #ifdef NEWSHADE
-       
+!       Georgina Gibsons version after Morel 1988 (in Loukos 1997)
+
         DO i=Istr,Iend
-   
+
           cff10=grid(ng) % h(i,j)
           k_extV= k_ext+2.00_r8*exp(-cff10*.05)
 
           cff0=PARs(i)
 
           DO k=N(ng),1,-1
-    
+
             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
             cff5=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
-            cff2 = (k_chl*(cff5)**(0.428_r8))   
-            !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)     &
-     !&                **(-0.428_r8))))      
+            cff2 = (k_chl*(cff5)**(0.428_r8))
+            !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
 
           END DO
         END DO
 #else
-!  Version from Sarah Hinckley old C code 
+        ! Version from Sarah Hinckley old C code
         DO k=N(ng),1,-1
           DO i=Istr,Iend
             cff3 = z_r(i,j,k)+2.5_r8
             IF ( cff3 .gt. -71.0_r8 ) THEN
               cff1 = k_ext + k_chl *                                 &
      &                  ( Bio(i,k,iPhS) + Bio(i,k,iPhL) ) / ccr
-              ELSE
+            ELSE
                 cff1 = 0.077_r8
-              END IF
-              PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
-         
-              
-            END DO
+            END IF
+            PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
+
+
           END DO
+        END DO
 #endif
 
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-              HzL(i,k) = Hz(i,j,k)
-              Sal1 = Bio(i,k,isalt)
-              Temp1 = Bio(i,k,itemp)
-!         
-!-----------------------------------------------------------------------
-!Compute sigma-t for each depth
-!-----------------------------------------------------------------------
-! 
-              Dens(i,k) = ComputeDensity(Temp1,Sal1)
+        DO k=1,N(ng)
+          DO i=Istr,Iend
+            HzL(i,k) = Hz(i,j,k)
+            Sal1 = Bio(i,k,isalt)
+            Temp1 = Bio(i,k,itemp)
+
+            !-------------------------------
+            ! Compute sigma-t for each depth
+            !-------------------------------
+
+            Dens(i,k) = ComputeDensity(Temp1,Sal1)
 
 
-            END DO
           END DO
-    
+        END DO
+
         DO i=Istr,Iend
-!           
-!-----------------------------------------------------------------------
-!  Compute dsigmat/dz for each depth
-!  Return the maximum value
-!-----------------------------------------------------------------------
-! 
+
+          !-----------------------------------
+          !  Compute dsigmat/dz for each depth
+          !  Return the maximum value
+          !-----------------------------------
+
           Do k=1,N(ng)
             DensV(k)=Dens(i,k)
             ZW_V(k)=z_wL(i,k)
           end do
           StabParam(i) = ComputeStability(ng,ZW_V,DensV)
 #ifdef STATIONARY2
-          if(j.eq.3.and.i.eq.3)THEN   
+          if(j.eq.3.and.i.eq.3)THEN
           Stat2(i,2)=StabParam(i)
          endif
-#endif 
+#endif
         END DO
-     
+
         DO k=0,N(ng)
           DO i=Istr,Iend
             z_wL(i,k) = z_w(i,j,k)
           END DO
         END DO
-    
-!************************************************************************
-!************************************************************************
-! Begin BIOITER LOOP
-!************************************************************************
-!************************************************************************
+
+        !****************************************************************
+        !****************************************************************
+        ! Begin BIOITER LOOP
+        !****************************************************************
+        !****************************************************************
 
         ITER_LOOP: DO Iter=1,BioIter(ng)
 !         if ( .not. downward) then
-! 
-!-----------------------------------------------------------------------
-!  Make Neocalanus go down if temp > 12
-!-----------------------------------------------------------------------
-!                   
+
+            !---------------------------------------
+            !  Make Neocalanus go down if temp > 12
+            !---------------------------------------
+
 !           if (Bio(i,k,itemp) .gt. 12._r8 .and. NCa(k) .gt. 0.2_r8) then
 !             downward = .true.
 !             goto 111
@@ -1059,144 +1066,148 @@
           NHLim = 1.0_r8
           IronLim = 1.0_r8
 
-!=======================================================================
-!  Nutrient uptake by Small Phytoplankton
-!=======================================================================
+          !=========================================
+          !  Nutrient uptake by Small Phytoplankton
+          !=========================================
 
-! Options for alpha
-    
+          ! Options for alpha
+
           DO k=1,N(ng)
             DO i=Istr,Iend
 
-! Variable -depends on light/nutrient - gradual not step       
+              ! Variable -depends on light/nutrient - gradual not step
+
 !             ALPHA_N = (Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4))/ ( kN +Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4));
 !             ALPHA_P =  PAR(i,N(ng))/ ( kP +  PAR(i,N(ng)));
 !             cff1= (ALPHA_N* ALPHA_P);
 !             alphaPhSv=max(1.0_r8,cff1*alphaPhS);
 
 
-! Constant
+              ! Constant
               alphaPhSv=alphaPhS
-! 
-!-----------------------------------------------------------------------
-!  Growth rate computations
-!-----------------------------------------------------------------------
-! 
+
+              !--------------------------
+              !  Growth rate computations
+              !--------------------------
+
               if(DiS.gt.0_r8) THEN
                 Drate = DiS * 10.0_r8 ** (DpS * Bio(i,k,itemp) )
 
                 Pmax = (2.0_r8 ** Drate - 1.0_r8 )   !maximum daily mass specific growth rate FROST (1987)
-           
+
                 Pmaxs=Pmax*ccr !max chla specific growth rate from FROST (1987)
 
-! day length fraction scalar
-                Pmax = Pmax * Dl / 24.0_r8      
-              
-!-----------------------------------------------------------------------
-!  Nitrate limitation
-!-----------------------------------------------------------------------
-!
-#ifdef DENMAN   
-! 
-! Nutrient limitation following Denman  
-!               
-                NOLim = (Bio(i,k,iNO3) + Bio(i,k,iNH4))                  &
+                ! day length fraction scalar
+                Pmax = Pmax * Dl / 24.0_r8
+
+                !---------------------
+                !  Nitrate limitation
+                !---------------------
+
+#ifdef DENMAN
+
+                ! Nutrient limitation following Denman
+
+                NOLim = (Bio(i,k,iNO3) + Bio(i,k,iNH4))                 &
      &                  / ( k1PhS + Bio(i,k,iNO3)+ Bio(i,k,iNH4) )
-              
+
                 cff1=0.2/(0.2+Bio(i,k,iNH4))
-!               cff1=aPS/(aPS+Bio(i,k,iNH4)) 
+!               cff1=aPS/(aPS+Bio(i,k,iNH4))
 
                 cff2=cff1*Bio(i,k,iNO3)/(Bio(i,k,iNO3)+Bio(i,k,iNH4))
-#else 
-!      
-! limitation folowing Wroblewski (JMR 1977)    
-! 
+#else
+
+                ! limitation folowing Wroblewski (JMR 1977)
+
 !               NOLim = Bio(i,k,iNO3) * EXP( -psiPhS * Bio(i,k,iNH4) )  &
 !    &               / ( k1PhS + Bio(i,k,iNO3) )
-! 
-! limitation following Lomas (marine Biology 1999)    
-! 
+
+                ! limitation following Lomas (marine Biology 1999)
+
                 NOLim = (Bio(i,k,iNO3)/ ( k1PhS +Bio(i,k,iNO3))) &
-     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(k2PhS + Bio(i,k,iNH4))));  
-! 
-! Limitation following Vallina and Quere (Ecological Modelling 2008)
+     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(k2PhS + Bio(i,k,iNH4))));
+
+                ! Limitation following Vallina and Quere
+                ! (Ecological Modelling 2008)
+
 !               NOLim = Bio(i,k,iNO3) *                                 &
 !     &                (1-((Bio(i,k,iNH4)/(k2PhS + Bio(i,k,iNH4))))) /  &
-!     &                ( k1PhS + Bio(i,k,iNO3) 
+!     &                ( k1PhS + Bio(i,k,iNO3)
 
 
- 
+
 #endif
-         
+
 #ifdef IRON_LIMIT
-! 
-!-----------------------------------------------------------------------
-! Iron Limitation - disabled at concs of 2 micromol Fe m-3
-!-----------------------------------------------------------------------
-! 
+
+                !---------------------------------------------------------
+                ! Iron Limitation -disabled at concs of 2 micromol Fe m-3
+                !---------------------------------------------------------
+
                 IronLim = eps + Bio(i,k,iFe) / (kfePhS + Bio(i,k,iFe)) *&
      &                  (kfePhS + 2._r8) / 2._r8
 #endif
-                 
-!-----------------------------------------------------------------------
-!  Light limitation function
-!-----------------------------------------------------------------------
+
+                !---------------------------
+                ! Light limitation function
+                !---------------------------
                 Par1 = PAR(i,k)
-     
+
 #ifdef DENMAN
                 LightLim = TANH( alphaPhSv * Par1 / Pmax /              &
      &                 ccr)
                 cff3=  Pmax*LightLim*NOLim*IronLim
                 NOup=Bio(i,k,iPhS)*cff3*cff2
                 NHup=Bio(i,k,iPhS)*cff3*(1-cff2)
-#else       
+#else
                 LightLim = TANH( alphaPhSv * MAX((Par1 - OffSet),0.0_r8)&
      &                         / Pmaxs)
-     
 
-!-----------------------------------------------------------------------
-!  Nitrate uptake
-!-----------------------------------------------------------------------
 
-!  Multiplicative limitation
+                !-----------------
+                !  Nitrate uptake
+                !-----------------
+
+                !  Multiplicative limitation
 !               NOup = max(0.0_r8,                                      &
 !    &               (Bio(i,k,iPhS)/ccr) * Pmaxs * LightLim * NOLim * IronLim)
-        
 
-!  Denman limitation 
+
+                !  Denman limitation
 
                 NOup = MAX(0.0_r8,(Bio(i,k,iPhS)/ccr) *                 &
      &               Pmaxs*MIN(LightLim, NOLim, IronLim))
-  
-!-----------------------------------------------------------------------
-! Ammonium limitation
-!-----------------------------------------------------------------------
+
+               !---------------------
+               ! Ammonium limitation
+               !---------------------
 
                 NHLim = Bio(i,k,iNH4) / ( k2PhS + Bio(i,k,iNH4) )
-          
+
                 if((NOLim+NHLim).gt.1.0_r8) then
                   NHLim= 1.0_r8-NOLim
                 endif
-!-----------------------------------------------------------------------
-!  Light limitation for ammonium
-!-----------------------------------------------------------------------
- 
-                LightLim = TANH( alphaPhSv * MAX((Par1 - OffSet),0.0_r8)&
-     &                        / Pmaxs) 
 
-# ifdef STATIONARY         
+                !--------------------------------
+                !  Light limitation for ammonium
+                !--------------------------------
+
+                LightLim = TANH( alphaPhSv * MAX((Par1 - OffSet),0.0_r8)&
+     &                        / Pmaxs)
+
+# ifdef STATIONARY
                 Stat3(i,k,1)=LightLim
                 Stat3(i,k,2)=IronLim
                 Stat3(i,k,3)=NOLim
                 Stat3(i,k,4)=NHLim
 # endif
-           
-!-----------------------------------------------------------------------
-!  Ammonium uptake
-!-----------------------------------------------------------------------
+
+                !------------------
+                !  Ammonium uptake
+                !------------------
 !               NHup = max(0.0_r8,                                      &
 !    &                 (Bio(i,k,iPhS)/ccr) * Pmaxs * LightLim * NHLim)
-           
+
                 NHup = MAX(0.0_r8,(Bio(i,k,iPhS)/ccr) * Pmaxs * MIN(LightLim, NHLim))
 #endif
 
@@ -1206,156 +1217,156 @@
                 cff3=0.0_r8
               endif
 
-!  ajh limit NOup and NHup to amount of NO and NH present
+              ! ajh limit NOup and NHup to amount of NO and NH present
               NOup=MIN(NOup,Bio(i,k,iNO3)/(xi*dtdays))
               NHup=MIN(NHup,Bio(i,k,iNH4)/(xi*dtdays))
               NOup=MAX(0.0_r8,NOup)
               NHup=MAX(0.0_r8,NHup)
 
-!-----------------------------------------------------------------------
-!  Change in nitrate concentration
-!-----------------------------------------------------------------------
+              !----------------------------------
+              !  Change in nitrate concentration
+              !----------------------------------
               DBio(i,k,iNO3) = DBio(i,k,iNO3) - xi * NOup * dtdays
-               
-!-----------------------------------------------------------------------
-!  Change in ammonium concentration
-!-----------------------------------------------------------------------
+
+              !-----------------------------------
+              !  Change in ammonium concentration
+              !-----------------------------------
               DBio(i,k,iNH4) = DBio(i,k,iNH4) - xi * NHup * dtdays
 
-!-----------------------------------------------------------------------
-!  Change in concentration of small phytoplankton
-!-----------------------------------------------------------------------
-                
-#ifdef DENMAN    
+              !-------------------------------------------------
+              !  Change in concentration of small phytoplankton
+              !-------------------------------------------------
+
+#ifdef DENMAN
               DBio(i,k,iPhS) = DBio(i,k,iPhS)+Bio(i,k,iPhS)*cff3*dtdays
 #else
               DBio(i,k,iPhS) = DBio(i,k,iPhS)+(NOup+NHup)*dtdays
 #endif
-                
-!-----------------------------------------------------------------------
-!  Primary production of small phytoplankton
-!-----------------------------------------------------------------------
-#ifdef PROD3    
+
+              !--------------------------------------------
+              !  Primary production of small phytoplankton
+              !--------------------------------------------
+#ifdef PROD3
               Prod(i,k,iPhSprd) = Prod(i,k,iPhSprd) + DBio(i,k,iPhS)
 #endif
 
 #ifdef IRON_LIMIT
-!-----------------------------------------------------------------------
-!  Change in iron concentration
-!-----------------------------------------------------------------------
+              !-------------------------------
+              !  Change in iron concentration
+              !-------------------------------
               DBio(i,k,iFe) = DBio(i,k,iFe) - FeC * NOup * dtdays
-    
+
 #endif
 
 #ifdef STATIONARY
-! 
-!  save fratio
-! 
+
+              ! save fratio
+
               if (NOup.gt.0.0 .AND. NHup.gt.0.0) THEN
 !               Stat3(i,k,6) = (NOup/(NOup + NHup))
               else if(NOup.gt.0.0 .AND. NHup.le.0.0) THEN
 !               Stat3(i,k,6) =1.0_r8
               else if(NOup.le.0.0 .AND. NHup.gt.0.0) THEN
 !               Stat3(i,k,6) = -999
-              endif    
+              endif
 #endif
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
-                
+
                 bflx(iNO3,iPhS) = bflx(iNO3,iPhS) + NOup*xi* dtdays
                 bflx(iNH4,iPhS) = bflx(iNH4,iPhS) + NHup*xi* dtdays
               ENDIF
 #endif
             END DO
           END DO
-!=========================================================================
-!  Nutrient uptake by Large Phytoplankton
-!=========================================================================
+          !=========================================
+          !  Nutrient uptake by Large Phytoplankton
+          !=========================================
           kN=0;
           kP=48;
-!         
-! Coyle step alpha function   
-! 
+
+          ! Coyle step alpha function
+
 !         if (ParMax.lt.48) then
 !           Alpha = 1.0_r8
 !         else
 !           Alpha = 4.0_r8
 !         endif
-! 
-! Depends on light/nutrient - gradual not step  
-! 
+
+          ! Depends on light/nutrient - gradual not step
+
 !         ALPHA_N = (Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4))/ ( kN +Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4));
 !         ALPHA_P =  PAR(i,k)/ ( kP +  PAR(i,k));
 !         ALPHA_P =  PAR(i,N(ng))/ ( kP +  PAR(i,N(ng)));
 !         cff1= (ALPHA_N* ALPHA_P);
 !         alphaPhLv=max(1.0_r8,cff1*alphaPhL);
 
-          alphaPhLv=alphaPhL          
- 
+          alphaPhLv=alphaPhL
+
           DO k=1,N(ng)
             DO i=Istr,Iend
 
-              LightLim=1.0_r8 
-              IronLim=1.0_r8    
+              LightLim=1.0_r8
+              IronLim=1.0_r8
               NOLim=1.0_r8
-!  
-!-----------------------------------------------------------------------
-! Growth rate computations
-!-----------------------------------------------------------------------
-! 
+
+              !-------------------------
+              ! Growth rate computations
+              !-------------------------
+
               if(DiL.gt.0_r8) THEN
                 Drate = DiL * 10.0_r8 ** (DpL * Bio(i,k,itemp) )
 
                 Pmax = (2.0_r8 ** Drate - 1.0_r8 )
-    
-                Pmaxs=Pmax*ccrPhL
-! 
-!  day length fraction scalar
-!             
-!               Pmax = (2.0_r8 ** Drate - 1.0_r8 ) * Dl / 24.0_r8
-                      
-!-----------------------------------------------------------------------
-!  Nitrate limitation
-!-----------------------------------------------------------------------
 
-#ifdef DENMAN   
-! 
-!  Nutrient limitation following Denman    
+                Pmaxs=Pmax*ccrPhL
+
+                !  day length fraction scalar
+
+!               Pmax = (2.0_r8 ** Drate - 1.0_r8 ) * Dl / 24.0_r8
+
+                !---------------------
+                !  Nitrate limitation
+                !---------------------
+
+#ifdef DENMAN
+
+                ! Nutrient limitation following Denman
                 NOLim = (Bio(i,k,iNO3) + Bio(i,k,iNH4))                 &
      &                  / ( k1PhL + Bio(i,k,iNO3)+ Bio(i,k,iNH4) )
-              
+
                 cff1=0.4/(0.4+Bio(i,k,iNH4))
                 cff2=cff1*Bio(i,k,iNO3)/(Bio(i,k,iNO3)+Bio(i,k,iNH4))
-#else      
-! 
-! limitation following Wroblewski (JMR 1977)    
+#else
+
+                ! limitation following Wroblewski (JMR 1977)
 !               NOLim = Bio(i,k,iNO3) * EXP( -psiPhL * Bio(i,k,iNH4) )  &
 !     &                  / ( k1PhL + Bio(i,k,iNO3) )
 
-! limitation following Lomas (marine Biology 1999) 
+                ! limitation following Lomas (marine Biology 1999)
                 NOLim = (Bio(i,k,iNO3)/ ( k1PhL +Bio(i,k,iNO3)))        &
      &                *(1-(0.8_r8*Bio(i,k,iNH4)/(k2PhL + Bio(i,k,iNH4))));
 
-! Limitation following Vallina and Quere (Ecological Modelling 2008)
+                ! Limitation following Vallina and Quere (Ecological Modelling 2008)
 !               NOLim = Bio(i,k,iNO3) *                                 &
 !    &                 (1-(Bio(i,k,iNH4)/(k2PhL + Bio(i,k,iNH4)))))     &
-!    &                 / ( k1PhL + Bio(i,k,iNO3)       
+!    &                 / ( k1PhL + Bio(i,k,iNO3)
 
 #endif
-   
+
 #ifdef IRON_LIMIT
-!-----------------------------------------------------------------------
-!  Iron Limitation - disabled at cons of 2 micromol Fe m-3
-!-----------------------------------------------------------------------
+                !--------------------------------------------------------
+                !  Iron Limitation -disabled at cons of 2 micromol Fe m-3
+                !--------------------------------------------------------
 
                 IronLim = eps + Bio(i,k,iFe) / (kfePhL + Bio(i,k,iFe))  &
      &                           * (kfePhL + 2._r8) / 2._r8
 #endif
-! 
-!-----------------------------------------------------------------------
-!  Light limitation for nitrate uptake function
-!-----------------------------------------------------------------------
-! 
+
+                !----------------------------------------------
+                !  Light limitation for nitrate uptake function
+                !----------------------------------------------
+
                 Par1 = Par(i,k)
                 ParMax = Par(i,N(ng))
 
@@ -1366,42 +1377,42 @@
                 cff3=  Pmax*LightLim*NOLim*IronLim
                 NOup=Bio(i,k,iPhL)*cff3*cff2
                 NHup=Bio(i,k,iPhL)*cff3*(1-cff2)
-#else        
-   
+#else
+
                 OffSet=0.0_r8
 
                 LightLim = TANH( alphaPhLv * MAX((PAR1 - OffSet),0.0_r8)&
      &                         / Pmaxs)
-! 
-!-----------------------------------------------------------------------
-!  Nitrate uptake
-!-----------------------------------------------------------------------
-! 
+
+                !----------------
+                !  Nitrate uptake
+                !----------------
+
 !               NOup = MAX(0.0_r8,(Bio(i,k,iPhL)/ccrPhL)                &
 !     &              * Pmaxs * LightLim * NOLim * IronLim)
 
                 NOup=MAX(0.0_r8,(Bio(i,k,iPhL)/ccrPhL)*Pmaxs*MIN(LightLim ,NOLim,IronLim))
-!               
-!-----------------------------------------------------------------------
-!  Ammonium limitation
-!-----------------------------------------------------------------------
-!  
+
+                !---------------------
+                !  Ammonium limitation
+                !---------------------
+
                 NHLim = Bio(i,k,iNH4) / ( k2PhL + Bio(i,k,iNH4) )
                 if((NOLim+NHLim).gt.1.0_r8) then
                   NHLim= 1.0_r8-NOLim
                 endif
-                  
-!-----------------------------------------------------------------------
-!  light limitation for ammonium uptake 
-!-----------------------------------------------------------------------
+
+                !---------------------------------------
+                !  light limitation for ammonium uptake
+                !---------------------------------------
 
                 OffSet = 0.0_r8
                 LightLim = TANH( alphaPhLv * MAX((PAR1 - OffSet),0.0_r8)&
      &                     / Pmaxs )
 
-!-----------------------------------------------------------------------
-!  Ammonium uptake
-!-----------------------------------------------------------------------
+                !-----------------
+                !  Ammonium uptake
+                !-----------------
 !               NHup = max(0.0_r8,                                      &
 !     &                  (Bio(i,k,iPhL)/ccrPhL) * Pmaxs * LightLim * NHLim)
                 NHup = MAX(0.0_r8,(Bio(i,k,iPhL)/ccrPhL) * Pmaxs * MIN(LightLim ,NHLim))
@@ -1411,129 +1422,128 @@
                 NHup=0.0_r8
                 cff3=0.0_r8
               endif
-    
+
 #ifdef STATIONARY
               Stat3(i,k,5) =LightLim
               Stat3(i,k,6) =IronLim
               Stat3(i,k,7) =NOLim
               Stat3(i,k,8) =NHLim
-#endif  
-! 
-!  ajh limit NOup and NHup to amount of NO and NH present
-! 
+#endif
+
+              ! ajh limit NOup and NHup to amount of NO and NH present
+
               NOup=MIN(NOup,Bio(i,k,iNO3)/(xi*dtdays))
               NHup=MIN(NHup,Bio(i,k,iNH4)/(xi*dtdays))
               NOup=MAX(0.0_r8,NOup)
               NHup=MAX(0.0_r8,NHup)
 
 
-!-----------------------------------------------------------------------
-!  Change in nitrate concentration
-!-----------------------------------------------------------------------
+              !---------------------------------
+              !  Change in nitrate concentration
+              !---------------------------------
               DBio(i,k,iNO3) = DBio(i,k,iNO3) - xi * NOup * dtdays
-    
-!-----------------------------------------------------------------------
-!  Change in ammonium concentration
-!-----------------------------------------------------------------------
+
+              !-----------------------------------
+              !  Change in ammonium concentration
+              !-----------------------------------
               DBio(i,k,iNH4) = DBio(i,k,iNH4) - xi * NHup * dtdays
 
-!-----------------------------------------------------------------------
-!  Change in concentration of large phytoplankton
-!-----------------------------------------------------------------------
-! 
-#ifdef DENMAN   
+              !-------------------------------------------------
+              !  Change in concentration of large phytoplankton
+              !-------------------------------------------------
+!
+#ifdef DENMAN
               DBio(i,k,iPhL) =  DBio(i,k,iPhL)                          &
      &                        + Bio(i,k,iPhL)*cff3* dtdays
-#else     
+#else
               DBio(i,k,iPhL) = DBio(i,k,iPhL)                           &
      &                       + ( NOup + NHup ) * dtdays
-#endif    
-! 
-!-----------------------------------------------------------------------
-!  Primary production of large phytoplankton
-!-----------------------------------------------------------------------
-! 
-#ifdef PROD3    
+#endif
+
+              !--------------------------------------------
+              !  Primary production of large phytoplankton
+              !--------------------------------------------
+
+#ifdef PROD3
               Prod(i,k,iPhLprd) = Prod(i,k,iPhLprd) + DBio(i,k,iPhL)
 
 #endif
 #ifdef IRON_LIMIT
-!-----------------------------------------------------------------------
-!  Change in iron concentration
-!-----------------------------------------------------------------------
+              !-------------------------------
+              !  Change in iron concentration
+              !-------------------------------
               DBio(i,k,iFe) = DBio(i,k,iFe) - FeC * NOup * dtdays
 #endif
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iNO3,iPhL) = bflx(iNO3,iPhL) + NOup*xi* dtdays 
+                bflx(iNO3,iPhL) = bflx(iNO3,iPhL) + NOup*xi* dtdays
                 bflx(iNH4,iPhL) = bflx(iNH4,iPhL) + NHup*xi* dtdays
               END IF
 #endif
             END DO
           END DO
 
-!=======================================================================
-! Grazing by MZS
-!=======================================================================
+          !=================
+          ! Grazing by MZS
+          !=================
 !         DO k=1,N(ng)
 !           DO i=Istr,Iend
-!       
-!-----------------------------------------------------------------------
-!  Food preferences
-!-----------------------------------------------------------------------
+
+              !-------------------
+              !  Food preferences
+              !-------------------
 !             cff1 = fpPhSMZS * Bio(i,k,iPhS)**2                        &
 !    &             + fpPhLMZS * Bio(i,k,iPhL)**2
-!     
-!-----------------------------------------------------------------------
-!  Food consumption
-!-----------------------------------------------------------------------
+!
+              !-------------------
+              !  Food consumption
+              !-------------------
 !             cff2 = eMZS * Bio(i,k,iMZS) / (fMZS**2 + cff1)
 !             cff2 = eMZS * Bio(i,k,iMZS) / (fMZS + cff1)
 !
-!-----------------------------------------------------------------------
-!  Temperature correction
-!-----------------------------------------------------------------------
-!             cff3 = Q10MZS ** ( (Bio(i,k,itemp)-Q10MZST)/ 10.0_r8)    
+              !-------------------------
+              !  Temperature correction
+              !-------------------------
+!             cff3 = Q10MZS ** ( (Bio(i,k,itemp)-Q10MZST)/ 10.0_r8)
 !             cff3 =1.0_r8
 !
-!                 
-!-----------------------------------------------------------------------
-!  Change in small and large phytoplankton due to predation
-!-----------------------------------------------------------------------
+              !----------------------------------------------------------
+              !  Change in small and large phytoplankton due to predation
+              !----------------------------------------------------------
 !             DBio(i,k,iPhS) = DBio(i,k,iPhS) - fpPhSMZS *              &
 !    &                        (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays
 !             DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLMZS *              &
 !    &                        (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays
-!                     
-!-----------------------------------------------------------------------  
-!  Growth of small microzooplankton due to consumption
-!-----------------------------------------------------------------------
+!
+              !-----------------------------------------------------
+              !  Growth of small microzooplankton due to consumption
+              !-----------------------------------------------------
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) +                         &
 !    &                         gammaMZS * cff1 * cff2 * cff3 * dtdays
-!     
-!      
+!
+!
 !#ifdef PROD3
-!-----------------------------------------------------------------------
-!  Production for small microzooplankton
-!-----------------------------------------------------------------------
+              !---------------------------------------
+              !  Production for small microzooplankton
+              !---------------------------------------
 !             Prod(i,k,iMZSprd) = Prod(i,k,iMZSprd) + DBio(i,k,iMZS)
-!#endif     
-!-----------------------------------------------------------------------
-!  Additions to detritus pool - unassimilated food
-!-----------------------------------------------------------------------
+!#endif
+              !--------------------------------------------------
+              !  Additions to detritus pool - unassimilated food
+              !--------------------------------------------------
 !             DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
 !    &              (1.0_r8 - gammaMZS) * cff1 * cff2 * cff3 * dtdays
-!     
+!
 !#if defined BIOFLUX && defined BEST_NPZ
 !             IF (i.eq.3.and.j.eq.3) THEN
 !
-!               bflx(iPhS,iMZS) = bflx(iPhS,iMZS) +                     &            
+!               bflx(iPhS,iMZS) = bflx(iPhS,iMZS) +                     &
 !    &          fpPhSMZS * (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi
-!     
+!
 !               bflx(iPhL,iMZS) = bflx(iPhL,iMZS) +                     &
 !    &          fpPhLMZS * (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays*xi
-!       
-!     
+!
+!
 !               bflx(iMZS,iDet) = bflx(iMZS,iDet)  +                    &
 !    &          ( 1.0_r8-gammaMZS )*cff1*cff2* cff3 * dtdays*xi
 !             END IF
@@ -1542,73 +1552,73 @@
 !           END DO
 !         END DO
 
-!========================================================================
-! Grazing by MZL
-!========================================================================
+          !================
+          ! Grazing by MZL
+          !================
           DO k=1,N(ng)
             DO i=Istr,Iend
-        
-!-----------------------------------------------------------------------
-!  Food preferences
-!-----------------------------------------------------------------------
+
+              !--------------------
+              !  Food preferences
+              !--------------------
               cff1 = fpPhSMZL * Bio(i,k,iPhS)**2                        &
-     &             + fpPhLMZL * Bio(i,k,iPhL)**2                   
+     &             + fpPhLMZL * Bio(i,k,iPhL)**2
 !    &             + fpMZSMZL * Bio(i,k,iMZS)**2
-     
-!-----------------------------------------------------------------------
-! Food consumption
-!-----------------------------------------------------------------------
+
+              !------------------
+              ! Food consumption
+              !------------------
 !             cff2 = eMZL * Bio(i,k,iMZL) / (fMZL**2 + cff1)
               cff2 = Bio(i,k,iMZL) / (fMZL + cff1)
-!               
-!-----------------------------------------------------------------------
-!  Temperature correction
-!-----------------------------------------------------------------------
+
+              !-------------------------
+              !  Temperature correction
+              !-------------------------
               cff3= eMZL *Q10MZL**((Bio(i,k,itemp)-Q10MZLT)/10.0_r8)
 !             cff3= max(0.6_r8,cff3)
 !             cff3= 1.0_r8
 
-!-----------------------------------------------------------------------
-!  Change in small and large phytoplankton due to predation
-!-----------------------------------------------------------------------
-! 
+              !----------------------------------------------------------
+              !  Change in small and large phytoplankton due to predation
+              !----------------------------------------------------------
+!
               DBio(i,k,iPhS) = DBio(i,k,iPhS) - fpPhSMZL *              &
      &                        (Bio(i,k,iPhS)**2) * cff2 * cff3* dtdays
               DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLMZL *              &
      &                        (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) - fpMZSMZL *              &
 !    &                        (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays
-     
-!-----------------------------------------------------------------------
-!  Growth of large microzooplankton
-!-----------------------------------------------------------------------
+
+              !----------------------------------
+              !  Growth of large microzooplankton
+              !----------------------------------
               DBio(i,k,iMZL) = DBio(i,k,iMZL) +                         &
      &                         gammaMZL * cff1 * cff2 * cff3 * dtdays
-          
+
 #ifdef PROD3
-!-----------------------------------------------------------------------
-!  Production of large microzooplankton
-!-----------------------------------------------------------------------     
+              !---------------------------------------
+              !  Production of large microzooplankton
+              !---------------------------------------
               Prod(i,k,iMZLprd) = Prod(i,k,iMZLprd)                     &
      &                + gammaMZL * cff1 * cff2 * cff3 * dtdays
-#endif     
-!-----------------------------------------------------------------------
-!  Additions to detritus pool - unassimilated food
-!-----------------------------------------------------------------------
+#endif
+              !--------------------------------------------------
+              !  Additions to detritus pool - unassimilated food
+              !--------------------------------------------------
               DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
      &          (1.0_r8 - gammaMZL) * cff1 * cff2 * cff3 * dtdays
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iPhS,iMZL) = bflx(iPhS,iMZL) +                     &
      &          fpPhSMZL * (Bio(i,k,iPhS)**2) * cff2 * cff3* dtdays*xi
-     
+
                 bflx(iPhL,iMZL) = bflx(iPhL,iMZL) +                     &
      &          fpPhLMZL *  (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays*xi
 !                    bflx(iMZS,iMZL) = bflx(iPhL,iMZL) +                &
 !    &               fpMZSMZL * (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays*xi
-        
-  
+
+
 
                 bflx(iMZL,iDet) = bflx(iMZL,iDet)  +                    &
      &                ( 1.0_r8-gammaMZL )*cff1*cff2* cff3 * dtdays*xi
@@ -1617,23 +1627,23 @@
             END DO
           END DO
 
-!===========================================================================
-! Grazing and Predation by Copepods
-!===========================================================================
+          !===================================
+          ! Grazing and Predation by Copepods
+          !===================================
           DO k=1,N(ng)
             DO i=Istr,Iend
-        
-!-----------------------------------------------------------------------
-!Food preferences
-!-----------------------------------------------------------------------
-! 
-#ifdef ICE_BIO  
+
+              !-----------------
+              !Food preferences
+              !-----------------
+!
+#ifdef ICE_BIO
               if(k.eq.N(ng)) THEN
                 cff1 = fpPhSCop * Bio(i,k,iPhS)**2                      &
      &               + fpPhLCop * Bio(i,k,iPhL)**2                      &
 !    &               + fpMZSCop * Bio(i,k,iMZS)**2                      &
      &               + fpMZLCop * Bio(i,k,iMZL)**2                      &
-# ifdef CLIM_ICE_1D     
+# ifdef CLIM_ICE_1D
      &               + fpPhLCop* (BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
 # elif defined BERING_10K
      &               + fpPhLCop* (IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
@@ -1642,55 +1652,55 @@
                 cff1 = fpPhSCop * Bio(i,k,iPhS)**2                      &
      &               + fpPhLCop * Bio(i,k,iPhL)**2                      &
 !    &               + fpMZSCop * Bio(i,k,iMZS)**2                      &
-     &               + fpMZLCop * Bio(i,k,iMZL)**2     
+     &               + fpMZLCop * Bio(i,k,iMZL)**2
               endif
 #else
               cff1 = fpPhSCop * Bio(i,k,iPhS)**2                        &
      &               + fpPhLCop * Bio(i,k,iPhL)**2                      &
 !    &               + fpMZSCop * Bio(i,k,iMZS)**2                      &
-     &               + fpMZLCop * Bio(i,k,iMZL)**2     
+     &               + fpMZLCop * Bio(i,k,iMZL)**2
 #endif
 
-!-----------------------------------------------------------------------
-!  Food consumption
-!-----------------------------------------------------------------------
+              !-------------------
+              !  Food consumption
+              !-------------------
 !             cff2 = eCop * Bio(i,k,iCop) / (fCop**2 + cff1)
               cff2 = eCop * Bio(i,k,iCop) / (fCop + cff1)
-!         
-!-----------------------------------------------------------------------
-!  Temperature correction
-!-----------------------------------------------------------------------
-! 
+
+              !-------------------------
+              !  Temperature correction
+              !-------------------------
+
               cff3 = Q10Cop ** ( (Bio(i,k,itemp)-Q10CopT)/10.0_r8)
 !             cff3=1.0_r8
-! 
-!-----------------------------------------------------------------------
-!  Growth of small copepods
-!-----------------------------------------------------------------------
+
+              !--------------------------
+              !  Growth of small copepods
+              !--------------------------
               DBio(i,k,iCop) = DBio(i,k,iCop) +                         &
      &                        gammaCop * cff1 * cff2 * cff3 * dtdays
 
 #ifdef STATIONARY
               if(i.eq.2)THEN
-                if(j.eq.2)THEN     
+                if(j.eq.2)THEN
 !                 Stat3(i,k,3)=gammaCop * cff1 * cff2 * cff3 * dtdays
                 endif
               endif
 #endif
-! 
-!-----------------------------------------------------------------------
-!  Copepod production  iCop=9
-!-----------------------------------------------------------------------
-! 
+
+              !-----------------------------
+              !  Copepod production  iCop=9
+              !-----------------------------
+
 #ifdef PROD3
               Prod(i,k,iCopprd) = Prod(i,k,iCopprd)                     &
      &            + gammaCop * cff1 * cff2 * cff3 * dtdays
-    
-#endif           
-!-----------------------------------------------------------------------
-!Changes in prey concentration due to predation
-!-----------------------------------------------------------------------
-! 
+
+#endif
+              !----------------------------------------------
+              !Changes in prey concentration due to predation
+              !----------------------------------------------
+
               DBio(i,k,iPhS) = DBio(i,k,iPhS) -  fpPhSCop               &
      &                * (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iPhL) = DBio(i,k,iPhL) -  fpPhLCop               &
@@ -1699,43 +1709,43 @@
 !    &                * (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iMZL) = DBio(i,k,iMZL) -  fpMZLCop               &
      &                * (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays
-     
-#ifdef ICE_BIO     
+
+#ifdef ICE_BIO
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)-fpPhLCop *            &
-# ifdef CLIM_ICE_1D     
+# ifdef CLIM_ICE_1D
      &        (BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 * cff2 * cff3    &
      &           * dtdays*Hz(i,j,N(ng))/aidz
-# elif defined BERING_10K     
+# elif defined BERING_10K
      &        (IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2 * cff2 * cff3    &
      &           * dtdays *Hz(i,j,N(ng))/aidz
-# endif 
+# endif
 #endif
-     
-        
-!-----------------------------------------------------------------------
-!  Additions to detritus pool - unassimilated food
-!-----------------------------------------------------------------------
-! 
+
+
+              !--------------------------------------------------
+              !  Additions to detritus pool - unassimilated food
+              !--------------------------------------------------
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &            (1.0_r8 - gammaCop) * cff1 * cff2 * cff3 * dtdays
 
 
 
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iPhS,iCop)=bflx(iPhS,iCop) + fpPhSCop *            &
      &              (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi
-     
+
                 bflx(iPhL,iCop)=bflx(iPhL,iCop) + fpPhLCop  *           &
      &              (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays*xi
-        
+
                 bflx(iMZS,iCop)=bflx(iMZS,iCop)+fpMZSCop  *             &
      &              (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays*xi
 
                 bflx(iMZL,iCop)=bflx(iMZL,iCop)+fpMZLCop  *             &
      &              (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays*xi
-                    
+
                 bflx(iCop,iDetF) = bflx(iCop,iDetF) +                   &
      &              ( 1.0_r8-gammaCop )*cff1*cff2*cff3 * dtdays*xi
               END IF
@@ -1754,32 +1764,32 @@
 !g   &         + Hz(i,j,N(ng))*(fpPhLCop*                               &
 !g   &       (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
 !g#endif
-!g      
+!g
 !g        END DO
 !g
-!g#endif    
+!g#endif
 
-!========================================================================
-! Grazing and Predation by NCa initiated ON the shelf
-!========================================================================
+          !=====================================================
+          ! Grazing and Predation by NCa initiated ON the shelf
+          !=====================================================
           DO k=1,N(ng)
             DO i=Istr,Iend
-#ifdef ICE_BIO        
+#ifdef ICE_BIO
               if(k.eq.N(ng))THEN
-!                 
-!-----------------------------------------------------------------------
-!  Food preferences
-!-----------------------------------------------------------------------
-! 
+
+                !------------------
+                !  Food preferences
+                !------------------
+
                 cff1 = fpPhSNCa * Bio(i,k,iPhS)**2                 &
      &                 + fpPhLNCa * Bio(i,k,iPhL)**2               &
 !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2               &
      &                 + fpMZLNCa * Bio(i,k,iMZL)**2               &
-# ifdef CLIM_ICE_1D 
-     &                 + fpPhLNCa*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 
+# ifdef CLIM_ICE_1D
+     &                 + fpPhLNCa*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
 # elif defined BERING_10K
-     &                 + fpPhLNCa*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2 
-# endif    
+     &                 + fpPhLNCa*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
+# endif
 
               else
                 cff1 = fpPhSNCa * Bio(i,k,iPhS)**2                 &
@@ -1796,78 +1806,78 @@
      &                 + fpMZLNCa * Bio(i,k,iMZL)**2
 
 #endif
-     
-!-----------------------------------------------------------------------
-!Food consumption
-!-----------------------------------------------------------------------
-!      
+
+              !-----------------
+              !Food consumption
+              !-----------------
+
 !             cff2 = eNCa * Bio(i,k,iNCaS) / (fNCa**2 + cff1)
               cff2 = eCM * Bio(i,k,iNCaS) / (fNCa + cff1)
-!               
-!-----------------------------------------------------------------------
-!Temperature correction 
-!-----------------------------------------------------------------------
-! 
-              cff3 = Q10NCa ** ( (Bio(i,k,itemp)-Q10NCaT)/10.0_r8) 
-     
-!-----------------------------------------------------------------------
-!  Growth of Neocalanus
-!-----------------------------------------------------------------------
+
+              !-----------------------
+              !Temperature correction
+              !-----------------------
+
+              cff3 = Q10NCa ** ( (Bio(i,k,itemp)-Q10NCaT)/10.0_r8)
+
+              !-----------------------
+              !  Growth of Neocalanus
+              !-----------------------
               DBio(i,k,iNCaS) = DBio(i,k,iNCaS) +                       &
      &                     gammaNCa * cff1 * cff2 * cff3 * dtdays
-                 
 
-!-----------------------------------------------------------------------
-!Neocalanus production  iNCaS=10
-!-----------------------------------------------------------------------
-! 
-#ifdef PROD3     
+
+              !--------------------------------
+              !Neocalanus production  iNCaS=10
+              !--------------------------------
+!
+#ifdef PROD3
               Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) +                   &
      &             gammaNCa * cff1 * cff2 * cff3 * dtdays
-          
-#endif     
-!-----------------------------------------------------------------------
-!  Changes in prey concentration due to predation
-!-----------------------------------------------------------------------
-! 
+
+#endif
+              !-------------------------------------------------
+              !  Changes in prey concentration due to predation
+              !-------------------------------------------------
+
               DBio(i,k,iPhS) = DBio(i,k,iPhS) -                         &
      &           fpPhSNCa * (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays
                  DBio(i,k,iPhL) = DBio(i,k,iPhL) -                      &
-     &           fpPhLNCa * (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays     
+     &           fpPhLNCa * (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
 !    &           fpMZSNCa * (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays
                  DBio(i,k,iMZL) = DBio(i,k,iMZL) -                      &
      &           fpMZLNCa * (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays
 
 
-#ifdef ICE_BIO     
+#ifdef ICE_BIO
               DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) - fpPhLNCa *        &
-# ifdef CLIM_ICE_1D     
+# ifdef CLIM_ICE_1D
      &          (BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 * cff2 *       &
      &          cff3 * dtdays *Hz(i,j,N(ng))/aidz
-# elif defined BERING_10K     
+# elif defined BERING_10K
      &          (IcePhL(i,j,nstp) * aidz/Hz(i,j,N(ng)))**2 * cff2 *     &
      &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
-# endif 
+# endif
 #endif
-         
-!-----------------------------------------------------------------------
-!  Additions to Fast Sinking detritus pool - unassimilated food
-!-----------------------------------------------------------------------
+
+              !--------------------------------------------------------------
+              !  Additions to Fast Sinking detritus pool - unassimilated food
+              !--------------------------------------------------------------
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaNCa) * cff1 * cff2 * cff3 * dtdays
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iPhS,iNCaS) = bflx(iPhS,iNCaS) + fpPhSNCa *        &
      &            (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays*xi
                 bflx(iPhL,iNCaS) = bflx(iPhL,iNCaS) + fpPhLNCa *        &
      &            (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays*xi
-                bflx(iMZS,iNCaS) = bflx(iMZS,iNCaS) + fpMZSNCa *        & 
+                bflx(iMZS,iNCaS) = bflx(iMZS,iNCaS) + fpMZSNCa *        &
      &            (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays*xi
                 bflx(iMZL,iNCaS) = bflx(iMZL,iNCaS) + fpMZLNCa *        &
      &            (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays*xi
-                
+
      &          bflx(iNCaS,iDetF) = bflx(iNCaS,iDetF) +                 &
                   ( 1.0_r8-gammaNCa )*cff1*cff2* cff3 * dtdays*xi
               END IF
@@ -1877,31 +1887,31 @@
 
 !g#ifdef ICE_BIO
 !g        DO i=Istr,Iend
-!g       
+!g
 !g          DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) - Hz(i,j,N(ng)) *     &
 !g            (fpPhLNCa*(BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 *      &
 !g            cff3 * dtdays)
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
+!g#if defined BIOFLUX && defined BEST_NPZ
 !g          bflx(NT(ng)+3,iNCaS)= bflx(NT(ng)+3,iNCaS)                  &
 !g   &        + Hz(i,j,N(ng))*(fpPhLNCa*                                &
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
 !g#endif
-!g      
+!g
 !g
 !g
 !g        END DO
 !g#endif
 
-!=========================================================================
-! Grazing and Predation by Euphuasiids initiated ON the shelf
-!=========================================================================
+          !============================================================
+          ! Grazing and Predation by Euphuasiids initiated ON the shelf
+          !============================================================
           DO k=1,N(ng)
             DO i=Istr,Iend
-        
-!-----------------------------------------------------------------------
-!Food preferences
-!-----------------------------------------------------------------------
+
+              !-----------------
+              !Food preferences
+              !-----------------
 #ifdef ICE_BIO
               if(k.eq.N(ng))THEN
                 cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
@@ -1909,60 +1919,61 @@
 !    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
      &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
      &               + fpCopEup * Bio(i,k,iCop)**2                      &
-# ifdef CLIM_ICE_1D 
-     &               + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 
-# elif defined BERING_10K     
-     &               + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2 
-# endif   
+# ifdef CLIM_ICE_1D
+     &               + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
+# elif defined BERING_10K
+     &               + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
+# endif
               else
-    
+
                 cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
      &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
 !    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
      &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2                      
-     
+     &               + fpCopEup * Bio(i,k,iCop)**2
+
               endif
 #else
               cff1 = fpPhSEup * Bio(i,k,iPhS)**2                       &
      &               + fpPhLEup * Bio(i,k,iPhL)**2                     &
 !    &               + fpMZSEup * Bio(i,k,iMZS)**2                     &
      &               + fpMZLEup * Bio(i,k,iMZL)**2                     &
-     &               + fpCopEup * Bio(i,k,iCop)**2  
+     &               + fpCopEup * Bio(i,k,iCop)**2
 #endif
 
-!-----------------------------------------------------------------------
-!  Food consumption
-!-----------------------------------------------------------------------
-! 
+              !-------------------
+              !  Food consumption
+              !-------------------
+
 !             cff2 = eEup * Bio(i,k,iEupS) / (fEup**2 + cff1)
               cff2 = eEup * Bio(i,k,iEupS) / (fEup + cff1)
-    
-!-----------------------------------------------------------------------
-!  Temperature correction 
-!-----------------------------------------------------------------------
-! 
+
+              !-------------------------
+              !  Temperature correction
+              !-------------------------
+
               cff3 = Q10Eup ** ( (Bio(i,k,itemp)-Q10EupT) / 10.0_r8 )
-    
-!-----------------------------------------------------------------------
-!  Growth of Euphausiids
-!-----------------------------------------------------------------------
-    
+
+              !------------------------
+              !  Growth of Euphausiids
+              !------------------------
+
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
      &          gammaEup * cff1 * cff2 * cff3 * dtdays
-    
 
-!-----------------------------------------------------------------------
-!  Euphausiid production   iEupS=11
-!-----------------------------------------------------------------------
-#ifdef PROD3    
+
+              !-----------------------------------
+              !  Euphausiid production   iEupS=11
+              !-----------------------------------
+#ifdef PROD3
               Prod(i,k,iEupprd) = Prod(i,k,iEupprd) +                   &
      &          gammaEup * cff1 * cff2 * cff3 * dtdays
-          
-#endif    
-!-----------------------------------------------------------------------
-!  Changes in prey concentration due to predation
-!-----------------------------------------------------------------------
+
+#endif
+              !-------------------------------------------------
+              !  Changes in prey concentration due to predation
+              !-------------------------------------------------
+
               DBio(i,k,iPhS) = DBio(i,k,iPhS) - fpPhSEup *              &
      &          (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLEup *              &
@@ -1973,25 +1984,25 @@
      &          (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iCop) = DBio(i,k,iCop) - fpCopEup *              &
      &          (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays
- 
-#ifdef ICE_BIO     
+
+#ifdef ICE_BIO
               DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) - fpPhLEup *        &
-# ifdef CLIM_ICE_1D     
+# ifdef CLIM_ICE_1D
      &          (BioBI(i,iIcePhL)* aidz/Hz(i,j,N(ng)))**2 * cff2 *      &
      &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
-# elif defined BERING_10K     
+# elif defined BERING_10K
      &          (IcePhL(i,j,nstp)* aidz/Hz(i,j,N(ng)))**2 * cff2 *      &
      &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
-# endif 
+# endif
 #endif
-!                     
-!-----------------------------------------------------------------------
-! Additions to Fast Sinking detritus pool- unassimilated food
-!-----------------------------------------------------------------------
-! 
+
+              !------------------------------------------------------------
+              ! Additions to Fast Sinking detritus pool- unassimilated food
+              !------------------------------------------------------------
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * dtdays
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iPhS,iEupS) = bflx(iPhS,iEupS) + fpPhSEup *        &
@@ -2004,54 +2015,54 @@
      &            (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays*xi
                 bflx(iCop,iEupS) = bflx(iCop,iEupS) + fpCopEup *        &
      &            (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays*xi
-                   
+
                 bflx(iEupS,iDetF) = bflx(iEupS,iDetF) +                 &
      &            ( 1.0_r8-gammaEup )*cff1*cff2* cff3 * dtdays*xi
               END IF
 #endif
             END DO
           END DO
-     
+
 !g#ifdef ICE_BIO
 !g        DO i=Istr,Iend
 !g          DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) -                     &
 !g   &        Hz(i,j,N(ng))*(fpPhLEup*                                  &
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
+!g#if defined BIOFLUX && defined BEST_NPZ
 !g          bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupS)                  &
 !g   &        + Hz(i,j,N(ng))*(fpPhLEup*                                &
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
 !g#endif
-!g      
+!g
 !g        END DO
-!g#endif     
-!========================================================================
-! Grazing and Predation by NCa initiated OFF the shelf
-!========================================================================
+!g#endif
+          !======================================================
+          ! Grazing and Predation by NCa initiated OFF the shelf
+          !======================================================
           DO k=1,N(ng)
             DO i=Istr,Iend
-        
-!-----------------------------------------------------------------------
-!  Food preferences
-!-----------------------------------------------------------------------
+
+              !-------------------
+              !  Food preferences
+              !-------------------
 
 #ifdef ICE_BIO
               if(k.eq.N(ng))THEN
-!                 
-!-----------------------------------------------------------------------
-!Food preferences
-!-----------------------------------------------------------------------
-! 
+
+                !-----------------
+                !Food preferences
+                !-----------------
+
                 cff1 = fpPhSNCa * Bio(i,k,iPhS)**2                      &
      &                 + fpPhLNCa * Bio(i,k,iPhL)**2                    &
 !    &                 + fpMZSNCa * Bio(i,k,iMZS)**2                    &
      &                 + fpMZLNCa * Bio(i,k,iMZL)**2                    &
-# ifdef CLIM_ICE_1D 
-     &                 + fpPhLNCa *(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 
-# elif defined BERING_10K    
-     &                 + fpPhLNCa* (IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2 
-# endif     
+# ifdef CLIM_ICE_1D
+     &                 + fpPhLNCa *(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
+# elif defined BERING_10K
+     &                 + fpPhLNCa* (IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
+# endif
               else
                 cff1 = fpPhSNCa * Bio(i,k,iPhS)**2                      &
      &                 + fpPhLNCa * Bio(i,k,iPhL)**2                    &
@@ -2066,38 +2077,38 @@
      &                 + fpMZLNCa * Bio(i,k,iMZL)**2
 
 #endif
-     
-!-----------------------------------------------------------------------
-!  Food consumption
-!-----------------------------------------------------------------------
-     
+
+              !-------------------
+              !  Food consumption
+              !-------------------
+
 !             cff2 = eNCa * Bio(i,k,iNCaO) / (fNCa**2 + cff1)
               cff2 = eNC * Bio(i,k,iNCaO) / (fNCa + cff1)
-              
-!-----------------------------------------------------------------------
-!  Temperature correction 
-!-----------------------------------------------------------------------
-              cff3 = Q10NCa ** ( (Bio(i,k,itemp)-Q10NCaT) / 10.0_r8 ) 
-     
-!-----------------------------------------------------------------------
-!  Growth of Neocalanus
-!-----------------------------------------------------------------------
+
+              !-------------------------
+              !  Temperature correction
+              !-------------------------
+              cff3 = Q10NCa ** ( (Bio(i,k,itemp)-Q10NCaT) / 10.0_r8 )
+
+              !----------------------
+              !  Growth of Neocalanus
+              !----------------------
               DBio(i,k,iNCaO) = DBio(i,k,iNCaO) +                       &
      &                        gammaNCa * cff1 * cff2 * cff3 * dtdays
-     
-                 
-#ifdef PROD3  
-!-----------------------------------------------------------------------
-!  Neocalanus production  iNCaO=12
-!-----------------------------------------------------------------------  
-               
+
+
+#ifdef PROD3
+              !----------------------------------
+              !  Neocalanus production  iNCaO=12
+              !----------------------------------
+
               Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) +                   &
      &               gammaNCa * cff1 * cff2 * cff3 * dtdays
-#endif     
-!-----------------------------------------------------------------------
-!  Changes in prey concentration due to predation
-!-----------------------------------------------------------------------
-!   
+#endif
+              !------------------------------------------------
+              !  Changes in prey concentration due to predation
+              !------------------------------------------------
+!
               DBio(i,k,iPhS) = DBio(i,k,iPhS) - fpPhSNCa *              &
      &          (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays
               DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLNCa *              &
@@ -2106,36 +2117,36 @@
 !    &          (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays
               DBio(i,k,iMZL) = DBio(i,k,iMZL) - fpMZLNCa *              &
      &          (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays
-     
-#ifdef ICE_BIO     
+
+#ifdef ICE_BIO
               DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) - fpPhLEup *        &
-# ifdef CLIM_ICE_1D     
+# ifdef CLIM_ICE_1D
      &          (BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 * cff2 * cff3  &
-     &          * dtdays*Hz(i,j,N(ng))/aidz 
-# elif defined BERING_10K     
+     &          * dtdays*Hz(i,j,N(ng))/aidz
+# elif defined BERING_10K
      &          (IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2 * cff2 *       &
      &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
-# endif 
+# endif
 #endif
-! 
-!-----------------------------------------------------------------------
-!  Additions to detritus pool - unassimilated food
-!-----------------------------------------------------------------------
-! 
+
+              !-------------------------------------------------
+              !  Additions to detritus pool - unassimilated food
+              !-------------------------------------------------
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaNCa) * cff1 * cff2 * cff3 * dtdays
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iPhS,iNCaO) = bflx(iPhS,iNCaO) + fpPhSNCa *        &
-     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays*xi          
+     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 *dtdays*xi
                 bflx(iPhL,iNCaO) = bflx(iPhL,iNCaO) + fpPhLNCa *        &
-     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays *xi        
+     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 *dtdays *xi
                 bflx(iMZS,iNCaO) = bflx(iMZS,iNCaO) + fpMZSNCa *        &
-     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays *xi       
+     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 *dtdays *xi
                 bflx(iMZL,iNCaO) = bflx(iMZL,iNCaO) + fpMZLNCa *        &
-     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays*xi          
-               
+     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 *dtdays*xi
+
                 bflx(iNCaO,iDetF) = bflx(iNCaO,iDetF) +                 &
      &               ( 1.0_r8-gammaNCa )*cff1*cff2* cff3 * dtdays*xi
               END IF
@@ -2143,31 +2154,31 @@
             END DO
           END DO
 
-!g#ifdef ICE_BIO         
+!g#ifdef ICE_BIO
 !g        DO i=Istr,Iend
 !g          DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) -                     &
 !g   &        Hz(i,j,N(ng))*(fpPhLNCa*                                  &
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
 !g
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
+!g#if defined BIOFLUX && defined BEST_NPZ
 !g          bflx(NT(ng)+3,iNCaO)= bflx(NT(ng)+3,iNCaO)                  &
 !g   &        + Hz(i,j,N(ng))*(fpPhLNCa*                                &
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
 !g#endif
-!g 
+!g
 !g        END DO
 !g#endif
-!=========================================================================
-! Grazing and Predation by Euphuasiids initiated OFF the shelf
-!=========================================================================
+          !=============================================================
+          ! Grazing and Predation by Euphuasiids initiated OFF the shelf
+          !=============================================================
           DO k=1,N(ng)
             DO i=Istr,Iend
-        
-!-----------------------------------------------------------------------
-!  Food preferences
-!-----------------------------------------------------------------------
-! 
+
+              !-------------------
+              !  Food preferences
+              !-------------------
+!
 #ifdef ICE_BIO
               if(k.eq.N(ng))THEN
                 cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
@@ -2175,63 +2186,63 @@
 !    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
      &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
      &               + fpCopEup * Bio(i,k,iCop)**2                      &
-# ifdef CLIM_ICE_1D    
-     &               + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 
-# elif defined BERING_10K     
+# ifdef CLIM_ICE_1D
+     &               + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
+# elif defined BERING_10K
      &               + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
 # endif
-    
+
               else
-     
+
                 cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
      &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
 !    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
      &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2                      
-    
+     &               + fpCopEup * Bio(i,k,iCop)**2
+
               endif
 #else
               cff1 = fpPhSEup * Bio(i,k,iPhS)**2                        &
      &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
 !    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
      &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2 
+     &               + fpCopEup * Bio(i,k,iCop)**2
 #endif
- 
-               
-!-----------------------------------------------------------------------
-!Food consumption
-!-----------------------------------------------------------------------
-! 
+
+
+              !----------------
+              !Food consumption
+              !----------------
+
 !             cff2 = eEup * Bio(i,k,iEupO) / (fEup**2 + cff1)
               cff2 = eEup * Bio(i,k,iEupO) / (fEup + cff1)
-    
-!-----------------------------------------------------------------------
-!  Temperature correction 
-!-----------------------------------------------------------------------
-! 
+
+              !------------------------
+              !  Temperature correction
+              !------------------------
+
               cff3 = Q10Eup ** ( (Bio(i,k,itemp)-Q10EupT) / 10.0_r8 )
-    
-!-----------------------------------------------------------------------
-!Growth of Euphausiids
-!-----------------------------------------------------------------------
-    
+
+              !----------------------
+              !Growth of Euphausiids
+              !----------------------
+
               DBio(i,k,iEupO) = DBio(i,k,iEupO) +                       &
      &          gammaEup * cff1 * cff2 * cff3 * dtdays
-    
-!-----------------------------------------------------------------------
-!  Euphausiid production
-!-----------------------------------------------------------------------
-#ifdef PROD3    
-              
+
+              !------------------------
+              !  Euphausiid production
+              !------------------------
+#ifdef PROD3
+
               Prod(i,k,iEupprd) = Prod(i,k,iEupprd) +                   &
      &          gammaEup * cff1 * cff2 * cff3 * dtdays
-              
-#endif    
-!-----------------------------------------------------------------------
-!  Changes in prey concentration due to predation
-!-----------------------------------------------------------------------
-! 
+
+#endif
+              !-------------------------------------------------
+              !  Changes in prey concentration due to predation
+              !-------------------------------------------------
+
               DBio(i,k,iPhS) = DBio(i,k,iPhS) - fpPhSEup *              &
      &          (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLEup *              &
@@ -2242,124 +2253,125 @@
      &          (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iCop) = DBio(i,k,iCop) - fpCopEup *              &
      &          (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays
-  
-#ifdef ICE_BIO     
+
+#ifdef ICE_BIO
               DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) - fpPhLEup *        &
-# ifdef CLIM_ICE_1D     
+# ifdef CLIM_ICE_1D
      &          (BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 * cff2 *       &
-     &          cff3 * dtdays*Hz(i,j,N(ng))/aidz 
-# elif defined BERING_10K     
+     &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
+# elif defined BERING_10K
      &          (IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2 * cff2 *       &
      &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
-# endif 
+# endif
 #endif
-      
-!-----------------------------------------------------------------------
-!  Additions to detritus pool- unassimilated food
-!-----------------------------------------------------------------------
+
+              !-------------------------------------------------
+              !  Additions to detritus pool- unassimilated food
+              !-------------------------------------------------
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * dtdays
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iPhS,iEupO) = bflx(iPhS,iEupO) + fpPhSEup *        &
-     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi               
+     &            (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays*xi
                 bflx(iPhL,iEupO) = bflx(iPhL,iEupO) + fpPhLEup *        &
-     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays  *xi             
+     &            (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays  *xi
                 bflx(iMZS,iEupO) = bflx(iMZS,iEupO) + fpMZSEup *        &
-     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays  *xi            
+     &            (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays  *xi
                 bflx(iMZL,iEupO) = bflx(iMZL,iEupO) + fpMZLEup *        &
-     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays *xi             
+     &            (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays *xi
                 bflx(iCop,iEupO) = bflx(iCop,iEupO) + fpCopEup *        &
-     &            (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays*xi             
-              
+     &            (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays*xi
+
                 bflx(iEupO,iDetF) = bflx(iEupO,iDetF) +                 &
      &                 ( 1.0_r8-gammaEup )*cff1*cff2* cff3 * dtdays*xi
               END IF
 #endif
             END DO
-          END DO    
+          END DO
 
 #ifdef ICE_BIO
 !g        DO i=Istr,Iend
 !g          DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL)-Hz(i,j,N(ng)) *       &
 !g   &        (fpPhLEup*                                                &
-!g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays) 
+!g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays)
 !g
 !g
-!g#if defined BIOFLUX && defined BEST_NPZ           
+!g#if defined BIOFLUX && defined BEST_NPZ
 !g          bflx(NT(ng)+3,iEupO)= bflx(NT(ng)+3,iEupO)                  &
 !g   &        + Hz(i,j,N(ng))*(fpPhLEup*                                &
 !g   &        (BioBI(i,iIcePhL)/Hz(i,j,N(ng)))**2*cff2 * cff3 * dtdays*xi)
 !g#endif
-!g      
+!g
 !g        END DO
 #endif
 
-!=========================================================================
-! Grazing and Predation by Jellyfish
-!=========================================================================
+          !====================================
+          ! Grazing and Predation by Jellyfish
+          !====================================
 #ifdef JELLY
           DO k=1,N(ng)
             DO i=Istr,Iend
-               
-!-----------------------------------------------------------------------
-!  Food preferences
-!-----------------------------------------------------------------------
+
+              !------------------
+              !  Food preferences
+              !------------------
 
               cff1 = fpCopJel * Bio(i,k,iCop)**2 +                      &
      &               fpNCaJel * Bio(i,k,iNCaS)**2 +                     &
      &               fpNCaJel * Bio(i,k,iNCaO)**2 +                     &
      &               fpEupJel * Bio(i,k,iEupS)**2 +                     &
      &               fpEupJel * Bio(i,k,iEupO)**2
-     
-!-----------------------------------------------------------------------
-!  Food consumption 
-!-----------------------------------------------------------------------
-! 
-!  Linear
-! 
-!             cff2 = eJel 
-! 
-!  MM
-! 
+
+              !-------------------
+              !  Food consumption
+              !-------------------
+
+              !  Linear
+
+!             cff2 = eJel
+
+              !  MM
+
               cff2 = eJel * Bio(i,k,iJel) / (fJel + cff1)
 
-!-----------------------------------------------------------------------
-!  Temperature correction 
-!-----------------------------------------------------------------------
-! 
-              cff3= Q10Jele ** ((Bio(i,k,itemp)-Q10JelTe) / 10.0_r8)  
+              !------------------------
+              !  Temperature correction
+              !------------------------
+
+              cff3= Q10Jele ** ((Bio(i,k,itemp)-Q10JelTe) / 10.0_r8)
 !             cff3=1.0_r8
 
-!-----------------------------------------------------------------------
-!  Growth of Jellies
-!-----------------------------------------------------------------------  
-! 
+              !-------------------
+              !  Growth of Jellies
+              !-------------------
+
               DBio(i,k,iJel) =  DBio(i,k,iJel) +                        &
      &          gammaJel * cff1 * cff2 * cff3 * dtdays
-     
 
-!-----------------------------------------------------------------------
-!  Jellyfish production
-!-----------------------------------------------------------------------
-# ifdef PROD3   
+
+              !----------------------
+              !  Jellyfish production
+              !----------------------
+# ifdef PROD3
               Prod(i,k,iJelprd) = gammaJel * Prod(i,k,iJelprd) +        &
      &          gammaJel * cff1 * cff2 * cff3 * dtdays
-            
-# endif 
 
-# ifdef STATIONARY    
-              Stat3(i,k,16)= gammaJel *cff1 * cff2 * cff3 
+# endif
+
+# ifdef STATIONARY
+              Stat3(i,k,16)= gammaJel *cff1 * cff2 * cff3
 
               Stat3(i,k,11)=fpNCaJel * Bio(i,k,iNCaS)**2* cff2 * cff3 * dtdays
-          
+
 # endif
-    
-!-----------------------------------------------------------------------
-!  Changes in prey concentration due to predation
-!-----------------------------------------------------------------------
-    
+
+              !------------------------------------------------
+              !  Changes in prey concentration due to predation
+              !------------------------------------------------
+
               DBio(i,k,iCop) = DBio(i,k,iCop) - fpCopJel *              &
      &          Bio(i,k,iCop)**2 * cff2 * cff3 * dtdays
               DBio(i,k,iEupS) = DBio(i,k,iEupS) - fpEupJel *            &
@@ -2377,7 +2389,7 @@
 # if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iCop,iJel)  = bflx(iCop,iJel)  + fpCopJel *        &
-     &            Bio(i,k,iCop)**2*Bio(i,k,iJel)* cff2 * cff3 * dtdays*xi           
+     &            Bio(i,k,iCop)**2*Bio(i,k,iJel)* cff2 * cff3 * dtdays*xi
                 bflx(iNCaS,iJel) = bflx(iNCaS,iJel) + fpNCaJel *        &
      &            Bio(i,k,iNCaS)**2*Bio(i,k,iJel)*cff2 * cff3 * dtdays*xi
                 bflx(iEupS,iJel) = bflx(iEupS,iJel) + fpEupJel *        &
@@ -2385,7 +2397,7 @@
                 bflx(iNCaO,iJel) = bflx(iNCaO,iJel) + fpNCaJel *        &
      &            Bio(i,k,iNCaO)**2*Bio(i,k,iJel)*cff2 * cff3 * dtdays*xi
                 bflx(iEupO,iJel) = bflx(iEupO,iJel) + fpEupJel *        &
-     &            Bio(i,k,iEupO)*Bio(i,k,iJel)* cff2 * cff3 * dtdays*xi  
+     &            Bio(i,k,iEupO)*Bio(i,k,iJel)* cff2 * cff3 * dtdays*xi
                 bflx(iJel,iDetF) = bflx(iJel,iDetF) +                   &
      &            ( 1.0_r8-gammaJel) * cff1 * cff2 * cff3 *             &
      &            Bio(i,k,iJel) * dtdays*xi
@@ -2395,11 +2407,11 @@
             END DO
           END DO
 #endif
- 
-!=======================================================================
-! Phytoplankton Linear Mortality and Senescence Terms
-!=======================================================================
-! 
+
+          !=====================================================
+          ! Phytoplankton Linear Mortality and Senescence Terms
+          !=====================================================
+!
           DO k=1,N(ng)
             DO i=Istr,Iend
 !             cff1 = MAX( minmPhS , maxmPhS -                           &
@@ -2413,22 +2425,22 @@
               DBio(i,k,iPhL) = DBio(i,k,iPhL) -                     &
      &                         mPhL* Bio(i,k,iPhL) * dtdays
 
-#ifdef STATIONARY 
-              if(i.eq.2) THEN 
+#ifdef STATIONARY
+              if(i.eq.2) THEN
                 if(j.eq.2) THEN
 !                 Stat3(i,k,2)=  mPhS * dtdays * Bio(i,k,iPhL)
                 endif
               endif
-              if(i.eq.3) THEN  
+              if(i.eq.3) THEN
                 if(j.eq.3) THEN
 !                 Stat3(i,k,2)=  mPhL * dtdays * Bio(i,k,iPhL)
                 endif
               endif
 #endif
-!-----------------------------------------------------------------------
-!  Additions to detritus pool - phytoplankton mort
-!-----------------------------------------------------------------------
-                  
+              !--------------------------------------------------
+              !  Additions to detritus pool - phytoplankton mort
+              !--------------------------------------------------
+
               DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
      &                         ( mPhS * Bio(i,k,iPhS)) * dtdays
               DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
@@ -2443,149 +2455,149 @@
 #endif
             END DO
           END DO
-!           
-!=======================================================================
-!  Microzooplankton Mortality - use only linear OR QUADRATIC
-!=======================================================================
-! 
+
+          !============================================================
+          !  Microzooplankton Mortality - use only linear OR QUADRATIC
+          !============================================================
+
           DO k=1,N(ng)
             DO i=Istr,Iend
-        
-! 
-!  Linear   
-! 
+
+
+              !  Linear
+
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
 !     &                        mMZS * Bio(i,k,iMZS) * dtdays
 !             DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
 !     &                         mMZL * Bio(i,k,iMZL) * dtdays
-!
-!  Quadratic 
-!  
+
+              !  Quadratic
+
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
 !    &                         mpredMZS*dtdays*Bio(i,k,iMZS)**2
               DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
      &                         mpredMZL*dtdays*Bio(i,k,iMZL)**2
-         
+
 #ifdef STATIONARY
-              if(i.eq.2) THEN  
+              if(i.eq.2) THEN
                 if(j.eq.2) THEN
 !                 Stat3(i,k,7)=  mpredMZL*dtdays*Bio(i,k,iMZL)**2
                 endif
               endif
 #endif
-!-----------------------------------------------------------------------
-!  Additions to detritus pool - natural microzoo mortality
-!-----------------------------------------------------------------------
-! 
-!  if linear (George)
-! 
+              !----------------------------------------------------------
+              !  Additions to detritus pool - natural microzoo mortality
+              !----------------------------------------------------------
+
+              ! if linear (George)
+
 !             Bio(i,k,iDet) = DBio(i,k,iDet) +                          &
-!    &                        mMZL * Bio(i,k,iMZL) * dtdays   
-! 
-!  if quadratic (Ken)
-! 
+!    &                        mMZL * Bio(i,k,iMZL) * dtdays
+
+              ! if quadratic (Ken)
+
               DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
-      &                        (mpredMZL * Bio(i,k,iMZL)**2 ) * dtdays 
+      &                        (mpredMZL * Bio(i,k,iMZL)**2 ) * dtdays
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
 !               bflx(iMZS,iDet)= bflx(iMZS,iDet)                        &
-!     &           + mMZS * Bio(i,k,iMZS) * dtdays*xi  
-      
+!     &           + mMZS * Bio(i,k,iMZS) * dtdays*xi
+
                 bflx(iMZL,iDet)= bflx(iMZL,iDet)                        &
-     &            + mpredMZL*( Bio(i,k,iMZL)**2) * dtdays*xi  
+     &            + mpredMZL*( Bio(i,k,iMZL)**2) * dtdays*xi
               END IF
 #endif
             END DO
           END DO
 
-!=======================================================================
-!  Mesozooplankton Mortality (Closure terms)
-!=======================================================================
-! 
+          !============================================
+          !  Mesozooplankton Mortality (Closure terms)
+          !============================================
+
           DO k=1,N(ng)
             DO i=Istr,Iend
-               
+
               TFEup = Q10Eup ** ( (Bio(i,k,itemp)-Q10EupT) / 10.0_r8)
-          
+
 #ifdef fixedPRED
-              DBio(i,k,iCop)  = DBio(i,k,iCop)  - 0.5*Hz(i,j,k)/dtdays  
-              DBio(i,k,iNCaS) = DBio(i,k,iNCaS) - 0.5*Hz(i,j,k)/dtdays                 
-              DBio(i,k,iEupS) = DBio(i,k,iEupS) - 1  *Hz(i,j,k)/dtdays   
-              DBio(i,k,iNCaO) = DBio(i,k,iNCaS) - 0.5*Hz(i,j,k)/dtdays   
-              DBio(i,k,iEupO) = DBio(i,k,iEupS) - 1  *Hz(i,j,k)/dtdays     
-     
+              DBio(i,k,iCop)  = DBio(i,k,iCop)  - 0.5*Hz(i,j,k)/dtdays
+              DBio(i,k,iNCaS) = DBio(i,k,iNCaS) - 0.5*Hz(i,j,k)/dtdays
+              DBio(i,k,iEupS) = DBio(i,k,iEupS) - 1  *Hz(i,j,k)/dtdays
+              DBio(i,k,iNCaO) = DBio(i,k,iNCaS) - 0.5*Hz(i,j,k)/dtdays
+              DBio(i,k,iEupO) = DBio(i,k,iEupS) - 1  *Hz(i,j,k)/dtdays
+
 #else
 # ifdef FEAST
               predSumCop  = TFEup*(mpredCop + fpredCop  * GF%zoop_force(1,1,i,j,1))*Bio(i,k,iCop)**2
-              predSumNCaS = TFEup*(mpredNca + fpredNcaS * GF%zoop_force(1,2,i,j,1))*Bio(i,k,iNCaS)**2     
+              predSumNCaS = TFEup*(mpredNca + fpredNcaS * GF%zoop_force(1,2,i,j,1))*Bio(i,k,iNCaS)**2
               predSumEupS = TFEup*(mpredEup + fpredEupS * GF%zoop_force(1,4,i,j,1))*Bio(i,k,iEupS)**2
               predSumNCaO = TFEup*(mpredNca + fpredNcaO * GF%zoop_force(1,3,i,j,1))*Bio(i,k,iNCaO)**2
-              predSumEupO = TFEup*(mpredEup + fpredEupO * GF%zoop_force(1,5,i,j,1))*Bio(i,k,iEupO)**2  
+              predSumEupO = TFEup*(mpredEup + fpredEupO * GF%zoop_force(1,5,i,j,1))*Bio(i,k,iEupO)**2
 # else
               predSumCop  = TFEup*(mpredCop)*Bio(i,k,iCop)**2
-              predSumNCaS = TFEup*(mpredNca)*Bio(i,k,iNCaS)**2     
+              predSumNCaS = TFEup*(mpredNca)*Bio(i,k,iNCaS)**2
               predSumEupS = TFEup*(mpredEup)*Bio(i,k,iEupS)**2
               predSumNCaO = TFEup*(mpredNca)*Bio(i,k,iNCaO)**2
-              predSumEupO = TFEup*(mpredEup)*Bio(i,k,iEupO)**2  
+              predSumEupO = TFEup*(mpredEup)*Bio(i,k,iEupO)**2
 # endif
 
               DBio(i,k,iCop)  = DBio(i,k,iCop)  - predSumCop  * dtdays
-              DBio(i,k,iNCaS) = DBio(i,k,iNCaS) - predSumNCaS * dtdays               
-              DBio(i,k,iEupS) = DBio(i,k,iEupS) - predSumEupS * dtdays                   
-              DBio(i,k,iNCaO) = DBio(i,k,iNCaO) - predSumNCaO * dtdays                   
-              DBio(i,k,iEupO) = DBio(i,k,iEupO) - predSumEupO * dtdays                    
+              DBio(i,k,iNCaS) = DBio(i,k,iNCaS) - predSumNCaS * dtdays
+              DBio(i,k,iEupS) = DBio(i,k,iEupS) - predSumEupS * dtdays
+              DBio(i,k,iNCaO) = DBio(i,k,iNCaO) - predSumNCaO * dtdays
+              DBio(i,k,iEupO) = DBio(i,k,iEupO) - predSumEupO * dtdays
 #endif
 
 #ifdef FEAST
 # ifdef PROD3
               pt3(i,j,k,nnew,iQCopMort)  = predSumCop
               pt3(i,j,k,nnew,iQNCaSMort) = predSumNCaS
-              pt3(i,j,k,nnew,iQEupSMort) = predSumEupS 
+              pt3(i,j,k,nnew,iQEupSMort) = predSumEupS
               pt3(i,j,k,nnew,iQNCaOMort) = predSumNCaO
               pt3(i,j,k,nnew,iQEupOMort) = predSumEupO
 # endif
 #endif
 
-#ifdef STATIONARY     
-!g            Stat3(i,k,8)=TFEup*mpredNCa*dtdays*Bio(i,k,iNCaS)**2       
+#ifdef STATIONARY
+!g            Stat3(i,k,8)=TFEup*mpredNCa*dtdays*Bio(i,k,iNCaS)**2
 #endif
-          
-!-----------------------------------------------------------------------
-!  Detritus from nonlinear mortality
-!-----------------------------------------------------------------------  
-! 
+
+              !-----------------------------------
+              !  Detritus from nonlinear mortality
+              !-----------------------------------
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) + dtdays *              &
      &                          (predSumCop + predSumNCaS + predSumEupS &
      &                          + predSumNCaO + predSumEupO)
-     
+
 #ifdef STATIONARY
-             
+
 # ifdef fixedPRED
               Stat3(i,k,14) =                                           &
      &          + 0.5*Hz(i,j,k)/dtdays                                  &
      &          +0.5*Hz(i,j,k)/dtdays                                   &
      &          + 1*Hz(i,j,k)/dtdays                                    &
      &          0.5*Hz(i,j,k)/dtdays                                    &
-     &          +1*Hz(i,j,k)/dtdays     
+     &          +1*Hz(i,j,k)/dtdays
 
-# else       
-                 
+# else
+
               Stat3(i,k,14) = dtdays *                                  &
      &                        (predSumCop + predSumNCaS + predSumEupS + &
      &                         predSumNCaO + predSumEupO)
-     
+
 # endif
-               
+
 #endif
-                
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iCop,iDetF)= bflx(iCop,iDetF)  + dtdays*xi*predSumCop     
-                bflx(iNcaS,iDetF)= bflx(iNCaS,iDetF)+ dtdays*xi*predSumNCaS                                
-                bflx(iEupS,iDetF)= bflx(iEupS,iDetF)+ dtdays*xi*predSumEupS             
-                bflx(iNcaO,iDetF)= bflx(iNCaO,iDetF)+ dtdays*xi*predSumNCaO                                 
-                bflx(iEupO,iDetF)= bflx(iEupO,iDetF)+ dtdays*xi*predSumEupO                     
+                bflx(iCop,iDetF)= bflx(iCop,iDetF)  + dtdays*xi*predSumCop
+                bflx(iNcaS,iDetF)= bflx(iNCaS,iDetF)+ dtdays*xi*predSumNCaS
+                bflx(iEupS,iDetF)= bflx(iEupS,iDetF)+ dtdays*xi*predSumEupS
+                bflx(iNcaO,iDetF)= bflx(iNCaO,iDetF)+ dtdays*xi*predSumNCaO
+                bflx(iEupO,iDetF)= bflx(iEupO,iDetF)+ dtdays*xi*predSumEupO
               END IF
 #endif
 
@@ -2593,25 +2605,25 @@
               DBio(i,k,iJel) = DBio(i,k,iJel) - mpredJel *              &
      &                         Bio(i,k,iJel)**2  * dtdays
 
-    
-# ifdef STATIONARY         
-!             Stat3(i,k,5) =mpredJel *  Bio(i,k,iJel)**2 
-      
+
+# ifdef STATIONARY
+!             Stat3(i,k,5) =mpredJel *  Bio(i,k,iJel)**2
+
 # endif
               DBio(i,k,iDetF) = DBio(i,k,iDetF)                         &
      &                   + mpredJel * Bio(i,k,iJel)**2  * dtdays
-               
+
 # if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iJel,iDet)= bflx(iJel,iDet)+                       &
      &                           mpredJel*dtdays*Bio(i,k,iJel)*xi
               END IF
-# endif      
-     
-# ifdef STATIONARY    
+# endif
+
+# ifdef STATIONARY
               IF (i.eq.3.and.j.eq.3) THEN
 !g              Stat3(i,k,11)=mpredJel*Bio(i,k,iJel)**2  * dtdays
-          
+
               END IF
 # endif
 
@@ -2620,112 +2632,113 @@
             END DO
           END DO
 
-        
-!=======================================================================
-!Phytoplankton respiration losses
-!=======================================================================
-! 
+
+          !=================================
+          !Phytoplankton respiration losses
+          !=================================
+
           DO k=1,N(ng)
             DO i=Istr,Iend
-            
+
               BasalMet = respPhS
-    
+
 #ifdef IRON_LIMIT
-!-----------------------------------------------------------------------
-!  Correct basal metabolism for iron limitation
-!-----------------------------------------------------------------------
-               
+              !----------------------------------------------
+              !  Correct basal metabolism for iron limitation
+              !----------------------------------------------
+
 !             Iron1 = Bio(i,k,iFe)
 !             respPh = respPhS
 !             kfePh = kfePhS
 !             BasalMet = GetBasalMetabolism(respPh,kfePh,Iron1)
-     
+
 #endif
-            
-!-----------------------------------------------------------------------
-!  Arhonditsis temperature functions
-!-----------------------------------------------------------------------
-! 
+
+              !-----------------------------------
+              !  Arhonditsis temperature functions
+              !-----------------------------------
+!
               TempFuncPhS(i,k) = GetPhytoResp2(Temp1,TmaxPhS,KtBm_PhS)
-    
-!-----------------------------------------------------------------------
-!  Change in concentration of Small Phytoplankton
-!----------------------------------------------------------------------- 
+
+              !-------------------------------------------------
+              !  Change in concentration of Small Phytoplankton
+              !-------------------------------------------------
+
               DBio(i,k,iPhS) = DBio(i,k,iPhS) -                         &
      &          TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
-        
-    
-                    
+
+
+
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &          xi * TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
-     
 
-!-----------------------------------------------------------------------
-!  Primary production of Small phytoplankton
-!-----------------------------------------------------------------------
-#ifdef PROD3    
+
+              !--------------------------------------------
+              !  Primary production of Small phytoplankton
+              !--------------------------------------------
+#ifdef PROD3
               Prod(i,k,iPHSprd) = Prod(i,k,iPHSprd) -                   &
      &          TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
 
-                
-#endif     
-#ifdef STATIONARY     
-              if(i.eq.2) THEN  
+
+#endif
+#ifdef STATIONARY
+              if(i.eq.2) THEN
                 if(j.eq.2) THEN
     !             Stat3(i,k,1)=TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
                 endif
               endif
-#endif              
-        
+#endif
+
               BasalMet = respPhL
 #ifdef IRON_LIMIT
 
-!-----------------------------------------------------------------------
-!  Correct basal metabolism for iron limitation
-!-----------------------------------------------------------------------
-! 
+              !-----------------------------------------------
+              !  Correct basal metabolism for iron limitation
+              !-----------------------------------------------
+
 !             respPh = respPhL
 !             kfePh = kfePhL
 !             BasalMet = GetBasalMetabolism(respPh,kfePh,Iron1)
 #endif
- !-----------------------------------------------------------------------
- !  Arhonditsis temperature functions
- !-----------------------------------------------------------------------
+              !------------------------------------
+              !  Arhonditsis temperature functions
+              !------------------------------------
               TempFuncPhL(i,k) = GetPhytoResp2(Temp1,TmaxPhL,KtBm_PhL)
-     
-!-----------------------------------------------------------------------
-!  Change in concentration of Large Phytoplankton
-!-----------------------------------------------------------------------
-    
+
+              !-------------------------------------------------
+              !  Change in concentration of Large Phytoplankton
+              !-------------------------------------------------
+
               DBio(i,k,iPhL) = DBio(i,k,iPhL) -                         &
      &          TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-#ifdef STATIONARY     
-    
-              if(i.eq.3) THEN  
+#ifdef STATIONARY
+
+              if(i.eq.3) THEN
                 if(j.eq.3) THEN
 !                 Stat3(i,k,1)=TempFuncPhL(i,k)*BasalMet*dtdays!*Bio(i,k,iPhL)
                 endif
               endif
 #endif
-               
-               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                        &
+
+              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &           xi * TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-    
-!-----------------------------------------------------------------------
-!  Primary production of Large phytoplankton
-!-----------------------------------------------------------------------
-! 
-#ifdef PROD3    
+
+              !--------------------------------------------
+              !  Primary production of Large phytoplankton
+              !--------------------------------------------
+
+#ifdef PROD3
               Prod(i,k,iPHLprd) = Prod(i,k,iPHLprd) -                   &
      &          TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-#endif     
+#endif
 
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iPhS,iNH4)= bflx(iPhS,iNH4)+                       &
-     &            TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)*xi 
-           
+     &            TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)*xi
+
                 bflx(iPhL,iNH4)= bflx(iPhL,iNH4)+                       &
      &            TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)*xi
               END IF
@@ -2733,94 +2746,96 @@
 
             END DO
           END DO
-    
-!=======================================================================
-!  Microzooplankton respiration losses
-!=======================================================================
+
+          !======================================
+          !  Microzooplankton respiration losses
+          !======================================
           DO k=1,N(ng)
             DO i=Istr,Iend
 
 !             cff1 = fpPhSMZL * Bio(i,k,iPhS)+ fpPhLMZL * Bio(i,k,iPhL)
-      
+
 !             if(cff1.lt.1.0_r8)THEN
 !               BasalMetMZL=0.0_r8
 !             else
-!               BasalMetMZL=respMZL 
+!               BasalMetMZL=respMZL
 !             end if
-               
 
-!-----------------------------------------------------------------------      
-!  Small Microzooplankton 
-!-----------------------------------------------------------------------
-! 
-!  Arhonditsis temperature functions
-! 
+
+              !-------------------------
+              !  Small Microzooplankton
+              !-------------------------
+
+              !  Arhonditsis temperature functions
+
 !             TempFuncMZS(i,k) = GetPhytoResp2(Temp1,TmaxMZS,           &
 !    &                           KtBm_MZS)
-     
+
 !             BasalMet = respMZS
 !             TFMZL = Q10MZS ** ( (Bio(i,k,itemp)-Q10MZST) / 10.0_r8 )
-! 
-!-----------------------------------------------------------------------
-!  Change in concentration of small microzooplankton
-!-----------------------------------------------------------------------
-         
+!
+              !----------------------------------------------------
+              !  Change in concentration of small microzooplankton
+              !----------------------------------------------------
+
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
-!     &         TempFuncMZS(i,k)*BasalMet*dtdays*Bio(i,k,iMZS)          
+!     &         TempFuncMZS(i,k)*BasalMet*dtdays*Bio(i,k,iMZS)
 !     &         TFMZS*respMZS*dtdays*Bio(i,k,iMZS)
-! 
-!-----------------------------------------------------------------------
-!  Small Microzooplankton production
-!-----------------------------------------------------------------------
-! 
-#ifdef PROD3         
+
+              !------------------------------------
+              !  Small Microzooplankton production
+              !------------------------------------
+
+#ifdef PROD3
 !             Prod(i,k,iMZS) = Prod(i,k,iMZS) -                         &
 !     &         TempFuncMZS(i,k)*BasalMet*dtdays*Bio(i,k,iMZS)
 !     &         TFMZS*respMZS*dtdays*Bio(i,k,iMZS)
-#endif     
-!-----------------------------------------------------------------------
-!  Add ammonium to correct for excretion related to metabolism
-!-----------------------------------------------------------------------
+#endif
+              !-------------------------------------------------------------
+              !  Add ammonium to correct for excretion related to metabolism
+              !-------------------------------------------------------------
+
 !             DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
 !     &         xi*(TempFuncMZS(i,k)*BasalMet*dtdays*Bio(i,k,iMZS))
 !     &         xi*(TFMZS*respMZS*dtdays*Bio(i,k,iMZS))
-     
-!-----------------------------------------------------------------------      
-!  Large Microzooplankton 
-!-----------------------------------------------------------------------
-! 
-!  Arhonditsis temperature functions
-! 
+
+              !-------------------------
+              !  Large Microzooplankton
+              !-------------------------
+
+              !  Arhonditsis temperature functions
+
 
               TFMZL = exp(KtBm_MZL * (Bio(i,k,itemp) - TmaxMZL))
 
               BasalMetMZL = respMZL
-        
-!-----------------------------------------------------------------------
-!  Change in concentration of large microzooplankton
-!-----------------------------------------------------------------------
+
+              !----------------------------------------------------
+              !  Change in concentration of large microzooplankton
+              !----------------------------------------------------
               DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
 !    &          TempFuncMZL(i,k)*BasalMet*dtdays*Bio(i,k,iMZL)
      &          TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL)
-#ifdef STATIONARY     
-!             if(i.eq.2) THEN 
+#ifdef STATIONARY
+!             if(i.eq.2) THEN
 !               if(j.eq.2) THEN
-!                 Stat3(i,k,9)=TFMZL* BasalMetMZL*dtdays 
+!                 Stat3(i,k,9)=TFMZL* BasalMetMZL*dtdays
 !               endif
 !             endif
 #endif
-! 
-!-----------------------------------------------------------------------
-!  Large Microzooplankton net production
-!-----------------------------------------------------------------------
-! 
-#ifdef PROD3         
+
+              !---------------------------------------
+              !  Large Microzooplankton net production
+              !---------------------------------------
+
+#ifdef PROD3
               Prod(i,k,iMZLprd) = Prod(i,k,iMZLprd) -                   &
      &             TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL)
-#endif     
-!-----------------------------------------------------------------------
-!  Add ammonium to correct for excretion related to metabolism
-!-----------------------------------------------------------------------
+#endif
+              !-------------------------------------------------------------
+              !  Add ammonium to correct for excretion related to metabolism
+              !-------------------------------------------------------------
+
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                        &
 !    &          xi*(TempFuncMZL(i,k)*BasalMetMZL*dtdays*Bio(i,k,iMZL))
      &          xi*(TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL))
@@ -2830,56 +2845,56 @@
 !    &            BasalMetMZL*dtdays*Bio(i,k,iMZS)*xi
                 bflx(iMZL,iNH4)= bflx(iMZL,iNH4) + xi * (TFMZL*         &
      &            BasalMetMZL*dtdays*Bio(i,k,iMZL))
-                  
+
               END IF
 #endif
-     
+
             END DO
           END DO
-     
-!=======================================================================
-!  Mesozooplankton respiration losses
-!=======================================================================
+
+          !=====================================
+          !  Mesozooplankton respiration losses
+          !=====================================
           DO k=1,N(ng)
             DO i=Istr,Iend
-     
+
               cff1 = fpPhSCop * Bio(i,k,iPhS)+ fpPhLCop * Bio(i,k,iPhL) &
      &             + fpMZLCop * Bio(i,k,iMZL)
-      
 
- 
+
+
               if(cff1.lt.0.01_r8)THEN  !0.05
-                BasalMetCop= respCop*cff1/0.01_r8 
+                BasalMetCop= respCop*cff1/0.01_r8
               else
                 BasalMetCop= respCop
-              endif 
+              endif
 
-!-----------------------------------------------------------------------
-!  Copepod respiration correction
-!-----------------------------------------------------------------------
+              !---------------------------------
+              !  Copepod respiration correction
+              !---------------------------------
 
               TFCop = exp(ktbmC * (Bio(i,k,itemp) - TrefC))
 
-!-----------------------------------------------------------------------
-!  Neocalanus respiration correction
-!-----------------------------------------------------------------------
+              !------------------------------------
+              !  Neocalanus respiration correction
+              !------------------------------------
 
               TFNCa = exp(ktbmN * (Bio(i,k,itemp) - TrefN))
 
-!-----------------------------------------------------------------------
-!  Euphausiid respiration correction
-!-----------------------------------------------------------------------
+              !-----------------------------------
+              !  Euphausiid respiration correction
+              !-----------------------------------
 
               TFEup = exp(ktbmE * (Bio(i,k,itemp) - TrefE))
 
-! 
-!  starvation response  
-! 
+
+              ! starvation response
+
               cff1 = fpPhSEup * Bio(i,k,iPhS)                           &
      &               + fpPhLEup * Bio(i,k,iPhL)                         &
 !    &               + fpMZSEup * Bio(i,k,iMZS)                         &
      &               + fpMZLEup * Bio(i,k,iMZL)                         &
-     &               + fpCopEup * Bio(i,k,iCop)                    
+     &               + fpCopEup * Bio(i,k,iCop)
 
               cff2 = fpPhSNCa * Bio(i,k,iPhS)+ fpPhLNCa * Bio(i,k,iPhL) &
 !    &               + fpMZSNCa * Bio(i,k,iMZS)                         &
@@ -2887,120 +2902,120 @@
 
 
 
-                  
+
               if(cff1.lt.0.01_r8)THEN
                 BasalMetEup=respEup*cff1/0.01_r8
               else
-                BasalMetEup= respEup 
-              endif 
-      
+                BasalMetEup= respEup
+              endif
+
 
 
               if(cff2.lt.0.01_r8)THEN
-                BasalMetNC= respNC*cff2/0.01_r8 
-                BasalMetCM= respCM*cff2/0.01_r8  
+                BasalMetNC= respNC*cff2/0.01_r8
+                BasalMetCM= respCM*cff2/0.01_r8
               else
                 BasalMetNC=respNC
                 BasalMetCM=respCM
-              end if 
-      
-!-----------------------------------------------------------------------
-!  Change in concentration from small copepod respiration
-!-----------------------------------------------------------------------
-! 
+              end if
+
+              !---------------------------------------------------------
+              !  Change in concentration from small copepod respiration
+              !---------------------------------------------------------
+
               DBio(i,k,iCop) = DBio(i,k,iCop) -                         &
      &          BasalMetCop*TFCop*Bio(i,k,iCop)*dtdays
 
 
-#ifdef PROD3         
+#ifdef PROD3
               Prod(i,k,iCopprd) = Prod(i,k,iCopprd) -                   &
      &          TFCop*BasalMetCop*Bio(i,k,iCop)*dtdays
-#endif     
+#endif
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &          xi*(TFCop*BasalMetCop*dtdays*Bio(i,k,iCop))
-     
-!-----------------------------------------------------------------------
-!  Change in concentration from large copepods respiration 
-!-----------------------------------------------------------------------
-     
+
+              !----------------------------------------------------------
+              !  Change in concentration from large copepods respiration
+              !----------------------------------------------------------
+
               DBio(i,k,iNCaS) = DBio(i,k,iNCaS) -                       &
      &            TFNCa*BasalMetCM*Bio(i,k,iNCaS)*dtdays
-     
+
               DBio(i,k,iNCaO) = DBio(i,k,iNCaO) -                       &
      &            TFNCa*BasalMetNC*Bio(i,k,iNCaO)*dtdays
-#ifdef PROD3     
+#ifdef PROD3
               Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) -                   &
       &           TFNCa*BasalMetCM*Bio(i,k,iNCaS)*dtdays
 
               Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) -                   &
      &            TFNCa*BasalMetNC*Bio(i,k,iNCaO)*dtdays
-#endif     
+#endif
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            xi*(TFNCa*BasalMetCM*dtdays*Bio(i,k,iNCaS))
 
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            xi*(TFNCa*BasalMetNC*dtdays*Bio(i,k,iNCaO))
 
-!-----------------------------------------------------------------------
-!  Change in concentration from euphausiid respiration
-!-----------------------------------------------------------------------
-! 
+              !------------------------------------------------------
+              !  Change in concentration from euphausiid respiration
+              !------------------------------------------------------
+
               DBio(i,k,iEupS) = DBio(i,k,iEupS) -                       &
      &            TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays
 
               DBio(i,k,iEupO) = DBio(i,k,iEupO) -                       &
      &            TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays
-#ifdef PROD3     
+#ifdef PROD3
               Prod(i,k,iEupprd) = Prod(i,k,iEupprd) -                   &
      &            TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays
               Prod(i,k,iEupprd) = Prod(i,k,iEupprd) -                   &
      &            TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays
-#endif     
+#endif
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            xi*(TFEup*BasalMetEup* dtdays*Bio(i,k,iEupS))
-     
+
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            xi*(TFEup*BasalMetEup*dtdays*Bio(i,k,iEupO))
 
 
-#ifdef STATIONARY     
-              Stat3(i,k,10)= TFNCa*BasalMetCM*Bio(i,k,iNCaS)*dtdays        
-#endif 
+#ifdef STATIONARY
+              Stat3(i,k,10)= TFNCa*BasalMetCM*Bio(i,k,iNCaS)*dtdays
+#endif
 
 
 #if defined JELLY
 
               BasalMetJel = respJel
-    
+
               TFJel = Q10Jelr ** ( (Bio(i,k,itemp)-Q10JelTr)/10.0_r8)
-       
+
 !             TFJel =1.0_r8
 
               DBio(i,k,iJel) = DBio(i,k,iJel) -                         &
-     &            TFJel *BasalMetJel* Bio(i,k,iJel)*dtdays   
-            
+     &            TFJel *BasalMetJel* Bio(i,k,iJel)*dtdays
+
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            xi*(TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))
 
-# ifdef STATIONARY         
+# ifdef STATIONARY
 !             Stat3(i,k,6) =  TFJel *BasalMetJel* Bio(i,k,iJel)
-      
+
 # endif
 
-# ifdef STATIONARY  
-              IF (i.eq.3.and.j.eq.3) THEN  
-!               Stat3(i,k,12)= Ra !TFJel *BasalMetJel* Bio(i,k,iJel)*dtdays   
+# ifdef STATIONARY
+              IF (i.eq.3.and.j.eq.3) THEN
+!               Stat3(i,k,12)= Ra !TFJel *BasalMetJel* Bio(i,k,iJel)*dtdays
               endif
-     
+
 # endif
-# ifdef PROD3         
+# ifdef PROD3
               Prod(i,k,iJelprd) = Prod(i,k,iJelprd) -                   &
      &            TFJel*BasalMetJel*Bio(i,k,iJel)*dtdays
 # endif
-     
-     
+
+
 #endif
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iCop,iNH4)  = bflx(iCop,iNH4)  +                   &
@@ -3010,37 +3025,38 @@
                 bflx(iNCaO,iNH4) = bflx(iNCaO,iNH4) +                   &
      &              TFNCa*BasalMetNCa*Bio(i,k,iNCaO)*dtdays*xi
                 bflx(iEupS,iNH4) = bflx(iEupS,iNH4) +                   &
-     &              TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays*xi 
+     &              TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays*xi
                 bflx(iEupO,iNH4) = bflx(iEupO,iNH4) +                   &
-     &              TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays*xi        
+     &              TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays*xi
                 bflx(iJel,iNH4)  = bflx(iJel,iNH4)  +                   &
-     &              TFJel*BasalMetJel*Bio(i,k,iJel) *dtdays*xi                                 
+     &              TFJel*BasalMetJel*Bio(i,k,iJel) *dtdays*xi
               END IF
 #endif
             END DO
           END DO
-!=========================================================================
-! Molting: 
-!=========================================================================
 
-!-----------------------------------------------------------------------
-!  NOTE: It is unclear where molting equation came from.
-!  This is present only for euphausiids, not copepods
-!-----------------------------------------------------------------------
-      
+          !=============
+          ! Molting:
+          !=============
+
+          !--------------------------------------------------------
+          !  NOTE: It is unclear where molting equation came from.
+          !  This is present only for euphausiids, not copepods
+          !--------------------------------------------------------
+
 !g        DO k=1,N(ng)
 !g          DO i=Istr,Iend
 !g            cff1 = 0.02_r8 / (10.0_r8 - 0.4_r8 * Bio(i,k,itemp))*     &
-!g   &               Bio(i,k,iEupS)             
+!g   &               Bio(i,k,iEupS)
 !g            DBio(i,k,iDet) = DBio(i,k,iDet) + cff1 * dtdays
 !g            DBio(i,k,iEupS) = DBio(i,k,iEupS) - cff1 * dtdays
 !g
 !g            cff1 = 0.02_r8 / (10.0_r8 - 0.4_r8 * Bio(i,k,itemp))*     &
-!g   &               Bio(i,k,iEupO)                 
+!g   &               Bio(i,k,iEupO)
 !g            DBio(i,k,iDet) = DBio(i,k,iDet) + cff1 * dtdays
 !g            DBio(i,k,iEupO) = DBio(i,k,iEupO) - cff1 * dtdays
-!g     
-    
+!g
+
 !g#if defined BIOFLUX && defined BEST_NPZ
 !g            IF (i.eq.3.and.j.eq.3) THEN
 !g              bflx(iEupS,iDet)= bflx(iEupS,iDet) + cff1* dtdays*xi
@@ -3050,48 +3066,48 @@
 !g          END DO
 !g        END DO
 
-!=========================================================================
-! Detrital Remineralization   (Det -> NH4)
-!=========================================================================
-         
+          !==========================================
+          ! Detrital Remineralization   (Det -> NH4)
+          !==========================================
+
           DO k=1,N(ng)
             DO i=Istr,Iend
 
               Temp1 = Bio(i,k,itemp)
-!-----------------------------------------------------------------------
-!  From Frost (1993).
-!-----------------------------------------------------------------------
+              !----------------------
+              !  From Frost (1993).
+              !----------------------
 !             cff1 = regen * dgrad * Bio(i,k,iDet)
 !             DBio(i,k,iNH4) = DBio(i,k,iNH4) + xi * cff1 * dtdays
 !             DBio(i,k,iDet) = DBio(i,k,iDet) - cff1 * dtdays
-    
-!-----------------------------------------------------------------------
-!  From Kawamiya(2000)
-!-----------------------------------------------------------------------
+
+              !-----------------------
+              !  From Kawamiya(2000)
+              !-----------------------
               PON = Bio(i,k,iDet)*xi  !Particulate organic nitrogen
-    
+
               DBio(i,k,iDet) = DBio(i,k,iDet) -                         &
      &            ((Pv0*exp(PvT*Temp1)*PON)/xi)*dtdays
-                 
+
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-     
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iDet,iNH4)= bflx(iDet,iNH4) +                      &
      &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
               END IF
 #endif
-     
+
               PON = Bio(i,k,iDetF)*xi  !Particulate organic nitrogen
-        
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) -                       &
      &            ((Pv0*exp(PvT*Temp1)*PON)/xi)*dtdays
               DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
      &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-     
-        
-    
+
+
+
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iDetF,iNH4)= bflx(iDetF,iNH4) +                    &
@@ -3100,164 +3116,164 @@
 #endif
             END DO
           END DO
-!=========================================================================
-!Nitrification  (NH4 -> NO3)
-!=========================================================================
+          !=============================
+          !Nitrification  (NH4 -> NO3)
+          !=============================
           DO k=1,N(ng)
             DO i=Istr,Iend
-        
-        
-!-----------------------------------------------------------------------
-!Temperature dependance
-!-----------------------------------------------------------------------
-! 
-!  Kawamiya 2000  NitrMax=Nitr0*exp(KnT*Temp1) - Ken
-!   
+
+
+              !-----------------------
+              !Temperature dependance
+              !-----------------------
+
+              ! Kawamiya 2000  NitrMax=Nitr0*exp(KnT*Temp1) - Ken
+
 !             NitrifMax=GetNitrifMaxK(Temp1,KnT,Nitr0)
-! 
-!  Arhonditsis NitrMax=Nitr0*exp(-ktntr*(Temp1 - ToptNtr)**2)
-! 
+
+              ! Arhonditsis NitrMax=Nitr0*exp(-ktntr*(Temp1 - ToptNtr)**2)
+
               NitrifMax=GetNitrifMaxA(Nitr0, ktntr,Temp1,ToptNtr)
-! 
-!  No temperaure effects - NitrMax is constant
-! 
+
+              !  No temperaure effects - NitrMax is constant
+
 !             NitrifMax=Nitr0
-        
-        
-!-----------------------------------------------------------------------
-!  Light/Depth dependance
-!-----------------------------------------------------------------------
-! 
-!  Fennel  
+
+
+              !-------------------------
+              !  Light/Depth dependance
+              !-------------------------
+
+              !  Fennel
+
 !             DLNitrif=GetNitrifLight(Par1,tI0,KI)
-! 
-! Denman
+
+              ! Denman
+
 !             DLNitrif = (z_wL(k)**10_r8)/( (20_r8**10_r8) +            &
 !    &                    z_wL(k)**10_r8)
-! 
-!  No Depth/Ligt effects
-! 
+
+              !  No Depth/Ligt effects
+
               DLNitrif= 1.0_r8
-     
-     
-!-----------------------------------------------------------------------
-!  Saturation
-!-----------------------------------------------------------------------
-! 
-!  Arhonditsis
-!         
+
+
+              !-------------
+              !  Saturation
+              !-------------
+
+              ! Arhonditsis
+
 !             cff1 = Bio(i,k,iNH4)/(KNH4Nit +Bio(i,k,iNH4))
-! 
-!  No saturation -ken
-! 
+
+              !  No saturation -ken
+
               cff1 =1.0_r8
-    
-              
+
+
               DBio(i,k,iNH4) = DBio(i,k,iNH4)  - NitrifMax *            &
-     &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays 
-    
+     &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays
+
               DBio(i,k,iNO3) = DBio(i,k,iNO3) + NitrifMax *             &
-     &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays    
+     &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iNH4,iNO3)= bflx(iNH4,iNO3) +                      &
-     &            NitrifMax  * Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays   
+     &            NitrifMax  * Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays
               END IF
 #endif
             END DO
           END DO
 
-!======================================================================
-!Benthic Sub Model
-!======================================================================
+          !=================
+          !Benthic Sub Model
+          !=================
 #ifdef BENTHIC
 !         DO k=1,NBL(ng)
-    
+
           DO i=Istr,Iend
-         
-!-----------------------------------------------------------------------
-!  Growth of Benthic Infauna
-!-----------------------------------------------------------------------
-! 
-!  calculate average water column concentrations
-!   
+
+            !----------------------------
+            !  Growth of Benthic Infauna
+            !----------------------------
+
+            ! calculate average water column concentrations
+
             cff1=0.0_r8
             cff2=0.0_r8
             cff3=0.0_r8
             cff4=0.0_r8
-     
-     
+
+
             do k = 1,N(ng)
               cff1 = cff1 + Bio(i,k,iDet)  * Hz(i,j,k)
               cff2 = cff2 + Bio(i,k,iDetF) * Hz(i,j,k)
               cff3 = cff3 + Bio(i,k,iPhS)  * Hz(i,j,k)
               cff4 = cff4 + Bio(i,k,iPhL)  * Hz(i,j,k)
             end do
-       
+
             avgD  = cff1/grid(ng) % h(i,j)
             avgDF = cff2/grid(ng) % h(i,j)
             avgPS = cff3/grid(ng) % h(i,j)
             avgPL = cff4/grid(ng) % h(i,j)
-     
-! use  food concentration in bottom layer of WC only
+
+            ! use  food concentration in bottom layer of WC only
 
 !           avgD  =  Bio(i,k,iDet)
 !           avgDF =  Bio(i,k,iDetF)
 !           avgPS =  Bio(i,k,iPhS)
 !           avgPL =  Bio(i,k,iPhL)
-        
-        
+
             k = 1
             Temp1 = Bio(i,k,itemp)
-            cff0 = q10r**((Temp1-T0benr)/10.0_r8) 
-! 
-! Potential food available from water column
-! 
+            cff0 = q10r**((Temp1-T0benr)/10.0_r8)
+
+            ! Potential food available from water column
+
 !           dw=3.0_r8 !assume bottom 3ms available
             dw=1.0_r8 !assume only bottom meter/layer available
-   
+
             cff1=(prefD *avgD *dw/((prefD *avgD *dw)+LupP))*prefD *avgD *dw
             cff2=(prefD *avgDF*dw/((prefD *avgDF*dw)+LupP))*prefD *avgDF*dw
             cff3=(prefPS*avgPS*dw/((prefPS*avgPS*dw)+LupP))*prefPS*avgPS*dw
             cff4=(prefPL*avgPL*dw/((prefPL*avgPL*dw)+LupP))*prefPL*avgPL*dw
 
 !           print*, 'Food=',cff1, cff2, cff3, cff4
-! 
-!Potential food available from  sea floor
-! 
-       
+
+            ! Potential food available from  sea floor
+
+
             cff5 = (prefD * BioB(i,k,iBenDet) / (prefD *                &
      &             BioB(i,k,iBenDet) + LupD)) * prefD * BioB(i,k,iBenDet)
-! 
-!  Total pelagic food available       
-! 
-            cff6 = cff1+cff2+cff3+cff4
-       
 
-!  uptake of each food category
-      
+            ! Total pelagic food available
+
+            cff6 = cff1+cff2+cff3+cff4
+
+
+            !  uptake of each food category
+
             cff7  = min(cff1,(cff0*cff1*BioB(i,k,iBen)*Rup/(cff6+KupP)))
             cff8  = min(cff2,(cff0*cff2*BioB(i,k,iBen)*Rup/(cff6+KupP)))
             cff9  = min(cff3,(cff0*cff3*BioB(i,k,iBen)*Rup/(cff6+KupP)))
             cff10 = min(cff4,(cff0*cff4*BioB(i,k,iBen)*Rup/(cff6+KupP)))
             cff11 = min(cff5,(cff0*cff5*BioB(i,k,iBen)*Rup/(cff5+KupD)))
-        
-        
+
+
             DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)-dtdays*cff11
-! 
-!  if just removing from base layer 
-! 
-            k=1     
+
+            ! if just removing from base layer
+
+            k=1
             DBio(i,k,iDet) = DBio(i,k,iDet)  - dtdays*cff7/ Hz(i,j,k)
             DBio(i,k,iDetF)= DBio(i,k,iDetF) - dtdays*cff8/ Hz(i,j,k)
             DBio(i,k,iPhS) = DBio(i,k,iPhS)  - dtdays*cff9/ Hz(i,j,k)
             DBio(i,k,iPhL) = DBio(i,k,iPhL)  - dtdays*cff10/Hz(i,j,k)
-       
-         
-     
-!  Spread removal evenly over water column 
-!  ajh note I have changed the following section of benthic removal    
+
+
+            ! Spread removal evenly over water column
+            ! ajh note I have changed the following section of benthic removal
 
 !           DO k=1,N(ng)
 !             DBio(i,k,iDet) =DBio(i,k,iDet)-dtdays*cff7/grid(ng) % h(i,j)
@@ -3265,96 +3281,96 @@
 !             DBio(i,k,iPhS) =DBio(i,k,iPhS)-dtdays*cff9/grid(ng) % h(i,j)
 !             DBio(i,k,iPhL) =DBio(i,k,iPhL)-dtdays*cff10/grid(ng)% h(i,j)
 !           END DO
-   
+
             k=1
-               
+
             DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff11*dtdays
             DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff7 *dtdays
             DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff8 *dtdays
             DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff9 *dtdays
             DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff10*dtdays
 
-      
+
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+2,NT(ng)+1)=bflx(NT(ng)+2,NT(ng)+1)           &
      &            +dtdays*cff9*xi
             ENDIF
-# endif      
-    
-!-----------------------------------------------------------------------
-! Benthic Production
-!-----------------------------------------------------------------------
-! 
-# ifdef PROD2 
+# endif
+
+            !--------------------
+            ! Benthic Production
+            !--------------------
+!
+# ifdef PROD2
             Prod2(i,iBenPrd)=Prod2(i,iBenPrd) + (cff11)*dtdays
             Prod2(i,iBenPrd)=Prod2(i,iBenPrd) + (cff7+cff8+cff9+cff10)*dtdays
 # endif
 
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
-         
+
               bflx(iDet,NT(ng)+1) = bflx(iDet,NT(ng)+1) +               &
     &             dtdays*cff6/Hz(i,j,k)*xi
               bflx(iPhL,NT(ng)+1) = bflx(iPhL,NT(ng)+1) +               &
     &             dtdays*cff7/Hz(i,j,k)*xi
               bflx(iPhS,NT(ng)+1) = bflx(iPhS,NT(ng)+1) +               &
     &             dtdays*cff8/Hz(i,j,k)*xi
-      
+
             END IF
-# endif   
-!-----------------------------------------------------------------------
-!  Excretion
-!-----------------------------------------------------------------------
-       
-            cff1=cff7 *eexD 
+# endif
+            !------------
+            !  Excretion
+            !------------
+
+            cff1=cff7 *eexD
             cff2=cff8 *eexD
             cff3=cff9 *eex
             cff4=cff10*eex
             cff5=cff11*eexD
 
             DBioB(i,k,iBen)=DBioB(i,k,iBen)                             &
-     &           -(cff1+cff2+cff3+cff4+cff5)*dtdays   
+     &           -(cff1+cff2+cff3+cff4+cff5)*dtdays
 
 
-!  Material excreted is considered inorganic and not available
-!  for further secondary production
+            !  Material excreted is considered inorganic and not available
+            !  for further secondary production
 
             DBio(i,k,iNH4)= DBio(i,k,iNH4)+xi*dtdays*0.5_r8             &
      &         *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,k)
-     
+
             DBioB(i,k,iBenDet)= DBioB(i,k,iBenDet)+dtdays               &
      &         *(cff1+cff2+cff3+cff4+cff5)*0.5_r8
 
-             
+
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
      &          + (cff6+cff7+cff8+cff9+cff10)*dtdays*xi
             ENDIF
-# endif     
-!----------------------------------------------------------------------- 
-!  Respiration
-!-----------------------------------------------------------------------
-      
-            cff3=cff0*BioB(i,k,iBen)*Rres 
+# endif
+            !--------------
+            !  Respiration
+            !--------------
+
+            cff3=cff0*BioB(i,k,iBen)*Rres
             cff4=Qres*(((1_r8-eexD)*cff7) + ((1_r8-eexD)*cff8) +        &
     &            ((1_r8-eex)*cff9) + ((1_r8-eex)*cff10) +               &
     &            ((1_r8-eexD)*cff11))
 
 
-            
+
             cff6=cff3+cff4
-     
+
             DBioB(i,k,iBen)=DBioB(i,k,iBen) -cff6*dtdays
-            DBio(i,k,iNH4)= DBio(i,k,iNH4)+ xi*dtdays*cff6/Hz(i,j,k) 
-           
-        
-# ifdef STATIONARY2           
+            DBio(i,k,iNH4)= DBio(i,k,iNH4)+ xi*dtdays*cff6/Hz(i,j,k)
+
+
+# ifdef STATIONARY2
             Stat2(i,4)=cff3*dtdays
             Stat2(i,5)=cff4*dtdays
-      
-# endif  
+
+# endif
 
 
 # if defined BIOFLUX && defined BEST_NPZ
@@ -3363,59 +3379,59 @@
      &          +xi*dtdays*cff6/Hz(i,j,k)
             ENDIF
 # endif
-!-----------------------------------------------------------------------
-!  Benthic Production
-!-----------------------------------------------------------------------
-# ifdef PROD2       
-            Prod2(i,iBenPrd) = Prod2(i,iBenPrd) - cff6*dtdays 
-        
+            !---------------------
+            !  Benthic Production
+            !---------------------
+# ifdef PROD2
+            Prod2(i,iBenPrd) = Prod2(i,iBenPrd) - cff6*dtdays
+
 # endif
-!-----------------------------------------------------------------------
-!  Mortality
-!-----------------------------------------------------------------------
+            !------------
+            !  Mortality
+            !------------
 
             cff1= rmort*BioB(i,k,iBen)*cff0
             DBioB(i,k,iBen) = DBioB(i,k,iBen)- cff1 * dtdays
             DBioB(i,k,iBenDet)= DBioB(i,k,iBenDet)+cff1*dtdays
-# ifdef STATIONARY2           
-  
+# ifdef STATIONARY2
+
             Stat2(i,6)= cff1 * dtdays
-# endif 
+# endif
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
      &          + cff1*dtdays*xi
             ENDIF
-# endif 
+# endif
 
-!-----------------------------------------------------------------------
-!  Predation
-!-----------------------------------------------------------------------
+            !------------
+            !  Predation
+            !------------
 
             DBioB(i,k,iBen) =DBioB(i,k,iBen)                            &
      &           -cff0*BenPred*dtdays*BioB(i,k,iBen)**2
-  
+
             DBioB(i,k,iBenDet) =DBioB(i,k,iBenDet)                      &
      &           +cff0*BenPred*dtdays*BioB(i,k,iBen)**2
 
 
-# ifdef STATIONARY2           
-  
-            Stat2(i,7)=cff0*BenPred*dtdays*BioB(i,k,iBen)**2 
-# endif  
+# ifdef STATIONARY2
 
-!-----------------------------------------------------------------------
-!  (Det -> NH4) temperature dependent  
-!-----------------------------------------------------------------------
-        
+            Stat2(i,7)=cff0*BenPred*dtdays*BioB(i,k,iBen)**2
+# endif
+
+            !-------------------------------------
+            !  (Det -> NH4) temperature dependent
+            !-------------------------------------
+
             PON = BioB(i,k,iBenDet)*xi/Hz(i,j,k)  !Benthic Particulate organic nitrogen
-         
+
 !           cff5= q10**((Temp1-T0ben)/10.0_r8)
-            cff1=Pv0*exp(PvT*Temp1)*PON       !-Kawamiya 2000 
+            cff1=Pv0*exp(PvT*Temp1)*PON       !-Kawamiya 2000
 !           cff1=Pv0*cff5*PON
-! 
-!  Arhonditsis
-! 
+
+            !  Arhonditsis
+
             cff2 = Bio(i,k,iNH4)/(KNH4Nit +Bio(i,k,iNH4))
 
             DBioB(i,k,iBenDet) =DBioB(i,k,iBenDet)                      &
@@ -3423,40 +3439,40 @@
 
             DBio(i,k,iNH4)= DBio(i,k,iNH4)                              &
      &           + (cff1)*dtdays
-      
-     
+
+
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+2,iNH4)=bflx(NT(ng)+2,iNH4)                   &
-     &            +  iremin*(cff1)*dtdays 
+     &            +  iremin*(cff1)*dtdays
             ENDIF
-# endif         
+# endif
 
           END DO
 
 #endif
-      
 
 
-!
-!==================================================================
-! Vertical Sinking of Particles(Phyto and Det) 
-!==================================================================
-!
-! Use Sinking Code adapted from J. Warner ROMS sediment code 
-!   - this is similar to the approach taken in Fasham 
-!     biology code but adapted to be used in subroutine
-!   - Also addapted to return particle flux in and out of each
-!     level - used in BENTHIC sub model
-!   - Incorporated Liz Dobbins zlimit to determine sinking rate
-!     zlimit =1 for constant sinking - use for Phyto and Det
-!     zlimit =-1*NcmaxZ for Neocalanus- sink rate is then attenuated
-!     as max sinking depth is approached
-! 
-! G.Gibson  July 2008        
-! K.Kearney March 2016: updated to correct mass-accumulation bug
 
-          ! Note: all sinking and rising uses the subroutine BioSink, 
+          !
+          !==============================================================
+          ! Vertical Sinking of Particles(Phyto and Det)
+          !==============================================================
+          !
+          ! Use Sinking Code adapted from J. Warner ROMS sediment code
+          !   - this is similar to the approach taken in Fasham
+          !     biology code but adapted to be used in subroutine
+          !   - Also addapted to return particle flux in and out of each
+          !     level - used in BENTHIC sub model
+          !   - Incorporated Liz Dobbins zlimit to determine sinking rate
+          !     zlimit =1 for constant sinking - use for Phyto and Det
+          !     zlimit =-1*NcmaxZ for Neocalanus- sink rate is then attenuated
+          !     as max sinking depth is approached
+          !
+          ! G.Gibson  July 2008
+          ! K.Kearney March 2016: updated to correct mass-accumulation bug
+
+          ! Note: all sinking and rising uses the subroutine TracerSink,
           ! which modifies Btmp and sinkout
 
           ! Initialize temporary arrays to 0
@@ -3464,136 +3480,136 @@
           Btmp = 0    ! tracer profile, (1:n)
           Hztmp = 0   ! layer thickness, (1:n)
           zwtmp = 0   ! layer edges, (0:n)
-          sinkout2 = 0 ! loss out of bottom cell (1) 
+          sinkout2 = 0 ! loss out of bottom cell (1)
 
-          ! Small phytoplankton: sinks, and 79% of what sinks out of the 
-          ! bottom goes to benthic detritus 
+          ! Small phytoplankton: sinks, and 79% of what sinks out of the
+          ! bottom goes to benthic detritus
 
           DO i=Istr,Iend
-                  
+
             call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhS, 1.0_r8, Bio(i,:,iPhS), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
             END DO
             DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-  
+
           END DO
 
 
-          ! Large phytoplankton: sinks, and 79% of what sinks out of the 
-          ! bottom goes to benthic detritus 
-          
+          ! Large phytoplankton: sinks, and 79% of what sinks out of the
+          ! bottom goes to benthic detritus
+
           DO i=Istr,Iend
-                  
+
             call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhL, 1.0_r8, Bio(i,:,iPhL), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
             END DO
             DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-  
+
           END DO
 
-          ! Slow-sinking detritus: sinks, and 79% of what sinks out of the 
-          ! bottom goes to benthic detritus 
-          
+          ! Slow-sinking detritus: sinks, and 79% of what sinks out of the
+          ! bottom goes to benthic detritus
+
           DO i=Istr,Iend
-  
+
             call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wDet, 1.0_r8, Bio(i,:,iDet), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
             END DO
             DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-  
+
           END DO
 
-          ! Fast-sinking detritus: sinks, and 79% of what sinks out of the 
-          ! bottom goes to benthic detritus 
-          
+          ! Fast-sinking detritus: sinks, and 79% of what sinks out of the
+          ! bottom goes to benthic detritus
+
           DO i=Istr,Iend
-  
+
             call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wDetF, 1.0_r8, Bio(i,:,iDetF), Btmp, sinkout2)
 
             DO k = 1,N(ng)
               DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
             END DO
             DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-  
+
           END DO
-          
-          ! On-shelf large copepods (NCaS i.e. CM): Move up and down 
-          ! based on dates set in input file.  Stop at either 200m or the 
-          ! water depth, whichever is shallower.  No biomass should cross 
-          ! the bottom or surface boundary.  
-          
+
+          ! On-shelf large copepods (NCaS i.e. CM): Move up and down
+          ! based on dates set in input file.  Stop at either 200m or the
+          ! water depth, whichever is shallower.  No biomass should cross
+          ! the bottom or surface boundary.
+
           DO i=Istr,Iend
-            
+
             if (downwardCM) then
-            
+
               call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), Bio(i,:,iNCaS), Btmp, sinkout2)
-              
+
               DO k = 1,N(ng)
                 DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
               END DO
-              
+
             else if (upwardCM) then
-              
+
               call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaS), Btmp, sinkout2)
-              
+
               DO k = 1,N(ng)
                 DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
               END DO
-              
+
             end if
-            
+
           END DO
-          
-          ! Off-shelf large copepods (NCaO i.e. NC): Move up and down 
-          ! based on dates set in input file.  Diapause to 400 m.  
-          ! If water is shallower than 400m, assume they die when they 
+
+          ! Off-shelf large copepods (NCaO i.e. NC): Move up and down
+          ! based on dates set in input file.  Diapause to 400 m.
+          ! If water is shallower than 400m, assume they die when they
           ! hit the bottom, and transfer biomass to benthic detritus.
-          
+
           DO i=Istr,Iend
-            
+
             if (downward) then
-                    
+
               call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, -400.0_r8, Bio(i,:,iNCaO), Btmp, sinkout2)
 
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
               END DO
-            
+
               DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2
-              
+
             else if (upward) then
-              
+
               call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaO), Btmp, sinkout2)
-              
+
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
               END DO
-              
+
             end if
-            
+
           END DO
 
- 
 
-!=======================================================================
-!Ice Sub Model
-!=======================================================================
-! 
+
+          !==============================================================
+          !Ice Sub Model
+          !==============================================================
+!
 #ifdef ICE_BIO
-       
-          DO i=Istr,Iend  
-            
+
+          DO i=Istr,Iend
+
 # ifdef CLIM_ICE_1D
-         
+
             IF (itL(i,j,nstp,iIceLog).gt.0.0) THEN   !0.02
               Temp1 = Bio(i,N(ng),itemp)
-                                        
+
 # elif defined BERING_10K
 
             IF (IceLog(i,j,nstp).gt.0.0_r8) THEN
@@ -3602,37 +3618,37 @@
 
               Sal1 = Bio(i,N(ng),isalt)
               Par1 = PARs(i)
-           
-!-----------------------------------------------------------
-! Growth of Ice  Algae
-!-----------------------------------------------------------  
- 
+
+              !----------------------
+              ! Growth of Ice  Algae
+              !----------------------
+
               ! light limitation
- 
-              aiceIfrac=(1-exp(-alphaIb*Par1))*exp(-betaI*Par1)  
-    
+
+              aiceIfrac=(1-exp(-alphaIb*Par1))*exp(-betaI*Par1)
+
 ! nutrient limitation
-    
-# ifdef CLIM_ICE_1D       
-              cff1=BioBI(i,iIceNO3)/(ksnut1+BioBI(i,iIceNO3))                  
+
+# ifdef CLIM_ICE_1D
+              cff1=BioBI(i,iIceNO3)/(ksnut1+BioBI(i,iIceNO3))
               cff2=BioBI(i,iIceNH4)/(ksnut2+BioBI(i,iIceNH4))
-                      
-              aiceNfrac=cff1*exp(-inhib*BioBI(i,iIceNH4))+cff2   
+
+              aiceNfrac=cff1*exp(-inhib*BioBI(i,iIceNH4))+cff2
               fNO3=(cff1*exp(-inhib*BioBI(i,iIceNH4)))/aiceNfrac
-                      
-# elif defined BERING_10K  
-              cff1=IceNO3(i,j,nstp)/(ksnut1+IceNO3(i,j,nstp))                  
+
+# elif defined BERING_10K
+              cff1=IceNO3(i,j,nstp)/(ksnut1+IceNO3(i,j,nstp))
               cff2=IceNH4(i,j,nstp)/(ksnut2+IceNH4(i,j,nstp))
-                      
-              aiceNfrac=cff1*exp(-inhib*IceNH4(i,j,nstp))+cff2   
+
+              aiceNfrac=cff1*exp(-inhib*IceNH4(i,j,nstp))+cff2
               fNO3=(cff1*exp(-inhib*IceNH4(i,j,nstp)))/aiceNfrac
 # endif
-      
-    
-! salinity impact (gesi) on ice algal growth 
+
+
+              ! salinity impact (gesi) on ice algal growth
 
 # ifdef BERING_10K
-! use ice temperature to determine brine salinity (sb) -from Arrigo 1993
+              ! use ice temperature to determine brine salinity (sb) -from Arrigo 1993
 
               if (ti(i,j,nstp)> -22.9_r8) THEN
                 cff1=-3.9921
@@ -3650,11 +3666,11 @@
                 cff3=-5.501
                 cff4=-0.03669
               endif
-              
+
               sb=cff1+cff2* ti(i,j,nstp)+cff3*ti(i,j,nstp)**2           &
      &           +cff4* ti(i,j,nstp)**3
-         
- 
+
+
 
               gesi = max(0.0_r8,(1.1e-2+3.012e-2*sb                     &
      &             +1.0342e-3*sb**2                                     &
@@ -3662,191 +3678,192 @@
      &             +4.926e-7*sb**4                                      &
      &             -1.659e-9*sb**5              ))
 
-# else 
+# else
 
               gesi=1.0_r8
 # endif
-           
+
               grow1=mu0*exp(0.0633*Temp1)
-           
-! Alternate temperature dependance code - need to look into more
-!
-! freezing point of seawater at sea level  
+
+              ! Alternate temperature dependance code - need to look into more
+
+              ! freezing point of seawater at sea level
+
 !             cff1=-0.0575
 !             cff2=1.710523E-3
 !             cff3=-2.154996E-4
 !             cff4=cff1*Sal1+cff2*Sal1**(3/2)+cff3*Sal1**2
-        
+
 !             grow1=mu0*exp(cff4-Temp1)
-         
- 
-# ifdef STATIONARY2           
-  
+
+
+# ifdef STATIONARY2
+
 !             Stat2(i,1)= Temp1
 !             Stat2(i,2)= sb
 !             Stat2(i,3)= gesi
- 
-    
-# endif 
+
+
+# endif
 
 
               GROWAice=grow1*min(aiceNfrac,aiceIfrac)*gesi
-    
-# ifdef CLIM_ICE_1D   
+
+# ifdef CLIM_ICE_1D
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                       &
-     &         + GROWAice*BioBI(i,iIcePhL)* dtdays   
-           
-#  ifdef PROD2      
+     &         + GROWAice*BioBI(i,iIcePhL)* dtdays
+
+#  ifdef PROD2
               Prod2(i,iIAPrd) = Prod2(i,iIAPrd)                         &
-     &         + GROWAice*BioBI(i,iIcePhL)* dtdays    
-#  endif       
-# elif defined BERING_10K  
+     &         + GROWAice*BioBI(i,iIcePhL)* dtdays
+#  endif
+# elif defined BERING_10K
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                       &
-     &         + GROWAice*IcePhL(i,j,nstp)* dtdays  
-         
-#  ifdef PROD2      
+     &         + GROWAice*IcePhL(i,j,nstp)* dtdays
+
+#  ifdef PROD2
               Prod2(i,iIAPrd) = Prod2(i,iIAPrd)                         &
-     &         + GROWAice*IcePhL(i,j,nstp)* dtdays    
-#  endif  
+     &         + GROWAice*IcePhL(i,j,nstp)* dtdays
+#  endif
 # endif
-       
-!------------------------------ 
-!  Respiration of Ice Algae  
-!------------------------------ 
+
+              !------------------------------
+              !  Respiration of Ice Algae
+              !------------------------------
 !             RAi0=R0i*GROWAice
               RAi0=R0i*mu0*exp(0.0633*Temp1)
 # ifdef CLIM_ICE_1D
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                       &
      &         -BioBI(i,iIcePhL)*RAi0*dtdays
-       
-#  ifdef PROD2      
-              Prod2(i,iIAPrd) = Prod2(i,iIAPrd)                         &
-     &         -BioBI(i,iIcePhL)*RAi0*dtdays   
-#  endif           
-#  ifdef STATIONARY2           
-  
 
-#  endif     
-# elif defined BERING_10K  
+#  ifdef PROD2
+              Prod2(i,iIAPrd) = Prod2(i,iIAPrd)                         &
+     &         -BioBI(i,iIcePhL)*RAi0*dtdays
+#  endif
+#  ifdef STATIONARY2
+
+
+#  endif
+# elif defined BERING_10K
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                       &
      &         -IcePhL(i,j,nstp)*RAi0*dtdays
-#  ifdef PROD2      
+#  ifdef PROD2
               Prod2(i,iIAPrd) = Prod2(i,iIAPrd)                         &
-     &         -IcePhL(i,j,nstp)*RAi0*dtdays   
-#  endif     
-# endif 
-  
-! ----------------------------------------
-!  mortality of Ice Algae 
-! ----------------------------------------
+     &         -IcePhL(i,j,nstp)*RAi0*dtdays
+#  endif
+# endif
+
+              ! ----------------------------------------
+              !  mortality of Ice Algae
+              ! ----------------------------------------
               RgAi=rg0*exp(rg*Temp1)
-    
+
 # ifdef CLIM_ICE_1D
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                       &
      &         -BioBI(i,iIcePhL)*RgAi*dtdays
-     
+
               DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                       &
      &         +BioBI(i,iIcePhL)*RgAi*dtdays*xi
-     
-# elif defined BERING_10K  
+
+# elif defined BERING_10K
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)                       &
      &          -IcePhL(i,j,nstp)*RgAi*dtdays
-    
+
               DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                       &
      &          +IcePhL(i,j,nstp)*RgAi*dtdays*xi
-# endif 
-       
-              
-!--------------
-! Nitrification
-!------------------       
-       
-       
+# endif
+
+
+              !--------------
+              ! Nitrification
+              !--------------
+
+
 # ifdef CLIM_ICE_1D
-              reN=annit*BioBI(i,iIceNH4) 
-              
-# elif defined BERING_10K  
- 
-              reN=annit*IceNH4(i,j,nstp) 
-              
+              reN=annit*BioBI(i,iIceNH4)
+
+# elif defined BERING_10K
+
+              reN=annit*IceNH4(i,j,nstp)
+
 # endif
               DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)+reN*dtdays
               DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)-reN*dtdays
-                
-            
+
+
 # ifdef CLIM_ICE_1D
               cff2=BioBI(i,iIcePhL)*(GROWAice-RAi0)
-          
-# elif defined BERING_10K  
-           
+
+# elif defined BERING_10K
+
               cff2=IcePhL(i,j,nstp)*(GROWAice-RAi0)
-# endif 
-  
+# endif
+
               DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)                       &
      &            -fNO3*cff2*xi*dtdays
-     
- 
+
+
               DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)                       &
      &            -(1.0_r8-fNO3)*cff2*xi*dtdays
-     
+
               !------------------------------
               ! Ice/water convective exchange
               !------------------------------
-    
-              ! Convective exchange rate is based on a polynomial fit to 
+
+              ! Convective exchange rate is based on a polynomial fit to
               ! ice growth/melting rate
-              
-# if defined CLIM_ICE_1D  
-              dhicedt=it(i,j,nnew,iIceZ)-it(i,j,nstp,iIceZ)  
-# elif defined BERING_10K  
+
+# if defined CLIM_ICE_1D
+              dhicedt=it(i,j,nnew,iIceZ)-it(i,j,nstp,iIceZ)
+# elif defined BERING_10K
               dhicedt=hi(i,j,nstp)-hi(i,j,nnew)
-# endif   
+# endif
               dhicedt=dhicedt*sec2day/dtdays !convert to m/s
-  
+
               trs=9.667e-11+4.49e-6*dhicedt-1.39e-5*dhicedt**2
               trs=trs*86400   !convert to m/d
-              twi=72*trs               
-     
-              IF (dhicedt.lt.0) THEN     
-            
+              twi=72*trs
+
+              IF (dhicedt.lt.0) THEN
+
                 trs=4.49e-6*ABS(dhicedt)-1.39e-5*ABS(dhicedt)**2
                 trs=trs*86400
-                twi=720*trs       
-                                  
+                twi=720*trs
+
               ENDIF
-              
-              ! IcePhL can get washed out of ice, but not in, so assume 
+
+              ! IcePhL can get washed out of ice, but not in, so assume
               ! [PhL] = 0 for this exchange
-              
-# if defined CLIM_ICE_1D              
+
+# if defined CLIM_ICE_1D
               DBioBI(i,iIcePhL)  = DBioBI(i,iIcePhL)  + (twi * -BioBI(i,iIcePhL)/aidz)*dtdays
               DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL) + (twi * BioBI(i,iIcePhL)/Hz(i,j,N(ng)))*dtdays
 # elif defined BERING_10K
               DBioBI(i,iIcePhL)  = DBioBI(i,iIcePhL)  + (twi * -IcePhL(i,j,nstp)/aidz)*dtdays
               DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL) + (twi * IcePhL(i,j,nstp)/Hz(i,j,N(ng)))*dtdays
 # endif
-  
-              ! NO3 and NH4 have two-way exchange, based on gradient 
+
+              ! NO3 and NH4 have two-way exchange, based on gradient
               ! across the ice/water interface
-              
-# if defined CLIM_ICE_1D  
+
+# if defined CLIM_ICE_1D
               DBioBI(i,iIceNO3)  = DBioBI(i,iIceNO3)  + (twi * (Bio(i,N(ng),iNO3) - BioBI(i,iIceNO3))/aidz)*dtdays
               DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3) + (twi * (BioBI(i,iIceNO3)) - Bio(i,N(ng),iNO3)/Hz(i,j,N(ng)))*dtdays
-              
+
               DBioBI(i,iIceNH4)  = DBioBI(i,iIceNH4)  + (twi * (Bio(i,N(ng),iNH4) - BioBI(i,iIceNH4))/aidz)*dtdays
               DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4) + (twi * (BioBI(i,iIceNH4)) - Bio(i,N(ng),iNH4)/Hz(i,j,N(ng)))*dtdays
-              
+
 # elif defined BERING_10K
               DBioBI(i,iIceNO3)  = DBioBI(i,iIceNO3)  + (twi * (Bio(i,N(ng),iNO3) - IceNO3(i,j,nstp))/aidz)*dtdays
               DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3) + (twi * (IceNO3(i,j,nstp)) - Bio(i,N(ng),iNO3)/Hz(i,j,N(ng)))*dtdays
-              
+
               DBioBI(i,iIceNH4)  = DBioBI(i,iIceNH4)  + (twi * (Bio(i,N(ng),iNH4) - IceNH4(i,j,nstp))/aidz)*dtdays
               DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4) + (twi * (IceNH4(i,j,nstp)) - Bio(i,N(ng),iNH4)/Hz(i,j,N(ng)))*dtdays
-              
-# endif             
-  
+
+# endif
+
               ! TODO: add bflux associated with ice/water exchange
-   
+
 !               IF (twi.lt.0) THEN
 !
 ! # if defined CLIM_ICE_1D
@@ -3973,8 +3990,8 @@
 !
 ! !             DBioBI(i,iIcePhL)=10_r8
 ! !           ENDIF
-             
-# if defined CLIM_ICE_1D  
+
+# if defined CLIM_ICE_1D
             ELSE IF(itL(i,j,nstp,iIceLog).lt.0_r8.and.itL(i,j,nnew,iIceLog).gt.0_r8) THEN
 
               DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                   &
@@ -3984,34 +4001,34 @@
      &               + BioBI(i,iIceNO3)*aidz/Hz(i,j,N(ng))
               DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)                   &
      &               + BioBI(i,iIceNH4)*aidz/Hz(i,j,N(ng))
-    
-    
+
+
               DBioBI(i,iIceNO3)=-BioBI(i,iIceNO3)
               DBioBI(i,iIceNH4)=-BioBI(i,iIceNH4)
               DBioBI(i,iIcePhL)=-BioBI(i,iIcePhL)
-#  ifdef PROD2      
-              Prod2(i,iIAPrd) = 0_r8 
-#  endif           
+#  ifdef PROD2
+              Prod2(i,iIAPrd) = 0_r8
+#  endif
 
-    
-          
+
+
 # elif defined BERING_10K
-     
-            ELSE IF (IceLog(i,j,nstp).lt.0_r8.and.IceLog(i,j,nnew).gt.0.0_r8) THEN 
-         
+
+            ELSE IF (IceLog(i,j,nstp).lt.0_r8.and.IceLog(i,j,nnew).gt.0.0_r8) THEN
+
               DBio(i,N(ng),iPhL) = DBio(i,N(ng),iPhL)                   &
      &               + IcePhL(i,j,nnew)*aidz/Hz(i,j,N(ng))
-     
+
               if((Bio(i,N(ng),iNO3)+IceNO3(i,j,nnew)).le.IceNO3(i,j,nnew))THEN
-  
-  
+
+
                 DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)                 &
      &               + IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))
               endif
 
               if((Bio(i,N(ng),iNH4)+IceNH4(i,j,nnew)).le.IceNH4(i,j,nnew))THEN
-  
-  
+
+
                 DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)                 &
      &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))
               endif
@@ -4019,143 +4036,143 @@
               DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)-IceNO3(i,j,nstp)
               DBioBI(i,iIceNH4)=DBioBI(i,iIceNH4)-IceNH4(i,j,nstp)
               DBioBI(i,iIcePhL)=DBioBI(i,iIcePhL)-IcePhL(i,j,nstp)
-#  ifdef PROD2      
-              Prod2(i,iIAPrd) = 0_r8 
+#  ifdef PROD2
+              Prod2(i,iIAPrd) = 0_r8
 #  endif
 
-# endif        
-# if defined CLIM_ICE_1D         
+# endif
+# if defined CLIM_ICE_1D
 #  if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(NT(ng)+3,iPhL)=bflx(NT(ng)+3,iPhL)                 & !PLi->PhL
-     &            + it(i,j,nnew,iIcePhL)*xi/aidz                        
-                                                                        
+     &            + it(i,j,nnew,iIcePhL)*xi/aidz
+
                 bflx(NT(ng)+4,iNO3)=bflx(NT(ng)+4,iNO3)                 & !NO3i->NO3
-     &            + it(i,j,nnew,iIceNO3)/aidz                           
-                                                                        
+     &            + it(i,j,nnew,iIceNO3)/aidz
+
                 bflx(NT(ng)+5,iNH4)=bflx(NT(ng)+5,iNH4)                 & !NH4i->NH4
-     &            + it(i,j,nnew,iIceNH4)/aidz 
-              ENDIF      
-#  endif  
+     &            + it(i,j,nnew,iIceNH4)/aidz
+              ENDIF
+#  endif
 # endif
 
             ELSE
-!no recent hitory of ice so icebio do nothing         
-# if defined CLIM_ICE_1D 
-         
+              !no recent hitory of ice so icebio do nothing
+# if defined CLIM_ICE_1D
+
               DO itrc=1,3 !NIB
                 ibioBI=idice(itrc)
                 DBioBI(i,ibioBI)=0_r8
-              
-              END DO 
-#  ifdef PROD2      
-              Prod2(i,iIAPrd) = 0_r8 
-#  endif   
-# elif defined BERING_10K   
+
+              END DO
+#  ifdef PROD2
+              Prod2(i,iIAPrd) = 0_r8
+#  endif
+# elif defined BERING_10K
               DBioBI(i,iIceNO3)=0_r8
               DBioBI(i,iIceNH4)=0_r8
               DBioBI(i,iIcePhL)=0_r8
-#  ifdef PROD2      
-              Prod2(i,iIAPrd) = 0_r8 
+#  ifdef PROD2
+              Prod2(i,iIAPrd) = 0_r8
 #  endif
-# endif 
+# endif
 
-            ENDIF 
-   
+            ENDIF
+
             if(i.eq.3)THEN
 !              Stat2(3,7)=  DBioBI(i,iIcePhL)
-            endif  
- 
-          END DO
-       
-#endif 
+            endif
 
-            
-!=======================================================================
-! Update Bio array
-!=======================================================================
+          END DO
+
+#endif
+
+
+          !==============================================================
+          ! Update Bio array
+          !==============================================================
           DO i=Istr,Iend
-          
+
             DO itrc=1,NBT
               ibio=idbio(itrc)
               DO k=1,N(ng)
-                      
+
                 Bio(i,k,ibio)=Bio(i,k,ibio)+DBio(i,k,ibio)
-          
+
               END DO
             END DO
           END DO
-#ifdef BENTHIC 
+#ifdef BENTHIC
           DO itrc=1,NBEN
             ibioB=idben(itrc)
             DO k=1,NBL(ng)
               DO i=Istr,Iend
-               
+
                 BioB(i,k,ibioB)=BioB(i,k,ibioB)+DBioB(i,k,ibioB)
-              
+
               END DO
             END DO
           END DO
 
 #endif
 #ifdef ICE_BIO
-# if defined CLIM_ICE_1D  
-          
+# if defined CLIM_ICE_1D
+
           DO i=Istr,Iend
-          
+
             if(itL(i,j,nstp,1).gt.0_r8)THEN
               BioBI(i,iIceNO3)=BioBI(i,iIceNO3)+DBioBI(i,iIceNO3)
               BioBI(i,iIceNH4)=BioBI(i,iIceNH4)+DBioBI(i,iIceNH4)
               BioBI(i,iIcePhL)=BioBI(i,iIcePhL)+DBioBI(i,iIcePhL)
-                
+
             else
-              BioBI(i,iIceNO3)=0_r8 
-              BioBI(i,iIceNH4)=0_r8 
-              BioBI(i,iIcePhL)=0_r8 
+              BioBI(i,iIceNO3)=0_r8
+              BioBI(i,iIceNH4)=0_r8
+              BioBI(i,iIcePhL)=0_r8
             endif
-          
+
           END DO
 
 # elif defined BERING_10K
 
           DO i=Istr,Iend
-               
+
             if (IceLog(i,j,nstp).gt.0 )THEN
-          
-              IcePhL(i,j,nnew) = IcePhL(i,j,nstp) + DBioBI(i,iIcePhL)    
-              IceNO3(i,j,nnew) = IceNO3(i,j,nstp) + DBioBI(i,iIceNO3)     
-              IceNH4(i,j,nnew) = IceNH4(i,j,nstp) + DBioBI(i,iIceNH4) 
-            else 
-              IcePhL(i,j,nnew) = 0_r8  
-              IceNO3(i,j,nnew) = 0_r8    
-              IceNH4(i,j,nnew) = 0_r8 
+
+              IcePhL(i,j,nnew) = IcePhL(i,j,nstp) + DBioBI(i,iIcePhL)
+              IceNO3(i,j,nnew) = IceNO3(i,j,nstp) + DBioBI(i,iIceNO3)
+              IceNH4(i,j,nnew) = IceNH4(i,j,nstp) + DBioBI(i,iIceNH4)
+            else
+              IcePhL(i,j,nnew) = 0_r8
+              IceNO3(i,j,nnew) = 0_r8
+              IceNH4(i,j,nnew) = 0_r8
             endif
-        
-#  ifdef STATIONARY2           
-  
-      
-!           Stat2(i,5)=IceNH4(i,j,nstp) 
+
+#  ifdef STATIONARY2
+
+
+!           Stat2(i,5)=IceNH4(i,j,nstp)
 !           Stat2(i,6)=IceNH4(i,j,nnew)
-#  endif  
-           
-           
+#  endif
+
+
           END DO
 
-# endif 
+# endif
 #endif
-    
- 
+
+
         END DO ITER_LOOP
-  
-!=======================================================================
-!  Update global tracer variables (m Tunits).
-!=======================================================================
-                
+
+        !=============================================
+        !  Update global tracer variables (m Tunits).
+        !=============================================
+
         DO i=Istr,Iend
           DO itrc=1,NBT
             ibio=idbio(itrc)
             DO k=1,N(ng)
-           
+
               t(i,j,k,nnew,ibio)=MAX(t(i,j,k,nnew,ibio)+                &
       &                               (Bio(i,k,ibio)-Bio_bak(i,k,ibio)) &
       &                               *Hz(i,j,k)                        &
@@ -4163,15 +4180,15 @@
 
 #ifdef TS_MPDATA
               t(i,j,k,3,ibio)=t(i,j,k,nnew,ibio)*Hz_inv(i,k)
-        
+
 #endif
 
               t(i,j,k,nnew,iMZS)=0.0_r8
-     
+
             END DO
           END DO
         END DO
-    
+
 #ifdef BENTHIC
 
         DO itrc=1,NBEN
@@ -4179,10 +4196,10 @@
           DO k=1,NBL(ng)
             DO i=Istr,Iend
 
-!  check indexing here. think it ok.  
+              !  check indexing here. think it ok.
               bt(i,j,k,nnew,ibioB)=MAX(bt(i,j,k,nstp,ibioB)+            &
      &                           (BioB(i,k,ibioB)-Bio_bakB(i,k,ibioB))  &
-     &                           ,0.0_r8) 
+     &                           ,0.0_r8)
 
 # ifdef MASKING
               bt(i,j,k,nnew,ibioB)=  bt(i,j,k,nnew,ibioB)*rmask(i,j)
@@ -4195,11 +4212,11 @@
 #ifdef ICE_BIO
 # if defined CLIM_ICE_1D
 
-       
+
         DO i=Istr,Iend
-         
+
           if(itL(i,j,nstp,1).gt.0_r8)THEN
-     
+
             it(i,j,nnew,iIceNO3)=MAX(it(i,j,nstp,iIceNO3)+              &
      &                           BioBI(i,iIceNO3)-Bio_bakBI(i,iIceNO3)  &
      &                               ,0.0_r8)
@@ -4209,62 +4226,62 @@
             it(i,j,nnew,iIcePhL)=MAX(it(i,j,nstp,iIcePhL)+              &
      &                           BioBI(i,iIcePhL)-Bio_bakBI(i,iIcePhL)  &
      &                               ,0.0_r8)
-     
+
           else
-   
+
             it(i,j,nnew,iIcePhL)=0_r8
             it(i,j,nnew,iIceNH4)=0_r8
             it(i,j,nnew,iIceNO3)=0_r8
           endif
-   
-   
+
+
           itL(i,j,nnew,iIceLog)=itL(i,j,nstp,iIceLog)
-    
-       
+
+
 #  ifdef MASKING
           it(i,j,nnew,iIcePhL)  = it(i,j,nnew,iIcePhL)*rmask(i,j)
           it(i,j,nnew,iIceNH4)  = it(i,j,nnew,iIceNH4)*rmask(i,j)
           it(i,j,nnew,iIceNO3)  = it(i,j,nnew,iIceNO3)*rmask(i,j)
           itL(i,j,nnew,iIceLog) = itL(i,j,nnew,iIceLog)*rmask(i,j)
-#  endif     
-       
+#  endif
+
         END DO
-  
+
 # elif defined BERING_10K
         DO i=Istr,Iend
           if (IceLog(i,j,nstp).ge.0_r8 )THEN
-!             
-!  ajh added zero trap on these
-! 
-            IcePhL(i,j,nnew) = max(0.,IcePhL(i,j,nnew))  
-            IceNO3(i,j,nnew) =  max(0.,IceNO3(i,j,nnew))     
-            IceNH4(i,j,nnew) =  max(0.,IceNH4(i,j,nnew))    
-          else
-            IcePhL(i,j,nnew) =0_r8 
-            IceNO3(i,j,nnew) =  0_r8     
-            IceNH4(i,j,nnew) =  0_r8 
-          endif
-     
-#  ifdef MASKING
-          IcePhL(i,j,nnew) = IcePhL(i,j,nnew)*rmask(i,j)   
-          IceNO3(i,j,nnew) =  IceNO3(i,j,nnew)*rmask(i,j)     
-          IceNH4(i,j,nnew) =  IceNH4(i,j,nnew)*rmask(i,j)       
-#  endif 
-            IceLog(i,j,nnew)=IceLog(i,j,nstp)
-         
-        END DO
-  
-# endif 
 
-          
-#endif  
-  
-  
+            !  ajh added zero trap on these
+
+            IcePhL(i,j,nnew) = max(0.,IcePhL(i,j,nnew))
+            IceNO3(i,j,nnew) =  max(0.,IceNO3(i,j,nnew))
+            IceNH4(i,j,nnew) =  max(0.,IceNH4(i,j,nnew))
+          else
+            IcePhL(i,j,nnew) =0_r8
+            IceNO3(i,j,nnew) =  0_r8
+            IceNH4(i,j,nnew) =  0_r8
+          endif
+
+#  ifdef MASKING
+          IcePhL(i,j,nnew) = IcePhL(i,j,nnew)*rmask(i,j)
+          IceNO3(i,j,nnew) =  IceNO3(i,j,nnew)*rmask(i,j)
+          IceNH4(i,j,nnew) =  IceNH4(i,j,nnew)*rmask(i,j)
+#  endif
+            IceLog(i,j,nnew)=IceLog(i,j,nstp)
+
+        END DO
+
+# endif
+
+
+#endif
+
+
 #ifdef STATIONARY
         DO k=1,N(ng)
 
           DO i=Istr,Iend
-             
+
              st(i,j,k,nstp,1)  =    Stat3(i,k,1)
              st(i,j,k,nstp,2)  =    Stat3(i,k,2)
              st(i,j,k,nstp,3)  =    Stat3(i,k,3)
@@ -4281,16 +4298,16 @@
              st(i,j,k,nstp,14) =    Stat3(i,k,14)
              st(i,j,k,nstp,15) =    Stat3(i,k,15)
              st(i,j,k,nstp,16) =    Stat3(i,k,16)
-        
-       
+
+
           END DO
         END DO
 #endif
 #ifdef STATIONARY2
-        
+
         DO i=Istr,Iend
           st2(i,j,nstp,1) =   Stat2(i,1)
-          st2(i,j,nstp,2) =   Stat2(i,2)    
+          st2(i,j,nstp,2) =   Stat2(i,2)
           st2(i,j,nstp,3) =   Stat2(i,3)
           st2(i,j,nstp,4) =   Stat2(i,4)
           st2(i,j,nstp,5) =   Stat2(i,5)
@@ -4298,16 +4315,16 @@
           st2(i,j,nstp,7) =   Stat2(i,7)
           st2(i,j,nstp,8) =   Stat2(i,8)
 # ifdef MASKING
-          st2(i,j,nstp,1) =  st2(i,j,nstp,1)*rmask(i,j)   
-          st2(i,j,nstp,2) =  st2(i,j,nstp,2)*rmask(i,j)   
-          st2(i,j,nstp,3) =  st2(i,j,nstp,3)*rmask(i,j) 
-          st2(i,j,nstp,4) =  st2(i,j,nstp,4)*rmask(i,j)     
-          st2(i,j,nstp,5) =  st2(i,j,nstp,5)*rmask(i,j)   
-          st2(i,j,nstp,6) =  st2(i,j,nstp,6)*rmask(i,j)     
-          st2(i,j,nstp,7) =  st2(i,j,nstp,7)*rmask(i,j)     
-          st2(i,j,nstp,8) =  st2(i,j,nstp,8)*rmask(i,j) 
+          st2(i,j,nstp,1) =  st2(i,j,nstp,1)*rmask(i,j)
+          st2(i,j,nstp,2) =  st2(i,j,nstp,2)*rmask(i,j)
+          st2(i,j,nstp,3) =  st2(i,j,nstp,3)*rmask(i,j)
+          st2(i,j,nstp,4) =  st2(i,j,nstp,4)*rmask(i,j)
+          st2(i,j,nstp,5) =  st2(i,j,nstp,5)*rmask(i,j)
+          st2(i,j,nstp,6) =  st2(i,j,nstp,6)*rmask(i,j)
+          st2(i,j,nstp,7) =  st2(i,j,nstp,7)*rmask(i,j)
+          st2(i,j,nstp,8) =  st2(i,j,nstp,8)*rmask(i,j)
 
-# endif    
+# endif
         END DO
 #endif
 #ifdef PROD3
@@ -4315,7 +4332,7 @@
           DO i=Istr,Iend
             pt3(i,j,k,nnew,iPhSprd) = pt3(i,j,k,nstp,iPhSprd) +         &
      &                             Prod(i,k,iPhSPrd)
-            
+
             pt3(i,j,k,nnew,iPhLprd) = pt3(i,j,k,nstp,iPhLprd) +         &
      &                             Prod(i,k,iPhLPrd)
             pt3(i,j,k,nnew,iMZSprd) = pt3(i,j,k,nstp,iMZSprd) +         &
@@ -4328,28 +4345,28 @@
      &                             Prod(i,k,iNCaPrd)
             pt3(i,j,k,nnew,iEupPrd) = pt3(i,j,k,nstp,iEupPrd) +         &
      &                             Prod(i,k,iEupPrd)
-# ifdef JELLY     
+# ifdef JELLY
 
             pt3(i,j,k,nnew,iJelPrd) = pt3(i,j,k,nstp,iJelPrd) +         &
      &                             Prod(i,k,iJelPrd)
 # endif
 # ifdef FEAST
-! 
-!  Note that fish zoopmort are lagged by one timestep due to state update
-! 
-!           pt3(i,j,k,nnew,iFCopMort)   = ZoopFishDeath(i,j,k,1) 
+
+            ! Note that fish zoopmort are lagged by one timestep due to state update
+
+!           pt3(i,j,k,nnew,iFCopMort)   = ZoopFishDeath(i,j,k,1)
 !           pt3(i,j,k,nnew,iFNCaSMort)  = ZoopFishDeath(i,j,k,2)
-!           pt3(i,j,k,nnew,iFNCaOMort)  = ZoopFishDeath(i,j,k,3) 
-!           pt3(i,j,k,nnew,iFEupSMort)  = ZoopFishDeath(i,j,k,4) 
-!           pt3(i,j,k,nnew,iFEupOMort)  = ZoopFishDeath(i,j,k,5) 
+!           pt3(i,j,k,nnew,iFNCaOMort)  = ZoopFishDeath(i,j,k,3)
+!           pt3(i,j,k,nnew,iFEupSMort)  = ZoopFishDeath(i,j,k,4)
+!           pt3(i,j,k,nnew,iFEupOMort)  = ZoopFishDeath(i,j,k,5)
             pt3(i,j,k,nnew,iFishOne)   = GF%ofdat(i,j,k,1)
             pt3(i,j,k,nnew,iFishTwo)   = GF%ofdat(i,j,k,2)
             pt3(i,j,k,nnew,iFishThree) = GF%ofdat(i,j,k,3)
-            pt3(i,j,k,nnew,iFishFour)  = GF%ofdat(i,j,k,4) 
-            pt3(i,j,k,nnew,iFishFive)  = GF%ofdat(i,j,k,5) 
-            pt3(i,j,k,nnew,iFishSix)   = GF%ofdat(i,j,k,6) 
-            pt3(i,j,k,nnew,iFishSeven) = GF%ofdat(i,j,k,7) 
-            pt3(i,j,k,nnew,iFishEight) = GF%ofdat(i,j,k,8) 
+            pt3(i,j,k,nnew,iFishFour)  = GF%ofdat(i,j,k,4)
+            pt3(i,j,k,nnew,iFishFive)  = GF%ofdat(i,j,k,5)
+            pt3(i,j,k,nnew,iFishSix)   = GF%ofdat(i,j,k,6)
+            pt3(i,j,k,nnew,iFishSeven) = GF%ofdat(i,j,k,7)
+            pt3(i,j,k,nnew,iFishEight) = GF%ofdat(i,j,k,8)
 # endif
           END DO
         END DO
@@ -4357,17 +4374,17 @@
 
 
 #ifdef PROD2
-        
+
         DO i=Istr,Iend
-# ifdef BENTHIC   
+# ifdef BENTHIC
 
           pt2(i,j,nnew,iBenPrd) = pt2(i,j,nstp,iBenPrd)                 &
-     &                           +Prod2(i,iBenPrd) 
-# endif        
-             
+     &                           +Prod2(i,iBenPrd)
+# endif
+
 # ifdef ICE_BIO
-          pt2(i,j,nnew,iIAPrd) = pt2(i,j,nstp,iIAPrd)+Prod2(i,iIAPrd) 
-      
+          pt2(i,j,nnew,iIAPrd) = pt2(i,j,nstp,iIAPrd)+Prod2(i,iIAPrd)
+
 # endif
           pt2(i,j,nnew,iXPrd) = pt2(i,j,nstp,iXPrd)+Prod2(i,iXPrd)
         END DO
@@ -4376,49 +4393,49 @@
 
       END DO J_LOOP
 
-#if defined EW_PERIODIC || defined NS_PERIODIC   
-!
-!  Apply periodic boundary conditions.
-!
+#if defined EW_PERIODIC || defined NS_PERIODIC
+
+      ! Apply periodic boundary conditions.
+
       DO itrc=1,NBT
         ibio=idbio(itrc)
-      
+
         CALL exchange_r3d_tile (ng, tile,                               &
      &                          LBi, UBi, LBj, UBj, 1, N(ng),           &
      &                          t(:,:,:,nnew,ibio))
       END DO
 #endif
-     
-#ifdef DISTRIBUTE
-!
-!  Exchange boundary data.
-!
 
-!ajh
-!added block on this for passives when feast is present
-!NOTE will need to exchange when passives/fish are changed elsewhere
+#ifdef DISTRIBUTE
+
+      ! Exchange boundary data.
+
+
+      !ajh
+      !added block on this for passives when feast is present
+      !NOTE will need to exchange when passives/fish are changed elsewhere
 # ifdef FEAST_NOEXCHANGE
-       CALL mp_exchange4d (ng, tile, iNLM, 1,                           &
+      CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NAT,         &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
 
-       CALL mp_exchange4d (ng, tile, iNLM, 1,                           &
+      CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng),                 &
      &                    NAT+NPT+1, NT(ng),                    &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
 
 # else
-       CALL mp_exchange4d (ng, tile, iNLM, 1,                           &
+      CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NT(ng),      &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
 # endif
-!     
-# ifdef STATIONARY     
-       CALL mp_exchange4d (ng, tile, iNLM, 1,                           &
-     &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NBTS,     &
+!
+# ifdef STATIONARY
+      CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
+     &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NBTS,        &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    st(:,:,:,nnew,:))
 # endif
@@ -4426,9 +4443,9 @@
 #endif
 
 
-#if defined ICE_BIO  
-# ifdef BERING_10K 
-       
+#if defined ICE_BIO
+# ifdef BERING_10K
+
       CALL IcePhLbc_tile (ng, tile,                                    &
      &                LBi, UBi, LBj, UBj,                               &
      &                nstp, nnew,                                     &
@@ -4441,37 +4458,38 @@
      &                LBi, UBi, LBj, UBj,                               &
      &                nstp, nnew,                                     &
      &                ui, vi, IceNH4)
-      
-#  if defined EW_PERIODIC || defined NS_PERIODIC || defined DISTRIBUTE     
+
+#  if defined EW_PERIODIC || defined NS_PERIODIC || defined DISTRIBUTE
       CALL mp_exchange2d (ng, tile, iNLM, 3,                            &
      &                    LBi, UBi, LBj, UBj,                           &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    IcePhL(:,:,nnew), IceNO3(:,:,nnew),         &
      &                    IceNH4(:,:,nnew))
-   
+
 #  endif
 
 
-    
 
-    
 
-# endif      
+
+
+# endif
 #endif
 
 #if defined FEAST
 #include "feast_step.h"
-#endif 
+#endif
 
       RETURN
       END SUBROUTINE biology_tile
+
 !=====================================================================
 ! BIOSINK_1  particle sinking subroutine After J. Warner sed sink code
 ! G. Gibson July 2008
 !=====================================================================
       subroutine BIOSINK_1(ng,wBio,Bio,sinkIN,sinkOUT,HzL,dtdays,z_wL,  &
      &                       zlimit,LBi,UBi,IminS, ImaxS)
-      
+
       USE mod_param
 !
       implicit none
@@ -4486,35 +4504,35 @@
       real(r8), intent(in) :: HzL(IminS:ImaxS,N(ng))
 
       real(r8), intent(in)    :: dtdays
-      
-           
+
+
       real(r8), intent(out) :: sinkIN(IminS:ImaxS,N(ng))
       real(r8), intent(out) :: sinkOUT(IminS:ImaxS,N(ng))
-      
+
       integer :: i,k,ks
       real(r8) :: aL, aR, cff1, cff2
       real(r8) :: cffL, cffR, cu, dltL, dltR,cff
-      
+
 
       real(r8):: dBio(0:N(ng)), wBiod(LBi:UBi,0:N(ng))
       real(r8) :: FC(IminS:ImaxS,0:N(ng))
-       
+
       real(r8) :: Hz_inv(IminS:ImaxS,N(ng))
       real(r8) :: Hz_inv2(IminS:ImaxS,N(ng))
       real(r8) :: Hz_inv3(IminS:ImaxS,N(ng))
-      
+
 
       integer :: ksource(IminS:ImaxS,N(ng))
-      
+
       real(r8) :: qR(IminS:ImaxS,N(ng))
       real(r8) :: qL(IminS:ImaxS,N(ng))
       real(r8) :: WL(IminS:ImaxS,N(ng))
       real(r8) :: WR(IminS:ImaxS,N(ng))
       real(r8), dimension(IminS:ImaxS,N(ng)) :: qc
-          
-    
-    
-    
+
+
+
+
       IF ( zlimit .lt. 0 ) THEN
        DO k=0,N(ng)
          DO i=LBi, UBi
@@ -4533,11 +4551,11 @@
           END DO
         END DO
       END IF
-! 
+!
 !
 !  Compute inverse thickness to avoid repeated divisions.
 !
-     
+
       DO k=1,N(ng)
        DO i=LBi,UBi
          !if (HzL(i,k)==0) then
@@ -4556,13 +4574,13 @@
          Hz_inv3(i,k)=1.0_r8/(HzL(i,k-1)+HzL(i,k)+HzL(i,k+1))
        END DO
       END DO
-  
+
       DO k=1,N(ng)
          DO i=LBi,UBi
            qc(i,k)=Bio(i,k)
          END DO
       END DO
-       
+
 !
 !  Reconstruct vertical profile of suspended sediment "qc" in terms
 !  of a set of parabolic segments within each grid box. Then, compute
@@ -4575,7 +4593,7 @@
           FC(i,k)=(qc(i,k+1)-qc(i,k))*Hz_inv2(i,k)
         END DO
       END DO
-    
+
 !     DO k=N(ng)-1,1,-1
 !       DO i=LBi,UBi
 !         print*,'LBi=',LBi,'UBi=',UBi
@@ -4585,8 +4603,8 @@
 !         endif
 !       END DO
 !     END DO
-    
-    
+
+
       DO k=2,N(ng)-1
         DO i=LBi,UBi
           dltR=HzL(i,k)*FC(i,k)
@@ -4608,7 +4626,7 @@
           END IF
 !
 !  Compute right and left side values (qR,qL) of parabolic segments
-!  within grid box Hz(k); (WR,WL) are measures of quadratic variations. 
+!  within grid box Hz(k); (WR,WL) are measures of quadratic variations.
 !
 !  NOTE: Although each parabolic segment is monotonic within its grid
 !        box, monotonicity of the whole profile is not guaranteed,
@@ -4634,7 +4652,7 @@
           qL(i,k+1)=qR(i,k)
         END DO
       END DO
-   
+
       DO i=LBi,UBi
         FC(i,N(ng))=0.0_r8              ! no-flux boundary condition
 #if defined LINEAR_CONTINUATION
@@ -4648,13 +4666,13 @@
         qL(i,N(ng))=qc(i,N(ng))         ! conditions
         qR(i,N(ng)-1)=qc(i,N(ng))
 #endif
-#if defined LINEAR_CONTINUATION 
+#if defined LINEAR_CONTINUATION
         qR(i,1)=qL(i,2)
         qL(i,1)=2.0_r8*qc(i,1)-qR(i,1)
 #elif defined NEUMANN
         qR(i,1)=qL(i,2)
         qL(i,1)=1.5_r8*qc(i,1)-0.5_r8*qR(i,1)
-#else  
+#else
         qL(i,2)=qc(i,1)                 ! bottom grid boxes are
         qR(i,1)=qc(i,1)                 ! re-assumed to be
         qL(i,1)=qc(i,1)                 ! piecewise constant.
@@ -4694,11 +4712,11 @@
 !  In the two code segments below, WL is the z-coordinate of the
 !  departure point for grid box interface z_w with the same indices;
 !  FC is the finite volume flux; ksource(:,k) is index of vertical
-!  grid box which contains the departure point (restricted by N(ng)). 
+!  grid box which contains the departure point (restricted by N(ng)).
 !  During the search: also add in content of whole grid boxes
 !  participating in FC.
 !
-          
+
       DO k=1,N(ng)
         DO i=LBi,UBi
           cff=dtdays*ABS(wBiod(i,k))
@@ -4731,9 +4749,9 @@
      &                   cu*(0.5_r8*(qR(i,ks)-qL(i,ks))-                &
      &                       (1.5_r8-cu)*                               &
      &                       (qR(i,ks)+qL(i,ks)-2.0_r8*qc(i,ks))))
-            
-! 
-!  G.Gibson  - FC is the flux into the level 
+
+!
+!  G.Gibson  - FC is the flux into the level
 !            - should be 0 at the surface
 
           if (k.eq.N(ng)) then
@@ -4744,20 +4762,20 @@
 
       DO k=1,N(ng)
         DO i=LBi,UBi
-!           
+!
 !  The Bio variables are now updated in the main subroutine
-! 
+!
 !         Bio(i,k)=qc(i,k)+(FC(i,k)-FC(i,k-1))*Hz_inv(i,k)
-          sinkIN(i,k)=FC(i,k) 
-          sinkOUT(i,k)=FC(i,k-1) 
-     
+          sinkIN(i,k)=FC(i,k)
+          sinkOUT(i,k)=FC(i,k-1)
+
           if(k.eq.N(ng))THEN
             sinkIN(i,k)=0.0_r8
           endif
 
         END DO
       END DO
-    
+
       RETURN
       END SUBROUTINE BIOSINK_1
 !=====================================================================
@@ -4768,9 +4786,9 @@
      subroutine BIORISE_1(ng,wBio,Bio,rOUT,rIN,HzL,dtdays,z_wL,         &
      &                       LBi,UBi,zlimit,IminS, ImaxS)
 
-        
 
-      
+
+
       USE mod_param
 !
       implicit none
@@ -4784,33 +4802,33 @@
       real(r8), intent(in) :: HzL(IminS:ImaxS,N(ng))
 !     real(r8), intent(in)    :: HzL(N(ng))
       real(r8), intent(in)    :: dtdays
-      
-       
+
+
       real(r8), intent(out) :: rIN(IminS:ImaxS,N(ng))
       real(r8), intent(out) :: rOUT(IminS:ImaxS,N(ng))
-   
+
       integer :: i,k,ks
       real(r8) :: aL, aR, cff1, cff2
       real(r8) :: cffL, cffR, cu, dltL, dltR,cff
-      
+
 
       real(r8):: dBio(0:N(ng)), wBiod(LBi:UBi,0:N(ng))
       real(r8) :: FC(IminS:ImaxS,0:N(ng))
-       
+
       real(r8) :: Hz_inv(IminS:ImaxS,N(ng))
       real(r8) :: Hz_inv2(IminS:ImaxS,N(ng))
       real(r8) :: Hz_inv3(IminS:ImaxS,N(ng))
-      
+
 
       integer :: ksource(IminS:ImaxS,N(ng))
-      
+
       real(r8) :: qR(IminS:ImaxS,N(ng))
       real(r8) :: qL(IminS:ImaxS,N(ng))
       real(r8) :: WL(IminS:ImaxS,N(ng))
       real(r8) :: WR(IminS:ImaxS,N(ng))
       real(r8), dimension(IminS:ImaxS,N(ng)) :: qc
-      
-    
+
+
       IF ( zlimit .lt. 0 ) THEN
        DO k=0,N(ng)
          DO i=LBi, UBi
@@ -4829,11 +4847,11 @@
           END DO
         END DO
       END IF
-! 
+!
 !
 !  Compute inverse thickness to avoid repeated divisions.
 !
-     
+
       DO k=1,N(ng)
        DO i=LBi,UBi
          Hz_inv(i,k)=1.0_r8/HzL(i,k)
@@ -4849,40 +4867,40 @@
          Hz_inv3(i,k)=1.0_r8/(HzL(i,k-1)+HzL(i,k)+HzL(i,k+1))
        END DO
       END DO
-  
+
       DO k=1,N(ng)
          DO i=LBi,UBi
            qc(i,k)=Bio(i,k)
          END DO
       END DO
-        
+
 ! !
 ! !  Reconstruct vertical profile of suspended sediment "qc" in terms
 ! !  of a set of parabolic segments within each grid box. Then, compute
 ! !  semi-Lagrangian flux due to sinking.
 ! !
 
-    
+
       DO k=2,N(ng),1
         DO i=LBi,UBi
- 
+
           FC(i,k)=(qc(i,k-1)-qc(i,k))*Hz_inv2(i,k)
-                   
+
         END DO
       END DO
-                 
+
       DO k=N(ng)-1,2,-1
          DO i=LBi,UBi
           dltR=HzL(i,k)*FC(i,k)
           dltL=HzL(i,k)*FC(i,k+1)
- 
+
           cff=HzL(i,k+1)+2.0_r8*HzL(i,k)+HzL(i,k-1)
           cffR=cff*FC(i,k)
           cffL=cff*FC(i,k+1)
- 
- 
-   
-    
+
+
+
+
 ! !
 ! !  Apply PPM monotonicity constraint to prevent oscillations within the
 ! !  grid box.
@@ -4897,7 +4915,7 @@
           END IF
 ! !
 ! !  Compute right and left side values (qR,qL) of parabolic segments
-! !  within grid box Hz(k); (WR,WL) are measures of quadratic variations. 
+! !  within grid box Hz(k); (WR,WL) are measures of quadratic variations.
 ! !
 ! !  NOTE: Although each parabolic segment is monotonic within its grid
 ! !        box, monotonicity of the whole profile is not guaranteed,
@@ -4908,28 +4926,28 @@
           cff=(dltR-dltL)*Hz_inv3(i,k)
           dltR=dltR-cff*HzL(i,k-1)
           dltL=dltL+cff*HzL(i,k+1)
- 
+
           qR(i,k)=qc(i,k)+dltR
           qL(i,k)=qc(i,k)-dltL
           WR(i,k)=(2.0_r8*dltR-dltL)**2
           WL(i,k)=(dltR-2.0_r8*dltL)**2
         END DO
       END DO
- 
+
       cff=1.0E-14_r8
-           
+
       DO k=N(ng),2,-1
         DO i=LBi,UBi
           dltL=MAX(cff,WL(i,k  ))
- 
+
           dltR=MAX(cff,WR(i,k-1))
- 
+
           qR(i,k)=(dltR*qR(i,k)+dltL*qL(i,k-1))/(dltR+dltL)
- 
+
           qL(i,k-1)=qR(i,k)
         END DO
       END DO
-  
+
       DO i=LBi,UBi
              FC(i,N(ng))=0.0_r8              ! no-flux boundary condition
 #if defined LINEAR_CONTINUATION
@@ -4943,13 +4961,13 @@
              qL(i,N(ng))=qc(i,N(ng))         ! conditions
              qR(i,N(ng)-1)=qc(i,N(ng))
 #endif
-#if defined LINEAR_CONTINUATION 
+#if defined LINEAR_CONTINUATION
              qR(i,1)=qL(i,2)
              qL(i,1)=2.0_r8*qc(i,1)-qR(i,1)
 #elif defined NEUMANN
              qR(i,1)=qL(i,2)
              qL(i,1)=1.5_r8*qc(i,1)-0.5_r8*qR(i,1)
-#else  
+#else
              qL(i,2)=qc(i,1)                 ! bottom grid boxes are
              qR(i,1)=qc(i,1)                 ! re-assumed to be
              qL(i,1)=qc(i,1)                 ! piecewise constant.
@@ -4960,8 +4978,8 @@
 ! !  values may cause a non-monotonic behavior of the parabolic segments
 ! !  inside the grid box.
 ! !
-! 
-     
+!
+
       DO k=N(ng),1,-1
         DO i=LBi,UBi
           dltR=qR(i,k)-qc(i,k)
@@ -4980,8 +4998,8 @@
           qL(i,k)=qc(i,k)-dltL
         END DO
       END DO
-!       
-! !   
+!
+! !
 ! !  After this moment reconstruction is considered complete. The next
 ! !  stage is to compute vertical advective fluxes, FC. It is expected
 ! !  that sinking may occurs relatively fast, the algorithm is designed
@@ -4992,19 +5010,19 @@
 ! !  In the two code segments below, WL is the z-coordinate of the
 ! !  departure point for grid box interface z_w with the same indices;
 ! !  FC is the finite volume flux; ksource(:,k) is index of vertical
-! !  grid box which contains the departure point (restricted by N(ng)). 
+! !  grid box which contains the departure point (restricted by N(ng)).
 ! !  During the search: also add in content of whole grid boxes
 ! !  participating in FC.
 ! !
-           
-!            
-!       
-      
+
+!
+!
+
       DO k=N(ng)-1,1,-1
         DO i=LBi,UBi
           cff=dtdays*ABS(wBiod(i,k))
           FC(i,k)=0.0_r8
-        
+
           WL(i,k)=z_wL(i,k+1)+cff
           WR(i,k)=HzL(i,k)*qc(i,k)
           ksource(i,k)=k
@@ -5016,23 +5034,23 @@
           DO i=LBi,UBi
             IF (WL(i,k).gt.z_wL(i,ks)) THEN
               ksource(i,k)=ks-1
- 
+
               FC(i,k+1)=FC(i,k+1)+WR(i,ks)
- 
+
             END IF
           END DO
         END DO
       END DO
- 
-! 
-!        
+
+!
+!
 ! !
 ! !  Finalize computation of flux: add fractional part.
 ! !
       DO k=N(ng)-1,1,-1
         DO i=LBi,UBi
           ks=ksource(i,k)
- 
+
           cu=MIN(1.0_r8,(WL(i,k)-z_wL(i,ks+1))*Hz_inv(i,ks))
           FC(i,k+1)=FC(i,k+1)+                                          &
       &                  HzL(i,ks)*cu*                                  &
@@ -5043,11 +5061,11 @@
         END DO
 
      END DO
-          
-          
+
+
      DO k=1,N(ng),1
        DO i=LBi,UBi
-         rIN(i,k)=MAX(0.0_r8,FC(i,k)) 
+         rIN(i,k)=MAX(0.0_r8,FC(i,k))
          if (k.eq.1) THEN
            rIN(i,1)=0.0_r8
          endif
@@ -5064,18 +5082,19 @@
 
 
       RETURN
-                
+
       END SUBROUTINE BIORISE_1
-      
-      
-            
-
-      
 
 
-      
+
+
+
+
+
+
 !=====================================================================
-!     BioSink: New subroutine to replace BIOSINK_1, BIORISE_1
+! TracerSink, TracerRise (and BioSink, called by both)
+! New subroutine for vertical movement, replaces BIOSINK_1, BIORISE_1
 !=====================================================================
 
 !************************************************************************
@@ -5090,11 +5109,11 @@
       ! zlimit: depth below which sinking stops (m, negative down, >=0 = no limit)
       ! Bio:    n x 1, biomass concentration input (g m^-3)
       ! Bout:   n x 1, biomass concentration output (g m^-3)
-      ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
-      
+      ! lost:   scalar, amount of biomass lost across lower boundary (g m^-2)
+
       USE mod_param
       implicit none
-      
+
       integer,  intent(in) :: nn
       real(r8), intent(in) :: wBio
       real(r8), intent(in) :: zlimit
@@ -5102,16 +5121,16 @@
       real(r8), intent(in)  :: Hz(1,1,nn)
       real(r8), intent(in)  :: z_w(1,1,0:nn)
       real(r8), intent(in)  :: Bio(1,nn)
-      
+
       real(r8), intent(out) :: Bout(nn)
       real(r8), intent(out) :: lost
-      
+
       integer  :: k
       real(r8) :: zwtmp(0:nn)
       real(r8) :: Hztmp(nn)
-      
+
       ! Pack the array slices into appropriate 1D arrays
-      
+
       DO k = 1,nn
         Bout(k) = Bio(1,k)
         Hztmp(k) = Hz(1,1,k)
@@ -5123,11 +5142,11 @@
       ! Call the sinking routine
 
       call BioSink(nn, Bout, wBio, Hztmp, dtdays, zwtmp, zlimit, lost)
-      
+
       RETURN
       END SUBROUTINE TracerSink
-      
-      
+
+
 !************************************************************************
 
       Subroutine TracerRise(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
@@ -5141,8 +5160,8 @@
       ! Bio:    1 x n x 1 slice, biomass concentration input (g m^-3)
       ! Bout:   n x 1, biomass concentration output (g m^-3)
       ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
-                  
-      USE mod_param 
+
+      USE mod_param
       implicit none
 
       integer,  intent(in)  :: nn
@@ -5152,17 +5171,17 @@
       real(r8), intent(in)  :: Hz(1,1,nn)
       real(r8), intent(in)  :: z_w(1,1,0:nn)
       real(r8), intent(in)  :: Bio(1,nn)
-      
+
       real(r8), intent(out) :: Bout(nn)
       real(r8), intent(out) :: lost
-      
+
       integer  :: k
       real(r8) :: zwtmp(0:nn)
       real(r8) :: Hztmp(nn)
       real(r8) :: Btmp(nn)
       real(r8) :: zlimflip
 
-      ! Flip the water column upside down.  The bottom is now at z = 0 
+      ! Flip the water column upside down.  The bottom is now at z = 0
       ! and the surface at water depth+free surface height.
 
       DO k = 1,nn
@@ -5172,28 +5191,28 @@
       DO k = 0,nn
         zwtmp(k) = z_w(1,1,0) - z_w(1,1,nn-k) ! make surface the bottom
       END DO
-      
+
       zlimflip = z_w(1,1,0) - zlimit
 
       ! Call the sinking routine
-      
+
       call BioSink(nn, Btmp, wBio, Hztmp, dtdays, zwtmp, zlimflip, lost)
-      
+
       ! Flip the water column back
-      
+
       DO k = 1,nn
         Bout(k) = Btmp(nn+1-k) ! flip back
       END DO
-      
+
       RETURN
       END SUBROUTINE TracerRise
-      
+
 !************************************************************************
-      
+
       Subroutine BioSink(n, Btmp, wBio, HzL, dtdays, z_wL, zlimit, sinkout)
-    
+
       !------------------------------------------------------------------
-      ! Computes redistribution of a tracer in the water column due to 
+      ! Computes redistribution of a tracer in the water column due to
       ! sinking.  After J. Warner sed sink code.
       !
       !   n       = # layers
@@ -5206,11 +5225,11 @@
       !   sinkout = amount lost out of bottom cell (concentration)
       !
       ! Modifies Btmp and sinkout in the calling program
-      !------------------------------------------------------------------ 
-    
+      !------------------------------------------------------------------
+
       USE mod_param
       implicit none
-    
+
       integer,  intent(in) :: n
       real(r8), intent(in) :: wBio
       real(r8), intent(in) :: zlimit
@@ -5219,29 +5238,29 @@
       real(r8), intent(inout) :: Btmp(n)
       real(r8), intent(in) :: HzL(n)
       real(r8), intent(inout) :: sinkout
-  
+
       integer :: i,k,ks
       real(r8) :: aL, aR, cff1, cff2
       real(r8) :: cffL, cffR, cu, dltL, dltR,cff
-  
+
       real(r8):: dBio(0:n), wBiod(0:n)
       real(r8) :: FC(0:n)
-   
+
       real(r8) :: Hz_inv(n)
       real(r8) :: Hz_inv2(n)
       real(r8) :: Hz_inv3(n)
-  
+
       integer :: ksource(n)
-  
+
       real(r8) :: qR(n)
       real(r8) :: qL(n)
       real(r8) :: WL(n)
       real(r8) :: WR(n)
       real(r8), dimension(n) :: qc
-  
-  
-      ! Modify sinking rates as necessary 
-  
+
+
+      ! Modify sinking rates as necessary
+
       IF ( zlimit .lt. 0 ) THEN
         DO k=0,n
           IF ( z_wL(k) .ge. zlimit ) THEN
@@ -5255,8 +5274,8 @@
           wBiod(k) = wBio
         END DO
       END IF
-    
-      
+
+
       ! Compute inverse thickness to avoid repeated divisions.
 
 
@@ -5276,7 +5295,7 @@
 
 
       ! Reconstruct vertical profile of suspended sediment "qc" in terms
-      ! of a set of parabolic segments within each grid box. Then, 
+      ! of a set of parabolic segments within each grid box. Then,
       ! compute semi-Lagrangian flux due to sinking.
 
       DO k=n-1,1,-1
@@ -5290,7 +5309,7 @@
           cffR=cff*FC(k)
           cffL=cff*FC(k-1)
 
-          ! Apply PPM monotonicity constraint to prevent oscillations 
+          ! Apply PPM monotonicity constraint to prevent oscillations
           ! within the grid box.
 
           IF ((dltR*dltL).le.0.0_r8) THEN
@@ -5302,15 +5321,15 @@
             dltL=cffR
           END IF
 
-          ! Compute right and left side values (qR,qL) of parabolic 
-          ! segments within grid box Hz(k); (WR,WL) are measures of 
+          ! Compute right and left side values (qR,qL) of parabolic
+          ! segments within grid box Hz(k); (WR,WL) are measures of
           ! quadratic variations.
           !
-          !  NOTE: Although each parabolic segment is monotonic within 
-          !        its grid box, monotonicity of the whole profile is not 
-          !        guaranteed, because qL(k+1)-qR(k) may still have 
-          !        different sign than qc(k+1)-qc(k).  This possibility 
-          !        is excluded, after qL and qR are reconciled using WENO 
+          !  NOTE: Although each parabolic segment is monotonic within
+          !        its grid box, monotonicity of the whole profile is not
+          !        guaranteed, because qL(k+1)-qR(k) may still have
+          !        different sign than qc(k+1)-qc(k).  This possibility
+          !        is excluded, after qL and qR are reconciled using WENO
           !        procedure.
 
           cff=(dltR-dltL)*Hz_inv3(k)
@@ -5321,9 +5340,9 @@
           WR(k)=(2.0_r8*dltR-dltL)**2
           WL(k)=(dltR-2.0_r8*dltL)**2
       END DO
-  
+
       cff=1.0E-14_r8
-  
+
       DO k=2,n-2
         dltL=MAX(cff,WL(k  ))
         dltR=MAX(cff,WR(k+1))
@@ -5344,21 +5363,21 @@
       qL(n)=qc(n)                   ! conditions
       qR(n-1)=qc(n)
 #endif
-#if defined LINEAR_CONTINUATION 
+#if defined LINEAR_CONTINUATION
       qR(1)=qL(2)
       qL(1)=2.0_r8*qc(1)-qR(1)
 #elif defined NEUMANN
       qR(1)=qL(2)
       qL(1)=1.5_r8*qc(1)-0.5_r8*qR(1)
-#else  
+#else
       qL(2)=qc(1)                   ! bottom grid boxes are
       qR(1)=qc(1)                   ! re-assumed to be
       qL(1)=qc(1)                   ! piecewise constant.
 #endif
 
 
-      ! Apply monotonicity constraint again, since the reconciled 
-      ! interfacial values may cause a non-monotonic behavior of the 
+      ! Apply monotonicity constraint again, since the reconciled
+      ! interfacial values may cause a non-monotonic behavior of the
       ! parabolic segments inside the grid box.
 
       DO k=1,n
@@ -5377,7 +5396,7 @@
           qR(k)=qc(k)+dltR
           qL(k)=qc(k)-dltL
       END DO
-  
+
       ! After this moment reconstruction is considered complete. The next
       ! stage is to compute vertical advective fluxes, FC. It is expected
       ! that sinking may occurs relatively fast, the algorithm is designed
@@ -5388,10 +5407,10 @@
       ! In the two code segments below, WL is the z-coordinate of the
       ! departure point for grid box interface z_w with the same indices;
       ! FC is the finite volume flux; ksource(:,k) is index of vertical
-      ! grid box which contains the departure point (restricted by N(ng)). 
+      ! grid box which contains the departure point (restricted by N(ng)).
       ! During the search: also add in content of whole grid boxes
       ! participating in FC.
-  
+
       DO k=1,n
         cff=dtdays*ABS(wBiod(k))
         FC(k-1)=0.0_r8
@@ -5432,14 +5451,14 @@
       ! Amount lost out of bottom cell (mass per area)
 
       sinkout = FC(0)
-  
+
       RETURN
       END SUBROUTINE BioSink
-			
+
 !************************************************************************
-   
+
 !=======================================================================
-!    DetSINK 
+!    DetSINK
 !----------------
 !====================================================================
         Function ComputeDensity(Temp1,Sal1)
@@ -5617,7 +5636,7 @@
         Resp = bmJ * exp(ktbmJ * (Temp1 - TrefJ))
         GetJelResp = Resp
         Return
-        End Function GetJelResp 
+        End Function GetJelResp
 !=================================================================
         Function GetBasalMetabolism(respPh,kfePh,Iron1)
 !---------------------------------------------------------
@@ -5708,23 +5727,23 @@
         GetNitrif2 = Nitr
         Return
         End Function GetNitrif2
-!-----------------------------------------------------------  
-  
+!-----------------------------------------------------------
+
   Function GetNitrifLight(Par1,tI0,KI)
    USE mod_kinds
-   
+
         Real(r8) GetNitrifLight
         Real(r8) :: Par1               !--------------------------------
         Real(r8) :: tI0                 !Threshold,light inhibition, W m-2
         Real(r8) :: KI                 !Half Saturation light intensity, W m-2
         Real(r8) :: ParW               !Par in watts
         Real(r8) :: cff1
-  
+
       ParW = Par1/0.394848_r8 !convert PAR back to watts
             cff1 = (ParW-tI0)/(KI+ParW-tI0)
-      
+
       GetNitrifLight=(1-MAX(0.0_r8,cff1))
-    
+
         Return
         End Function GetNitrifLight
 !-----------------------------------------------
@@ -5736,37 +5755,37 @@
 !-------------------------------------------------------
         USE mod_kinds
         Real(r8) GetNitrifMaxK
-                               
+
         Real(r8) :: Temp1         !--------------------------------
         Real(r8) :: KnT           !Passed variables
         Real(r8) :: Nitr0         !--------------------------------
-       
+
 
   GetNitrifMaxK=Nitr0*exp(KnT*Temp1)
-  
+
         Return
         End Function GetNitrifMaxK
-  
-!-----------------------------------------------------------  
-  
+
+!-----------------------------------------------------------
+
   Function GetNitrifMaxA(Nitr0, ktntr,Temp1,ToptNtr)
    USE mod_kinds
-   
+
         Real(r8) GetNitrifMaxA
-                               
-        Real(r8) :: Temp1         
+
+        Real(r8) :: Temp1
         Real(r8) :: Ktntr           !--------------------------------
         Real(r8) :: Nitr0           !Passed variables
         Real(r8) :: ToptNtr         !--------------------------------
-       
+
 
   GetNitrifMaxA=Nitr0*exp(-ktntr*(Temp1 - ToptNtr)**2)
-  
-  
+
+
         Return
         End Function GetNitrifMaxA
-  
-!-----------------------------------------------------------    
+
+!-----------------------------------------------------------
 !=====================================================================
       FUNCTION GetLightLimIron2(alphaPh, PAR1, Pmax1, CrChlRatio1, &
      &     IronLim1)
@@ -5826,7 +5845,7 @@
      !SumSigma = 0
      SumDep = 0
      indx = N(ng)     !30
-                                 
+
      SumDep = z_wL(indx) * (-1.0_r8)
      SumSigma = Dens(indx) * SumDep
      indx = indx - 1
@@ -5871,3 +5890,4 @@
      ComputeStability = -9.8 * SumSigma / SumDep
 
      END FUNCTION ComputeStability
+
