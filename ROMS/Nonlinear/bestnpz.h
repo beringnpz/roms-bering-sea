@@ -4202,8 +4202,8 @@
     
 # ifdef CARBON
 	      DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)                 &
-    &			   +cff1/Hz(i,j,N(ng))*16._r8                   &
-    &                      +cff2/Hz(i,j,N(ng))*16._r8
+    &			   +cff1/Hz(i,j,N(ng))*P2CN                     &
+    &                      +cff2/Hz(i,j,N(ng))*P2CN
 	      DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)                 &
     &                      -cff1/Hz(i,j,N(ng))                          &
     &                      +cff2/Hz(i,j,N(ng))
@@ -4235,7 +4235,7 @@
                   DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
 # ifdef CARBON
 		  DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
-   &                      -cff1/Hz(i,j,N(ng))*16._r8
+   &                      -cff1/Hz(i,j,N(ng))*P2CN
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
    &                      +cff1/Hz(i,j,N(ng)) 
 # endif
@@ -4252,7 +4252,7 @@
                   DBio(i,N(ng),iNO3) = DBio(i,N(ng),iNO3)-cff1/Hz(i,j,N(ng))
 # ifdef CARBON
                   DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
-   &                       -cff1/Hz(i,j,N(ng))*16._r8
+   &                       -cff1/Hz(i,j,N(ng))*P2CN
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
    &                       +cff1/Hz(i,j,N(ng))
 # endif
@@ -4270,7 +4270,7 @@
                   DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))
 # ifdef CARBON
                   DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
-    &                      -cff2/Hz(i,j,N(ng))*16._r8
+    &                      -cff2/Hz(i,j,N(ng))*P2CN
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
     &                      -cff2/Hz(i,j,N(ng))
 # endif
@@ -4287,7 +4287,7 @@
                   DBio(i,N(ng),iNH4) = DBio(i,N(ng),iNH4)-cff2/Hz(i,j,N(ng))
 # ifdef CARBON  
                   DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)             &
-     &                    -cff2/Hz(i,j,N(ng))*16._r8
+     &                    -cff2/Hz(i,j,N(ng))*P2CN
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
      &                    -cff2/Hz(i,j,N(ng))
 # endif
@@ -4350,7 +4350,7 @@
      &               + IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))
 # ifdef CARBON
                 DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)               &
-     &               + IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))*16._r8
+     &               + IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))*P2CN
 	        DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)               &
      &               - IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))
 # endif 
@@ -4363,7 +4363,7 @@
      &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))
 # ifdef CARBON
                 DBio(i,N(ng),iTIC_) = DBio(i,N(ng),iTIC_)               &
-     &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))*16._r8
+     &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))*P2CN
                 DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)               &
      &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))
 # endif
