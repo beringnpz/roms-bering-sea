@@ -812,6 +812,19 @@
             DO i=Istr,Iend
               Bio_bak(i,k,ibio)=max(t(i,j,k,nstp,ibio),0.0_r8)
               Bio(i,k,ibio)=Bio_bak(i,k,ibio)
+# ifdef CARBON_DEBUG
+               IF (j.EQ.20.0_r8) THEN
+                         IF (i.EQ.20.0_r8) THEN
+                               IF (k.EQ.10) THEN
+                                 print *, ibio,'_beginning', Bio(i,k,ibio)
+                                   IF (ibio.LT.13) THEN
+                                        totalN = Bio(i,k,ibio)+totalN
+                                        print *, 'TotalN', totalN
+                                   END IF
+                                END IF
+                         END IF
+               END IF
+#endif 
               DBio(i,k,ibio)=0.0_r8
             END DO
           END DO
@@ -1361,6 +1374,19 @@
                 Bio(i,k,iTAlk)=Bio(i,k,iTAlk)                           &
      &            +(NOup)*xi*dtdays-(NHup)*xi*dtdays
 #endif
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+     print *, 'ALK_Flux_PProd', (NOup)*xi*dtdays-(NHup)*xi*dtdays
+     print *, 'NO3_Flux_PProd', (NOup)*xi*dtdays
+      print *, 'NH4_Flux_PProd', (NHup)*xi*dtdays
+     print *, 'DIC_Flux_PProd', (NHup+NOup)*dtdays/12._r8
+                 print *, 'loc', i, j, k
+                    END IF
+                  END IF
+                END IF
+#endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iPPro)=DiaBio3d(i,j,k,iPPro)+            &
      &         (NHup+NOup)*dtdays/12._r8
@@ -1597,6 +1623,19 @@
 !
                 Bio(i,k,iTAlk)=Bio(i,k,iTAlk)                           &
      &            +(NOup)*xi*dtdays-(NHup)*xi*dtdays
+#endif
+#ifdef CARBON_DEBUG
+                 IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+     print *, 'ALK_Flux_PProd_L', (NOup)*xi*dtdays-(NHup)*xi*dtdays
+    print *, 'NO3_Flux_PProd_L', (NOup)*xi*dtdays
+      print *, 'NH4_Flux_PProd_L', (NHup)*xi*dtdays
+     print *, 'DIC_Flux_PProd_L', (NHup+NOup)*dtdays/12._r8
+                 print *, 'loc', i, j, k
+                    END IF
+                  END IF
+                END IF
 #endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iPPro)=DiaBio3d(i,j,k,iPPro)+            &
@@ -2810,6 +2849,21 @@
      & 	      (TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS))/12._r8
           Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+                                &
      &        xi * TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
+#endif
+#ifdef CARBON_DEBUG
+          IF (j.EQ.20.0_r8) THEN
+             IF (i.EQ.20.0_r8) THEN
+               IF (k.EQ.10) THEN
+                    Graz1 =   (TempFuncPhS(i,k)*BasalMet*dtdays         &
+     &                        *Bio(i,k,iPhS))/12._r8
+                    Graz1_alk =   xi*(TempFuncPhS(i,k)*BasalMet*dtdays  &
+     &                           *Bio(i,k,iPhS))
+                print *, 'Graz', Graz1
+                print *, 'Graz_alk', Graz1_alk
+                print *, 'loc', i, j, k
+               END IF
+             END IF
+          END IF
 #endif 
 !-----------------------------------------------------------------------
 !  Primary production of Small phytoplankton
@@ -2866,7 +2920,22 @@
      &        (TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL))/12._r8
           Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+                                &
      &        xi * TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-#endif    
+#endif
+#ifdef CARBON_DEBUG
+          IF (j.EQ.20.0_r8) THEN
+             IF (i.EQ.20.0_r8) THEN
+               IF (k.EQ.10) THEN
+                    Graz1 =   (TempFuncPhL(i,k)*BasalMet*dtdays         &
+     &                        *Bio(i,k,iPhL))/12._r8
+                    Graz1_alk =   xi*(TempFuncPhL(i,k)*BasalMet*dtdays  &
+     &                           *Bio(i,k,iPhL))
+                print *, 'Graz', Graz1
+                print *, 'Graz_alk', Graz1_alk
+                print *, 'loc', i, j, k
+               END IF
+             END IF
+          END IF
+#endif 
 !-----------------------------------------------------------------------
 !  Primary production of Large phytoplankton
 !-----------------------------------------------------------------------
@@ -2990,6 +3059,19 @@
                 DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
      &         +((TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL)))/12._r8
 # endif
+#ifdef CARBON_DEBUG
+          IF (j.EQ.20.0_r8) THEN
+             IF (i.EQ.20.0_r8) THEN
+               IF (k.EQ.10) THEN
+           Graz1 =  (TFMZL(i,k)*BasalMetMZL*dtdays*Bio(i,k,iMZL))/12._r8
+           Graz1_alk =  (TFMZL(i,k)*BasalMetMZL*dtdays*Bio(i,k,iMZL))*xi
+                print *, 'Graz', Graz1
+                print *, 'Graz_alk', Graz1_alk
+                print *, 'loc', i, j, k
+               END IF
+             END IF
+          END IF
+#endif
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
 !               bflx(iMZS,iNH4)= bflx(iMZS,iNH4) + TempFuncMZS(i,k) *   &
@@ -3198,6 +3280,40 @@
      &         +   (TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))/12._r8
 #endif
 #endif
+#ifdef CARBON_DEBUG
+          IF (j.EQ.20.0_r8) THEN
+             IF (i.EQ.20.0_r8) THEN
+               IF (k.EQ.10) THEN
+          Graz2 =((TFCop*BasalMetCop*dtdays*Bio(i,k,iCop))              &
+     &         +  (TFNCa*BasalMetCM*dtdays*Bio(i,k,iNCaS))              &
+     &         +  (TFNCa*BasalMetNC*dtdays*Bio(i,k,iNCaO))              &
+     &         +  (TFEup*BasalMetEup*dtdays*Bio(i,k,iEupS))             &
+     &         +  (TFEup*BasalMetEup*dtdays*Bio(i,k,iEupO)))/12._r8
+          Graz_alk= xi*(TFCop*BasalMetCop*dtdays*Bio(i,k,iCop))         &
+     &         +  xi*(TFNCa*BasalMetCM*dtdays*Bio(i,k,iNCaS))           &
+     &         +  xi*(TFNCa*BasalMetNC*dtdays*Bio(i,k,iNCaO))           &
+     &         +  xi*(TFEup*BasalMetEup*dtdays*Bio(i,k,iEupS))          &
+     &         +  xi*(TFEup*BasalMetEup*dtdays*Bio(i,k,iEupO))
+                print *, 'Graz', Graz2
+                print *, 'Graz_alk', Graz_alk
+                print *, 'loc', i, j, k
+               END IF
+             END IF
+          END IF
+#ifdef JELLY
+          IF (j.EQ.20.0_r8) THEN
+             IF (i.EQ.20.0_r8) THEN
+               IF (k.EQ.10) THEN
+         Graz_jelly=(TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))/12._r8
+         Graz_alk_jelly=xi*(TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))
+                print *, 'Graz_jelly', Graz_jelly
+                print *, 'Graz_alk_jelly', Graz_alk_jelly
+                print *, 'loc', i, j, k
+               END IF
+             END IF
+          END IF
+#endif 
+#endif
 #endif     
 
 #if defined BIOFLUX && defined BEST_NPZ
@@ -3284,6 +3400,17 @@
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iResp)=DiaBio3d(i,j,k,iResp)+            &
      &                      ((Pv0*exp(PvT*Temp1)*PON)/xi)*dtdays/12._r8
+#endif
+#ifdef CARBON_DEBUG
+          IF (j.EQ.20.0_r8) THEN
+             IF (i.EQ.20.0_r8) THEN
+               IF (k.EQ.10) THEN
+                print *, 'Resp', ((Pv0*exp(PvT*Temp1)*PON)/xi)*dtdays/12._r8
+                print *, 'Resp NH4',((Pv0*exp(PvT*Temp1)*PON))*dtdays
+                print *, 'loc', i, j, k,xi
+               END IF
+             END IF
+          END IF
 #endif
 #endif     
 #if defined BIOFLUX && defined BEST_NPZ
@@ -3376,6 +3503,18 @@
                 DiaBio3d(i,j,k,iNit)=DiaBio3d(i,j,k,iNit)-            &
      &         2.0_r8*NitrifMax * Bio(i,k,iNH4) * DLNitrif * cff1 *     &
      &          dtdays
+#endif
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+		nitrif_alk=2.0_r8*NitrifMax *                           &
+     &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays	
+                 print *, 'Nitrification', nitrif_alk
+                 print *, 'loc', i, j, k
+                    END IF
+                  END IF
+                END IF
 #endif
 #endif
 
@@ -3553,6 +3692,20 @@
         Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+xi*dtdays*0.5_r8                  &
      &         *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,k)
 # endif             
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+            excretion=dtdays*0.5_r8/12._r8                              &
+     &         *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,k)
+            excretion_alk=xi*dtdays*0.5_r8                              &
+     &         *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,k)
+            print *, 'Excretion', excretion
+            print *, 'Excretion_alk', excretion_alk                  
+                    END IF
+                  END IF
+                END IF
+#endif
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
@@ -3579,7 +3732,16 @@
         Bio(i,k,iTIC_)=Bio(i,k,iTIC_)+dtdays*cff6/Hz(i,j,k)/12._r8
         Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+xi*dtdays*cff6/Hz(i,j,k)
 # endif
-
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+           print *, 'Benthic_resp', dtdays*cff6/Hz(i,j,k)/12._r8
+           print *, 'Benthic_alk_resp', xi*dtdays*cff6/Hz(i,j,k)
+                    END IF
+                  END IF
+                END IF
+#endif 
         
 # ifdef STATIONARY2           
             Stat2(i,4)=cff3*dtdays
@@ -3659,7 +3821,16 @@
         Bio(i,k,iTIC_)=Bio(i,k,iTIC_)+cff1*dtdays/xi/12._r8
         Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+cff1*dtdays
 # endif
-
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+           print *, 'Benthic_remin', cff1*dtdays/xi/12._r8 
+           print *, 'Benthic_alk_remin', cff1*dtdays 
+                    END IF
+                  END IF
+                END IF
+#endif
      
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
@@ -4208,7 +4379,18 @@
     &                      -cff1/Hz(i,j,N(ng))                          &
     &                      +cff2/Hz(i,j,N(ng))
 # endif
-	      
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+                ice=cff1/Hz(i,j,N(ng))*P2CN+cff2/Hz(i,j,N(ng))*P2CN
+                ice_alk=cff2/Hz(i,j,N(ng))-cff1/Hz(i,j,N(ng))
+                print *, 'Ice', ice
+                print *, 'Ice_alk', ice_alk
+                    END IF
+                  END IF
+                END IF
+#endif 	      
 # if defined CLIM_ICE_1D     
 #  if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
@@ -4239,6 +4421,16 @@
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
    &                      +cff1/Hz(i,j,N(ng)) 
 # endif
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+                print *, 'Ice', -cff1/Hz(i,j,N(ng))*P2CN 
+                print *, 'Ice_alk', cff1/Hz(i,j,N(ng))
+                    END IF
+                  END IF
+                END IF
+#endif
                 endif
               else if(cff1.lt.0_r8)THEN
 # if defined BERING_10K  
@@ -4256,6 +4448,16 @@
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
    &                       +cff1/Hz(i,j,N(ng))
 # endif
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+                print *, 'Ice', -cff1/Hz(i,j,N(ng))*P2CN
+                print *, 'Ice_alk', cff1/Hz(i,j,N(ng))
+                    END IF
+                  END IF
+                END IF
+#endif
                 endif
               endif
 
@@ -4274,6 +4476,16 @@
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
     &                      -cff2/Hz(i,j,N(ng))
 # endif
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+                print *, 'Ice', -cff2/Hz(i,j,N(ng))*P2CN
+                print *, 'Ice_alk', -cff2/Hz(i,j,N(ng))
+                    END IF
+                  END IF
+                END IF
+#endif
                 endif
              else if(cff2.lt.0_r8)THEN
 # if defined BERING_10K  
@@ -4291,6 +4503,16 @@
                   DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)             &
      &                    -cff2/Hz(i,j,N(ng))
 # endif
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+                print *, 'Ice', -cff2/Hz(i,j,N(ng))*P2CN
+                print *, 'Ice_alk', -cff2/Hz(i,j,N(ng))
+                    END IF
+                  END IF
+                END IF
+#endif
                 endif
               endif
       
@@ -4354,6 +4576,18 @@
 	        DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)               &
      &               - IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))
 # endif 
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+                ice_no3=IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))*P2CN
+                ice_alk_no3= -IceNO3(i,j,nnew)*aidz/Hz(i,j,N(ng))
+                print *, 'Ice_no3', ice_no3
+                print *, 'Ice_alk_no3', ice_alk_no3
+                    END IF
+                  END IF
+                END IF
+#endif
               endif
 
               if((Bio(i,N(ng),iNH4)+IceNH4(i,j,nnew)).le.IceNH4(i,j,nnew))THEN
@@ -4367,6 +4601,18 @@
                 DBio(i,N(ng),iTAlk) = DBio(i,N(ng),iTAlk)               &
      &               + IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))
 # endif
+#ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                      IF (k.EQ.10) THEN
+                ice_nh4=IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))*P2CN
+                ice_alk_nh4= IceNH4(i,j,nnew)*aidz/Hz(i,j,N(ng))
+                print *, 'Ice_nh4', ice_nh4
+                print *, 'Ice_alk_nh4', ice_alk_nh4
+                    END IF
+                  END IF
+                END IF
+#endif
               endif
 
               DBioBI(i,iIceNO3)=DBioBI(i,iIceNO3)-IceNO3(i,j,nstp)
@@ -4518,6 +4764,14 @@
      &                          CO2_Flux
             DiaBio2d(i,j,ipCO2)=pCO2(i)
 # endif
+# ifdef CARBON_DEBUG
+                IF (j.EQ.20.0_r8) THEN
+                   IF (i.EQ.20.0_r8) THEN
+                 print *, 'degas', CO2_Flux*Hz_inv(i,k)!/dtdays
+                 print *, 'loc', i, j, k
+                  END IF
+                END IF
+#endif
           END DO
 #endif
 
@@ -4616,6 +4870,23 @@
               t(i,j,k,3,ibio)=t(i,j,k,nnew,ibio)*Hz_inv(i,k)
         
 #endif
+#ifdef CARBON_DEBUG
+
+             IF (j.EQ.20.0_r8) THEN
+                IF (i.EQ.20.0_r8) THEN
+                   IF (k.EQ.10) THEN
+                      print *, 'NO3_end', Bio(i,k,iNO3)
+                      print *, 'NH4_end', Bio(i,k,iNH4)
+                      print *, 'P_end', Bio(i,k,iPhL)+Bio(i,k,iPhS)
+                      print *, 'D_end', Bio(i,k,iDet)
+                      print *, 'DIC_end', Bio(i,k,iTIC_)
+                     print *, 'ALK_end', Bio(i,k,iTAlk)
+
+                  END IF
+                END IF
+              END IF
+#endif
+
 
               t(i,j,k,nnew,iMZS)=0.0_r8
      
