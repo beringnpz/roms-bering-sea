@@ -7740,6 +7740,18 @@
      &          'Extinction coefficient due to seawater (1/m)'
           WRITE (out,70) k_chl, 'k_chl',                                &
      &          'Extinction coefficient due to phytoplankton (1/m)'
+          WRITE (out,70) k_extZ, 'k_extZ',                              &
+     &          'Cokelet light parameter' ! TODO: unused?  Looks like old bit of Cokelet light code now commented out
+          WRITE (out,70) k_chlA, 'k_chlA',                              &
+     &          'Cokelet light parameter' ! TODO: Cokelet-related, get details of this
+          WRITE (out,70) k_chlB, 'k_chlB',                              &
+     &          'Cokelet light parameter' ! TODO: Cokelet-related, get details of this
+          WRITE (out,70) k_chlC, 'k_chlC',                              &
+     &          'Cokelet light parameter' ! TODO: Cokelet-related, get details of this
+          WRITE (out,70) a_frac, 'a_frac',                              &
+     &          'light parameter' ! TODO: swdk calc in pre_step3d... get details of this
+          WRITE (out,70) a_mu1, 'a_mu1',                                &
+     &          'light parameter' ! TODO: swdk calc in pre_step3d... get details of this
           WRITE (out,70) DiS, 'DiS',                                    &
      &          'PhS Doubling rate parameter'
           WRITE (out,70) Dps, 'DpS',                                    &
