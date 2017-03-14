@@ -329,12 +329,12 @@
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: grad
 
 !ajh coefs for bio absorption
-      real(r8), parameter :: ccr = 65.0d0
-      real(r8), parameter :: ccrPhL = 25.0d0
-      real(r8), parameter :: k_ext = .046d0
-      real(r8), parameter :: k_chl = .121d0
-      real(r8), parameter :: a_frac = .58d0
-      real(r8), parameter :: a_mu1 = .35d0
+!       real(r8), parameter :: ccr = 65.0d0
+!       real(r8), parameter :: ccrPhL = 25.0d0
+!       real(r8), parameter :: k_ext = .046d0
+!       real(r8), parameter :: k_chl = .121d0
+!       real(r8), parameter :: a_frac = .58d0
+!       real(r8), parameter :: a_mu1 = .35d0
 
       integer :: kk
       real(r8) :: PhSsum,PhLsum,PhSave,PhLave
@@ -377,10 +377,14 @@
             PhSave = PhSsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
             PhLave = PhLsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
 
-            cffa1 = max(1.e-3,(PhSave/ccr) +                & 
-     &                 (PhLave/ccrPhL))
+            cffa1 = max(1.e-3,(PhSave/ccr) + (PhLave/ccrPhL))
             cffa2 = k_ext+2.00_r8*exp(z_w(i,j,0)*.05)
-            cffa3 = (k_chl*(cffa1)**(0.428_r8))   
+#    if defined COKELET
+            cffa3=(k_chlA*(cffa1)**(k_chlB))+k_chlC
+#    else
+            cffa3 = (k_chl*(cffa1)**(0.428_r8))
+#    endif
+
             FX(i,j) = z_w(i,j,N(ng))-z_w(i,j,k)
             swdk(i,j,k) = (1.-a_frac)*EXP(-1.*FX(i,j)*(cffa2+cffa3))    &
      &                  + a_frac*EXP(-1.*FX(i,j)/a_mu1)

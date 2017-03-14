@@ -6724,6 +6724,18 @@
             Npts=load_r(Nval, Rval, 1, k_ext)
           ELSE IF (TRIM(KeyWord).eq.'k_chl') THEN
             Npts=load_r(Nval, Rval, 1, k_chl)
+          ELSE IF (TRIM(KeyWord).eq.'k_extZ') THEN
+             Npts=load_r(Nval, Rval, 1, k_extZ)
+          ELSE IF (TRIM(KeyWord).eq.'k_chlA') THEN
+             Npts=load_r(Nval, Rval, 1, k_chlA)
+          ELSE IF (TRIM(KeyWord).eq.'k_chlB') THEN
+             Npts=load_r(Nval, Rval, 1, k_chlB)
+          ELSE IF (TRIM(KeyWord).eq.'k_chlC') THEN
+             Npts=load_r(Nval, Rval, 1, k_chlC)
+          ELSE IF (TRIM(KeyWord).eq.'a_frac') THEN
+             Npts=load_r(Nval, Rval, 1, a_frac)
+           ELSE IF (TRIM(KeyWord).eq.'a_mu1') THEN
+             Npts=load_r(Nval, Rval, 1, a_mu1)
 
           !  PhS growth params
 

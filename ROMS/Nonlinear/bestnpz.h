@@ -521,7 +521,7 @@
 #endif
 
 #ifdef DIAPAUSE
-      logical :: downward = .false., upward = .false.
+      logical :: downwardNC = .false., upwardNC = .false.
       logical :: downwardCM = .false., upwardCM = .false.
 #endif
 
@@ -571,6 +571,11 @@
 
      if ((RiseStartCM .eq. 0.0_r8) .and. (RiseEndCM .eq. 0.0_r8) .and. &
         (SinkStartCM .eq. 0.0_r8) .and. (SinkEndCM .eq. 0.0_r8)) then
+        
+        ! All 0 is the shortcut for lagging the onshelf group movement
+        ! 1 month behind the offshelf group (this was the original 
+        ! hard-coded behavior)
+         
         RSCM = MOD(RiseStart + 30, 366.0_r8)
         RECM = MOD(RiseEnd   + 30, 366.0_r8)
         SSCM = MOD(SinkStart + 30, 366.0_r8)
@@ -590,7 +595,7 @@
 !    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
 !    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SECM
 
-     upward =     ((RSNC.lt.RENC) .and.                                &
+     upwardNC =   ((RSNC.lt.RENC) .and.                                &
     &              (yday.ge.RSNC .and. yday.le.RENC))                  &
     &             .or.                                                 &
     &             ((RSNC.gt.RENC) .and.                                &
@@ -602,7 +607,7 @@
     &             ((RSCM.gt.RECM) .and.                                &
     &              (yday.ge.RSCM .or.  yday.le.RECM))
 
-     downward   = ((SSNC.lt.SENC) .and.                                &
+     downwardNC = ((SSNC.lt.SENC) .and.                                &
     &              (yday.ge.SSNC .and. yday.le.SENC))                  &
     &             .or.                                                 &
     &             ((SSNC.gt.SENC) .and.                                &
@@ -614,7 +619,7 @@
     &             ((SSCM.gt.SECM) .and.                                &
     &              (yday.ge.SSCM .or.  yday.le.SECM))
 
-     if (downward) then
+     if (downwardNC) then
        respNC = respNCa * 0.1_r8
        eNC = 0
      else
@@ -978,6 +983,28 @@
             cff5=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
             cff2 = (k_chl*(cff5)**(0.428_r8))
             !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
+            PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+            cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
+
+          END DO
+        END DO
+
+#elif defined COKELET
+        ! Version from Ned Cokelet
+       
+        DO i=Istr,Iend
+
+          cff10=grid(ng) % h(i,j)
+          !  k_extV= k_ext+k_extZ*exp(-cff10*.05)
+          k_extV= k_ext
+          cff0=PARs(i)
+
+          DO k=N(ng),1,-1  
+
+            dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+            cff5=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
+            cff2 = (k_chlA*(cff5)**(k_chlB))   
+
             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
 
@@ -3573,7 +3600,7 @@
 
           DO i=Istr,Iend
 
-            if (downward) then
+            if (downwardNC) then
 
               call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, -400.0_r8, Bio(i,:,iNCaO), Btmp, sinkout2)
 
@@ -3583,7 +3610,7 @@
 
               DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2
 
-            else if (upward) then
+            else if (upwardNC) then
 
               call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaO), Btmp, sinkout2)
 
