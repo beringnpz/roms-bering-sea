@@ -633,7 +633,14 @@
       real(r8) :: C_Flux_RemineL, C_Flux_RemineS
       real(r8) :: CO2_Flux, CO2_sol, SchmidtN, TempK
 #endif
-
+#ifdef CARBON_DEBUG
+      real(r8) :: totalN,Graz1,Graz1_alk,Graz2,Graz_alk,nitrif_alk
+      real(r8) :: excretion,excretion_alk,ice_dic,ice_alk,ice_no3
+      real(r8) :: ice_alk_no3,ice_nh4,ice_alk_nh4,ice_init,ice_alk_init
+#ifdef JELLY
+      real(r8) :: Graz_jelly,Graz_alk_jelly
+#endif
+#endif
       real(r8) :: Alpha
       real(r8) :: ALPHA_N,ALPHA_P, kN, kP, alphaPhSv, alphaPhLv
       real(r8) ::respNC, respCM 
@@ -913,7 +920,7 @@
             Bio(i,k,iTIC_)=MAX(Bio(i,k,iTIC_),400.0_r8)
           END DO
         END DO
-#endif  
+#endif
 #ifdef ICE_BIO
         DO i=Istr,Iend
 
@@ -981,6 +988,18 @@
 	    DBio(i,N(ng),iTIC_)=DBio(i,N(ng),iTIC_)-Bio(i,N(ng),iTIC_)*aidz/Hz(i,j,N(ng))
 	    DBio(i,N(ng),iTAlk)=DBio(i,N(ng),iTAlk)-Bio(i,N(ng),iTAlk)*aidz/Hz(i,j,N(ng))
 # endif
+#ifdef CARBON_DEBUG
+               IF (j.EQ.20.0_r8) THEN
+                         IF (i.EQ.20.0_r8) THEN
+                               IF (k.EQ.10) THEN
+           ice_init=-Bio(i,N(ng),iTIC_)*aidz/Hz(i,j,N(ng))
+           ice_alk_init=-Bio(i,N(ng),iTAlk)*aidz/Hz(i,j,N(ng))
+           print *, 'ice_init', ice_init
+	   print *, 'ice_alk_init', ice_alk_init
+                                END IF
+                         END IF
+               END IF
+#endif
           elseif (IceLog(i,j,nstp).le.0.and.IceLog(i,j,nnew).le.0)THEN
      
             IcePhL(i,j,nstp) = 0_r8   
@@ -2864,6 +2883,10 @@
                END IF
              END IF
           END IF
+#endif
+#ifdef DIAGNOSTICS_BIO
+                DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
+     &        (TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS))/12._r8
 #endif 
 !-----------------------------------------------------------------------
 !  Primary production of Small phytoplankton
@@ -2935,6 +2958,10 @@
                END IF
              END IF
           END IF
+#endif
+#ifdef DIAGNOSTICS_BIO
+                DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
+     &        (TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL))/12._r8
 #endif 
 !-----------------------------------------------------------------------
 !  Primary production of Large phytoplankton
@@ -3063,8 +3090,8 @@
           IF (j.EQ.20.0_r8) THEN
              IF (i.EQ.20.0_r8) THEN
                IF (k.EQ.10) THEN
-           Graz1 =  (TFMZL(i,k)*BasalMetMZL*dtdays*Bio(i,k,iMZL))/12._r8
-           Graz1_alk =  (TFMZL(i,k)*BasalMetMZL*dtdays*Bio(i,k,iMZL))*xi
+           Graz1 =  (TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL))/12._r8
+           Graz1_alk =  (TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL))*xi
                 print *, 'Graz', Graz1
                 print *, 'Graz_alk', Graz1_alk
                 print *, 'loc', i, j, k
@@ -3825,8 +3852,8 @@
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
                       IF (k.EQ.10) THEN
-           print *, 'Benthic_remin', cff1*dtdays/xi/12._r8 
-           print *, 'Benthic_alk_remin', cff1*dtdays 
+           print *, 'Benthic_mort', cff1*dtdays/xi/12._r8 
+           print *, 'Benthic_alk_mort', cff1*dtdays 
                     END IF
                   END IF
                 END IF
@@ -4383,9 +4410,9 @@
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
                       IF (k.EQ.10) THEN
-                ice=cff1/Hz(i,j,N(ng))*P2CN+cff2/Hz(i,j,N(ng))*P2CN
+                ice_dic=cff1/Hz(i,j,N(ng))*P2CN+cff2/Hz(i,j,N(ng))*P2CN
                 ice_alk=cff2/Hz(i,j,N(ng))-cff1/Hz(i,j,N(ng))
-                print *, 'Ice', ice
+                print *, 'Ice_dic', ice_dic
                 print *, 'Ice_alk', ice_alk
                     END IF
                   END IF
@@ -4425,7 +4452,7 @@
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
                       IF (k.EQ.10) THEN
-                print *, 'Ice', -cff1/Hz(i,j,N(ng))*P2CN 
+                print *, 'Ice_dic', -cff1/Hz(i,j,N(ng))*P2CN 
                 print *, 'Ice_alk', cff1/Hz(i,j,N(ng))
                     END IF
                   END IF
@@ -4452,7 +4479,7 @@
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
                       IF (k.EQ.10) THEN
-                print *, 'Ice', -cff1/Hz(i,j,N(ng))*P2CN
+                print *, 'Ice_dic', -cff1/Hz(i,j,N(ng))*P2CN
                 print *, 'Ice_alk', cff1/Hz(i,j,N(ng))
                     END IF
                   END IF
@@ -4480,7 +4507,7 @@
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
                       IF (k.EQ.10) THEN
-                print *, 'Ice', -cff2/Hz(i,j,N(ng))*P2CN
+                print *, 'Ice_dic', -cff2/Hz(i,j,N(ng))*P2CN
                 print *, 'Ice_alk', -cff2/Hz(i,j,N(ng))
                     END IF
                   END IF
@@ -4507,7 +4534,7 @@
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
                       IF (k.EQ.10) THEN
-                print *, 'Ice', -cff2/Hz(i,j,N(ng))*P2CN
+                print *, 'Ice_dic', -cff2/Hz(i,j,N(ng))*P2CN
                 print *, 'Ice_alk', -cff2/Hz(i,j,N(ng))
                     END IF
                   END IF
@@ -4767,7 +4794,7 @@
 # ifdef CARBON_DEBUG
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
-                 print *, 'degas', CO2_Flux*Hz_inv(i,k)!/dtdays
+                 print *, 'degas', CO2_Flux*Hz_inv(i,k)
                  print *, 'loc', i, j, k
                   END IF
                 END IF
