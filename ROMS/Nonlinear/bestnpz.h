@@ -1109,9 +1109,18 @@
 !             cff1= (ALPHA_N* ALPHA_P);
 !             alphaPhSv=max(1.0_r8,cff1*alphaPhS);
 
+              ! Adjust AlphaPhS. Based on PAR. WIP:From discussions with Ken Coyle.
+
+              if (PARs(i).lt.30.0) then
+                alphaPhSv = 18
+              elseif (PARs(i).gt.40.0) then
+                alphaPhSv = 5.6
+              else
+                alphaPhSv = 18.0-((18.0-5.6)/(40.0-30.0))*(PARs(i)-30.0)
+              end if
 
               ! Constant
-              alphaPhSv=alphaPhS
+!               alphaPhSv=alphaPhS
 
               !--------------------------
               !  Growth rate computations
@@ -1125,7 +1134,7 @@
                 Pmaxs=Pmax*ccr !max chla specific growth rate from FROST (1987)
 
                 ! day length fraction scalar
-                Pmax = Pmax * Dl / 24.0_r8
+                !Pmax = Pmax * Dl / 24.0_r8 % environmental driver input is sub-daily, so don't use this
 
                 !---------------------
                 !  Nitrate limitation
@@ -1172,7 +1181,7 @@
                 !---------------------------------------------------------
 
                 IronLim = eps + Bio(i,k,iFe) / (kfePhS + Bio(i,k,iFe)) *&
-     &                  (kfePhS + 2._r8) / 2._r8
+     &                   (kfePhS + FeCritPS) / FeCritPS
 #endif
 
                 !---------------------------
@@ -1328,10 +1337,21 @@
 !         cff1= (ALPHA_N* ALPHA_P);
 !         alphaPhLv=max(1.0_r8,cff1*alphaPhL);
 
-          alphaPhLv=alphaPhL
+!           alphaPhLv=alphaPhL
 
           DO k=1,N(ng)
             DO i=Istr,Iend
+
+              ! Adjust AlphaPhL. Based on PAR. WIP:From discussions with Ken Coyle.
+ 
+              if (PARs(i).lt.30.0) then
+                alphaPhLv = 10
+              elseif (PARs(i).gt.40.0) then
+                alphaPhLv = 2.2
+              else
+                alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(Par1-30.0)
+              end if
+
 
               LightLim=1.0_r8
               IronLim=1.0_r8
@@ -1387,7 +1407,7 @@
                 !--------------------------------------------------------
 
                 IronLim = eps + Bio(i,k,iFe) / (kfePhL + Bio(i,k,iFe))  &
-     &                           * (kfePhL + 2._r8) / 2._r8
+     &                    * (kfePhL + FeCritPL) / FeCritPL
 #endif
 
                 !----------------------------------------------

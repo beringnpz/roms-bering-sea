@@ -6753,6 +6753,8 @@
             Npts=load_r(Nval, Rval, 1, k2PhS)
           ELSE IF (TRIM(KeyWord).eq.'aPS') THEN
             Npts=load_r(Nval, Rval, 1, aPS)
+          ELSE IF (TRIM(KeyWord).eq.'FeCritPS') THEN
+            Npts=load_r(Nval, Rval, 1, FeCritPS)
 
           !  PhL growth params
 
@@ -6770,6 +6772,8 @@
             Npts=load_r(Nval, Rval, 1, k2PhL)
           ELSE IF (TRIM(KeyWord).eq.'aPL') THEN
             Npts=load_r(Nval, Rval, 1, aPL)
+          ELSE IF (TRIM(KeyWord).eq.'FeCritPL') THEN
+            Npts=load_r(Nval, Rval, 1, FeCritPL)
 
           !  MZS preference params
 
@@ -7757,7 +7761,7 @@
           WRITE (out,70) Dps, 'DpS',                                    &
      &          'PhS Doubling rate exponent'
           WRITE (out,70) alphaPhS, 'alphaPhS',                          &
-     &          'PhS Slope of P-I curve (mg C/mg Chl-a/E/m2)'
+     &          'PhS Slope of P-I curve (mg C/mg Chl-a/E/m2) (legacy?)'
           WRITE (out,70) k1PhS, 'k1PhS',                                &
      &          'PhS Half-saturation constant for NO3 limitation'
           WRITE (out,70) k2PhS, 'k2PhS',                                &
@@ -7767,7 +7771,7 @@
           WRITE (out,70) DpL, 'DpL',                                    &
      &          'PhL Doubling rate exponent'
           WRITE (out,70) alphaPhL, 'alphaPhL',                          &
-     &          'PhL Slope of P-I curve (mg C/mg Chl-a/E/m2)'
+     &          'PhL Slope of P-I curve (mg C/mg Chl-a/E/m2) (legacy?)'
           WRITE (out,70) k1PhL, 'k1PhL',                                &
      &          'PhL Half-saturation constant for NO3 limitation'
           WRITE (out,70) k2PhL, 'k2PhL',                                &
@@ -7938,6 +7942,10 @@
      &          'PhL Half-saturation constant for iron (umol/m^3)'
           WRITE (out,70) FeC, 'FeC',                                    &
      &          'Fe:C ratio (umol Fe/mg C ??)'
+          WRITE (out,70) FeCritPS, 'FeCritPS',                          &
+     &          'related to iron limitation' ! TODO: get details
+          WRITE (out,70) FeCritPL, 'FeCritPL',                          &
+     &          'related to iron limitation' ! TODO: get details
           WRITE (out,70) NCmaxz, 'NCmaxz',                              &
      &          'NCa highest depth of diapausing (m) (legacy, unused)'
           WRITE (out,70) wNCrise, 'wNCrise',                            &

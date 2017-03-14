@@ -1320,7 +1320,7 @@
         real(r8) :: tI0,KI
 
 !  Iron limitation terms
-        real(r8) :: kfePhS, kfePhL, FeC
+        real(r8) :: kfePhS, kfePhL, FeC, FeCritPS, FeCritPL
 !  Diapause
         real(r8) :: NCmaxz
         real(r8) :: wNCrise,wNCsink
