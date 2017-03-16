@@ -6984,6 +6984,10 @@
             Npts=load_r(Nval, Rval, 1,ktntr)
           ELSE IF (TRIM(KeyWord).eq.'KNH4Nit') THEN
             Npts=load_r(Nval, Rval, 1,KNH4Nit)
+          ELSE IF (TRIM(KeyWord).eq.'tI0') THEN
+            Npts=load_r(Nval, Rval, 1,tI0)
+          ELSE IF (TRIM(KeyWord).eq.'KI') THEN
+            Npts=load_r(Nval, Rval, 1,KI)
             
           ! Benthos
           
@@ -7837,6 +7841,10 @@
      &          'Temperature coefficient for nitrification (1/deg C)'
           WRITE (out,70) KNH4Nit, 'KNH4Nit',                            &
      &          'Half-saturation constant for nitrification (mg N/m^3/d ?)'
+          WRITE (out,70) tI0, 'tI0',                                    &
+     &          'Threshold for light limitation of nitrification (W m^-2)'
+          WRITE (out,70) KI, 'KI',                                      &
+     &          'Half saturation light intensity for nitrification (w m^-2)'
      
           ! Benthos
           

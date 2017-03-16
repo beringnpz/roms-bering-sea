@@ -3206,7 +3206,7 @@
 
               !  Fennel
 
-!             DLNitrif=GetNitrifLight(Par1,tI0,KI)
+              DLNitrif=GetNitrifLight(Par1,tI0,KI)
 
               ! Denman
 
@@ -3215,7 +3215,7 @@
 
               !  No Depth/Ligt effects
 
-              DLNitrif= 1.0_r8
+!               DLNitrif= 1.0_r8
 
 
               !-------------
@@ -3224,11 +3224,11 @@
 
               ! Arhonditsis
 
-!             cff1 = Bio(i,k,iNH4)/(KNH4Nit +Bio(i,k,iNH4))
+              cff1 = Bio(i,k,iNH4)/(KNH4Nit +Bio(i,k,iNH4))
 
               !  No saturation -ken
 
-              cff1 =1.0_r8
+!               cff1 =1.0_r8
 
 
               DBio(i,k,iNH4) = DBio(i,k,iNH4)  - NitrifMax *            &

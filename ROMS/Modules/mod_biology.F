@@ -1283,7 +1283,7 @@
 			
 			! Remineralization and nitrification
 			
-			real(r8) :: Pv0, PvT, Nitr0, ToptNtr, ktntr, KNH4Nit	
+			real(r8) :: Pv0, PvT, Nitr0, ToptNtr, ktntr, KNH4Nit, tI0, KI	
         
 			! Benthos
 			
