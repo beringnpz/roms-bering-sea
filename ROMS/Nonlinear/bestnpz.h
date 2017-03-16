@@ -1958,41 +1958,31 @@
               !-----------------
               !Food preferences
               !-----------------
+							
+              cff1 = fpPhSEup * Bio(i,k,iPhS)**2                        &
+     &             + fpPhLEup * Bio(i,k,iPhL)**2                        &
+     &             + fpMZLEup * Bio(i,k,iMZL)**2                        &
+     &             + fpCopEup * Bio(i,k,iCop)**2     ! live food                  
+		 
+		          
+		          cff0 = fpDetEup * Bio(i,k,iDet)**2                        &
+     &             + fpDetEup * Bio(i,k,iDetF)**2    ! detrital food
+		 
 #ifdef ICE_BIO
-              if(k.eq.N(ng))THEN
-                cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
-     &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
-!    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
-     &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2                      &
+							if (k.eq.N(ng)) then
 # ifdef CLIM_ICE_1D
-     &               + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
+              	cff1 = cff1 + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
 # elif defined BERING_10K
-     &               + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
+                cff1 = cff1 + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
 # endif
-              else
-
-                cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
-     &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
-!    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
-     &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2
-
-              endif
-#else
-              cff1 = fpPhSEup * Bio(i,k,iPhS)**2                       &
-     &               + fpPhLEup * Bio(i,k,iPhL)**2                     &
-!    &               + fpMZSEup * Bio(i,k,iMZS)**2                     &
-     &               + fpMZLEup * Bio(i,k,iMZL)**2                     &
-     &               + fpCopEup * Bio(i,k,iCop)**2
-#endif
+							endif
 
               !-------------------
               !  Food consumption
               !-------------------
 
 !             cff2 = eEup * Bio(i,k,iEupS) / (fEup**2 + cff1)
-              cff2 = eEup * Bio(i,k,iEupS) / (fEup + cff1)
+              cff2 = eEup * Bio(i,k,iEupS) / (fEup + cff1 + cff0)
 
               !-------------------------
               !  Temperature correction
@@ -2000,12 +1990,30 @@
 
               cff3 = Q10Eup ** ( (Bio(i,k,itemp)-Q10EupT) / 10.0_r8 )
 
+              !-------------------------
+              !  Depth correction
+              !-------------------------
+							
+							! Force EupS to do better on the shelf.  
+							! KK: This seems like a cheat to me; it prevents any growth 
+							! in water deeper than 200 m.  What's the mechanism behind 
+							! it?
+							
+							cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((grid(ng) % h(i,j)-200_r8)/.3_r8))
+
               !------------------------
               !  Growth of Euphausiids
               !------------------------
 
+              ! Live food growth
+							
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
-     &          gammaEup * cff1 * cff2 * cff3 * dtdays
+     &          gammaEup * cff1 * cff2 * cff3 * cff4 * dtdays
+    
+		 					! Detrital food growth
+		
+              DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
+     &          0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
 
 
               !-----------------------------------
@@ -2020,25 +2028,27 @@
               !  Changes in prey concentration due to predation
               !-------------------------------------------------
 
-              DBio(i,k,iPhS) = DBio(i,k,iPhS) - fpPhSEup *              &
-     &          (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays
-              DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLEup *              &
-     &          (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays
-!             DBio(i,k,iMZS) = DBio(i,k,iMZS) - fpMZSEup *              &
-!    &          (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays
-              DBio(i,k,iMZL) = DBio(i,k,iMZL) - fpMZLEup *              &
-     &          (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays
-              DBio(i,k,iCop) = DBio(i,k,iCop) - fpCopEup *              &
-     &          (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays
+              DBio(i,k,iPhS)  = DBio(i,k,iPhS) - fpPhSEup *              &
+     &          (Bio(i,k,iPhS)**2)  * cff2 * cff3 * cff4 * dtdays
+              DBio(i,k,iPhL)  = DBio(i,k,iPhL) - fpPhLEup *              &
+     &          (Bio(i,k,iPhL)**2)  * cff2 * cff3 * cff4 * dtdays
+              DBio(i,k,iMZL)  = DBio(i,k,iMZL) - fpMZLEup *              &
+     &          (Bio(i,k,iMZL)**2)  * cff2 * cff3 * cff4 * dtdays
+              DBio(i,k,iCop)  = DBio(i,k,iCop) - fpCopEup *              &
+     &          (Bio(i,k,iCop)**2)  * cff2 * cff3 * cff4 * dtdays
+              DBio(i,k,iDet)  = DBio(i,k,iDet) - fpDetEup *              &
+     &	        (Bio(i,k,iDet)**2)  * cff2 * cff3 * cff4 * dtdays
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) - fpDetEup  *           &
+     &          (Bio(i,k,iDetF)**2) * cff2 * cff3 * cff4 * dtdays
 
 #ifdef ICE_BIO
               DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) - fpPhLEup *        &
 # ifdef CLIM_ICE_1D
      &          (BioBI(i,iIcePhL)* aidz/Hz(i,j,N(ng)))**2 * cff2 *      &
-     &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
+     &          cff3 * cff4 * dtdays*Hz(i,j,N(ng))/aidz
 # elif defined BERING_10K
      &          (IcePhL(i,j,nstp)* aidz/Hz(i,j,N(ng)))**2 * cff2 *      &
-     &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
+     &          cff3 * cff4 * dtdays*Hz(i,j,N(ng))/aidz
 # endif
 #endif
 
@@ -2046,8 +2056,16 @@
               ! Additions to Fast Sinking detritus pool- unassimilated food
               !------------------------------------------------------------
 
+              ! Live food egestion
+							
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
-     &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * dtdays
+     &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * cff4 * dtdays
+		 
+		          ! Detrital food egestion
+							
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
+     &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3* cff4 * dtdays
+							
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
@@ -2224,44 +2242,22 @@
               !-------------------
               !  Food preferences
               !-------------------
-!
-#ifdef ICE_BIO
-              if(k.eq.N(ng))THEN
-                cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
-     &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
-!    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
-     &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2                      &
-# ifdef CLIM_ICE_1D
-     &               + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
-# elif defined BERING_10K
-     &               + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
-# endif
-
-              else
-
-                cff1 = fpPhSEup * Bio(i,k,iPhS)**2                      &
-     &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
-!    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
-     &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2
-
-              endif
-#else
+							
               cff1 = fpPhSEup * Bio(i,k,iPhS)**2                        &
-     &               + fpPhLEup * Bio(i,k,iPhL)**2                      &
-!    &               + fpMZSEup * Bio(i,k,iMZS)**2                      &
-     &               + fpMZLEup * Bio(i,k,iMZL)**2                      &
-     &               + fpCopEup * Bio(i,k,iCop)**2
-#endif
-
+     &             + fpPhLEup * Bio(i,k,iPhL)**2                        &
+     &             + fpMZLEup * Bio(i,k,iMZL)**2                        &
+     &             + fpCopEup * Bio(i,k,iCop)**2     ! live food                  
+		 
+		          
+		          cff0 = fpDetEupO * Bio(i,k,iDet)**2                        &
+     &             + fpDetEupO * Bio(i,k,iDetF)**2   ! detrital food
 
               !----------------
               !Food consumption
               !----------------
 
 !             cff2 = eEup * Bio(i,k,iEupO) / (fEup**2 + cff1)
-              cff2 = eEup * Bio(i,k,iEupO) / (fEup + cff1)
+              cff2 = eEup * Bio(i,k,iEupO) / (fEup + cff1 + cff0)
 
               !------------------------
               !  Temperature correction
@@ -2269,12 +2265,23 @@
 
               cff3 = Q10Eup ** ( (Bio(i,k,itemp)-Q10EupT) / 10.0_r8 )
 
+							!-----------------
+							! depth correction
+							!-----------------
+							
+							! KK: See comment above... this is a cheat and I don't like it
+							
+							cff4 = 1.0_r8-(0.5_r8+0.5_r8*tanh((200_r8-grid(ng) % h(i,j))/.3_r8))
+
               !----------------------
               !Growth of Euphausiids
               !----------------------
 
               DBio(i,k,iEupO) = DBio(i,k,iEupO) +                       &
-     &          gammaEup * cff1 * cff2 * cff3 * dtdays
+     &          gammaEup * cff1 * cff2 * cff3 * cff4 * dtdays
+		 
+              DBio(i,k,iEupO) = DBio(i,k,iEupO) +                  &
+     &	        0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
 
               !------------------------
               !  Euphausiid production
@@ -2290,24 +2297,24 @@
               !-------------------------------------------------
 
               DBio(i,k,iPhS) = DBio(i,k,iPhS) - fpPhSEup *              &
-     &          (Bio(i,k,iPhS)**2) * cff2 * cff3 * dtdays
+     &          (Bio(i,k,iPhS)**2) * cff2 * cff3 * cff4 * dtdays
               DBio(i,k,iPhL) = DBio(i,k,iPhL) - fpPhLEup *              &
-     &          (Bio(i,k,iPhL)**2) * cff2 * cff3 * dtdays
+     &          (Bio(i,k,iPhL)**2) * cff2 * cff3 * cff4 * dtdays
 !             DBio(i,k,iMZS) = DBio(i,k,iMZS) - fpMZSEup *              &
 !    &          (Bio(i,k,iMZS)**2) * cff2 * cff3 * dtdays
               DBio(i,k,iMZL) = DBio(i,k,iMZL) - fpMZLEup *              &
-     &          (Bio(i,k,iMZL)**2) * cff2 * cff3 * dtdays
+     &          (Bio(i,k,iMZL)**2) * cff2 * cff3 * cff4 * dtdays
               DBio(i,k,iCop) = DBio(i,k,iCop) - fpCopEup *              &
-     &          (Bio(i,k,iCop)**2) * cff2 * cff3 * dtdays
+     &          (Bio(i,k,iCop)**2) * cff2 * cff3 * cff4 * dtdays
 
 #ifdef ICE_BIO
               DBioBI(i,iIcePhL) = DBioBI(i,iIcePhL) - fpPhLEup *        &
 # ifdef CLIM_ICE_1D
      &          (BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2 * cff2 *       &
-     &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
+     &          cff3 * cff4 * dtdays*Hz(i,j,N(ng))/aidz
 # elif defined BERING_10K
      &          (IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2 * cff2 *       &
-     &          cff3 * dtdays*Hz(i,j,N(ng))/aidz
+     &          cff3 * cff4 * dtdays*Hz(i,j,N(ng))/aidz
 # endif
 #endif
 
@@ -2315,8 +2322,15 @@
               !  Additions to detritus pool- unassimilated food
               !-------------------------------------------------
 
+              ! Live
+							
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
-     &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * dtdays
+     &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * cff4 *  dtdays
+		 
+		 					! Detrital
+							
+              Bio(i,k,iDetF) = DBio(i,k,iDetF) +                        &
+     &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3 * cff4* dtdays
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN

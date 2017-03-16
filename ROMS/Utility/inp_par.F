@@ -6790,6 +6790,10 @@
             Npts=load_r(Nval, Rval, 1, fpMZLEup)
           ELSE IF (TRIM(KeyWord).eq.'fpCopEup') THEN
             Npts=load_r(Nval, Rval, 1, fpCopEup)
+          ELSE IF (TRIM(KeyWord).eq.'fpDetEup') THEN
+            Npts=load_r(Nval, Rval, 1, fpDetEup)
+          ELSE IF (TRIM(KeyWord).eq.'fpDetEupO') THEN
+            Npts=load_r(Nval, Rval, 1, fpDetEupO)
           ELSE IF (TRIM(KeyWord).eq.'fpCopJel') THEN
             Npts=load_r(Nval, Rval, 1, fpCopJel)
           ELSE IF (TRIM(KeyWord).eq.'fpEupJel') THEN
@@ -7641,6 +7645,10 @@
      &          'MZL->Eup Feeding preference'
           WRITE (out,70) fpCopEup, 'fpCopEup',                          &
      &          'Cop->Eup Feeding preference'
+          WRITE (out,70) fpDetEup, 'fpDetEup',                          &
+     &          'Det->Eup Feeding preference'
+          WRITE (out,70) fpDetEupO, 'fpDetEupO',                        &
+     &          'Det->EupO Feeding preference'
           WRITE (out,70) fpCopJel, 'fpCopJel',                          &
      &          'Cop->Jel Feeding preference'
           WRITE (out,70) fpEupJel, 'fpEupJel',                          &
