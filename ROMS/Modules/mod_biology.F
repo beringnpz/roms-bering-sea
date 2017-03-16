@@ -1206,7 +1206,7 @@
       RETURN
       END SUBROUTINE initialize_biology
 # endif
-#ifdef BEST_NPZ
+# ifdef BEST_NPZ
 !=======================================================================
 !   Parameters for BEST NPZ Biological Model
 !      Georgina Gibson 
@@ -1214,275 +1214,202 @@
 
       USE mod_param
 
-        implicit none
+      implicit none
 
-        integer, dimension(Ngrids) :: BioIter
-        real(r8) :: VertMixIncr
-        real(r8), dimension(Ngrids) :: PARfrac       ! nondimensional
-!  Bio- conversions
-        real(r8) :: xi, ccr, ccrPhL
-!  extinction coefficients
-        real(r8) :: k_ext, k_chl, k_extZ, k_chlA, k_chlB, k_chlC
-        real(r8) :: a_frac, a_mu1
-!  PhS growth params
-        real(r8) :: DiS, DpS,aPS
-        real(r8) :: alphaPhS
-        real(r8) :: psiPhS
-        real(r8) :: k1PhS, k2PhS
-!  PhL growth params
-        real(r8) :: DiL,aPL
-        real(r8) :: DpL
-        real(r8) :: alphaPhL
-        real(r8) :: psiPhL
-        real(r8) :: k1PhL
-        real(r8) :: k2PhL
-!  MZS preference params
-        real(r8) :: fpPhSMZS, fpPhLMZS
-!  MZS growth and feeding params
-        real(r8) :: eMZS
-        real(r8) :: Q10MZS
-        real(r8) :: Q10MZST
-        real(r8) :: fMZS
-        real(r8) :: kMZS
-        real(r8) :: gammaMZS
-!  MZL preferences params
-        real(r8) :: fpPhSMZL, fpPhLMZL, fpMZSMZL
-!  MZL growth and feeding params
-        real(r8) :: eMZL
-        real(r8) :: Q10MZL
-        real(r8) :: Q10MZLT
-        real(r8) :: fMZL
-        real(r8) :: kMZL
-        real(r8) :: gammaMZL
-!  Cop preference params
-        real(r8) :: fpPhSCop, fpPhLCop, fpMZSCop, fpMZLCop
-!  Cop growth and feeding params
-        real(r8) :: eCop
-        real(r8) :: Q10Cop
-        real(r8) :: Q10CopT
-        real(r8) :: fCop
-        real(r8) :: gammaCop
-        real(r8) :: kCop
-!  NCa preference params
-        real(r8) :: fpPhSNCa, fpPhLNCa, fpMZSNCa, fpMZLNCa
-!  NCa growth and feeding params
-        real(r8) :: eNCa
-        real(r8) :: Q10NCa
-        real(r8) :: Q10NCaT
-        real(r8) :: fNCa
-        real(r8) :: gammaNCa
-        real(r8) :: kNCa
-!  Eup preference params
-        real(r8) :: fpPhSEup, fpPhLEup, fpMZSEup, fpMZLEup, fpCopEup
-!  Eup growth and feeding params
-        real(r8) :: eEup
-        real(r8) :: Q10Eup
-        real(r8) :: Q10EupT
-        real(r8) :: fEup
-        real(r8) :: gammaEup
-        real(r8) :: kEup
-# ifdef JELLY
-!  Jellyfish Parameters
-        real(r8) :: eJel, gammaJel,fJel
-        real(r8) :: respJel,mpredJel
-        real(r8) :: fpCopJel, fpNCaJel, fpEupJel
-        real(r8) :: Q10Jelr, Q10JelTr,Q10Jele, Q10JelTe
-        real(r8) :: bmJ,ktbmJ,TrefJ
+			! General
 
-# endif
+      integer, dimension(Ngrids) :: BioIter
 
-!  Phytoplankton senescence
-        real(r8) :: mPhS, maxmPhS, NcritPhS,minmPhS
-        real(r8) :: mPhL, maxmPhL, NcritPhL, minmPhL
-!  Zoopkankton mortality
-        real(r8) :: mMZS, mMZL, mCop, mNCa, mEup
-!  predation closure
-        real(r8) :: mpredCop, mpredNCa, mpredEup
-        real(r8) :: mpredMZS, mpredMZL
-!  sinking
-        real(r8) :: wPhS, wPhL, wDet, wDetF
-!  Terms to define the Iron climatology field
-        real(r8) :: Feinlo, Feinhi, Feinh, Feofflo, Feoffhi, Feoffh
+			! Light
+			
+      real(r8), dimension(Ngrids) :: PARfrac       ! nondimensional
+      real(r8) :: k_ext, k_chl, k_extZ, k_chlA, k_chlB, k_chlC
+      real(r8) :: a_frac, a_mu1
+		
+			! Conversion factors
+			
+      real(r8) :: xi, ccr, ccrPhL, FeC
 
-!  Terms to define respiration
-        real(r8) :: respPhS, respPhL, respMZS, respMZL
-        real(r8) :: respCop, respNCa, respEup
-        real(r8) :: TmaxPhS,TminPhS, Topt_PhS, KtBm_PhS
-        real(r8) :: TmaxPhL, TminPhL, Topt_PhL, KtBm_PhL
-        real(r8) :: TmaxMZS, KtBm_MZS, TmaxMZL, KtBm_MZL
-        real(r8) :: ktbmC,TrefC
-        real(r8) :: ktbmN,TrefN
-        real(r8) :: ktbmE,TrefE
-!  Detrital Remineralization and Nitrification
-        real(r8) :: regen, dgrad
-        real(r8) :: Pv0, PvT
-        real(r8) :: KnT, Nitr0,ToptNtr,ktntr,KNH4Nit
-        real(r8) :: tI0,KI
+			! Phytoplankton growth parameters
+			
+			real(r8) :: DiS, DiL, DpS, DpL
+			real(r8) :: k1PhS, k1PhL, k2PhS, k2PhL
+			real(r8) :: FeCritPS, FeCritPL, kfePS, kfePL
 
-!  Iron limitation terms
-        real(r8) :: kfePhS, kfePhL, FeC, FeCritPS, FeCritPL
-!  Diapause
-        real(r8) :: NCmaxz
-        real(r8) :: wNCrise,wNCsink
-        real(r8) :: RiseStart, RiseEnd, SinkStart, SinkEnd
-        real(r8) :: RiseStartCM, RiseEndCM, SinkStartCM, SinkEndCM
-# ifdef BENTHIC
-        real(r8) :: bmB,ktbmB,TrefB
-        real(r8) :: iremin
-        real(r8) :: q10,q10r
-        real(r8) :: Rup,KupP,LupD, LupP,KupD
-        real(r8) :: Qres,Rres,rmort,eex,eexD,BenPred
-        real(r8) :: prefD,prefPS,prefPL,T0ben,T0benr
-# endif
-# ifdef ICE_BIO
-        real(r8) :: alphaIb, betaI,  inhib
-        real(r8) :: ksnut1,ksnut2,mu0, R0i
-        real(r8) :: rg0,rg,annit
-        real(r8) :: aidz
-# endif
+			! Feeding preferences
+			
+			real(r8) :: fpPhSMZL, fpPhLMZL, fpMZSMZL
+			real(r8) :: fpPhSCop, fpPhLCop, fpMZLCop
+			real(r8) :: fpPhSNCa, fpPhLNCa, fpMZLNCa
+			real(r8) :: fpPhSEup, fpPhLEup, fpMZLEup, fpCopEup
+			real(r8) :: fpCopJel, fpNCaJel, fpEupJel
+			
+			! Zooplankton growth and feeding
+			
+			real(r8) :: eMZL, eCop, eNCa, eEup, eJel
+			real(r8) :: Q10MZL, Q10Cop, Q10NCa, Q10Eup, Q10Jele
+			real(r8) :: Q10MZLT, Q10CopT, Q10NCaT, Q10EupT, Q10JelTe
+			real(r8) :: fMZL, fCop, fNCa, fEup, fJel
+			real(r8) :: gammaMZL, gammaCop, gammaNCa, gammaEup, gammaJel
+			
+			! Phytoplankton sensescence
+			
+			real(r8) :: mPhS, mPhL
+			
+			! Predation closure
+			
+      real(r8) :: mpredMZL, mpredCop, mpredNCa, mpredEup
 
-# ifdef FEAST
+			! Sinking
+			
+			real(r8) :: wPhS, wPhL, wDet, wDetF
+			
+			! Respiration
+			
+			real(r8) :: respPhS, respPhL, respMZL, respCop, respNCa, respEup, respJel
+			real(r8) :: Q10Jelr, Q10JelTr
+			real(r8) :: KtBm_PhS, KtBm_PhL, KtBm_MZL, ktbmC, ktbmN, ktbmE
+			real(r8) :: TmaxPhS, TmaxPhL, TmaxMZL, TrefC, TrefN, TrefE
+			
+			! Iron climatology
+			
+			real(r8) :: Feinlo, Feinhi, Feinh, Feofflo, Feoffhi, Feoffh
+			
+			! Diapause
+			
+      real(r8) :: wNCrise,wNCsink
+      real(r8) :: RiseStart, RiseEnd, SinkStart, SinkEnd
+      real(r8) :: RiseStartCM, RiseEndCM, SinkStartCM, SinkEndCM
+			
+			! Remineralization and nitrification
+			
+			real(r8) :: Pv0, PvT, Nitr0, ToptNtr, ktntr, KNH4Nit	
+        
+			! Benthos
+			
+      real(r8) :: iremin
+      real(r8) :: q10r
+      real(r8) :: Rup, KupD, KupP, LupD, LupP
+      real(r8) :: Qres, Rres, rmort, eex, eexD
+      real(r8) :: prefD, prefPS, prefPL, 
+			real(r8) :: T0benr, BenPred
+			
+			! Ice biology
+			
+      real(r8) :: alphaIb, betaI, inhib
+      real(r8) :: ksnut1, ksnut2, mu0, R0i
+      real(r8) :: rg0, rg, annit
+      real(r8) :: aidz
+			
+#  ifdef FEAST
 
-  !  FEAST parameters
- 
-!!MOD_PARAM   ! Local set constant parameters (e.g. #defines in C)
-!!MOD_PARAM     real(r8),    parameter :: EPSILON      = 1e-20
-!!MOD_PARAM     !integer, parameter :: ROMS_LAYERS    = 60  ! MUST MATCH UBk
-!!MOD_PARAM     integer, parameter :: LAYERS         =  3  !// Number of vert layers for fish
-!!MOD_PARAM     !integer, parameter :: FEAST_PASSIVES = 21  ! FEAST passive tracers
-!!MOD_PARAM
-!!MOD_PARAM!integer, parameter :: NUM_ROMS_DEPTHS       = 60
-!!MOD_PARAM!integer, parameter :: NUM_PLANKTON          =  4 ! COP, NCA, EUP, BEN
-!!MOD_PARAMinteger, parameter :: NUM_PLANKTON          =  6 ! COP, NCAS, NCA0, EUPS, EUPO, BEN
-!!MOD_PARAMinteger, parameter :: MAX_LCLASS            = 60 !// Maximum length classes
-!!MOD_PARAMinteger, parameter :: NUM_AGES              = 11 ! nac
-!!MOD_PARAMinteger, parameter :: NUM_AGED_LENGTHS      = 14 ! nlc
-!!MOD_PARAMinteger, parameter :: NUM_NOAGE_LENGTHS     = 20 !nlct
-!!MOD_PARAMinteger, parameter :: NUM_AGED_SPECIES      = 3 ! POL, COD, ATF
-!!MOD_PARAMinteger, parameter :: NUM_LENGTHED_SPECIES  = 7 ! HER, CAP, EUL, SAN, MYC, SAL1, SAL2 
-!!MOD_PARAMinteger, parameter :: NUM_SIMPLE_SPECIES    = 5 ! SHR, SQU, EPI, CRA, OTH 
-!!MOD_PARAMinteger, parameter :: NUM_GEARS             = 8 ! COD_CVPOT, COD_CVLGL, COD_CVTWL, COD_CPPOT, COD_CPLGL, COD_CPTWL, POL_CVTWL, POL_CPTWL
-!!MOD_PARAMinteger, parameter :: NUM_TVAR              = 20
-!!MOD_PARAM
-!!MOD_PARAMinteger, parameter :: nfvaral = 3          !Numbers, CF, Cal
-!!MOD_PARAMinteger, parameter :: nfvarl  = 3          !Numbers, CF, Cal
-!!MOD_PARAMinteger, parameter :: nfvar   = 2          !Biomass, Cal
-!!MOD_PARAMinteger, parameter :: nrates  = 5          !Catch,happiness,dN,dCF,dCAL
-!!MOD_PARAM
-!!MOD_PARAMinteger, parameter :: TOT_LENGTHED = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES
-!!MOD_PARAMinteger, parameter :: TOT_FEAST    = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES + NUM_SIMPLE_SPECIES
-!!MOD_PARAMinteger, parameter :: TOT_LINKS = NUM_AGED_SPECIES * NUM_AGES * NUM_AGED_LENGTHS + NUM_NOAGE_LENGTHS * NUM_LENGTHED_SPECIES + 1
-                                     
-  !     TYPE species_params   !struct species_params{
-          !  Identifiers
-   	         !character(len=20) Name 
-             !integer, dimension(NUM_SPECIES)  :: Guild 
-          !  Parameters         
-        integer ALL_LINKS
-        integer, dimension(TOT_LENGTHED)   :: fsh_Lsize     !// width of length bins
-        integer, dimension(NUM_AGED_SPECIES,NUM_AGES) :: fsh_age_offset
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_a_T, fsh_b_T, fsh_c_T
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_A_L, fsh_B_L 
-        !real(r8), dimension(TOT_LENGTHED)  :: fsh_H, fsh_theta 
-        real(r8), dimension(TOT_FEAST,TOT_FEAST+NUM_PLANKTON) :: fsh_q_G
-				integer, dimension(TOT_LENGTHED)   :: fsh_base_prey      
-				real(r8), dimension(TOT_LENGTHED,TOT_FEAST+NUM_PLANKTON)   :: fsh_alpha_G, fsh_beta_G  
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_A_S, fsh_B_S 
-        !real(r8), dimension(TOT_LENGTHED)  :: fsh_a_C, fsh_b_C !fsh_CQ
-        !real(r8), dimension(TOT_LENGTHED)  :: fsh_A_Q, fsh_B_Q 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_ED_m, fsh_ED_b 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_A_R, fsh_B_R 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_F_A, fsh_U_A, fsh_SDA 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_R_TM, fsh_R_T0, fsh_R_Q 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_C_TM, fsh_C_T0, fsh_C_Q 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_omega, fsh_mu, fsh_zeta, fsh_smallomega 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_g_W 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_lambda, fsh_phi, fsh_D, fsh_kappa, fsh_chi 
-      ! recruitment added 9/6/2009 KYA                
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_z_muL, fsh_z_sdL
-        real(r8), dimension(TOT_LENGTHED)   :: fsh_z_sday, fsh_z_eday, fsh_sp_sday, fsh_sp_eday
-      ! recruitment of 12/23/2101
-         real(r8), dimension(TOT_LENGTHED)  :: fsh_mat_a, fsh_mat_b, fsh_fec_a, fsh_fec_b
-         real(r8), dimension(TOT_LENGTHED)  :: fsh_fec_max, fsh_fem_prop, fsh_rec_prop
+      ! FEAST parameters
+       
+      integer ALL_LINKS
+      integer, dimension(TOT_LENGTHED)   :: fsh_Lsize     !// width of length bins
+      integer, dimension(NUM_AGED_SPECIES,NUM_AGES) :: fsh_age_offset
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_a_T, fsh_b_T, fsh_c_T
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_A_L, fsh_B_L 
+      real(r8), dimension(TOT_FEAST,TOT_FEAST+NUM_PLANKTON) :: fsh_q_G
+		  integer, dimension(TOT_LENGTHED)   :: fsh_base_prey      
+		  real(r8), dimension(TOT_LENGTHED,TOT_FEAST+NUM_PLANKTON)   :: fsh_alpha_G, fsh_beta_G  
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_A_S, fsh_B_S 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_ED_m, fsh_ED_b 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_A_R, fsh_B_R 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_F_A, fsh_U_A, fsh_SDA 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_R_TM, fsh_R_T0, fsh_R_Q 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_C_TM, fsh_C_T0, fsh_C_Q 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_omega, fsh_mu, fsh_zeta, fsh_smallomega 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_g_W 
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_lambda, fsh_phi, fsh_D, fsh_kappa, fsh_chi 
+      
+			! recruitment added 9/6/2009 KYA                
+      
+			real(r8), dimension(TOT_LENGTHED)  :: fsh_z_muL, fsh_z_sdL
+      real(r8), dimension(TOT_LENGTHED)   :: fsh_z_sday, fsh_z_eday, fsh_sp_sday, fsh_sp_eday
+      
+			! recruitment of 12/23/2101
+      
+			real(r8), dimension(TOT_LENGTHED)  :: fsh_mat_a, fsh_mat_b, fsh_fec_a, fsh_fec_b
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_fec_max, fsh_fem_prop, fsh_rec_prop
       ! variable activity added 10/28/11
-			    real(r8), dimension(TOT_LENGTHED) :: fsh_A_enc, fsh_B_enc
-			    real(r8), dimension(TOT_LENGTHED) :: fsh_Bv_min, fsh_B_Lzero, fsh_B_Lone, fsh_B_Lpow
-					!real(r8), dimension(TOT_LENGTHED) :: fsh_minVel, fsh_A_v, fsh_B_v, fsh_minACT 
-          
-					                   !fsh_minVel(sp) = (fsh_A_v(sp)/fsh_minACT(sp)) **(-1.0/fsh_B_v(sp))	            
-       ! feeding for simple and zoops
-       real(r8), dimension(NUM_SIMPLE_SPECIES) :: fsh_simple_len, fsh_simple_wt, fsh_simple_JperG 
-       real(r8), dimension(NUM_PLANKTON) :: fsh_zoop_len, fsh_zoop_wt, fsh_zoop_JperG 
-       
-      ! movement
-        real(r8), dimension(TOT_FEAST)     :: fsh_max_speed, fsh_happy_01, fsh_happy_99  !bodL/day
-      ! derived quantities
-        real(r8), dimension(TOT_LENGTHED) :: fsh_RTM_RT0, fsh_CTM_CT0 
-        real(r8), dimension(TOT_LENGTHED) :: fsh_CTMoverCTM_CT0, fsh_RTMoverRTM_RT0 
-        real(r8), dimension(TOT_LENGTHED) :: fsh_X_R, fsh_X_C, fsh_P_j 
-        real(r8) :: fpredCop, fpredNcaS, fpredNcaO, fpredEupS, fpredEupO
-      ! parameter vectors      
-        !real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_LL, fsh_AL_LL_BL, fsh_AS_LL_BS
-        !real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_L_deriv, fsh_ED, fsh_zeros
-     !  Gear vectors
-     	 real, dimension(NUM_GEARS,TOT_FEAST) :: fsh_catch_sel, fsh_catch_01, fsh_catch_99
-     	 !real, dimension(NUM_GEARS,TOT_FEAST,MAX_LCLASS) :: fsh_catch_CPUF
-     	 !real(r8) fsh_qq(NUM_GEARS,NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
+			
+			real(r8), dimension(TOT_LENGTHED) :: fsh_A_enc, fsh_B_enc
+			real(r8), dimension(TOT_LENGTHED) :: fsh_Bv_min, fsh_B_Lzero, fsh_B_Lone, fsh_B_Lpow            
+      
+			! feeding for simple and zoops
+      
+			real(r8), dimension(NUM_SIMPLE_SPECIES) :: fsh_simple_len, fsh_simple_wt, fsh_simple_JperG 
+      real(r8), dimension(NUM_PLANKTON) :: fsh_zoop_len, fsh_zoop_wt, fsh_zoop_JperG 
+      
+			! movement
+      
+			real(r8), dimension(TOT_FEAST)     :: fsh_max_speed, fsh_happy_01, fsh_happy_99  !bodL/day
+      
+			! derived quantities
+      
+			real(r8), dimension(TOT_LENGTHED) :: fsh_RTM_RT0, fsh_CTM_CT0 
+      real(r8), dimension(TOT_LENGTHED) :: fsh_CTMoverCTM_CT0, fsh_RTMoverRTM_RT0 
+      real(r8), dimension(TOT_LENGTHED) :: fsh_X_R, fsh_X_C, fsh_P_j 
+      real(r8) :: fpredCop, fpredNcaS, fpredNcaO, fpredEupS, fpredEupO
+      
+			! parameter vectors      
+      
+			!real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_LL, fsh_AL_LL_BL, fsh_AS_LL_BS
+      !real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_L_deriv, fsh_ED, fsh_zeros
+      
+			! Gear vectors
+     	
+			real, dimension(NUM_GEARS,TOT_FEAST) :: fsh_catch_sel, fsh_catch_01, fsh_catch_99
+     	!real, dimension(NUM_GEARS,TOT_FEAST,MAX_LCLASS) :: fsh_catch_CPUF
+     	!real(r8) fsh_qq(NUM_GEARS,NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
      	 
-  integer rlook_fal(NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
-  integer rlook_fl(NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS)
-  integer, dimension(TOT_LINKS) :: sp_all,age_all,lc_all,all_order,rev_order
-  integer, dimension(TOT_LINKS) :: prev_len,next_len,type_all
-  real(r8), dimension(TOT_LINKS) :: all_AL_LL_BL, all_AS_LL_BS
-	real(r8), dimension(TOT_LINKS) :: all_Aenc_LL_Benc, all_Ar_v_LL 
-	real(r8), dimension(TOT_LINKS) :: all_L_deriv,all_zeros,L_all,CALbase_all, L_width
-  real(r8), dimension(TOT_LINKS) :: swim_all, swim_selm, swim_selk
-  real(r8), dimension(TOT_LINKS) :: all_mat_rec, sum_preference
+      integer rlook_fal(NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
+      integer rlook_fl(NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS)
+      integer, dimension(TOT_LINKS) :: sp_all,age_all,lc_all,all_order,rev_order
+      integer, dimension(TOT_LINKS) :: prev_len,next_len,type_all
+      real(r8), dimension(TOT_LINKS) :: all_AL_LL_BL, all_AS_LL_BS
+	    real(r8), dimension(TOT_LINKS) :: all_Aenc_LL_Benc, all_Ar_v_LL 
+	    real(r8), dimension(TOT_LINKS) :: all_L_deriv,all_zeros,L_all,CALbase_all, L_width
+      real(r8), dimension(TOT_LINKS) :: swim_all, swim_selm, swim_selk
+      real(r8), dimension(TOT_LINKS) :: all_mat_rec, sum_preference
   
-  real(r8) :: all_QQ(NUM_GEARS,TOT_LINKS), all_preference(TOT_LINKS,TOT_LINKS)
-  real(r8) :: zoop_preference(TOT_LINKS,NUM_PLANKTON)
-  real(r8) :: simple_preference(TOT_LINKS,NUM_SIMPLE_SPECIES)
-  integer :: tspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
-  integer :: tspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
-  integer :: tsp(nfvar,NUM_SIMPLE_SPECIES)
-  integer :: kspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
-  integer :: kspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
-  integer :: ksp(nfvar,NUM_SIMPLE_SPECIES)	
-	integer :: teggs(TOT_LENGTHED), tspawn(TOT_LENGTHED)
-	integer :: keggs(TOT_LENGTHED), kspawn(TOT_LENGTHED)
+      real(r8) :: all_QQ(NUM_GEARS,TOT_LINKS), all_preference(TOT_LINKS,TOT_LINKS)
+      real(r8) :: zoop_preference(TOT_LINKS,NUM_PLANKTON)
+      real(r8) :: simple_preference(TOT_LINKS,NUM_SIMPLE_SPECIES)
+      integer :: tspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
+      integer :: tspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
+      integer :: tsp(nfvar,NUM_SIMPLE_SPECIES)
+      integer :: kspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
+      integer :: kspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
+      integer :: ksp(nfvar,NUM_SIMPLE_SPECIES)	
+	    integer :: teggs(TOT_LENGTHED), tspawn(TOT_LENGTHED)
+	    integer :: keggs(TOT_LENGTHED), kspawn(TOT_LENGTHED)
 	      	 
-  !    END TYPE   
-  !     real(r8), dimension(NUM_PLANKTON) ::  fsh_Zoop_JperG 
+      ! END TYPE   
+      !real(r8), dimension(NUM_PLANKTON) ::  fsh_Zoop_JperG 
 
-  real(r8) :: feast_test
-  real(r8) :: force_ration
-  real(r8) :: force_vonB
-  integer :: dye_update
-  integer :: dye_loaded = 0 
-  integer :: feast_mixed
-  integer :: feast_coupled
-  integer :: feast_mort
-  integer :: feast_fishing
-  integer :: feast_growth
-  integer :: feast_movement
-  integer :: feast_recruitment       ! flag to do or not do recruitment
-  integer :: feast_promotion         ! flag to do promotion or not
-  integer :: feast_time = 0          ! Set the time of day at which FEAST is updated
-  integer :: feast_sp_view  = 1      ! species to output detailed statistics
-  integer :: feast_age_view = 1      ! age to output detailed statistics
-  !real(r8), dimension(TOT_FEAST) :: age_zeros
+      real(r8) :: feast_test
+      real(r8) :: force_ration
+      real(r8) :: force_vonB
+      integer :: dye_update
+      integer :: dye_loaded = 0 
+      integer :: feast_mixed
+      integer :: feast_coupled
+      integer :: feast_mort
+      integer :: feast_fishing
+      integer :: feast_growth
+      integer :: feast_movement
+      integer :: feast_recruitment       ! flag to do or not do recruitment
+      integer :: feast_promotion         ! flag to do promotion or not
+      integer :: feast_time = 0          ! Set the time of day at which FEAST is updated
+      integer :: feast_sp_view  = 1      ! species to output detailed statistics
+      integer :: feast_age_view = 1      ! age to output detailed statistics
+      !real(r8), dimension(TOT_FEAST) :: age_zeros
 
-
-# endif
-!#  if defined BIOFLUX
-!        real(r8), dimension(NAT+NBT,NAT+NBT) :: bflx
-!#  endif
+#  endif
 # endif
        
-
-
-
-
 # ifdef BIO_GOANPZ
 !=======================================================================
 !   Parameters for Gulf of Alaska Biological Model

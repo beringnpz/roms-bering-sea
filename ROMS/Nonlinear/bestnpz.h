@@ -1352,7 +1352,6 @@
                 alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(Par1-30.0)
               end if
 
-
               LightLim=1.0_r8
               IronLim=1.0_r8
               NOLim=1.0_r8

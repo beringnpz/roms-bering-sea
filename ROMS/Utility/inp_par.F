@@ -6697,29 +6697,18 @@
         READ (inp,'(a)',ERR=10,END=20) line
         status=decode_line(line, KeyWord, Nval, Cval, Rval)
         IF (status.gt.0) THEN
+          
+          ! General biology
+          
           IF (TRIM(KeyWord).eq.'Lbiology') THEN
             Npts=load_l(Nval, Cval, Ngrids, Lbiology)
           ELSE IF (TRIM(KeyWord).eq.'BioIter') THEN
             Npts=load_i(Nval, Rval, Ngrids, BioIter)
+            
+          ! Light
+          
           ELSE IF (TRIM(KeyWord).eq.'PARfrac') THEN
             Npts=load_r(Nval, Rval, Ngrids, Parfrac)
-
-          !  Vertical mixing tuning parameter
-
-          ELSE IF (TRIM(KeyWord).eq.'VertMixIncr') THEN 
-            Npts=load_r(Nval, Rval, 1, VertMixIncr)         
-
-          !  Bio- conversions
-
-          ELSE IF (TRIM(KeyWord).eq.'xi') THEN
-            Npts=load_r(Nval, Rval, 1, xi)
-          ELSE IF (TRIM(KeyWord).eq.'ccr') THEN
-            Npts=load_r(Nval, Rval, 1, ccr)
-          ELSE IF (TRIM(KeyWord).eq.'ccrPhL') THEN 
-            Npts=load_r(Nval, Rval, 1, ccrPhL)
-
-          !  extinction coefficients
-
           ELSE IF (TRIM(KeyWord).eq.'k_ext') THEN
             Npts=load_r(Nval, Rval, 1, k_ext)
           ELSE IF (TRIM(KeyWord).eq.'k_chl') THEN
@@ -6734,237 +6723,143 @@
              Npts=load_r(Nval, Rval, 1, k_chlC)
           ELSE IF (TRIM(KeyWord).eq.'a_frac') THEN
              Npts=load_r(Nval, Rval, 1, a_frac)
-           ELSE IF (TRIM(KeyWord).eq.'a_mu1') THEN
+          ELSE IF (TRIM(KeyWord).eq.'a_mu1') THEN
              Npts=load_r(Nval, Rval, 1, a_mu1)
-
-          !  PhS growth params
-
+             
+          ! Conversion factors
+            
+          ELSE IF (TRIM(KeyWord).eq.'xi') THEN
+            Npts=load_r(Nval, Rval, 1, xi)
+          ELSE IF (TRIM(KeyWord).eq.'ccr') THEN
+            Npts=load_r(Nval, Rval, 1, ccr)
+          ELSE IF (TRIM(KeyWord).eq.'ccrPhL') THEN 
+            Npts=load_r(Nval, Rval, 1, ccrPhL)
+          ELSE IF (TRIM(KeyWord).eq.'FeC') THEN
+            Npts=load_r(Nval, Rval, 1, FeC) 
+          
+          ! Phytoplankton growth params
+          
           ELSE IF (TRIM(KeyWord).eq.'DiS') THEN
             Npts=load_r(Nval, Rval, 1, DiS)
-          ELSE IF (TRIM(KeyWord).eq.'DpS') THEN
-            Npts=load_r(Nval, Rval, 1, DpS)
-          ELSE IF (TRIM(KeyWord).eq.'alphaPhS') THEN
-            Npts=load_r(Nval, Rval, 1, alphaPhS)
-          ELSE IF (TRIM(KeyWord).eq.'psiPhS') THEN
-            Npts=load_r(Nval, Rval, 1, psiPhS)
-          ELSE IF (TRIM(KeyWord).eq.'k1PhS') THEN
-            Npts=load_r(Nval, Rval, 1, k1PhS)
-          ELSE IF (TRIM(KeyWord).eq.'k2PhS') THEN
-            Npts=load_r(Nval, Rval, 1, k2PhS)
-          ELSE IF (TRIM(KeyWord).eq.'aPS') THEN
-            Npts=load_r(Nval, Rval, 1, aPS)
-          ELSE IF (TRIM(KeyWord).eq.'FeCritPS') THEN
-            Npts=load_r(Nval, Rval, 1, FeCritPS)
-
-          !  PhL growth params
-
           ELSE IF (TRIM(KeyWord).eq.'DiL') THEN
             Npts=load_r(Nval, Rval, 1, DiL)
+          ELSE IF (TRIM(KeyWord).eq.'DpS') THEN
+            Npts=load_r(Nval, Rval, 1, DpS)
           ELSE IF (TRIM(KeyWord).eq.'DpL') THEN
             Npts=load_r(Nval, Rval, 1, DpL)
-          ELSE IF (TRIM(KeyWord).eq.'alphaPhL') THEN
-            Npts=load_r(Nval, Rval, 1, alphaPhL)
-          ELSE IF (TRIM(KeyWord).eq.'psiPhL') THEN
-            Npts=load_r(Nval, Rval, 1, psiPhL)
+          ELSE IF (TRIM(KeyWord).eq.'k1PhS') THEN
+            Npts=load_r(Nval, Rval, 1, k1PhS)
           ELSE IF (TRIM(KeyWord).eq.'k1PhL') THEN
             Npts=load_r(Nval, Rval, 1, k1PhL)
+          ELSE IF (TRIM(KeyWord).eq.'k2PhS') THEN
+            Npts=load_r(Nval, Rval, 1, k2PhS)
           ELSE IF (TRIM(KeyWord).eq.'k2PhL') THEN
             Npts=load_r(Nval, Rval, 1, k2PhL)
-          ELSE IF (TRIM(KeyWord).eq.'aPL') THEN
-            Npts=load_r(Nval, Rval, 1, aPL)
+          ELSE IF (TRIM(KeyWord).eq.'FeCritPS') THEN
+            Npts=load_r(Nval, Rval, 1, FeCritPS)
           ELSE IF (TRIM(KeyWord).eq.'FeCritPL') THEN
             Npts=load_r(Nval, Rval, 1, FeCritPL)
-
-          !  MZS preference params
-
-          ELSE IF (TRIM(KeyWord).eq.'fpPhSMZS') THEN
-            Npts=load_r(Nval, Rval, 1, fpPhSMZS)
-          ELSE IF (TRIM(KeyWord).eq.'fpPhLMZS') THEN
-            Npts=load_r(Nval, Rval, 1, fpPhLMZS)
-
-          !  MZS growth and feeding params
-
-          ELSE IF (TRIM(KeyWord).eq.'eMZS') THEN
-            Npts=load_r(Nval, Rval, 1, eMZS)
-          ELSE IF (TRIM(KeyWord).eq.'Q10MZS') THEN
-            Npts=load_r(Nval, Rval, 1, Q10MZS)
-          ELSE IF (TRIM(KeyWord).eq.'Q10MZST') THEN
-            Npts=load_r(Nval, Rval, 1, Q10MZST)
-          ELSE IF (TRIM(KeyWord).eq.'fMZS') THEN
-            Npts=load_r(Nval, Rval, 1, fMZS)
-          ELSE IF (TRIM(KeyWord).eq.'kMZS') THEN
-            Npts=load_r(Nval, Rval, 1, kMZS)
-          ELSE IF (TRIM(KeyWord).eq.'gammaMZS') THEN
-            Npts=load_r(Nval, Rval, 1, gammaMZS)
-
-          !  MZL preference params
-
+          ELSE IF (TRIM(KeyWord).eq.'kfePhS') THEN
+            Npts=load_r(Nval, Rval, 1, kfePhS)
+          ELSE IF (TRIM(KeyWord).eq.'kfePhL') THEN
+            Npts=load_r(Nval, Rval, 1, kfePhL)
+            
+          ! Feeding preferences
+          
           ELSE IF (TRIM(KeyWord).eq.'fpPhSMZL') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSMZL)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLMZL') THEN
             Npts=load_r(Nval, Rval, 1, fpPhLMZL)
-
-          !  MZL growth and feeding params
-
-          ELSE IF (TRIM(KeyWord).eq.'eMZL') THEN
-            Npts=load_r(Nval, Rval, 1, eMZL)
-          ELSE IF (TRIM(KeyWord).eq.'Q10MZL') THEN
-            Npts=load_r(Nval, Rval, 1, Q10MZL)
-          ELSE IF (TRIM(KeyWord).eq.'Q10MZLT') THEN
-            Npts=load_r(Nval, Rval, 1, Q10MZLT)
-          ELSE IF (TRIM(KeyWord).eq.'fMZL') THEN
-            Npts=load_r(Nval, Rval, 1, fMZL)
-          ELSE IF (TRIM(KeyWord).eq.'kMZL') THEN
-            Npts=load_r(Nval, Rval, 1, kMZL)
-          ELSE IF (TRIM(KeyWord).eq.'gammaMZL') THEN
-            Npts=load_r(Nval, Rval, 1, gammaMZL)
-
-          !  Cop preference params
-
           ELSE IF (TRIM(KeyWord).eq.'fpPhSCop') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSCop)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLCop') THEN
             Npts=load_r(Nval, Rval, 1, fpPhLCop)
-          ELSE IF (TRIM(KeyWord).eq.'fpMZSCop') THEN
-            Npts=load_r(Nval, Rval, 1, fpMZSCop)
           ELSE IF (TRIM(KeyWord).eq.'fpMZLCop') THEN
             Npts=load_r(Nval, Rval, 1, fpMZLCop)
-
-          !  Cop growth and feeding params
-
-          ELSE IF (TRIM(KeyWord).eq.'eCop') THEN
-            Npts=load_r(Nval, Rval, 1, eCop)
-          ELSE IF (TRIM(KeyWord).eq.'Q10Cop') THEN
-            Npts=load_r(Nval, Rval, 1, Q10Cop)
-          ELSE IF (TRIM(KeyWord).eq.'Q10CopT') THEN
-            Npts=load_r(Nval, Rval, 1, Q10CopT)
-          ELSE IF (TRIM(KeyWord).eq.'fCop') THEN
-            Npts=load_r(Nval, Rval, 1, fCop)
-          ELSE IF (TRIM(KeyWord).eq.'gammaCop') THEN
-            Npts=load_r(Nval, Rval, 1, gammaCop)
-          ELSE IF (TRIM(KeyWord).eq.'kCop') THEN
-            Npts=load_r(Nval, Rval, 1, kCop)
-
-          !  NCa preference params
-
           ELSE IF (TRIM(KeyWord).eq.'fpPhSNCa') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSNCa)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLNCa') THEN
             Npts=load_r(Nval, Rval, 1, fpPhLNCa)
-          ELSE IF (TRIM(KeyWord).eq.'fpMZSNCa') THEN
-            Npts=load_r(Nval, Rval, 1, fpMZSNCa)
           ELSE IF (TRIM(KeyWord).eq.'fpMZLNCa') THEN
             Npts=load_r(Nval, Rval, 1, fpMZLNCa)
-
-          !  NCa growth and feeding params
-
-          ELSE IF (TRIM(KeyWord).eq.'eNCa') THEN
-            Npts=load_r(Nval, Rval, 1, eNCa)
-          ELSE IF (TRIM(KeyWord).eq.'Q10NCa') THEN
-            Npts=load_r(Nval, Rval, 1, Q10NCa)
-          ELSE IF (TRIM(KeyWord).eq.'Q10NCaT') THEN
-            Npts=load_r(Nval, Rval, 1, Q10NCaT)
-          ELSE IF (TRIM(KeyWord).eq.'fNCa') THEN
-            Npts=load_r(Nval, Rval, 1, fNCa)
-          ELSE IF (TRIM(KeyWord).eq.'gammaNCa') THEN
-            Npts=load_r(Nval, Rval, 1, gammaNCa)
-          ELSE IF (TRIM(KeyWord).eq.'kNCa') THEN
-            Npts=load_r(Nval, Rval, 1, kNCa)
-
-          !  Eup preference params
-
           ELSE IF (TRIM(KeyWord).eq.'fpPhSEup') THEN
             Npts=load_r(Nval, Rval, 1, fpPhSEup)
           ELSE IF (TRIM(KeyWord).eq.'fpPhLEup') THEN
             Npts=load_r(Nval, Rval, 1, fpPhLEup)
-          ELSE IF (TRIM(KeyWord).eq.'fpMZSEup') THEN
-            Npts=load_r(Nval, Rval, 1, fpMZSEup)
           ELSE IF (TRIM(KeyWord).eq.'fpMZLEup') THEN
             Npts=load_r(Nval, Rval, 1, fpMZLEup)
           ELSE IF (TRIM(KeyWord).eq.'fpCopEup') THEN
             Npts=load_r(Nval, Rval, 1, fpCopEup)
-
-          !  Eup growth and feeding params
-
-          ELSE IF (TRIM(KeyWord).eq.'eEup') THEN
-            Npts=load_r(Nval, Rval, 1, eEup)
-          ELSE IF (TRIM(KeyWord).eq.'Q10Eup') THEN
-            Npts=load_r(Nval, Rval, 1, Q10Eup)
-          ELSE IF (TRIM(KeyWord).eq.'Q10EupT') THEN
-            Npts=load_r(Nval, Rval, 1, Q10EupT)
-          ELSE IF (TRIM(KeyWord).eq.'fEup') THEN
-            Npts=load_r(Nval, Rval, 1, fEup)
-          ELSE IF (TRIM(KeyWord).eq.'gammaEup') THEN
-            Npts=load_r(Nval, Rval, 1, gammaEup)
-          ELSE IF (TRIM(KeyWord).eq.'kEup') THEN
-            Npts=load_r(Nval, Rval, 1, kEup)
-#  if defined JELLY
-
-          !  Jellyfish  param
-
           ELSE IF (TRIM(KeyWord).eq.'fpCopJel') THEN
             Npts=load_r(Nval, Rval, 1, fpCopJel)
           ELSE IF (TRIM(KeyWord).eq.'fpEupJel') THEN
             Npts=load_r(Nval, Rval, 1, fpEupJel)
           ELSE IF (TRIM(KeyWord).eq.'fpNCaJel') THEN
             Npts=load_r(Nval, Rval, 1, fpNCaJel)
+            
+          
+          ! Zooplankton growth and feeding
+          
+          ELSE IF (TRIM(KeyWord).eq.'eMZL') THEN
+            Npts=load_r(Nval, Rval, 1, eMZL)
+          ELSE IF (TRIM(KeyWord).eq.'eCop') THEN
+            Npts=load_r(Nval, Rval, 1, eCop)
+          ELSE IF (TRIM(KeyWord).eq.'eNCa') THEN
+            Npts=load_r(Nval, Rval, 1, eNCa)
+          ELSE IF (TRIM(KeyWord).eq.'eEup') THEN
+            Npts=load_r(Nval, Rval, 1, eEup)
           ELSE IF (TRIM(KeyWord).eq.'eJel') THEN
             Npts=load_r(Nval, Rval, 1, eJel)
-          ELSE IF (TRIM(KeyWord).eq.'Q10Jelr') THEN
-            Npts=load_r(Nval, Rval, 1, Q10Jelr) 
-          ELSE IF (TRIM(KeyWord).eq.'Q10JelTr') THEN
-            Npts=load_r(Nval, Rval, 1, Q10JelTr)
+          ELSE IF (TRIM(KeyWord).eq.'Q10MZL') THEN
+            Npts=load_r(Nval, Rval, 1, Q10MZL)
+          ELSE IF (TRIM(KeyWord).eq.'Q10Cop') THEN
+            Npts=load_r(Nval, Rval, 1, Q10Cop)
+          ELSE IF (TRIM(KeyWord).eq.'Q10NCa') THEN
+            Npts=load_r(Nval, Rval, 1, Q10NCa)
+          ELSE IF (TRIM(KeyWord).eq.'Q10Eup') THEN
+            Npts=load_r(Nval, Rval, 1, Q10Eup)
           ELSE IF (TRIM(KeyWord).eq.'Q10Jele') THEN
             Npts=load_r(Nval, Rval, 1, Q10Jele) 
+          ELSE IF (TRIM(KeyWord).eq.'Q10MZLT') THEN
+            Npts=load_r(Nval, Rval, 1, Q10MZLT)
+          ELSE IF (TRIM(KeyWord).eq.'Q10CopT') THEN
+            Npts=load_r(Nval, Rval, 1, Q10CopT)
+          ELSE IF (TRIM(KeyWord).eq.'Q10NCaT') THEN
+            Npts=load_r(Nval, Rval, 1, Q10NCaT)
+          ELSE IF (TRIM(KeyWord).eq.'Q10EupT') THEN
+            Npts=load_r(Nval, Rval, 1, Q10EupT)
           ELSE IF (TRIM(KeyWord).eq.'Q10JelTe') THEN
             Npts=load_r(Nval, Rval, 1, Q10JelTe)
-          ELSE IF (TRIM(KeyWord).eq.'gammaJel') THEN
-            Npts=load_r(Nval, Rval, 1, gammaJel) 
-          ELSE IF (TRIM(KeyWord).eq.'mpredJel') THEN
-            Npts=load_r(Nval, Rval, 1, mpredJel) 
-          ELSE IF (TRIM(KeyWord).eq.'respJel') THEN
-            Npts=load_r(Nval, Rval, 1,respJel)
-          ELSE IF (TRIM(KeyWord).eq.'bmJ') THEN
-            Npts=load_r(Nval, Rval, 1,bmJ)
-          ELSE IF (TRIM(KeyWord).eq.'ktbmJ') THEN
-            Npts=load_r(Nval, Rval, 1,ktbmJ)
-          ELSE IF (TRIM(KeyWord).eq.'TrefJ') THEN
-            Npts=load_r(Nval, Rval, 1,TrefJ)
+          ELSE IF (TRIM(KeyWord).eq.'fMZL') THEN
+            Npts=load_r(Nval, Rval, 1, fMZL)
+          ELSE IF (TRIM(KeyWord).eq.'fCop') THEN
+            Npts=load_r(Nval, Rval, 1, fCop)
+          ELSE IF (TRIM(KeyWord).eq.'fNCa') THEN
+            Npts=load_r(Nval, Rval, 1, fNCa)
+          ELSE IF (TRIM(KeyWord).eq.'fEup') THEN
+            Npts=load_r(Nval, Rval, 1, fEup)
           ELSE IF (TRIM(KeyWord).eq.'fJel') THEN
             Npts=load_r(Nval, Rval, 1,fJel)
-#  endif
-
-
-          !  Phytoplankton senescence
-
+          ELSE IF (TRIM(KeyWord).eq.'gammaMZL') THEN
+            Npts=load_r(Nval, Rval, 1, gammaMZL)
+          ELSE IF (TRIM(KeyWord).eq.'gammaCop') THEN
+            Npts=load_r(Nval, Rval, 1, gammaCop)
+          ELSE IF (TRIM(KeyWord).eq.'gammaNCa') THEN
+            Npts=load_r(Nval, Rval, 1, gammaNCa)
+          ELSE IF (TRIM(KeyWord).eq.'gammaEup') THEN
+            Npts=load_r(Nval, Rval, 1, gammaEup)
+          ELSE IF (TRIM(KeyWord).eq.'gammaJel') THEN
+            Npts=load_r(Nval, Rval, 1, gammaJel)
+            
+          ! Phytoplankton senescence 
+          
           ELSE IF (TRIM(KeyWord).eq.'mPhS') THEN
             Npts=load_r(Nval, Rval, 1, mPhS)
           ELSE IF (TRIM(KeyWord).eq.'mPhL') THEN
             Npts=load_r(Nval, Rval, 1, mPhL)
-          ELSE IF (TRIM(KeyWord).eq.'NcritPhS') THEN
-            Npts=load_r(Nval, Rval, 1, NcritPhS)
-          ELSE IF (TRIM(KeyWord).eq.'minmPhL') THEN
-            Npts=load_r(Nval, Rval, 1, minmPhL)
-          ELSE IF (TRIM(KeyWord).eq.'maxmPhL') THEN
-            Npts=load_r(Nval, Rval, 1, maxmPhL)
-          ELSE IF (TRIM(KeyWord).eq.'NcritPhL') THEN
-            Npts=load_r(Nval, Rval, 1, NcritPhL)
-
-          !  Zoopkankton mortality
-
-          ELSE IF (TRIM(KeyWord).eq.'mMZS') THEN
-            Npts=load_r(Nval, Rval, 1, mMZS)
-          ELSE IF (TRIM(KeyWord).eq.'mMZL') THEN
-            Npts=load_r(Nval, Rval, 1, mMZL)
-          ELSE IF (TRIM(KeyWord).eq.'mCop') THEN
-            Npts=load_r(Nval, Rval, 1, mCop)
-          ELSE IF (TRIM(KeyWord).eq.'mNCa') THEN
-            Npts=load_r(Nval, Rval, 1, mNCa)
-          ELSE IF (TRIM(KeyWord).eq.'mEup') THEN
-            Npts=load_r(Nval, Rval, 1, mEup)
-
-          !  predation closure
-
+            
+          ! Predation closure
+          
           ELSE IF (TRIM(KeyWord).eq.'mpredMZL') THEN
             Npts=load_r(Nval, Rval, 1, mpredMZL)
           ELSE IF (TRIM(KeyWord).eq.'mpredCop') THEN
@@ -6973,10 +6868,11 @@
             Npts=load_r(Nval, Rval, 1, mpredNCa)
           ELSE IF (TRIM(KeyWord).eq.'mpredEup') THEN
             Npts=load_r(Nval, Rval, 1, mpredEup)
-
-          !  sinking 
-
-        
+          ELSE IF (TRIM(KeyWord).eq.'mpredJel') THEN
+            Npts=load_r(Nval, Rval, 1, mpredJel)
+            
+          ! Sinking
+          
           ELSE IF (TRIM(KeyWord).eq.'wPhS') THEN
             Npts=load_r(Nval, Rval, 1, wPhS)
           ELSE IF (TRIM(KeyWord).eq.'wPhL') THEN
@@ -6985,11 +6881,9 @@
             Npts=load_r(Nval, Rval, 1, wDet)
           ELSE IF (TRIM(KeyWord).eq.'wDetF') THEN
             Npts=load_r(Nval, Rval, 1, wDetF)
-
-          !  Respiration parameters
-
-          ELSE IF (TRIM(KeyWord).eq.'respMZS') THEN
-            Npts=load_r(Nval, Rval, 1, respMZS)
+            
+          ! Respiration
+          
           ELSE IF (TRIM(KeyWord).eq.'respMZL') THEN
             Npts=load_r(Nval, Rval, 1, respMZL)
           ELSE IF (TRIM(KeyWord).eq.'respPhS') THEN
@@ -7002,50 +6896,40 @@
             Npts=load_r(Nval, Rval, 1, respNCa)
           ELSE IF (TRIM(KeyWord).eq.'respEup') THEN
             Npts=load_r(Nval, Rval, 1, respEup)
-            
-                
-          ELSE IF (TRIM(KeyWord).eq.'ktbmC') THEN
-            Npts=load_r(Nval, Rval, 1,ktbmC)
-          ELSE IF (TRIM(KeyWord).eq.'TrefC') THEN
-            Npts=load_r(Nval, Rval, 1,TrefC)
-          ELSE IF (TRIM(KeyWord).eq.'ktbmN') THEN
-            Npts=load_r(Nval, Rval, 1,ktbmN)
-          ELSE IF (TRIM(KeyWord).eq.'TrefN') THEN
-            Npts=load_r(Nval, Rval, 1,TrefN)
-            
-          ELSE IF (TRIM(KeyWord).eq.'ktbmE') THEN
-            Npts=load_r(Nval, Rval, 1,ktbmE)
-          ELSE IF (TRIM(KeyWord).eq.'TrefE') THEN
-            Npts=load_r(Nval, Rval, 1,TrefE)
-            
-          ELSE IF (TRIM(KeyWord).eq.'TmaxPhS') THEN
-            Npts=load_r(Nval, Rval, 1, TmaxPhS)
-          ELSE IF (TRIM(KeyWord).eq.'TminPhS') THEN
-            Npts=load_r(Nval, Rval, 1,TminPhS)
-          ELSE IF (TRIM(KeyWord).eq.'Topt_PhS') THEN
-            Npts=load_r(Nval, Rval, 1, Topt_PhS)
+          ELSE IF (TRIM(KeyWord).eq.'respJel') THEN
+            Npts=load_r(Nval, Rval, 1,respJel)
+          ELSE IF (TRIM(KeyWord).eq.'Q10Jelr') THEN
+            Npts=load_r(Nval, Rval, 1, Q10Jelr) 
+          ELSE IF (TRIM(KeyWord).eq.'Q10JelTr') THEN
+            Npts=load_r(Nval, Rval, 1, Q10JelTr)
           ELSE IF (TRIM(KeyWord).eq.'KtBm_PhS') THEN
             Npts=load_r(Nval, Rval, 1,KtBm_PhS)
-          ELSE IF (TRIM(KeyWord).eq.'TmaxPhL') THEN
-            Npts=load_r(Nval, Rval, 1, TmaxPhL)
-          ELSE IF (TRIM(KeyWord).eq.'TminPhL') THEN
-            Npts=load_r(Nval, Rval, 1,TminPhL)
-          ELSE IF (TRIM(KeyWord).eq.'Topt_PhL') THEN
-            Npts=load_r(Nval, Rval, 1, Topt_PhL)
           ELSE IF (TRIM(KeyWord).eq.'KtBm_PhL') THEN
             Npts=load_r(Nval, Rval, 1,KtBm_PhL)
-
-          ELSE IF (TRIM(KeyWord).eq.'TmaxMZS') THEN
-            Npts=load_r(Nval, Rval, 1, TmaxMZS)
-          ELSE IF (TRIM(KeyWord).eq.'KtBm_MZS') THEN
-            Npts=load_r(Nval, Rval, 1,KtBm_MZS)
-          ELSE IF (TRIM(KeyWord).eq.'TmaxMZL') THEN
-            Npts=load_r(Nval, Rval, 1, TmaxMZL)
           ELSE IF (TRIM(KeyWord).eq.'KtBm_MZL') THEN
             Npts=load_r(Nval, Rval, 1,KtBm_MZL)
+          ELSE IF (TRIM(KeyWord).eq.'ktbmC') THEN
+            Npts=load_r(Nval, Rval, 1,ktbmC)
+          ELSE IF (TRIM(KeyWord).eq.'ktbmN') THEN
+            Npts=load_r(Nval, Rval, 1,ktbmN)
+          ELSE IF (TRIM(KeyWord).eq.'ktbmE') THEN
+            Npts=load_r(Nval, Rval, 1,ktbmE)
+          ELSE IF (TRIM(KeyWord).eq.'TmaxPhS') THEN
+            Npts=load_r(Nval, Rval, 1, TmaxPhS)
+          ELSE IF (TRIM(KeyWord).eq.'TmaxPhL') THEN
+            Npts=load_r(Nval, Rval, 1, TmaxPhL)
+          ELSE IF (TRIM(KeyWord).eq.'TmaxMZL') THEN
+            Npts=load_r(Nval, Rval, 1, TmaxMZL)
+          ELSE IF (TRIM(KeyWord).eq.'TrefC') THEN
+            Npts=load_r(Nval, Rval, 1,TrefC)
+          ELSE IF (TRIM(KeyWord).eq.'TrefN') THEN
+            Npts=load_r(Nval, Rval, 1,TrefN)
+          ELSE IF (TRIM(KeyWord).eq.'TrefE') THEN
+            Npts=load_r(Nval, Rval, 1,TrefE)
 
-          !  Iron climatology terms
-
+            
+          ! Iron climatology
+          
           ELSE IF (TRIM(KeyWord).eq.'Feinlo') THEN
             Npts=load_r(Nval, Rval, 1, Feinlo)
           ELSE IF (TRIM(KeyWord).eq.'Feinhi') THEN
@@ -7058,20 +6942,9 @@
             Npts=load_r(Nval, Rval, 1, Feoffhi)
           ELSE IF (TRIM(KeyWord).eq.'Feoffh') THEN
             Npts=load_r(Nval, Rval, 1, Feoffh)
-
-          !  Iron limitation terms
-
-          ELSE IF (TRIM(KeyWord).eq.'kfePhS') THEN
-            Npts=load_r(Nval, Rval, 1, kfePhS)
-          ELSE IF (TRIM(KeyWord).eq.'kfePhL') THEN
-            Npts=load_r(Nval, Rval, 1, kfePhL)
-          ELSE IF (TRIM(KeyWord).eq.'FeC') THEN
-            Npts=load_r(Nval, Rval, 1, FeC)
-
-          !  Diapause
-
-          ELSE IF (TRIM(KeyWord).eq.'NCmaxz') THEN
-            Npts=load_r(Nval, Rval, 1, NCmaxz)
+            
+          ! Diapause
+          
           ELSE IF (TRIM(KeyWord).eq.'wNCrise') THEN
             Npts=load_r(Nval, Rval, 1, wNCrise)
           ELSE IF (TRIM(KeyWord).eq.'wNCsink') THEN
@@ -7092,54 +6965,27 @@
             Npts=load_r(Nval, Rval, 1, SinkStartCM)
           ELSE IF (TRIM(KeyWord).eq.'SinkEndCM') THEN
             Npts=load_r(Nval, Rval, 1, SinkEndCM)
-
-
-          !  Remineralization and Nitrification
-
-          ELSE IF (TRIM(KeyWord).eq.'regen') THEN
-            Npts=load_r(Nval, Rval, 1, regen)
-          ELSE IF (TRIM(KeyWord).eq.'dgrad') THEN
-            Npts=load_r(Nval, Rval, 1, dgrad)
+            
+          ! Remineralization and nitrification
+          
           ELSE IF (TRIM(KeyWord).eq.'Pv0') THEN
             Npts=load_r(Nval, Rval, 1, Pv0)
           ELSE IF (TRIM(KeyWord).eq.'PvT') THEN
             Npts=load_r(Nval, Rval, 1, PvT)
           ELSE IF (TRIM(KeyWord).eq.'Nitr0') THEN
             Npts=load_r(Nval, Rval, 1,Nitr0)
-          ELSE IF (TRIM(KeyWord).eq.'KnT') THEN
-            Npts=load_r(Nval, Rval, 1,KnT)
           ELSE IF (TRIM(KeyWord).eq.'ToptNtr') THEN
             Npts=load_r(Nval, Rval, 1,ToptNtr)
           ELSE IF (TRIM(KeyWord).eq.'ktntr') THEN
             Npts=load_r(Nval, Rval, 1,ktntr)
           ELSE IF (TRIM(KeyWord).eq.'KNH4Nit') THEN
             Npts=load_r(Nval, Rval, 1,KNH4Nit)
-          ELSE IF (TRIM(KeyWord).eq.'tI0') THEN
-            Npts=load_r(Nval, Rval, 1,tI0)
-          ELSE IF (TRIM(KeyWord).eq.'KI') THEN
-            Npts=load_r(Nval, Rval, 1,KI)  
-
-            !  Benthic Parameters
-
+            
+          ! Benthos
+          
 #  ifdef BENTHIC
-#   ifdef FEAST
-!           NOGRID START
-#   endif
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
-            Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
-            DO ng=1,Ngrids
-              DO itrc=1,NBEN
-                i=idBvar(idben(itrc))
-                Hout(i,ng)=Ltrc(itrc,ng)
-              END DO
-            END DO
-#   ifdef FEAST
-!           NOGRID END
-#   endif
           ELSE IF (TRIM(KeyWord).eq.'iremin') THEN
             Npts=load_r(Nval, Rval, 1, iremin)
-          ELSE IF (TRIM(KeyWord).eq.'q10') THEN
-            Npts=load_r(Nval, Rval, 1, q10)
           ELSE IF (TRIM(KeyWord).eq.'q10r') THEN
             Npts=load_r(Nval, Rval, 1, q10r)
           ELSE IF (TRIM(KeyWord).eq.'Rup') THEN
@@ -7168,72 +7014,15 @@
             Npts=load_r(Nval, Rval, 1, prefPL)
           ELSE IF (TRIM(KeyWord).eq.'prefPS') THEN
             Npts=load_r(Nval, Rval, 1, prefPS)
-          ELSE IF (TRIM(KeyWord).eq.'T0ben') THEN
-            Npts=load_r(Nval, Rval, 1, T0ben)
           ELSE IF (TRIM(KeyWord).eq.'T0benr') THEN
             Npts=load_r(Nval, Rval, 1, T0benr)
           ELSE IF (TRIM(KeyWord).eq.'BenPred') THEN
             Npts=load_r(Nval, Rval, 1, BenPred)
-          ELSE IF (TRIM(KeyWord).eq.'bmB') THEN
-            Npts=load_r(Nval, Rval, 1,bmB)
-          ELSE IF (TRIM(KeyWord).eq.'ktbmB') THEN
-            Npts=load_r(Nval, Rval, 1,ktbmB)
-          ELSE IF (TRIM(KeyWord).eq.'TrefB') THEN
-            Npts=load_r(Nval, Rval, 1,TrefB)
-   
 #  endif
 
-
-          !  ice bio params
-
-#  ifdef ICE_BIO
-#   ifdef CLIM_ICE_1D
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceBvar)') THEN
-            Npts=load_l(Nval, Cval,NIB*Ngrids, Ltrc)
-            DO ng=1,Ngrids
-              DO itrc=1,NIB
-                i=idIceBvar(idice(itrc))
-                Hout(i,ng)=Ltrc(itrc,ng)
-              END DO
-            END DO
-              
-#   elif defined BERING_10K  
-#    ifdef FEAST
- !NOGRID START
-#    endif 
+          ! Ice biology
           
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idIcePhL)') THEN
-            Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
-            DO ng=1,Ngrids
-!g            Hout(idIcePhL,ng)=LtrcI(idIcePhL,ng)
-              Hout(idIcePhL,ng)=LtrcI(1,ng)
-            END DO
-            
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNO3)') THEN
-!              Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
-            DO ng=1,Ngrids
-              Hout(idIceNO3,ng)=LtrcI(2,ng)
-!g            Hout(idIceNO3,ng)=LtrcI(idIceNO3,ng)
-            END DO
-            
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNH4)') THEN
-!           Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
-            DO ng=1,Ngrids
-!g            Hout(idIceNH4,ng)=LtrcI(idIceNH4,ng)
-              Hout(idIceNH4,ng)=LtrcI(3,ng)
-            END DO
-            
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceLog)') THEN
-!           Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
-            DO ng=1,Ngrids
-!             Hout(idIceLog,ng)=LtrcI(idIceLog,ng)
-              Hout(idIceLog,ng)=LtrcI(4,ng)
-            END DO
-#    ifdef FEAST
-!           NOGRID END
-#    endif          
-            
-#   endif             
+#  ifdef ICE_BIO           
           ELSE IF (TRIM(KeyWord).eq.'alphaIb') THEN
             Npts=load_r(Nval, Rval, 1,alphaIb)
           ELSE IF (TRIM(KeyWord).eq.'betaI') THEN
@@ -7257,9 +7046,9 @@
           ELSE IF (TRIM(KeyWord).eq.'aidz') THEN
             Npts=load_r(Nval, Rval, 1,aidz)
 #  endif
-#  ifdef FEAST
-!           NOGRID START
-#  endif 
+
+          ! Diffusion and mixing parameters for biological tracers
+
           ELSE IF (TRIM(KeyWord).eq.'TNU2') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
             DO ng=1,Ngrids
@@ -7286,17 +7075,15 @@
             END DO
           ELSE IF (TRIM(KeyWord).eq.'TNUDG') THEN
             Npts=load_r(Nval, Rval, NBT*Ngrids, Rbio)
-            
-
-!!Hard wired this in for now as wasnt reading correctly from input file    
-!           Rbio(15,1)=360_r8
-            
             DO ng=1,Ngrids
               DO itrc=1,NBT
                 i=idbio(itrc)
                 Tnudg(i,ng)=Rbio(itrc,ng)
               END DO
             END DO
+            
+          ! Logical switches for history file writes
+            
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTvar)') THEN
             Npts=load_l(Nval, Cval, NBT*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7320,10 +7107,10 @@
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTBFvar)') THEN
             Npts=load_l(Nval, Cval, NT*Ngrids, Ltrc)
             DO ng=1,Ngrids
-!              DO itrc=1, NT(ng)   
+!             DO itrc=1, NT(ng)   
                 i=idTBFvar(iBF)
                 Hout(i,ng)=Ltrc(iBF,ng)
-!              END DO
+!             END DO
             END DO
          
 #  endif          
@@ -7338,7 +7125,6 @@
             END DO
          
 #  endif          
-
 #  ifdef PROD3      
           ELSE IF (TRIM(KeyWord).eq.'Hout(idPT3var)') THEN
             Npts=load_l(Nval, Cval, NBPT3*Ngrids, Ltrc3)
@@ -7360,18 +7146,55 @@
               END DO
             END DO
           
-#  endif        
-#  ifdef FEAST
-!           NOGRID END
-#  endif 
-#  ifdef FEAST
+#  endif   
+#  ifdef ICE_BIO     
+#   ifdef CLIM_ICE_1D
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceBvar)') THEN
+            Npts=load_l(Nval, Cval,NIB*Ngrids, Ltrc)
+            DO ng=1,Ngrids
+              DO itrc=1,NIB
+                i=idIceBvar(idice(itrc))
+                Hout(i,ng)=Ltrc(itrc,ng)
+              END DO
+            END DO
+#   elif defined BERING_10K  
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIcePhL)') THEN
+            Npts=load_l(Nval, Cval,NIB*Ngrids, LtrcI)
+            DO ng=1,Ngrids
+              Hout(idIcePhL,ng)=LtrcI(1,ng)
+            END DO
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNO3)') THEN
+            DO ng=1,Ngrids
+              Hout(idIceNO3,ng)=LtrcI(2,ng)
+            END DO
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceNH4)') THEN
+            DO ng=1,Ngrids
+              Hout(idIceNH4,ng)=LtrcI(3,ng)
+            END DO
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idIceLog)') THEN
+            DO ng=1,Ngrids
+              Hout(idIceLog,ng)=LtrcI(4,ng)
+            END DO        
+#   endif  
+# endif
+# ifdef BENTHIC
+          ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
+            Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
+            DO ng=1,Ngrids
+              DO itrc=1,NBEN
+                i=idBvar(idben(itrc))
+                Hout(i,ng)=Ltrc(itrc,ng)
+              END DO
+            END DO
+# endif
 
+#  ifdef FEAST
           ELSE IF (TRIM(KeyWord).eq.'feast_test') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)
-                                                feast_test=FeastVal(1)   
+            feast_test=FeastVal(1)   
           ELSE IF (TRIM(KeyWord).eq.'force_ration') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)
-                                                force_ration=FeastVal(1)   
+            force_ration=FeastVal(1)   
           ELSE IF (TRIM(KeyWord).eq.'force_vonB') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)   
             force_vonB=FeastVal(1)
@@ -7732,100 +7555,84 @@
         
         IF (Lbiology(1)) THEN 
           WRITE (out,40) 0
+          
+          ! Light
+          
           WRITE (out,70) PARfrac, 'PARfrac',                            &
      &          'Photosynthetically-available radiation fraction'
+          WRITE (out,70) k_ext, 'k_ext',                                &
+     &          'Extinction coefficient due to seawater (1/m)'
+          WRITE (out,70) k_chl, 'k_chl',                                &
+     &          'Extinction coefficient due to phytoplankton (1/m)'
+          WRITE (out,70) k_extZ, 'k_extZ',                              &
+     &          'Cokelet light parameter' 
+          WRITE (out,70) k_chlA, 'k_chlA',                              &
+     &          'Cokelet light parameter' 
+          WRITE (out,70) k_chlB, 'k_chlB',                              &
+     &          'Cokelet light parameter' 
+          WRITE (out,70) k_chlC, 'k_chlC',                              &
+     &          'Cokelet light parameter' 
+          WRITE (out,70) a_frac, 'a_frac',                              &
+     &          'light parameter' 
+          WRITE (out,70) a_mu1, 'a_mu1',                                &
+     &          'light parameter' 
+     
+          ! Conversion factors
+     
           WRITE (out,70) xi, 'xi',                                      &
      &          'Nitrogen:carbon ratio (molN/molC)'
           WRITE (out,70) ccr, 'ccr',                                    &
      &          'PhS Carbon:chlorophyll ratio (mg C/mg Chl-a)'
           WRITE (out,70) ccrPhL, 'ccrPhL',                              &
      &          'PhL Carbon:chlorophyll ratio (mg C/mg Chl-a)'
-          WRITE (out,70) k_ext, 'k_ext',                                &
-     &          'Extinction coefficient due to seawater (1/m)'
-          WRITE (out,70) k_chl, 'k_chl',                                &
-     &          'Extinction coefficient due to phytoplankton (1/m)'
-          WRITE (out,70) k_extZ, 'k_extZ',                              &
-     &          'Cokelet light parameter' ! TODO: unused?  Looks like old bit of Cokelet light code now commented out
-          WRITE (out,70) k_chlA, 'k_chlA',                              &
-     &          'Cokelet light parameter' ! TODO: Cokelet-related, get details of this
-          WRITE (out,70) k_chlB, 'k_chlB',                              &
-     &          'Cokelet light parameter' ! TODO: Cokelet-related, get details of this
-          WRITE (out,70) k_chlC, 'k_chlC',                              &
-     &          'Cokelet light parameter' ! TODO: Cokelet-related, get details of this
-          WRITE (out,70) a_frac, 'a_frac',                              &
-     &          'light parameter' ! TODO: swdk calc in pre_step3d... get details of this
-          WRITE (out,70) a_mu1, 'a_mu1',                                &
-     &          'light parameter' ! TODO: swdk calc in pre_step3d... get details of this
+          WRITE (out,70) FeC, 'FeC',                                    &
+     &          'Fe:C ratio (umol Fe/mg C ??)'
+     
+         ! Phytoplankton growth parameters
+
           WRITE (out,70) DiS, 'DiS',                                    &
      &          'PhS Doubling rate parameter'
-          WRITE (out,70) Dps, 'DpS',                                    &
-     &          'PhS Doubling rate exponent'
-          WRITE (out,70) alphaPhS, 'alphaPhS',                          &
-     &          'PhS Slope of P-I curve (mg C/mg Chl-a/E/m2) (legacy?)'
-          WRITE (out,70) k1PhS, 'k1PhS',                                &
-     &          'PhS Half-saturation constant for NO3 limitation'
-          WRITE (out,70) k2PhS, 'k2PhS',                                &
-     &          'PhS Half-saturation constant for NH4 limitation'
           WRITE (out,70) DiL, 'DiL',                                    &
      &          'PhL Doubling rate parameter'
+          WRITE (out,70) Dps, 'DpS',                                    &
+     &          'PhS Doubling rate exponent'
           WRITE (out,70) DpL, 'DpL',                                    &
      &          'PhL Doubling rate exponent'
-          WRITE (out,70) alphaPhL, 'alphaPhL',                          &
-     &          'PhL Slope of P-I curve (mg C/mg Chl-a/E/m2) (legacy?)'
+          WRITE (out,70) k1PhS, 'k1PhS',                                &
+     &          'PhS Half-saturation constant for NO3 limitation'
           WRITE (out,70) k1PhL, 'k1PhL',                                &
      &          'PhL Half-saturation constant for NO3 limitation'
+          WRITE (out,70) k2PhS, 'k2PhS',                                &
+     &          'PhS Half-saturation constant for NH4 limitation'
           WRITE (out,70) k2PhL, 'k2PhL',                                &
      &          'PhL Half-saturation constant for NH4 limitation'
+          WRITE (out,70) FeCritPS, 'FeCritPS',                          &
+     &          'related to iron limitation' 
+          WRITE (out,70) FeCritPL, 'FeCritPL',                          &
+     &          'related to iron limitation' 
+          WRITE (out,70) kfePhS, 'kfePhS',                              &
+     &          'PhS Half-saturation constant for iron (umol/m^3)'
+          WRITE (out,70) kfePhL, 'kfePhL',                              &
+     &          'PhL Half-saturation constant for iron (umol/m^3)'
+     
+          ! Feeding preference
+     
           WRITE (out,70) fpPhSMZL, 'fpPhSMZL',                          &
      &          'PhS->MZL Feeding preference'
           WRITE (out,70) fpPhLMZL, 'fpPhLMZL',                          &
      &          'PhL->MZL Feeding preference'
-          WRITE (out,70) eMZL, 'eMZL',                                  &
-     &          'MZL maximum specific ingestion rate (mg C/mg C/d)'
-          WRITE (out,70) Q10MZL, 'Q10MZL',                              &
-     &          'MZL Q10 for growth rate'
-          WRITE (out,70) Q10MZLT, 'Q10MZLT',                            &
-     &          'MZL Temperature coefficient for Q10 (deg. C)'
-          WRITE (out,70) fMZL, 'fMZL',                                  &
-     &          'MZL Half-saturation constant for grazing (mg C/m3)'
-          WRITE (out,70) kMZL, 'kMZL',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) gammaMZL, 'gammaMZL',                          &
-     &          'MZL Growth efficiency'
           WRITE (out,70) fpPhSCop, 'fpPhSCop',                          &
      &          'PhS->Cop Feeding preference'
           WRITE (out,70) fpPhLCop, 'fpPhLCop',                          &
      &          'PhL->Cop Feeding preference'
           WRITE (out,70) fpMZLCop, 'fpMZLCop',                          &
      &          'MZL->Cop Feeding preference'
-          WRITE (out,70) eCop, 'eCop',                                  &
-     &          'Cop maximum specific ingestion rate (mg C/mg C/d)'
-          WRITE (out,70) Q10Cop, 'Q10Cop',                              &
-     &          'Cop Q10 for growth rate'
-          WRITE (out,70) Q10CopT, 'Q10CopT',                            &
-     &          'Cop Temperature coefficient for Q10 (deg. C)'
-          WRITE (out,70) fCop, 'fCop',                                  &
-     &          'Cop Half-saturation constant for grazing (mg C/m3)'
-          WRITE (out,70) gammaCop, 'gammaCop',                          &
-     &          'Cop Growth efficiency'
           WRITE (out,70) fpPhSNca, 'fpPhSNca',                          &
      &          'PhS->NCa Feeding preference'
           WRITE (out,70) fpPhLNca, 'fpPhLNca',                          &
      &          'PhL->NCa Feeding preference'
           WRITE (out,70) fpMZLNca, 'fpMZLNca',                          &
      &          'MZL->NCa Feeding preference'
-          WRITE (out,70) eNca, 'eNca',                                  &
-     &          'NCa maximum specific ingestion rate (mg C/mg C/d)'
-          WRITE (out,70) Q10Nca, 'Q10Nca',                              &
-     &          'NCa Q10 for growth rate'
-          WRITE (out,70) Q10NcaT, 'Q10NcaT',                            &
-     &          'NCa Temperature coefficient for Q10 (deg. C)'
-          WRITE (out,70) fNca, 'fNca',                                  &
-     &          'NCa Half-saturation constant for grazing (mg C/m3)'
-          WRITE (out,70) gammaNca, 'gammaNca',                          &
-     &          'NCa Growth efficiency'
-          WRITE (out,70) kNca, 'kNca',                                  &
-     &          '(legacy, unused)'
           WRITE (out,70) fpPhSEup, 'fpPhSEup',                          &
      &          'PhS->Eup Feeding preference'
           WRITE (out,70) fpPhLEup, 'fpPhLEup',                          &
@@ -7834,44 +7641,75 @@
      &          'MZL->Eup Feeding preference'
           WRITE (out,70) fpCopEup, 'fpCopEup',                          &
      &          'Cop->Eup Feeding preference'
-          WRITE (out,70) eEup, 'eEup',                                  &
-     &          'Eup maximum specific ingestion rate (mg C/mg C/d)'
-          WRITE (out,70) Q10Eup, 'Q10Eup',                              &
-     &          'Eup Q10 for growth rate'
-          WRITE (out,70) Q10EupT, 'Q10EupT',                            &
-     &          'Eup Temperature coefficient for Q10 (deg. C)'
-          WRITE (out,70) fEup, 'fEup',                                  &
-     &          'Eup Half-saturation constant for grazing (mg C/m3)'
-          WRITE (out,70) gammaEup, 'gammaEup',                          &
-     &          'Eup Growth efficiency'
           WRITE (out,70) fpCopJel, 'fpCopJel',                          &
      &          'Cop->Jel Feeding preference'
           WRITE (out,70) fpEupJel, 'fpEupJel',                          &
      &          'Eup->Jel Feeding preference'
           WRITE (out,70) fpNCaJel, 'fpNCaJel',                          &
      &          'NCa->Jel Feeding preference'
+     
+          ! Zooplankton growth and feeding
+
+          WRITE (out,70) eMZL, 'eMZL',                                  &
+     &          'MZL maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) eCop, 'eCop',                                  &
+     &          'Cop maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) eNCa, 'eNca',                                  &
+     &          'NCa maximum specific ingestion rate (mg C/mg C/d)'
+          WRITE (out,70) eEup, 'eEup',                                  &
+     &          'Eup maximum specific ingestion rate (mg C/mg C/d)'
           WRITE (out,70) eJel, 'eJel',                                  &
      &          'Jel maximum specific ingestion rate (mg C/mg C/d)'
-          WRITE (out,70) Q10Jelr, 'Q10Jelr',                            &
-     &          'Jel Q10 for respiration rate'
-          WRITE (out,70) Q10JelTr, 'Q10JelTr',                          &
-     &          'Jel Temperature coefficient for resp Q10 (deg. C)'
+          WRITE (out,70) Q10MZL, 'Q10MZL',                              &
+     &          'MZL Q10 for growth rate'
+          WRITE (out,70) Q10Cop, 'Q10Cop',                              &
+     &          'Cop Q10 for growth rate'
+          WRITE (out,70) Q10NCa, 'Q10Nca',                              &
+     &          'NCa Q10 for growth rate'
+          WRITE (out,70) Q10Eup, 'Q10Eup',                              &
+     &          'Eup Q10 for growth rate'
           WRITE (out,70) Q10Jele, 'Q10Jele',                            &
      &          'Jel Q10 for growth rate'
+          WRITE (out,70) Q10MZLT, 'Q10MZLT',                            &
+     &          'MZL Temperature coefficient for Q10 (deg. C)'
+          WRITE (out,70) Q10CopT, 'Q10CopT',                            &
+     &          'Cop Temperature coefficient for Q10 (deg. C)'  
+          WRITE (out,70) Q10NCaT, 'Q10NcaT',                            &
+     &          'NCa Temperature coefficient for Q10 (deg. C)'   
+          WRITE (out,70) Q10EupT, 'Q10EupT',                            &
+     &          'Eup Temperature coefficient for Q10 (deg. C)'
           WRITE (out,70) Q10JelTe, 'Q10JelTe',                          &
      &          'Jel Temperature coefficient for growth Q10 (deg. C)'
-          WRITE (out,70) gammaJel, 'gammaJel',                          &
-     &          'Jel Growth efficiency'
-          WRITE (out,70) mpredJel, 'mpredJel',                          &
-     &          'Jel Daily mortality (1/d)'
-          WRITE (out,70) respJel, 'respJel',                            &
-     &          'Jel Basal metabolic rate (1/d)'
+          WRITE (out,70) fMZL, 'fMZL',                                  &
+     &          'MZL Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) fCop, 'fCop',                                  &
+     &          'Cop Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) fNCa, 'fNca',                                  &
+     &          'NCa Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) fEup, 'fEup',                                  &
+     &          'Eup Half-saturation constant for grazing (mg C/m3)'
           WRITE (out,70) fJel, 'fJel',                                  &
      &          'Jel Half-saturation constant for grazing (mg C/m3)'
+          WRITE (out,70) gammaMZL, 'gammaMZL',                          &
+     &          'MZL Growth efficiency'
+          WRITE (out,70) gammaCop, 'gammaCop',                          &
+     &          'Cop Growth efficiency'
+          WRITE (out,70) gammaNca, 'gammaNca',                          &
+     &          'NCa Growth efficiency'
+          WRITE (out,70) gammaEup, 'gammaEup',                          &
+     &          'Eup Growth efficiency'
+          WRITE (out,70) gammaJel, 'gammaJel',                          &
+     &          'Jel Growth efficiency'
+
+          ! Phytoplankton senescence
+          
           WRITE (out,70) mPhS, 'mPhS',                                  &
      &          'PhS daily linear mortality rate (1/d)'
           WRITE (out,70) mPhL, 'mPhL',                                  &
      &          'PhL daily linear mortality rate (1/d)'
+
+          ! Predation closure
+          
           WRITE (out,70) mpredMZL, 'mpredMZL',                          &
      &          'MZL Daily mortality (1/d)'
           WRITE (out,70) mpredCop, 'mpredCop',                          &
@@ -7880,6 +7718,11 @@
      &          'Nca Daily mortality (1/d)'
           WRITE (out,70) mpredEup, 'mpredEup',                          &
      &          'Eup Daily mortality (1/d)'
+          WRITE (out,70) mpredJel, 'mpredJel',                          &
+     &          'Jel Daily mortality (1/d)'
+
+          ! Sinking
+          
           WRITE (out,70) wPhS, 'wPhS',                                  &
      &          'PhS Sinking rate (m/d)'
           WRITE (out,70) wPhL, 'wPhL',                                  &
@@ -7888,42 +7731,54 @@
      &          'Det Sinking rate (m/d)'
           WRITE (out,70) wDetF, 'wDetF',                                &
      &          'DetF Sinking rate (m/d)'
-          WRITE (out,70) respMZL, 'respMZL',                            &
-     &          'MZL Specific respiration rate (1/d)'
+
+          ! Respiration
+          
           WRITE (out,70) respPhS, 'respPhS',                            &
      &          'PhS Specific respiration rate (1/d)'
           WRITE (out,70) respPhL, 'respPhL',                            &
      &          'PhL Specific respiration rate (1/d)'
+          WRITE (out,70) respMZL, 'respMZL',                            &
+     &          'MZL Specific respiration rate (1/d)'
           WRITE (out,70) respCop, 'respCop',                            &
      &          'Cop Specific respiration rate (1/d)'
           WRITE (out,70) respNCa, 'respNCa',                            &
      &          'NCa Specific respiration rate (1/d)'
           WRITE (out,70) respEup, 'respEup',                            &
      &          'Eup Specific respiration rate (1/d)'
-          WRITE (out,70) ktbmC, 'ktbmC',                                &
-     &          'Cop temperature coefficient for respiration (1/deg C)'
-          WRITE (out,70) TrefC, 'TrefC',                                &
-     &          'Cop reference temperature for respiration (deg C)'
-          WRITE (out,70) ktbmN, 'ktbmN',                                &
-     &          'NCa temperature coefficient for respiration (1/deg C)'
-          WRITE (out,70) TrefN, 'TrefN',                                &
-     &          'NCa reference temperature for respiration (deg C)'
-          WRITE (out,70) ktbmE, 'ktbmE',                                &
-     &          'Eup temperature coefficient for respiration (1/deg C)'
-          WRITE (out,70) TrefE, 'TrefE',                                &
-     &          'Eup reference temperature for respiration (deg C)'
-          WRITE (out,70) TmaxPhS, 'TmaxPhS',                            &
-     &          'PhS reference temperature for respiration (deg C)'
+          WRITE (out,70) respJel, 'respJel',                            &
+     &          'Jel Basal metabolic rate (1/d)'
+          WRITE (out,70) Q10Jelr, 'Q10Jelr',                            &
+     &          'Jel Q10 for respiration rate'
+          WRITE (out,70) Q10JelTr, 'Q10JelTr',                          &
+     &          'Jel Temperature coefficient for resp Q10 (deg. C)'
           WRITE (out,70) KtBm_PhS, 'KtBm_PhS',                          &
      &          'PhS temperature coefficient for respiration (1/deg C)'
-          WRITE (out,70) TmaxPhL, 'TmaxPhL',                            &
-     &          'PhL reference temperature for respiration (deg C)'
           WRITE (out,70) KtBm_PhL, 'KtBm_PhL',                          &
      &          'PhL temperature coefficient for respiration (1/deg C)'
-          WRITE (out,70) TmaxMZL, 'TmaxMZL',                            &
-     &          'MZL reference temperature for respiration (deg C)'
           WRITE (out,70) KtBm_MZL, 'KtBm_MZL',                          &
      &          'MZL temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) ktbmC, 'ktbmC',                                &
+     &          'Cop temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) ktbmN, 'ktbmN',                                &
+     &          'NCa temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) ktbmE, 'ktbmE',                                &
+     &          'Eup temperature coefficient for respiration (1/deg C)'
+          WRITE (out,70) TmaxPhS, 'TmaxPhS',                            &
+     &          'PhS reference temperature for respiration (deg C)'
+          WRITE (out,70) TmaxPhL, 'TmaxPhL',                            &
+     &          'PhL reference temperature for respiration (deg C)'
+          WRITE (out,70) TmaxMZL, 'TmaxMZL',                            &
+     &          'MZL reference temperature for respiration (deg C)'
+          WRITE (out,70) TrefC, 'TrefC',                                &
+     &          'Cop reference temperature for respiration (deg C)'
+          WRITE (out,70) TrefN, 'TrefN',                                &
+     &          'NCa reference temperature for respiration (deg C)'
+          WRITE (out,70) TrefE, 'TrefE',                                &
+     &          'Eup reference temperature for respiration (deg C)'
+
+          ! Iron climatology
+
           WRITE (out,70) Feinlo, 'Feinlo',                              &
      &          'Inshore surface Fe concentration (umol Fe/m^3)'
           WRITE (out,70) Feinhi, 'Feinhi',                              &
@@ -7936,18 +7791,9 @@
      &          'Offshore deep Fe concentration (umol Fe/m^3)'
           WRITE (out,70) Feoffh, 'Feoffh',                              &
      &          'Offshore isobath of transition for Fe (m)'
-          WRITE (out,70) kfePhS, 'kfePhS',                              &
-     &          'PhS Half-saturation constant for iron (umol/m^3)'
-          WRITE (out,70) kfePhL, 'kfePhL',                              &
-     &          'PhL Half-saturation constant for iron (umol/m^3)'
-          WRITE (out,70) FeC, 'FeC',                                    &
-     &          'Fe:C ratio (umol Fe/mg C ??)'
-          WRITE (out,70) FeCritPS, 'FeCritPS',                          &
-     &          'related to iron limitation' ! TODO: get details
-          WRITE (out,70) FeCritPL, 'FeCritPL',                          &
-     &          'related to iron limitation' ! TODO: get details
-          WRITE (out,70) NCmaxz, 'NCmaxz',                              &
-     &          'NCa highest depth of diapausing (m) (legacy, unused)'
+
+          ! Diapause
+
           WRITE (out,70) wNCrise, 'wNCrise',                            &
      &          'NCa upward speed during diapause (m/d)'
           WRITE (out,70) wNCsink, 'wNCsink',                            &
@@ -7968,6 +7814,9 @@
      &          'NCaS Day of year to begin downward movement'
           WRITE (out,70) SinkEndCM, 'SinkEndCM',                        &
      &          'NCaS Day of year to end downward movement'
+     
+          ! Reminaralization and nitrification
+     
           WRITE (out,70) Pv0, 'Pv0',                                    &
      &          'PON decompositon rate at 0 deg C (1/d)'
           WRITE (out,70) PvT, 'PvT',                                    &
@@ -7980,6 +7829,9 @@
      &          'Temperature coefficient for nitrification (1/deg C)'
           WRITE (out,70) KNH4Nit, 'KNH4Nit',                            &
      &          'Half-saturation constant for nitrification (mg N/m^3/d ?)'
+     
+          ! Benthos
+          
           WRITE (out,70) iremin, 'iremin',                              &
      &          '?? related to nitrification bflx'
           WRITE (out,70) q10r, 'q10r',                                  &
@@ -8014,6 +7866,9 @@
      &          'Ben Q10 Reference temperature for feeding'
           WRITE (out,70) BenPred, 'BenPred',                            &
      &          'Ben mortality rate due to undefined predation (1/d)'
+     
+          ! Ice biology
+          
           WRITE (out,70) alphaIb, 'alphaIb',                            &
      &          'IcePhL Chl-a specific attenuation coefficient (W^-1 m^-2)'
           WRITE (out,70) betaI, 'betaI',                                &
@@ -8037,105 +7892,8 @@
           WRITE (out,70) aidz, 'aidz',                                  &
      &          'Ice thickness (m)'
      
-          WRITE (out,45)
-          WRITE (out,70) VertMixIncr, 'VertMixIncr',                    &
-     &          'Vertical mixing tuning parameter (legacy, unused)'
-          WRITE (out,70) aPS, 'aPS',                                    &
-     &          'PhS old NH4 limitation (legacy, unused)'
-          WRITE (out,70) psiPhS, 'psiPhS',                              &
-     &          '(legacy, unused)'
-          WRITE (out,70) psiPhL, 'psiPhl',                              &
-     &          '(legacy, unused)'
-          WRITE (out,70) aPL, 'aPL',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) fpPhSMZS, 'fpPhSMZS',                          &
-     &          'PhS->MZS Feeding preference (legacy, unused)'
-          WRITE (out,70) fpPhLMZS, 'fpPhLMZS',                          &
-     &          'PhL->MZS Feeding preference (legacy, unused)'
-          WRITE (out,70) eMZS, 'eMZS',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) Q10MZS, 'Q10MZS',                              &
-     &          '(legacy, unused)'
-          WRITE (out,70) Q10MZST, 'Q10MZST',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) fMZS, 'fMZS',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) kMZS, 'kMZS',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) gammaMZS, 'gammaMZS',                          &
-     &          '(legacy, unused)'
-          WRITE (out,70) fpMZSCop, 'fpMZSCop',                          &
-     &          'MZS->Cop Feeding preference (legacy, unused)'
-          WRITE (out,70) kCop, 'kCop',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) fpMZSNca, 'fpMZSNca',                          &
-     &          'MZS->NCa Feeding preference (legacy, unused)'
-          WRITE (out,70) fpMZSEup, 'fpMZSEup',                          &
-     &          'MZS->Eup Feeding preference (legacy, unused)'
-          WRITE (out,70) kEup, 'kEup',                                  &
-     &          '(legacy, unused)'
-          WRITE (out,70) TrefJ, 'TrefJ',                                &
-     &          'Reference temperature (deg. C) (legacy, unused)'
-          WRITE (out,70) mMZS, 'mMZS',                                  &
-     &          'MZS Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mMZL, 'mMZL',                                  &
-     &          'MZL Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mCop, 'mCop',                                  &
-     &          'Cop Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mNca, 'mNca',                                  &
-     &          'Nca Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) mEup, 'mEup',                                  &
-     &          'Eup Daily mortality (1/d) (legacy, unused)'
-          WRITE (out,70) respMZS, 'respMZS',                            &
-     &          'MZS Specific respiration rate (1/d) (legacy, unused)'
-          WRITE (out,70) TminPhS, 'TminPhS',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) Topt_PhS, 'Topt_PhS',                          &
-     &          '(legacy, unused)'
-          WRITE (out,70) TmaxMZS, 'TmaxMZS',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) KtBm_MZS, 'KtBm_MZS',                          &
-     &          '(legacy, unused)'
-          WRITE (out,70) regen, 'regen',                                &
-     &          'NH4 Regeneration rate (legacy, unused)'
-          WRITE (out,70) dgrad, 'dgrad',                                &
-     &          'Det Degradation rate (legacy, unused)'
-          WRITE (out,70) KnT, 'KnT',                                    &
-     &          'Temperature coefficient for nitrification (1/deg C) (legacy, unused)'
-          WRITE (out,70) bmB, 'bmB',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) ktbmB, 'ktbmB',                                &
-     &          '(legacy, unused)'
-          WRITE (out,70) TrefB, 'TrefB',                                &
-     &          '(legacy, unused)'
-          WRITE (out,70) TminPhL, 'TminPhL',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) Topt_PhL, 'Topt_PhL',                          &
-     &          '(legacy, unused)'
-          WRITE (out,70) NcritPhS, 'NcritPhS',                          &
-     &          '(legacy, unused)'
-          WRITE (out,70) minmPhL, 'minmPhL',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) maxmPhL, 'maxmPhL',                            &
-     &          '(legacy, unused)'
-          WRITE (out,70) NcritPhL, 'NcritPhL',                          &
-     &          '(legacy, unused)'
-          WRITE (out,70) tI0, 'tI0',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) KI, 'KI',                                      &
-     &          '(legacy, unused)'
-          WRITE (out,70) q10, 'q10',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) bmJ, 'bmJ',                                    &
-     &          '(legacy, unused)'
-          WRITE (out,70) ktbmJ, 'ktbmJ',                                &
-     &          '(legacy, unused)'
-          WRITE (out,70) T0ben, 'T0ben',                                &
-     &          '(legacy, unused)'
         ENDIF
 
-        
-        
       END IF
       
       !  Compute inverse nudging coefficients (1/s) used in various tasks.
