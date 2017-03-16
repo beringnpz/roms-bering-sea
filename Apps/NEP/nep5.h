@@ -315,7 +315,7 @@
 #  define IRON_LIMIT       /* Add iron  */
 #  define CARBON           /* include carbon*/
 #  define DIAGNOSTICS_BIO
-#  define CARBON_DEBUG     /* for debugging carbon chem */
+#  undef CARBON_DEBUG     /* for debugging carbon chem */
 #  define BENTHIC          /*FENNEL or BENTHIC or TRAP*/
 #  define ICE_BIO
 #  undef CLIM_ICE_1D
