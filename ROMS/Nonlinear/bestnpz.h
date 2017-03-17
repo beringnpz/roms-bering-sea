@@ -422,6 +422,7 @@
       integer :: ibioB
       real(r8) :: bf,fbase,TSS,Ifs,atss,btss,SF
       real(r8) ::avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum
+      real(r8) :: totD, totDF, totPS, totPL, frac1, frac2
       real(r8) ::sumD,sumDF,sumPL
 #endif
 #ifdef ICE_BIO
@@ -1958,24 +1959,24 @@
               !-----------------
               !Food preferences
               !-----------------
-							
+              
               cff1 = fpPhSEup * Bio(i,k,iPhS)**2                        &
      &             + fpPhLEup * Bio(i,k,iPhL)**2                        &
      &             + fpMZLEup * Bio(i,k,iMZL)**2                        &
      &             + fpCopEup * Bio(i,k,iCop)**2     ! live food                  
-		 
-		          
-		          cff0 = fpDetEup * Bio(i,k,iDet)**2                        &
+     
+              
+              cff0 = fpDetEup * Bio(i,k,iDet)**2                        &
      &             + fpDetEup * Bio(i,k,iDetF)**2    ! detrital food
-		 
+     
 #ifdef ICE_BIO
-							if (k.eq.N(ng)) then
+              if (k.eq.N(ng)) then
 # ifdef CLIM_ICE_1D
-              	cff1 = cff1 + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
+                cff1 = cff1 + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
 # elif defined BERING_10K
                 cff1 = cff1 + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
 # endif
-							endif
+              endif
 
               !-------------------
               !  Food consumption
@@ -1993,25 +1994,25 @@
               !-------------------------
               !  Depth correction
               !-------------------------
-							
-							! Force EupS to do better on the shelf.  
-							! KK: This seems like a cheat to me; it prevents any growth 
-							! in water deeper than 200 m.  What's the mechanism behind 
-							! it?
-							
-							cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((grid(ng) % h(i,j)-200_r8)/.3_r8))
+              
+              ! Force EupS to do better on the shelf.  
+              ! KK: This seems like a cheat to me; it prevents any growth 
+              ! in water deeper than 200 m.  What's the mechanism behind 
+              ! it?
+              
+              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((grid(ng) % h(i,j)-200_r8)/.3_r8))
 
               !------------------------
               !  Growth of Euphausiids
               !------------------------
 
               ! Live food growth
-							
+              
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
      &          gammaEup * cff1 * cff2 * cff3 * cff4 * dtdays
     
-		 					! Detrital food growth
-		
+              ! Detrital food growth
+    
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
      &          0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
 
@@ -2037,7 +2038,7 @@
               DBio(i,k,iCop)  = DBio(i,k,iCop) - fpCopEup *              &
      &          (Bio(i,k,iCop)**2)  * cff2 * cff3 * cff4 * dtdays
               DBio(i,k,iDet)  = DBio(i,k,iDet) - fpDetEup *              &
-     &	        (Bio(i,k,iDet)**2)  * cff2 * cff3 * cff4 * dtdays
+     &          (Bio(i,k,iDet)**2)  * cff2 * cff3 * cff4 * dtdays
               DBio(i,k,iDetF) = DBio(i,k,iDetF) - fpDetEup  *           &
      &          (Bio(i,k,iDetF)**2) * cff2 * cff3 * cff4 * dtdays
 
@@ -2057,15 +2058,15 @@
               !------------------------------------------------------------
 
               ! Live food egestion
-							
+              
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * cff4 * dtdays
-		 
-		          ! Detrital food egestion
-							
+     
+              ! Detrital food egestion
+              
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3* cff4 * dtdays
-							
+              
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
@@ -2242,14 +2243,14 @@
               !-------------------
               !  Food preferences
               !-------------------
-							
+              
               cff1 = fpPhSEup * Bio(i,k,iPhS)**2                        &
      &             + fpPhLEup * Bio(i,k,iPhL)**2                        &
      &             + fpMZLEup * Bio(i,k,iMZL)**2                        &
      &             + fpCopEup * Bio(i,k,iCop)**2     ! live food                  
-		 
-		          
-		          cff0 = fpDetEupO * Bio(i,k,iDet)**2                        &
+     
+              
+              cff0 = fpDetEupO * Bio(i,k,iDet)**2                        &
      &             + fpDetEupO * Bio(i,k,iDetF)**2   ! detrital food
 
               !----------------
@@ -2265,13 +2266,13 @@
 
               cff3 = Q10Eup ** ( (Bio(i,k,itemp)-Q10EupT) / 10.0_r8 )
 
-							!-----------------
-							! depth correction
-							!-----------------
-							
-							! KK: See comment above... this is a cheat and I don't like it
-							
-							cff4 = 1.0_r8-(0.5_r8+0.5_r8*tanh((200_r8-grid(ng) % h(i,j))/.3_r8))
+              !-----------------
+              ! depth correction
+              !-----------------
+              
+              ! KK: See comment above... this is a cheat and I don't like it
+              
+              cff4 = 1.0_r8-(0.5_r8+0.5_r8*tanh((200_r8-grid(ng) % h(i,j))/.3_r8))
 
               !----------------------
               !Growth of Euphausiids
@@ -2279,9 +2280,9 @@
 
               DBio(i,k,iEupO) = DBio(i,k,iEupO) +                       &
      &          gammaEup * cff1 * cff2 * cff3 * cff4 * dtdays
-		 
+     
               DBio(i,k,iEupO) = DBio(i,k,iEupO) +                  &
-     &	        0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
+     &          0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
 
               !------------------------
               !  Euphausiid production
@@ -2323,12 +2324,12 @@
               !-------------------------------------------------
 
               ! Live
-							
+              
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * cff4 *  dtdays
-		 
-		 					! Detrital
-							
+     
+              ! Detrital
+              
               Bio(i,k,iDetF) = DBio(i,k,iDetF) +                        &
      &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3 * cff4* dtdays
 
@@ -3246,11 +3247,10 @@
             END DO
           END DO
 
+#ifdef BENTHIC
           !=================
           !Benthic Sub Model
           !=================
-#ifdef BENTHIC
-!         DO k=1,NBL(ng)
 
           DO i=Istr,Iend
 
@@ -3258,59 +3258,56 @@
             !  Growth of Benthic Infauna
             !----------------------------
 
-            ! calculate average water column concentrations
-
-            cff1=0.0_r8
-            cff2=0.0_r8
-            cff3=0.0_r8
-            cff4=0.0_r8
-
-
-            do k = 1,N(ng)
-              cff1 = cff1 + Bio(i,k,iDet)  * Hz(i,j,k)
-              cff2 = cff2 + Bio(i,k,iDetF) * Hz(i,j,k)
-              cff3 = cff3 + Bio(i,k,iPhS)  * Hz(i,j,k)
-              cff4 = cff4 + Bio(i,k,iPhL)  * Hz(i,j,k)
-            end do
-
-            avgD  = cff1/grid(ng) % h(i,j)
-            avgDF = cff2/grid(ng) % h(i,j)
-            avgPS = cff3/grid(ng) % h(i,j)
-            avgPL = cff4/grid(ng) % h(i,j)
-
-            ! use  food concentration in bottom layer of WC only
-
-!           avgD  =  Bio(i,k,iDet)
-!           avgDF =  Bio(i,k,iDetF)
-!           avgPS =  Bio(i,k,iPhS)
-!           avgPL =  Bio(i,k,iPhL)
-
-            k = 1
-            Temp1 = Bio(i,k,itemp)
-            cff0 = q10r**((Temp1-T0benr)/10.0_r8)
+            ! Pelagic food accessible to benthic infauna
+            
+            dw = 1.0_r8 ! assume bottom 1 m is accessible
+            
+            totD  = 0.0_r8
+            totDF = 0.0_r8
+            totPS = 0.0_r8
+            totPL = 0.0_r8
+            
+            cff2 = 0.0_r8 ! accounted-for height above bottom
+            DO k = 1:N(ng)
+              
+              ! Fraction of this layer contributing to benthic feeding
+              
+              cff1 = max(min(dw, cff2 + Hz(i,j,k)) - cff2, 0.0_r8) ! m
+              frac1(i,k) = cff1/Hz(i,j,k)
+              
+              ! Fraction of benthic feeding coming from this level
+              
+              frac2(i,k) = cff1/dw 
+              
+              ! Food available to benthos
+              
+              totD  = totD  + Bio(i,k,iDet)  * Hz(i,j,k) * frac1(i,k)
+              totDF = totDF + Bio(i,k,iDetF) * Hz(i,j,k) * frac1(i,k)
+              totPS = totPS + Bio(i,k,iPhS)  * Hz(i,j,k) * frac1(i,k)
+              totPL = totPL + Bio(i,k,iPhL)  * Hz(i,j,k) * frac1(i,k)
+              
+              cff2 = cff2 + Hz(i,j,k)
+            END DO
 
             ! Potential food available from water column
 
-!           dw=3.0_r8 !assume bottom 3ms available
-            dw=1.0_r8 !assume only bottom meter/layer available
+            cff1=(prefD *totD /((prefD *totD )+LupP))*prefD *totD 
+            cff2=(prefD *totDF/((prefD *totDF)+LupP))*prefD *totDF
+            cff3=(prefPS*totPS/((prefPS*totPS)+LupP))*prefPS*totPS
+            cff4=(prefPL*totPL/((prefPL*totPL)+LupP))*prefPL*totPL
 
-            cff1=(prefD *avgD *dw/((prefD *avgD *dw)+LupP))*prefD *avgD *dw
-            cff2=(prefD *avgDF*dw/((prefD *avgDF*dw)+LupP))*prefD *avgDF*dw
-            cff3=(prefPS*avgPS*dw/((prefPS*avgPS*dw)+LupP))*prefPS*avgPS*dw
-            cff4=(prefPL*avgPL*dw/((prefPL*avgPL*dw)+LupP))*prefPL*avgPL*dw
-
-!           print*, 'Food=',cff1, cff2, cff3, cff4
+            cff6 = cff1+cff2+cff3+cff4 ! Total pelagic food
 
             ! Potential food available from  sea floor
 
-
             cff5 = (prefD * BioB(i,k,iBenDet) / (prefD *                &
      &             BioB(i,k,iBenDet) + LupD)) * prefD * BioB(i,k,iBenDet)
-
-            ! Total pelagic food available
-
-            cff6 = cff1+cff2+cff3+cff4
-
+     
+            ! Uptake rates mediated by bottom layer temperature
+     
+             k = 1
+             Temp1 = Bio(i,k,itemp)
+             cff0 = q10r**((Temp1-T0benr)/10.0_r8)
 
             !  uptake of each food category
 
@@ -3320,36 +3317,22 @@
             cff10 = min(cff4,(cff0*cff4*BioB(i,k,iBen)*Rup/(cff6+KupP)))
             cff11 = min(cff5,(cff0*cff5*BioB(i,k,iBen)*Rup/(cff5+KupD)))
 
+            ! Addition to benthos
 
-            DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)-dtdays*cff11
+            DBioB(i,1,iBen) = DBioB(i,1,iBen) + (cff7 +cff8+cff9+cff10+cff11) * dtdays
 
-            ! if just removing from base layer
-
-            k=1
-            DBio(i,k,iDet) = DBio(i,k,iDet)  - dtdays*cff7/ Hz(i,j,k)
-            DBio(i,k,iDetF)= DBio(i,k,iDetF) - dtdays*cff8/ Hz(i,j,k)
-            DBio(i,k,iPhS) = DBio(i,k,iPhS)  - dtdays*cff9/ Hz(i,j,k)
-            DBio(i,k,iPhL) = DBio(i,k,iPhL)  - dtdays*cff10/Hz(i,j,k)
-
-
-            ! Spread removal evenly over water column
-            ! ajh note I have changed the following section of benthic removal
-
-!           DO k=1,N(ng)
-!             DBio(i,k,iDet) =DBio(i,k,iDet)-dtdays*cff7/grid(ng) % h(i,j)
-!             DBio(i,k,iDetF)=DBio(i,k,iDetF)-dtdays*cff8/grid(ng) % h(i,j)
-!             DBio(i,k,iPhS) =DBio(i,k,iPhS)-dtdays*cff9/grid(ng) % h(i,j)
-!             DBio(i,k,iPhL) =DBio(i,k,iPhL)-dtdays*cff10/grid(ng)% h(i,j)
-!           END DO
-
-            k=1
-
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff11*dtdays
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff7 *dtdays
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff8 *dtdays
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff9 *dtdays
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) + cff10*dtdays
-
+            ! Feeding losses from appropriate layers
+            
+            DBioB(i,k,iBenDet) = DBioB(i,k,iBenDet) - dtdays*cff11
+            
+            DO k = 1:N(ng)
+              
+              DBio(i,k,iDet)  = DBio(i,k,iDet)  - cff7  * frac2(i,k) * dtdays / Hz(i,j,k)
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) - cff8  * frac2(i,k) * dtdays / Hz(i,j,k)
+              DBio(i,k,iPhS)  = DBio(i,k,iPhS)  - cff9  * frac2(i,k) * dtdays / Hz(i,j,k)
+              DBio(i,k,iPhL)  = DBio(i,k,iPhL)  - cff10 * frac2(i,k) * dtdays / Hz(i,j,k)
+              
+            END DO
 
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
@@ -3383,23 +3366,26 @@
             !  Excretion
             !------------
 
+            ! Assume all excretion occurs in the bottom layer
+            
+            k = 1 ! I'm trying to hard-code the bottom layer thing, but just in case I missed some...
             cff1=cff7 *eexD
             cff2=cff8 *eexD
             cff3=cff9 *eex
             cff4=cff10*eex
             cff5=cff11*eexD
 
-            DBioB(i,k,iBen)=DBioB(i,k,iBen)                             &
-     &           -(cff1+cff2+cff3+cff4+cff5)*dtdays
+            DBioB(i,1,iBen) = DBioB(i,1,iBen)                             &
+     &                        -(cff1+cff2+cff3+cff4+cff5)*dtdays
 
 
             !  Material excreted is considered inorganic and not available
             !  for further secondary production
 
-            DBio(i,k,iNH4)= DBio(i,k,iNH4)+xi*dtdays*0.5_r8             &
-     &         *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,k)
+            DBio(i,1,iNH4)= DBio(i,1,iNH4)+ xi * dtdays * 0.5_r8        &
+     &         *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,1)
 
-            DBioB(i,k,iBenDet)= DBioB(i,k,iBenDet)+dtdays               &
+            DBioB(i,1,iBenDet)= DBioB(i,1,iBenDet)+dtdays               &
      &         *(cff1+cff2+cff3+cff4+cff5)*0.5_r8
 
 
@@ -3413,7 +3399,7 @@
             !  Respiration
             !--------------
 
-            cff3=cff0*BioB(i,k,iBen)*Rres
+            cff3=cff0*BioB(i,1,iBen)*Rres
             cff4=Qres*(((1_r8-eexD)*cff7) + ((1_r8-eexD)*cff8) +        &
     &            ((1_r8-eex)*cff9) + ((1_r8-eex)*cff10) +               &
     &            ((1_r8-eexD)*cff11))
@@ -3422,8 +3408,8 @@
 
             cff6=cff3+cff4
 
-            DBioB(i,k,iBen)=DBioB(i,k,iBen) -cff6*dtdays
-            DBio(i,k,iNH4)= DBio(i,k,iNH4)+ xi*dtdays*cff6/Hz(i,j,k)
+            DBioB(i,1,iBen)=DBioB(i,1,iBen) -cff6*dtdays
+            DBio(i,1,iNH4)= DBio(i,1,iNH4)+ xi*dtdays*cff6/Hz(i,j,1)
 
 
 # ifdef STATIONARY2
@@ -3436,7 +3422,7 @@
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+1,iNH4)=bflx(NT(ng)+1,iNH4)                   &
-     &          +xi*dtdays*cff6/Hz(i,j,k)
+     &          +xi*dtdays*cff6/Hz(i,j,1)
             ENDIF
 # endif
             !---------------------
@@ -3484,7 +3470,9 @@
             !  (Det -> NH4) temperature dependent
             !-------------------------------------
 
-            PON = BioB(i,k,iBenDet)*xi/Hz(i,j,k)  !Benthic Particulate organic nitrogen
+            ! Assume only the top 25% available -> NH4
+            
+            PON = BioB(i,k,iBenDet)0.25*xi/Hz(i,j,k)  !Benthic Particulate organic nitrogen
 
 !           cff5= q10**((Temp1-T0ben)/10.0_r8)
             cff1=Pv0*exp(PvT*Temp1)*PON       !-Kawamiya 2000
