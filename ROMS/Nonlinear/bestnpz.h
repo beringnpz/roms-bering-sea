@@ -559,17 +559,17 @@
 
 #ifdef DIAPAUSE
 
-     ! For diapause, set movement direction flags for large copepods,
-     ! and lower respiration rates if they're in the diapause phase.
-     ! NCaS = CM = mostly C. marshallae, on-shelf
-     ! NCaO = NC = mostly Neocalanus, off-shelf
-
-     RSNC = MOD(RiseStart, 366.0_r8)
-     RENC = MOD(RiseEnd,   366.0_r8)
-     SSNC = MOD(SinkStart, 366.0_r8)
-     SENC = MOD(SinkEnd,   366.0_r8)
-
-     if ((RiseStartCM .eq. 0.0_r8) .and. (RiseEndCM .eq. 0.0_r8) .and. &
+      ! For diapause, set movement direction flags for large copepods,
+      ! and lower respiration rates if they're in the diapause phase.
+      ! NCaS = CM = mostly C. marshallae, on-shelf
+      ! NCaO = NC = mostly Neocalanus, off-shelf
+      
+      RSNC = MOD(RiseStart, 366.0_r8)
+      RENC = MOD(RiseEnd,   366.0_r8)
+      SSNC = MOD(SinkStart, 366.0_r8)
+      SENC = MOD(SinkEnd,   366.0_r8)
+      
+      if ((RiseStartCM .eq. 0.0_r8) .and. (RiseEndCM .eq. 0.0_r8) .and. &
         (SinkStartCM .eq. 0.0_r8) .and. (SinkEndCM .eq. 0.0_r8)) then
         
         ! All 0 is the shortcut for lagging the onshelf group movement
@@ -581,59 +581,59 @@
         SSCM = MOD(SinkStart + 30, 366.0_r8)
         SECM = MOD(SinkEnd   + 30, 366.0_r8)
 
-     else
+      else
 
         RSCM = MOD(RiseStartCM, 366.0_r8)
         RECM = MOD(RiseEndCM,   366.0_r8)
         SSCM = MOD(SinkStartCM, 366.0_r8)
         SECM = MOD(SinkEndCM,   366.0_r8)
 
-     endif
+      endif
 
 !    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsSt = ', RiseStart, ', RsEn = ', RiseEnd, ', SiSt = ', SinkStart, ', SiEn = ', SinkEnd
 !    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsStCM = ', RiseStartCM, ', RsEnCM = ', RiseEndCM, ', SiStCM = ', SinkStartCM, ', SiEnCM = ', SinkEndCM
 !    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
 !    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SECM
 
-     upwardNC =   ((RSNC.lt.RENC) .and.                                &
-    &              (yday.ge.RSNC .and. yday.le.RENC))                  &
-    &             .or.                                                 &
-    &             ((RSNC.gt.RENC) .and.                                &
-    &              (yday.ge.RSNC .or.  yday.le.RENC))
-
-     upwardCM =   ((RSCM.lt.RECM) .and.                                &
-    &              (yday.ge.RSCM .and. yday.le.RECM))                  &
-    &             .or.                                                 &
-    &             ((RSCM.gt.RECM) .and.                                &
-    &              (yday.ge.RSCM .or.  yday.le.RECM))
-
-     downwardNC = ((SSNC.lt.SENC) .and.                                &
-    &              (yday.ge.SSNC .and. yday.le.SENC))                  &
-    &             .or.                                                 &
-    &             ((SSNC.gt.SENC) .and.                                &
-    &              (yday.ge.SSNC .or.  yday.le.SENC))
-
-     downwardCM = ((SSCM.lt.SECM) .and.                                &
-    &              (yday.ge.SSCM .and. yday.le.SECM))                  &
-    &             .or.                                                 &
-    &             ((SSCM.gt.SECM) .and.                                &
-    &              (yday.ge.SSCM .or.  yday.le.SECM))
-
-     if (downwardNC) then
-       respNC = respNCa * 0.1_r8
-       eNC = 0
-     else
-       respNC = respNCa
-       eNC = eNCa
-     end if
-
-     if (downwardCM) then
-       respCM = respNCa * 0.1_r8
-       eCM = 0
-     else
-       respCM = respNCa
-       eCM = eNCa
-     end if
+      upwardNC =   ((RSNC.lt.RENC) .and.                                &
+     &              (yday.ge.RSNC .and. yday.le.RENC))                  &
+     &             .or.                                                 &
+     &             ((RSNC.gt.RENC) .and.                                &
+     &              (yday.ge.RSNC .or.  yday.le.RENC))
+    
+      upwardCM =   ((RSCM.lt.RECM) .and.                                &
+     &              (yday.ge.RSCM .and. yday.le.RECM))                  &
+     &             .or.                                                 &
+     &             ((RSCM.gt.RECM) .and.                                &
+     &              (yday.ge.RSCM .or.  yday.le.RECM))
+    
+      downwardNC = ((SSNC.lt.SENC) .and.                                &
+     &              (yday.ge.SSNC .and. yday.le.SENC))                  &
+     &             .or.                                                 &
+     &             ((SSNC.gt.SENC) .and.                                &
+     &              (yday.ge.SSNC .or.  yday.le.SENC))
+    
+      downwardCM = ((SSCM.lt.SECM) .and.                                &
+     &              (yday.ge.SSCM .and. yday.le.SECM))                  &
+     &             .or.                                                 &
+     &             ((SSCM.gt.SECM) .and.                                &
+     &              (yday.ge.SSCM .or.  yday.le.SECM))
+    
+      if (downwardNC) then
+        respNC = respNCa * 0.1_r8
+        eNC = 0
+      else
+        respNC = respNCa
+        eNC = eNCa
+      end if
+    
+      if (downwardCM) then
+        respCM = respNCa * 0.1_r8
+        eCM = 0
+      else
+        respCM = respNCa
+        eCM = eNCa
+      end if
 
 #endif
 
