@@ -421,8 +421,9 @@
 #if defined BENTHIC
       integer :: ibioB
       real(r8) :: bf,fbase,TSS,Ifs,atss,btss,SF
-      real(r8) ::avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum
-      real(r8) :: totD, totDF, totPS, totPL, frac1, frac2
+      real(r8) :: avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum
+			real(r8) :: totD, totDF, totPS, totPL
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: frac1, frac2
       real(r8) ::sumD,sumDF,sumPL
 #endif
 #ifdef ICE_BIO
@@ -1976,6 +1977,7 @@
 # elif defined BERING_10K
                 cff1 = cff1 + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
 # endif
+#endif
               endif
 
               !-------------------
@@ -2253,6 +2255,16 @@
               cff0 = fpDetEupO * Bio(i,k,iDet)**2                        &
      &             + fpDetEupO * Bio(i,k,iDetF)**2   ! detrital food
 
+#ifdef ICE_BIO
+              if (k.eq.N(ng)) then
+# ifdef CLIM_ICE_1D
+                cff1 = cff1 + fpPhLEup*(BioBI(i,iIcePhL)*aidz/Hz(i,j,N(ng)))**2
+# elif defined BERING_10K
+                cff1 = cff1 + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
+# endif
+#endif
+						  endif
+							
               !----------------
               !Food consumption
               !----------------
@@ -3268,7 +3280,7 @@
             totPL = 0.0_r8
             
             cff2 = 0.0_r8 ! accounted-for height above bottom
-            DO k = 1:N(ng)
+            DO k = 1,N(ng)
               
               ! Fraction of this layer contributing to benthic feeding
               
@@ -3325,7 +3337,7 @@
             
             DBioB(i,k,iBenDet) = DBioB(i,k,iBenDet) - dtdays*cff11
             
-            DO k = 1:N(ng)
+            DO k = 1,N(ng)
               
               DBio(i,k,iDet)  = DBio(i,k,iDet)  - cff7  * frac2(i,k) * dtdays / Hz(i,j,k)
               DBio(i,k,iDetF) = DBio(i,k,iDetF) - cff8  * frac2(i,k) * dtdays / Hz(i,j,k)
@@ -3472,7 +3484,7 @@
 
             ! Assume only the top 25% available -> NH4
             
-            PON = BioB(i,k,iBenDet)0.25*xi/Hz(i,j,k)  !Benthic Particulate organic nitrogen
+            PON = BioB(i,k,iBenDet)*0.25*xi/Hz(i,j,k)  !Benthic Particulate organic nitrogen
 
 !           cff5= q10**((Temp1-T0ben)/10.0_r8)
             cff1=Pv0*exp(PvT*Temp1)*PON       !-Kawamiya 2000

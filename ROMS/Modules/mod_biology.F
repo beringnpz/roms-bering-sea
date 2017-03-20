@@ -1234,7 +1234,7 @@
 			
 			real(r8) :: DiS, DiL, DpS, DpL
 			real(r8) :: k1PhS, k1PhL, k2PhS, k2PhL
-			real(r8) :: FeCritPS, FeCritPL, kfePS, kfePL
+			real(r8) :: FeCritPS, FeCritPL, kfePhS, kfePhL
 
 			! Feeding preferences
 			
@@ -1258,7 +1258,7 @@
 			
 			! Predation closure
 			
-      real(r8) :: mpredMZL, mpredCop, mpredNCa, mpredEup
+      real(r8) :: mpredMZL, mpredCop, mpredNCa, mpredEup, mpredJel
 
 			! Sinking
 			
@@ -1291,7 +1291,7 @@
       real(r8) :: q10r
       real(r8) :: Rup, KupD, KupP, LupD, LupP
       real(r8) :: Qres, Rres, rmort, eex, eexD
-      real(r8) :: prefD, prefPS, prefPL, 
+      real(r8) :: prefD, prefPS, prefPL
 			real(r8) :: T0benr, BenPred
 			
 			! Ice biology
