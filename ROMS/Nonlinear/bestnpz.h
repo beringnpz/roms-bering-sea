@@ -432,7 +432,7 @@
       integer :: Iter,is
       integer :: iday, month, year
 
-      real(r8) :: cff0,cff1, cff1b,cff2,cff3,cff4,pmaxs,dz
+      real(r8) :: cff0,cff1, cff1b,cff2,cff3,cff4,dz
       real(r8) :: TFMZS,TFMZL,TFCop,TFNCa,TFEup,TFJel
       real(r8) :: Drate, Pmax,NOup, NHup,offset
       real(r8) :: dtdays,Ra,Rf
@@ -531,7 +531,7 @@
       real(r8), parameter :: minv = 0.0E-20_r8
 
       real(r8) :: Alpha
-      real(r8) :: ALPHA_N,ALPHA_P, kN, kP, alphaPhSv, alphaPhLv
+      real(r8) :: ALPHA_N,ALPHA_P, kN, kP
       real(r8) ::respNC, respCM, eCM, eNC
 
       ! Vertical movement
@@ -551,6 +551,16 @@
       real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, DBio, Bio_bak
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Temp, Salt
 
+      ! Intermediate fluxes
+
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_NO3_PhS, Gpp_NO3_PhL
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_NH4_PhS, Gpp_NH4_PhL
+
+      ! Phytoplankton production
+
+      real(r8) :: LightLimS, NOLimS, NHLimS, IronLimS
+      real(r8) :: LightLimL, NOLimL, NHLimL, IronLimL
+      real(r8) :: alphaPhSv, alphaPhLv, DrateS, DrateL, PmaxS, PmaxL, PmaxsS, PmaxsL
 
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
@@ -1049,466 +1059,148 @@
         END DO
 #endif
 
-! TODO: overhauled to here
-        !****************************************************************
-        !****************************************************************
-        ! Begin BIOITER LOOP
-        !****************************************************************
-        !****************************************************************
+
+        !================================================================
+        !  Begin time loop (if BioIter > 1, this divides the main time
+        !  step into smaller steps for biological calculations)
+        !================================================================
 
         ITER_LOOP: DO Iter=1,BioIter(ng)
-!         if ( .not. downward) then
 
-            !---------------------------------------
-            !  Make Neocalanus go down if temp > 12
-            !---------------------------------------
+          !==============================================================
+          !  Biological Source/Sink terms.
+          !==============================================================
 
-!           if (Bio(i,k,itemp) .gt. 12._r8 .and. NCa(k) .gt. 0.2_r8) then
-!             downward = .true.
-!             goto 111
-!           end if
-!         end if
-! 111     Continue
-          LightLim = 1.0_r8
-          NOLim = 1.0_r8
-          NHLim = 1.0_r8
-          IronLim = 1.0_r8
+          !------------------------------
+          ! Phytoplankton production
+          !------------------------------
 
-          !=========================================
-          !  Nutrient uptake by Small Phytoplankton
-          !=========================================
-
-          ! Options for alpha
+          LightLimS = 1.0_r8
+          NOLimS    = 1.0_r8
+          NHLimS    = 1.0_r8
+          IronLimS  = 1.0_r8
+          LightLimL = 1.0_r8
+          NOLimL    = 1.0_r8
+          NHLimL    = 1.0_r8
+          IronLimL  = 1.0_r8
 
           DO k=1,N(ng)
             DO i=Istr,Iend
 
-              ! Variable -depends on light/nutrient - gradual not step
-
-!             ALPHA_N = (Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4))/ ( kN +Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4));
-!             ALPHA_P =  PAR(i,N(ng))/ ( kP +  PAR(i,N(ng)));
-!             cff1= (ALPHA_N* ALPHA_P);
-!             alphaPhSv=max(1.0_r8,cff1*alphaPhS);
-
-              ! Adjust AlphaPhS. Based on PAR. WIP:From discussions with Ken Coyle.
+              ! Slope of P-I curve
 
               if (PARs(i).lt.30.0) then
                 alphaPhSv = 18
-              elseif (PARs(i).gt.40.0) then
-                alphaPhSv = 5.6
-              else
-                alphaPhSv = 18.0-((18.0-5.6)/(40.0-30.0))*(PARs(i)-30.0)
-              end if
-
-              ! Constant
-!               alphaPhSv=alphaPhS
-
-              !--------------------------
-              !  Growth rate computations
-              !--------------------------
-
-              if(DiS.gt.0_r8) THEN
-                Drate = DiS * 10.0_r8 ** (DpS * Bio(i,k,itemp) )
-
-                Pmax = (2.0_r8 ** Drate - 1.0_r8 )   !maximum daily mass specific growth rate FROST (1987)
-
-                Pmaxs=Pmax*ccr !max chla specific growth rate from FROST (1987)
-
-                ! day length fraction scalar
-                !Pmax = Pmax * Dl / 24.0_r8 % environmental driver input is sub-daily, so don't use this
-
-                !---------------------
-                !  Nitrate limitation
-                !---------------------
-
-#ifdef DENMAN
-
-                ! Nutrient limitation following Denman
-
-                NOLim = (Bio(i,k,iNO3) + Bio(i,k,iNH4))                 &
-     &                  / ( k1PhS + Bio(i,k,iNO3)+ Bio(i,k,iNH4) )
-
-                cff1=0.2/(0.2+Bio(i,k,iNH4))
-!               cff1=aPS/(aPS+Bio(i,k,iNH4))
-
-                cff2=cff1*Bio(i,k,iNO3)/(Bio(i,k,iNO3)+Bio(i,k,iNH4))
-#else
-
-                ! limitation folowing Wroblewski (JMR 1977)
-
-!               NOLim = Bio(i,k,iNO3) * EXP( -psiPhS * Bio(i,k,iNH4) )  &
-!    &               / ( k1PhS + Bio(i,k,iNO3) )
-
-                ! limitation following Lomas (marine Biology 1999)
-
-                NOLim = (Bio(i,k,iNO3)/ ( k1PhS +Bio(i,k,iNO3))) &
-     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(k2PhS + Bio(i,k,iNH4))));
-
-                ! Limitation following Vallina and Quere
-                ! (Ecological Modelling 2008)
-
-!               NOLim = Bio(i,k,iNO3) *                                 &
-!     &                (1-((Bio(i,k,iNH4)/(k2PhS + Bio(i,k,iNH4))))) /  &
-!     &                ( k1PhS + Bio(i,k,iNO3)
-
-
-
-#endif
-
-#ifdef IRON_LIMIT
-
-                !---------------------------------------------------------
-                ! Iron Limitation -disabled at concs of 2 micromol Fe m-3
-                !---------------------------------------------------------
-
-                IronLim = eps + Bio(i,k,iFe) / (kfePhS + Bio(i,k,iFe)) *&
-     &                   (kfePhS + FeCritPS) / FeCritPS
-#endif
-
-                !---------------------------
-                ! Light limitation function
-                !---------------------------
-                Par1 = PAR(i,k)
-
-#ifdef DENMAN
-                LightLim = TANH( alphaPhSv * Par1 / Pmax /              &
-     &                 ccr)
-                cff3=  Pmax*LightLim*NOLim*IronLim
-                NOup=Bio(i,k,iPhS)*cff3*cff2
-                NHup=Bio(i,k,iPhS)*cff3*(1-cff2)
-#else
-                LightLim = TANH( alphaPhSv * MAX((Par1 - OffSet),0.0_r8)&
-     &                         / Pmaxs)
-
-
-                !-----------------
-                !  Nitrate uptake
-                !-----------------
-
-                !  Multiplicative limitation
-!               NOup = max(0.0_r8,                                      &
-!    &               (Bio(i,k,iPhS)/ccr) * Pmaxs * LightLim * NOLim * IronLim)
-
-
-                !  Denman limitation
-
-                NOup = MAX(0.0_r8,(Bio(i,k,iPhS)/ccr) *                 &
-     &               Pmaxs*MIN(LightLim, NOLim, IronLim))
-
-               !---------------------
-               ! Ammonium limitation
-               !---------------------
-
-                NHLim = Bio(i,k,iNH4) / ( k2PhS + Bio(i,k,iNH4) )
-
-                if((NOLim+NHLim).gt.1.0_r8) then
-                  NHLim= 1.0_r8-NOLim
-                endif
-
-                !--------------------------------
-                !  Light limitation for ammonium
-                !--------------------------------
-
-                LightLim = TANH( alphaPhSv * MAX((Par1 - OffSet),0.0_r8)&
-     &                        / Pmaxs)
-
-# ifdef STATIONARY
-                Stat3(i,k,1)=LightLim
-                Stat3(i,k,2)=IronLim
-                Stat3(i,k,3)=NOLim
-                Stat3(i,k,4)=NHLim
-# endif
-
-                !------------------
-                !  Ammonium uptake
-                !------------------
-!               NHup = max(0.0_r8,                                      &
-!    &                 (Bio(i,k,iPhS)/ccr) * Pmaxs * LightLim * NHLim)
-
-                NHup = MAX(0.0_r8,(Bio(i,k,iPhS)/ccr) * Pmaxs * MIN(LightLim, NHLim))
-#endif
-
-              else
-                NOup=0.0_r8
-                NHup=0.0_r8
-                cff3=0.0_r8
-              endif
-
-              ! ajh limit NOup and NHup to amount of NO and NH present
-              NOup=MIN(NOup,Bio(i,k,iNO3)/(xi*dtdays))
-              NHup=MIN(NHup,Bio(i,k,iNH4)/(xi*dtdays))
-              NOup=MAX(0.0_r8,NOup)
-              NHup=MAX(0.0_r8,NHup)
-
-              !----------------------------------
-              !  Change in nitrate concentration
-              !----------------------------------
-              DBio(i,k,iNO3) = DBio(i,k,iNO3) - xi * NOup * dtdays
-
-              !-----------------------------------
-              !  Change in ammonium concentration
-              !-----------------------------------
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) - xi * NHup * dtdays
-
-              !-------------------------------------------------
-              !  Change in concentration of small phytoplankton
-              !-------------------------------------------------
-
-#ifdef DENMAN
-              DBio(i,k,iPhS) = DBio(i,k,iPhS)+Bio(i,k,iPhS)*cff3*dtdays
-#else
-              DBio(i,k,iPhS) = DBio(i,k,iPhS)+(NOup+NHup)*dtdays
-#endif
-
-              !--------------------------------------------
-              !  Primary production of small phytoplankton
-              !--------------------------------------------
-#ifdef PROD3
-              Prod(i,k,iPhSprd) = Prod(i,k,iPhSprd) + DBio(i,k,iPhS)
-#endif
-
-#ifdef IRON_LIMIT
-              !-------------------------------
-              !  Change in iron concentration
-              !-------------------------------
-              DBio(i,k,iFe) = DBio(i,k,iFe) - FeC * NOup * dtdays
-
-#endif
-
-#ifdef STATIONARY
-
-              ! save fratio
-
-              if (NOup.gt.0.0 .AND. NHup.gt.0.0) THEN
-!               Stat3(i,k,6) = (NOup/(NOup + NHup))
-              else if(NOup.gt.0.0 .AND. NHup.le.0.0) THEN
-!               Stat3(i,k,6) =1.0_r8
-              else if(NOup.le.0.0 .AND. NHup.gt.0.0) THEN
-!               Stat3(i,k,6) = -999
-              endif
-#endif
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-
-                bflx(iNO3,iPhS) = bflx(iNO3,iPhS) + NOup*xi* dtdays
-                bflx(iNH4,iPhS) = bflx(iNH4,iPhS) + NHup*xi* dtdays
-              ENDIF
-#endif
-            END DO
-          END DO
-          !=========================================
-          !  Nutrient uptake by Large Phytoplankton
-          !=========================================
-          kN=0;
-          kP=48;
-
-          ! Coyle step alpha function
-
-!         if (ParMax.lt.48) then
-!           Alpha = 1.0_r8
-!         else
-!           Alpha = 4.0_r8
-!         endif
-
-          ! Depends on light/nutrient - gradual not step
-
-!         ALPHA_N = (Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4))/ ( kN +Bio(i,N(ng),iNO3) +Bio(i,N(ng),iNH4));
-!         ALPHA_P =  PAR(i,k)/ ( kP +  PAR(i,k));
-!         ALPHA_P =  PAR(i,N(ng))/ ( kP +  PAR(i,N(ng)));
-!         cff1= (ALPHA_N* ALPHA_P);
-!         alphaPhLv=max(1.0_r8,cff1*alphaPhL);
-
-!           alphaPhLv=alphaPhL
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-              ! Adjust AlphaPhL. Based on PAR. WIP:From discussions with Ken Coyle.
-
-              if (PARs(i).lt.30.0) then
                 alphaPhLv = 10
               elseif (PARs(i).gt.40.0) then
+                alphaPhSv = 5.6
                 alphaPhLv = 2.2
               else
-                alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(Par1-30.0)
+                alphaPhSv = 18.0-((18.0-5.6)/(40.0-30.0))*(PARs(i)-30.0)
+                alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(PARs(i)-30.0)
               end if
 
-              LightLim=1.0_r8
-              IronLim=1.0_r8
-              NOLim=1.0_r8
+              ! Maximum uptake rate
 
-              !-------------------------
-              ! Growth rate computations
-              !-------------------------
+              DrateS = DiS * 10.0_r8 ** (DpS * Temp(i,k))
+              DrateL = DiL * 10.0_r8 ** (DpL * Temp(i,k))
 
-              if(DiL.gt.0_r8) THEN
-                Drate = DiL * 10.0_r8 ** (DpL * Bio(i,k,itemp) )
+              PmaxS = (2.0_r8 ** DrateS - 1.0_r8 )   ! maximum daily mass specific growth rate FROST (1987)
+              PmaxL = (2.0_r8 ** DrateL - 1.0_r8 )
 
-                Pmax = (2.0_r8 ** Drate - 1.0_r8 )
-
-                Pmaxs=Pmax*ccrPhL
-
-                !  day length fraction scalar
-
-!               Pmax = (2.0_r8 ** Drate - 1.0_r8 ) * Dl / 24.0_r8
-
-                !---------------------
-                !  Nitrate limitation
-                !---------------------
+              PmaxsS=PmaxS*ccr                       ! max chla specific growth rate from FROST (1987)
+              PmaxsL=PmaxL*ccrPhL
 
 #ifdef DENMAN
+              ! N03 limitation following Denman
 
-                ! Nutrient limitation following Denman
-                NOLim = (Bio(i,k,iNO3) + Bio(i,k,iNH4))                 &
-     &                  / ( k1PhL + Bio(i,k,iNO3)+ Bio(i,k,iNH4) )
-
-                cff1=0.4/(0.4+Bio(i,k,iNH4))
-                cff2=cff1*Bio(i,k,iNO3)/(Bio(i,k,iNO3)+Bio(i,k,iNH4))
+              NOLimS = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhS + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
+              NOLimL = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhL + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
 #else
+              ! NO3 limitation following Lomas (Marine Biology 1999)
 
-                ! limitation following Wroblewski (JMR 1977)
-!               NOLim = Bio(i,k,iNO3) * EXP( -psiPhL * Bio(i,k,iNH4) )  &
-!     &                  / ( k1PhL + Bio(i,k,iNO3) )
-
-                ! limitation following Lomas (marine Biology 1999)
-                NOLim = (Bio(i,k,iNO3)/ ( k1PhL +Bio(i,k,iNO3)))        &
-     &                *(1-(0.8_r8*Bio(i,k,iNH4)/(k2PhL + Bio(i,k,iNH4))));
-
-                ! Limitation following Vallina and Quere (Ecological Modelling 2008)
-!               NOLim = Bio(i,k,iNO3) *                                 &
-!    &                 (1-(Bio(i,k,iNH4)/(k2PhL + Bio(i,k,iNH4)))))     &
-!    &                 / ( k1PhL + Bio(i,k,iNO3)
-
+              NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4))))
+              NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4))))
 #endif
-
 #ifdef IRON_LIMIT
-                !--------------------------------------------------------
-                !  Iron Limitation -disabled at cons of 2 micromol Fe m-3
-                !--------------------------------------------------------
 
-                IronLim = eps + Bio(i,k,iFe) / (kfePhL + Bio(i,k,iFe))  &
-     &                    * (kfePhL + FeCritPL) / FeCritPL
+              ! Iron limitation
+
+              IronLimS = eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS
+              IronLimL = eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL
 #endif
 
-                !----------------------------------------------
-                !  Light limitation for nitrate uptake function
-                !----------------------------------------------
-
-                Par1 = Par(i,k)
-                ParMax = Par(i,N(ng))
-
+              ! Light limitation
 
 #ifdef DENMAN
-                LightLim = TANH( Alpha*Par1 / Pmax /                    &
-     &                           ccrPhL)
-                cff3=  Pmax*LightLim*NOLim*IronLim
-                NOup=Bio(i,k,iPhL)*cff3*cff2
-                NHup=Bio(i,k,iPhL)*cff3*(1-cff2)
+              LightLimS = TANH(alphaPhSv * PAR(i,k) / PmaxsS)
+              LightLimL = TANH(alphaPhLv * PAR(i,k) / PmaxsL) ! TODO: alphaPhLv was Alpha in orig code, but the code to set its value was commented out.
 #else
-
-                OffSet=0.0_r8
-
-                LightLim = TANH( alphaPhLv * MAX((PAR1 - OffSet),0.0_r8)&
-     &                         / Pmaxs)
-
-                !----------------
-                !  Nitrate uptake
-                !----------------
-
-!               NOup = MAX(0.0_r8,(Bio(i,k,iPhL)/ccrPhL)                &
-!     &              * Pmaxs * LightLim * NOLim * IronLim)
-
-                NOup=MAX(0.0_r8,(Bio(i,k,iPhL)/ccrPhL)*Pmaxs*MIN(LightLim ,NOLim,IronLim))
-
-                !---------------------
-                !  Ammonium limitation
-                !---------------------
-
-                NHLim = Bio(i,k,iNH4) / ( k2PhL + Bio(i,k,iNH4) )
-                if((NOLim+NHLim).gt.1.0_r8) then
-                  NHLim= 1.0_r8-NOLim
-                endif
-
-                !---------------------------------------
-                !  light limitation for ammonium uptake
-                !---------------------------------------
-
-                OffSet = 0.0_r8
-                LightLim = TANH( alphaPhLv * MAX((PAR1 - OffSet),0.0_r8)&
-     &                     / Pmaxs )
-
-                !-----------------
-                !  Ammonium uptake
-                !-----------------
-!               NHup = max(0.0_r8,                                      &
-!     &                  (Bio(i,k,iPhL)/ccrPhL) * Pmaxs * LightLim * NHLim)
-                NHup = MAX(0.0_r8,(Bio(i,k,iPhL)/ccrPhL) * Pmaxs * MIN(LightLim ,NHLim))
+              OffSet = 0.0_r8
+              LightLimS = TANH(alphaPhSv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsS)
+              LightLimL = TANH(alphaPhLv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsL)
 #endif
-              else
-                NOup=0.0_r8
-                NHup=0.0_r8
-                cff3=0.0_r8
+#ifdef DENMAN
+              ! Uptake of NO3 and NH4
+
+              cff1 = 0.2/(0.2+Bio3d(i,k,iiNH4))
+              cff2 = cff1 * Bio3d(i,k,iiNO3)/(Bio(i,k,iiNO3)+Bio(i,k,iiNH4))
+
+              cff3 = PmaxS*LightLimS*NOLimS*IronLimS
+              Gpp_NO3_PhS(i,k) = Bio3d(i,k,iiPhS) * cff3 * cff2       ! mg C m^-3 d^-1
+              Gpp_NH4_PhS(i,k) = Bio3d(i,k,iiPhS) * cff3 * (1 - cff2) ! mg C m^-3 d^-1
+
+              cff3 = PmaxL*LightLimL*NOLimL*IronLimL
+              Gpp_NO3_PhL(i,k) = Bio3d(i,k,iiPhL) * cff3 * cff2       ! mg C m^-3 d^-1
+              Gpp_NH4_PhL(i,k) = Bio3d(i,k,iiPhL) * cff3 * (1 - cff2) ! mg C m^-3 d^-1
+#else
+              ! Ammonium limitation
+
+              NHLimS = Bio3d(i,k,iiNH4) / ( k2PhS + Bio3d(i,k,iiNH4) )
+              NHLimL = Bio3d(i,k,iiNH4) / ( k2PhL + Bio3d(i,k,iiNH4) )
+              if((NOLimS+NHLimS).gt.1.0_r8) then
+                NHLimS= 1.0_r8-NOLimS
+              endif
+              if((NOLimL+NHLimL).gt.1.0_r8) then
+                NHLimL= 1.0_r8-NOLimL
               endif
 
-#ifdef STATIONARY
-              Stat3(i,k,5) =LightLim
-              Stat3(i,k,6) =IronLim
-              Stat3(i,k,7) =NOLim
-              Stat3(i,k,8) =NHLim
-#endif
+              ! NO3 uptake
 
-              ! ajh limit NOup and NHup to amount of NO and NH present
+              Gpp_NO3_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*MIN(LightLimS, NOLimS, IronLimS))  ! mg C m^-3 d^-1
+              Gpp_NO3_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL)*PmaxsL*MIN(LightLimL, NOLimL, IronLimL))
 
-              NOup=MIN(NOup,Bio(i,k,iNO3)/(xi*dtdays))
-              NHup=MIN(NHup,Bio(i,k,iNH4)/(xi*dtdays))
-              NOup=MAX(0.0_r8,NOup)
-              NHup=MAX(0.0_r8,NHup)
+              ! NH4 uptake
 
-
-              !---------------------------------
-              !  Change in nitrate concentration
-              !---------------------------------
-              DBio(i,k,iNO3) = DBio(i,k,iNO3) - xi * NOup * dtdays
-
-              !-----------------------------------
-              !  Change in ammonium concentration
-              !-----------------------------------
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) - xi * NHup * dtdays
-
-              !-------------------------------------------------
-              !  Change in concentration of large phytoplankton
-              !-------------------------------------------------
-!
-#ifdef DENMAN
-              DBio(i,k,iPhL) =  DBio(i,k,iPhL)                          &
-     &                        + Bio(i,k,iPhL)*cff3* dtdays
-#else
-              DBio(i,k,iPhL) = DBio(i,k,iPhL)                           &
-     &                       + ( NOup + NHup ) * dtdays
-#endif
-
-              !--------------------------------------------
-              !  Primary production of large phytoplankton
-              !--------------------------------------------
-
-#ifdef PROD3
-              Prod(i,k,iPhLprd) = Prod(i,k,iPhLprd) + DBio(i,k,iPhL)
+              Gpp_NH4_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)    * PmaxsS * MIN(LightLimS, NHLimS)) ! mg C m^-3 d^-1
+              Gpp_NH4_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL) * PmaxsL * MIN(LightLimL ,NHLimL))
 
 #endif
-#ifdef IRON_LIMIT
-              !-------------------------------
-              !  Change in iron concentration
-              !-------------------------------
-              DBio(i,k,iFe) = DBio(i,k,iFe) - FeC * NOup * dtdays
-#endif
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iNO3,iPhL) = bflx(iNO3,iPhL) + NOup*xi* dtdays
-                bflx(iNH4,iPhL) = bflx(iNH4,iPhL) + NHup*xi* dtdays
-              END IF
-#endif
+              ! Convert intermediate fluxes from volumetric to per area
+
+              Gpp_NO3_PhS(i,k) = Gpp_NO3_PhS(i,k) * Hz(i,j,k) ! mg C m^-2 d^-1
+              Gpp_NH4_PhS(i,k) = Gpp_NH4_PhS(i,k) * Hz(i,j,k) ! mg C m^-2 d^-1
+              Gpp_NO3_PhL(i,k) = Gpp_NO3_PhL(i,k) * Hz(i,j,k) ! mg C m^-2 d^-1
+              Gpp_NH4_PhL(i,k) = Gpp_NH4_PhL(i,k) * Hz(i,j,k) ! mg C m^-2 d^-1
+
+              ! If doubling rate is 0, ignore the above (would be more
+              ! efficient to check before calculating, but then I would
+              ! have to split up the large/small calcs; doing it this way
+              ! for the sake of maintenance and debugging)
+
+              if (DiS.le.0_r8) THEN
+                Gpp_NO3_PhS(i,k) = 0; ! mg C m^-2 d^-1
+                Gpp_NH4_PhS(i,k) = 0; ! mg C m^-2 d^-1
+              endif
+              if (DiL.le.0_r8) THEN
+                Gpp_NO3_PhL(i,k) = 0; ! mg C m^-2 d^-1
+                Gpp_NH4_PhL(i,k) = 0; ! mg C m^-2 d^-1
+              endif
+
             END DO
           END DO
+
+! TODO: overhauled to here
 
           !=================
           ! Grazing by MZS
