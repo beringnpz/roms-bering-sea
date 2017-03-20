@@ -846,6 +846,10 @@
         Temp = t(Istr:Iend,j,1:N(ng),nstp,itemp)
         Salt = t(Istr:Iend,j,1:N(ng),nstp,isalt)
 
+#ifdef CORRECT_TEMP_BIAS
+        Temp = Temp - 1.94_r8 ! bias correction for bio only, not fed back
+#endif
+
         ! Initialize the rate of change, dB/dt, to 0 for all elements.
         ! Same for all intermediate flux arrays.  Note that these fluxes
         ! will hold the 2D equivalent of all the fluxes (i.e. per area,
@@ -853,7 +857,7 @@
         ! things that are moving between different-sized layers (e.g. ice
         ! to surface layer, or benthos to water column)
 
-        DBio = 0
+        DBio = 0 ! Initializes entire array to 0
         ! TODO: will set all Flx_aaa_bbb flux arrays = 0 here
 
         ! Save a copy of the original biomass
@@ -891,26 +895,24 @@
             ! If ice disappeared, biomass that was in the ice gets dumped
             ! into the water surface layer
 
-            Bio2d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL) + Bio2d(i,N(ng),iiIPhL)
-            Bio2d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3) + Bio2d(i,N(ng),iiINO3)
-            Bio2d(i,N(ng),iiNH4) = Bio2d(i,N(ng),iiNH4) + Bio2d(i,N(ng),iiINH4)
+            Bio2d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL) + Bio2d(i,N(ng),iiIcePhL)
+            Bio2d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3) + Bio2d(i,N(ng),iiIceNO3)
+            Bio2d(i,N(ng),iiNH4) = Bio2d(i,N(ng),iiNH4) + Bio2d(i,N(ng),iiIceNH4)
 
-            Bio2d(i,N(ng),iiIPhL) = 0.0_r8
-            Bio2d(i,N(ng),iiINO3) = 0.0_r8
-            Bio2d(i,N(ng),iiINH4) = 0.0_r8
+            Bio2d(i,N(ng),iiIcePhL) = 0.0_r8
+            Bio2d(i,N(ng),iiIceNO3) = 0.0_r8
+            Bio2d(i,N(ng),iiIceNH4) = 0.0_r8
 
             Bio3d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL)/Hz(i,j,N(ng))
             Bio3d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3)/Hz(i,j,N(ng))
             Bio3d(i,N(ng),iiNH4) = Bio2d(i,N(ng),iiNH4)/Hz(i,j,N(ng))
 
-            Bio3d(i,N(ng),iiIPhL) = 0.0_r8
-            Bio3d(i,N(ng),iiINO3) = 0.0_r8
-            Bio3d(i,N(ng),iiINH4) = 0.0_r8
+            Bio3d(i,N(ng),iiIcePhL) = 0.0_r8
+            Bio3d(i,N(ng),iiIceNO3) = 0.0_r8
+            Bio3d(i,N(ng),iiIceNH4) = 0.0_r8
 
           endif
         END DO
-
-        ! TODO: ***** OLD CODE BELOW *****
 
         ! Calculate inverse layer thickness
 
@@ -930,250 +932,27 @@
           END DO
         END DO
 
-        ! Calculate ice thickness
-
-#ifdef ICE_BIO
-        DO i=Istr,Iend
-
-# if defined CLIM_ICE_1D
-          ice_thick(i,j) = MAX(0.0_r8,tclm(3,3,N(ng),i1CI))
-# elif defined BERING_10K
-
-          if (hi(i,j,nstp).gt.0.0_r8)THEN
-            ice_thick(i,j) = hi(i,j,nstp)
-          else
-            ice_thick(i,j)=0.0_r8
-          end if
-# endif
-        END DO
-#endif
-
-        !  Extract biological variables from tracer arrays, and
-        !  restrict their values to be positive definite.  Removed CVL's
-        !  conservation of mass correction because conflicted with SPLINES.
-        !  For ROMS 2.2+, convert from "flux form" to concentrations by
-        !  dividing by grid cell thickness.
-
-        DO itrc=1,NBT
-          ibio=idbio(itrc)
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-              Bio_bak(i,k,ibio)=max(t(i,j,k,nstp,ibio),0.0_r8)
-              Bio(i,k,ibio)=Bio_bak(i,k,ibio)
-              DBio(i,k,ibio)=0.0_r8
-            END DO
-          END DO
-        END DO
-
-#ifdef PROD3
-        DO itrc=1,NBPT3
-          DO i=Istr,Iend
-             DO k=1,N(ng)
-               Prod(i,k,itrc)=0.0_r8
-             END DO
-          END DO
-        END DO
-#endif
-
-#ifdef PROD2
-        DO itrc=1,NBPT2
-          DO i=Istr,Iend
-            Prod2(i,itrc)=0.0_r8
-          END DO
-        END DO
-#endif
-
-#ifdef STATIONARY
-        DO itrc=1,NBTS
-          DO i=Istr,Iend
-            DO k=1,N(ng)
-
-              Stat3(i,k,itrc)=0.0_r8
-            END DO
-          END DO
-        END DO
-#endif
-#ifdef STATIONARY2
-        DO itrc=1,UBst2
-
-          ibio=idbio2(itrc)
-          DO i=Istr,Iend
-            Stat2(i,ibio)=0.0_r8
-          END DO
-        END DO
-#endif
-#ifdef BENTHIC
-        DO itrc=1,NBEN
-           ibioB=idben(itrc)
-          DO k=1,NBL(ng)
-            DO i=Istr,Iend
-              Bio_bakB(i,k,ibioB)=max(bt(i,j,k,nstp,ibioB),0.0_r8)
-
-              BioB(i,k,ibioB)=bt(i,j,k,nstp,ibioB)
-              DBioB(i,k,ibioB)=0.0_r8
-
-            END DO
-          END DO
-        END DO
-#endif
-
-        ! Extract temperature and salinity from tracer arrays
-
-        DO k=1,N(ng)
-          DO i=Istr,Iend
-#ifdef CORRECT_TEMP_BIAS
-
-            ! correct the ROMS temp for the biology only - not fed back
-
-            Bio(i,k,itemp)=t(i,j,k,nstp,itemp)-1.94_r8
-#else
-            Bio(i,k,itemp)=t(i,j,k,nstp,itemp)
-#endif
-            Bio(i,k,isalt)=t(i,j,k,nstp,isalt)
-            IF (Bio(i,k,itemp) .gt. 35._r8) THEN
-              print *, 'Temperature: ', &
-     &             Bio(i,k,itemp),i, j, k,ng, yday
-              print *,'Tracer: ',t(i,j,k,1,itemp),t(i,j,k,2,itemp), &
-     &              t(i,j,k,3,itemp),Hz(i,j,k),nnew
-              print *,'Others: ', z_w(i,j,N(ng)),       &
-     &                  GRID(ng) % h(i,j)
-            END IF
-            IF ((grid(ng) % h(i,j) + z_w(i,j,N(ng))) .lt.0.0_r8) THEN
-              print *, 'zeta & h: ',z_w(i,j,N(ng)),'  ',grid(ng) % h(i,j)
-            END IF
-          END DO
-        END DO
-
-#ifdef ICE_BIO
-
-        ! Extract ice variables from tracer arrays
-
-        DO i=Istr,Iend
-
-# ifdef CLIM_ICE_1D
-
-
-          DO itrc=1,3
-            ibioBI=idice(itrc)
-
-            Bio_bakBI(i,ibioBI)=max(it(i,j,nstp,ibioBI),0.0_r8)
-
-            DBioBI(i,ibioBI)=0.0_r8
-
-          END DO
-
-          if (ice_thick(i,j).gt.0.02)          THEN
-            itL(i,j,nstp,iIceLog) =1.0_r8
-          else
-            itL(i,j,nstp,iIceLog) =-1.0_r8
-          endif
-
-          ! Initialize the ice biology
-
-          if (itL(i,j,nstp,iIceLog).gt.0.and.                           &
-     &        itL(i,j,nnew,iIceLog).lt.0) THEN  ! new ice at this timestep
-
-            BioBI(i,iIcePhL) = 1.1638_r8  !0.1638_r8
-            BioBI(i,iIceNO3) = Bio(i,N(ng),iNO3)  !5.0_r8
-            BioBI(i,iIceNH4) = Bio(i,N(ng),iNH4)  !1.0_r8
-
-          elseif (itL(i,j,nstp,iIceLog).le.0.and. &
-     &            itL(i,j,nnew,iIceLog).lt.0) THEN  ! no ice
-            BioBI(i,iIcePhL) = 0.0_r8
-            BioBI(i,iIceNO3) = 0.0_r8
-            BioBI(i,iIceNH4) = 0.0_r8
-
-          else
-
-            BioBI(i,iIcePhL)=Bio_bakBI(i,iIcePhL) !continuing ice presence
-            BioBI(i,iIceNO3)=Bio_bakBI(i,iIceNO3)
-            BioBI(i,iIceNH4)=Bio_bakBI(i,iIceNH4)
-          endif
-
-
-# elif defined BERING_10K
-
-          cff1=IceLog(i,j,nnew)
-          cff2=IceLog(i,j,nstp)
-
-          IceLog(i,j,nnew)=cff2
-          IceLog(i,j,nstp)=cff1
-
-          ! Initialize the ice biology
-
-          if (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).le.0)THEN
-
-            IcePhL(i,j,nstp) = Bio(i,N(ng),iPhL)  !1.1638_r8  !0.1638_r8
-            IceNO3(i,j,nstp) = Bio(i,N(ng),iNO3)  !5.0_r8
-            IceNH4(i,j,nstp) = Bio(i,N(ng),iNH4)  !1.0_r8
-
-            DBio(i,N(ng),iNO3)=DBio(i,N(ng),iNO3)-Bio(i,N(ng),iNO3)*aidz/Hz(i,j,N(ng))
-            DBio(i,N(ng),iNH4)=DBio(i,N(ng),iNH4)-Bio(i,N(ng),iNH4)*aidz/Hz(i,j,N(ng))
-            DBio(i,N(ng),iPhL)=DBio(i,N(ng),iPhL)-Bio(i,N(ng),iPhL)*aidz/Hz(i,j,N(ng))
-
-          elseif (IceLog(i,j,nstp).le.0.and.IceLog(i,j,nnew).le.0)THEN
-
-            IcePhL(i,j,nstp) = 0_r8
-            IceNO3(i,j,nstp) = 0_r8
-            IceNH4(i,j,nstp) = 0_r8
-
-          elseif (IceLog(i,j,nstp).gt.0.and.IceLog(i,j,nnew).gt.0)THEN
-            !ajh added zero trap on these
-            IcePhL(i,j,nstp) = max(0.0_r8,IcePhL(i,j,nstp))
-            IceNO3(i,j,nstp) = max(0.0_r8,IceNO3(i,j,nstp))
-            IceNH4(i,j,nstp) = max(0.0_r8,IceNH4(i,j,nstp))
-
-          endif
-
-
-          DO itrc=1,3
-            ibioBI=idice(itrc)
-            DBioBI(i,ibioBI)=0.0_r8
-          END DO
-# endif
-
-        END DO
-#endif
-
-#ifdef BIOFLUX
-        IF (i.eq.3.and.j.eq.3) THEN
-          DO itrc=1,UBst
-            ibio=idbio3(itrc)
-            DO itrc2=1,UBst
-              ibio2=idbio3(itrc)
-!             DO i=Istr,Iend
-              BioFlx(ibio,ibio)=bflx(ibio,ibio2)
-!             END DO
-            END DO
-          END DO
-        ENDIF
-#endif
-
         !-------------------------------------
         ! Calculate Day Length and Surface PAR
         !-------------------------------------
 
-        ! Calculate Day Length
-
         DO i=Istr,Iend
+
 #if defined DIURNAL_SRFLUX
-          ! Day Length is already accounted for in ANA_SWRAD so disable
-          ! correction
+          ! Calculate Day Length:  Day Length is already accounted for
+          ! in ANA_SWRAD so disable correction
+
           Dl = 24.0_r8
 #else
           ! Day Length calculation (orig from R. Davis) from latitude and
           ! declination.
-          ! cff2 is Solar declination from Oberhuber (1988) (COADS
-          ! documentation)
 
-          !lat = 58.00  orig from C code
-          !lat = 45.00_r8  test for EPOC
           lat = GRID(ng) % latr(i,j)
           cff1 = 2.0_r8 * pi * ( yday-1.0_r8 ) / 365.0_r8
           cff2 = 0.006918_r8 - 0.399912_r8*cos(cff1)                    &
      &           + 0.070257_r8*sin(cff1) - 0.006758_r8*cos(2*cff1)      &
      &           + 0.000907_r8*sin(2*cff1) - 0.002697_r8*cos(3*cff1)    &
-     &           + 0.00148_r8*sin(3*cff1)
+     &           + 0.00148_r8*sin(3*cff1) ! Solar declination from Oberhuber (1988) (COADS documentation)
           cff3 = lat * pi /180.0_r8
           IF ( abs( -tan(cff3)*tan(cff2) ) .le. 1.0_r8 ) THEN
             cff1 = acos( -tan(cff3)*tan(cff2) ) * 180.0_r8 / pi
@@ -1187,22 +966,21 @@
           END IF
 #endif
 
-          ! Calculate PAR at the surface
-
 #ifdef KODIAK_IRAD
 
-          ! For PAR, Eyeball fit of data from Hinckley''s ezeroday.dat (E d-1 m-2)
+          ! Calculate PAR at the surface
+          ! Eyeball fit of data from Hinckley''s ezeroday.dat (E d-1 m-2)
+          ! TODO: this option seems to be missing the actual setting of PARs(i)??
 
           cff2 = 41.0_r8 - 35.0_r8                                      &
      &           * COS( ( 12.0_r8 + yday) * 2.0_r8 * pi / 365.0_r8 )
 #else
 
-          ! For PAR, use Shortwave radiation ( = surface solar irradiance)
-          ! converted from deg C m/s to E/m2/day   rho0=1025 Cp=3985
-
+          ! Calculate PAR at the surface: use Shortwave radiation
+          ! ( = surface solar irradiance) converted from deg C m/s to
+          ! E/m2/day   rho0=1025 Cp=3985
 
           PARs(i) =PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
-
 #endif
         END DO
 
@@ -1211,7 +989,7 @@
         !------------------------------------------
 
 #ifdef NEWSHADE
-!       Georgina Gibsons version after Morel 1988 (in Loukos 1997)
+        ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
 
         DO i=Istr,Iend
 
@@ -1271,47 +1049,7 @@
         END DO
 #endif
 
-        DO k=1,N(ng)
-          DO i=Istr,Iend
-            HzL(i,k) = Hz(i,j,k)
-            Sal1 = Bio(i,k,isalt)
-            Temp1 = Bio(i,k,itemp)
-
-            !-------------------------------
-            ! Compute sigma-t for each depth
-            !-------------------------------
-
-            Dens(i,k) = ComputeDensity(Temp1,Sal1)
-
-
-          END DO
-        END DO
-
-        DO i=Istr,Iend
-
-          !-----------------------------------
-          !  Compute dsigmat/dz for each depth
-          !  Return the maximum value
-          !-----------------------------------
-
-          Do k=1,N(ng)
-            DensV(k)=Dens(i,k)
-            ZW_V(k)=z_wL(i,k)
-          end do
-          StabParam(i) = ComputeStability(ng,ZW_V,DensV)
-#ifdef STATIONARY2
-          if(j.eq.3.and.i.eq.3)THEN
-          Stat2(i,2)=StabParam(i)
-         endif
-#endif
-        END DO
-
-        DO k=0,N(ng)
-          DO i=Istr,Iend
-            z_wL(i,k) = z_w(i,j,k)
-          END DO
-        END DO
-
+! TODO: overhauled to here
         !****************************************************************
         !****************************************************************
         ! Begin BIOITER LOOP
