@@ -422,7 +422,7 @@
       integer :: ibioB
       real(r8) :: bf,fbase,TSS,Ifs,atss,btss,SF
       real(r8) :: avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum
-			real(r8) :: totD, totDF, totPS, totPL
+      real(r8) :: totD, totDF, totPS, totPL
       real(r8), dimension(IminS:ImaxS,N(ng)) :: frac1, frac2
       real(r8) ::sumD,sumDF,sumPL
 #endif
@@ -446,8 +446,8 @@
       real(r8) :: NitrifMax,DLNitrif
 
       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: Bio
-      real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: DBio
-      real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: Bio_bak
+!       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: DBio
+!       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: Bio_bak
 #if defined PROD3
       real(r8), dimension(IminS:ImaxS,N(ng),NBPT3) :: Prod
 #endif
@@ -506,7 +506,7 @@
       real(r8) ::grow1, GROWAice,reN,fNO3,RAi0,RgAi
       real(r8) :: sb, gesi
       real(r8), dimension(PRIVATE_1D_SCRATCH_ARRAY,N(ng),3):: aib
-      real(r8), dimension(PRIVATE_2D_SCRATCH_ARRAY) :: ice_thick
+      real(r8), dimension(PRIVATE_2D_SCRATCH_ARRAY) :: ice_thick, ice_status
 #endif
 !
 #ifdef DISTRIBUTE
@@ -542,6 +542,15 @@
 
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
 
+      ! Bio tracer setup
+
+      integer  :: iiNO3,    iiNH4,    iiPhS,  iiPhL,  iiMZS, iiMZL, iiCop
+      integer  :: iiNCaS,   iiNCaO,   iiEupS, iiEupO, iiDet, iiDetF
+      integer  :: iiJel,    iiFe,     iiBen,  iiBenDet
+      integer  :: iiIcePhL, iiIceNO3, iiIceNH4
+      real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, DBio, Bio_bak
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Temp, Salt
+
 
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
@@ -556,28 +565,31 @@
       ! A few parameters...
 
       dtdays = dt(ng)*sec2day/REAL(BioIter(ng),r8)  ! time step, in days
-      k_phy = k_chl / ccr ! Light attenuation coefficient (mg Chl-a mg C^-1 m^-1) (? never used)
-
 
 #ifdef DIAPAUSE
 
-      ! For diapause, set movement direction flags for large copepods,
-      ! and lower respiration rates if they're in the diapause phase.
+      ! Copepod diapause is determined by time of year, based on sinking/
+      ! rising day-of-year input parameters.  Set movement
+      ! direction flags for on- and offshore large copepods here, and
+      ! lower respiration rates if they're in the diapause (downward)
+      ! phase.
       ! NCaS = CM = mostly C. marshallae, on-shelf
       ! NCaO = NC = mostly Neocalanus, off-shelf
-      
+
       RSNC = MOD(RiseStart, 366.0_r8)
       RENC = MOD(RiseEnd,   366.0_r8)
       SSNC = MOD(SinkStart, 366.0_r8)
       SENC = MOD(SinkEnd,   366.0_r8)
-      
+
       if ((RiseStartCM .eq. 0.0_r8) .and. (RiseEndCM .eq. 0.0_r8) .and. &
         (SinkStartCM .eq. 0.0_r8) .and. (SinkEndCM .eq. 0.0_r8)) then
-        
+
         ! All 0 is the shortcut for lagging the onshelf group movement
-        ! 1 month behind the offshelf group (this was the original 
-        ! hard-coded behavior)
-         
+        ! 1 month behind the offshelf group (this was the original
+        ! hard-coded behavior, and I wanted to maintain
+        ! back-compatibility with an input parameter file that doesn't
+        ! include the newer Rise/SinkCM parameters)
+
         RSCM = MOD(RiseStart + 30, 366.0_r8)
         RECM = MOD(RiseEnd   + 30, 366.0_r8)
         SSCM = MOD(SinkStart + 30, 366.0_r8)
@@ -592,35 +604,30 @@
 
       endif
 
-!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsSt = ', RiseStart, ', RsEn = ', RiseEnd, ', SiSt = ', SinkStart, ', SiEn = ', SinkEnd
-!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RsStCM = ', RiseStartCM, ', RsEnCM = ', RiseEndCM, ', SiStCM = ', SinkStartCM, ', SiEnCM = ', SinkEndCM
-!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSNC = ', RSNC, ', RENC = ', RENC, ', SSNC = ', SSNC, ', SENC = ', SENC
-!    write(*,'(A,F8.3,A,F8.3,A,F8.3,A,F8.3)') 'RSCM = ', RSCM, ', RECM = ', RECM, ', SSCM = ', SSCM, ', SECM = ', SECM
-
       upwardNC =   ((RSNC.lt.RENC) .and.                                &
      &              (yday.ge.RSNC .and. yday.le.RENC))                  &
      &             .or.                                                 &
      &             ((RSNC.gt.RENC) .and.                                &
      &              (yday.ge.RSNC .or.  yday.le.RENC))
-    
+
       upwardCM =   ((RSCM.lt.RECM) .and.                                &
      &              (yday.ge.RSCM .and. yday.le.RECM))                  &
      &             .or.                                                 &
      &             ((RSCM.gt.RECM) .and.                                &
      &              (yday.ge.RSCM .or.  yday.le.RECM))
-    
+
       downwardNC = ((SSNC.lt.SENC) .and.                                &
      &              (yday.ge.SSNC .and. yday.le.SENC))                  &
      &             .or.                                                 &
      &             ((SSNC.gt.SENC) .and.                                &
      &              (yday.ge.SSNC .or.  yday.le.SENC))
-    
+
       downwardCM = ((SSCM.lt.SECM) .and.                                &
      &              (yday.ge.SSCM .and. yday.le.SECM))                  &
      &             .or.                                                 &
      &             ((SSCM.gt.SECM) .and.                                &
      &              (yday.ge.SSCM .or.  yday.le.SECM))
-    
+
       if (downwardNC) then
         respNC = respNCa * 0.1_r8
         eNC = 0
@@ -628,7 +635,7 @@
         respNC = respNCa
         eNC = eNCa
       end if
-    
+
       if (downwardCM) then
         respCM = respNCa * 0.1_r8
         eCM = 0
@@ -646,30 +653,264 @@
 
       J_LOOP : DO j=Jstr,Jend
 
-        ! Initialize production arrays to 0 (if applicable)
+        !---------------------------------
+        ! Biological tracer variable setup
+        !---------------------------------
 
-        IF ((iic(ng).gt.ntstart(ng)).and.                             &
-     &        (MOD(iic(ng)-1,nHIS(ng)).eq.0)) THEN
-          IF (nrrec(ng).eq.0.or.iic(ng).ne.ntstart(ng)) THEN
+        ! The various biological state variables are passed into this
+        ! function in a few different arrays, depending on whether the
+        ! variable was part of the original GOANPZ model, added with the
+        ! benthic submodel, or added with the ice model (and for ice,
+        ! whether we're running ROMS with a full ice model or with 1D
+        ! climatological ice).
+        !
+        ! To make long-term maintenance of this code easier, we'll place
+        ! all these variables into a single i x k x var array, where
+        ! i = horizontal grid cell looping dimension, k = depth (counting
+        ! from bottom to top), and var is the biological state variable
+        ! index.
 
-#ifdef PROD3
-            DO itrc=1,NPT3(ng)
+        ! First, some handy indices, so I don't have to switch around
+        ! between the 3 different sets used for pelagic, benthic, and ice
+        ! variables in the input arrays.
 
-              OCEAN(ng) % pt3(:,:,:,nstp,itrc) = 0.0_r8
+        iiNO3    = 1
+        iiNH4    = 2
+        iiPhS    = 3
+        iiPhL    = 4
+        iiMZS    = 5
+        iiMZL    = 6
+        iiCop    = 7
+        iiNCaS   = 8
+        iiEupS   = 9
+        iiNCaO   = 10
+        iiEupO   = 11
+        iiDet    = 12
+        iiDetF   = 13
+        iiJel    = 14
+        iiFe     = 15
+        iiBen    = 16
+        iiBenDet = 17
+        iiIcePhL = 18
+        iiIceNO3 = 19
+        iiIceNH4 = 20
+
+        ! All state variables will be saved in two different versions:
+        ! per-volume (Bio3d) and per-area (Bio2d).  This redundancy makes
+        ! for clearer (for human readers) code.
+
+        Bio3d = 0 ! Initialize to 0
+        Bio2d = 0
+
+        ! Pelagic variables: These are originally stored in per-volume
+        ! concentrations in each water column layer. NO3 and NH4 are in
+        ! mmol N m^-3, Fe is in umol Fe m^-3, and the rest are in mg C
+        ! m^-3.
+
+        DO itrc=1,NBT  ! Pelagic variables
+          DO k=1,N(ng)
+            DO i=Istr,Iend
+              Bio3d(i,k,itrc)=max(t(i,j,k,nstp,idbio(itrc)),0.0_r8)
+              Bio2d(i,k,itrc)=Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
+          END DO
+        END DO
 
+        ! Benthic variables: These are originally stored in per-area
+        ! concentrations in each benthic layer, in mg C m^-2.  The
+        ! benthic layers are of unknown thickness.
+        !
+        ! At the moment, BESTNPZ hard-codes the number of benthic layers
+        ! (NBL) to 1; for bookkeeping purposes, we're going to store
+        ! benthic biomass in the bottom layer of our Bio3d/2d arrays.  If
+        ! we ever change the number of benthic layers, we may need to
+        ! rethink this schema.
+
+        DO itrc=1,NBEN
+          ibioB=idben(itrc) ! Note: idben(i) = i
+          DO k=1,NBL(ng) ! Note: For BESTNPZ, NBL = 1 is hard-coded in mod_param.F
+            DO i=Istr,Iend
+              Bio2d(i,k,itrc+NBT)=bt(i,j,k,nstp,ibioB) ! TODO: not restricted to >0?
+              Bio3d(i,k,itrc+NBT)=Bio2d(i,k,itrc+NBT)/Hz(i,j,k)
+            END DO
+          END DO
+        END DO
+
+
+        ! Before we get to the ice variables, we'll collect some info
+        ! about the ice itself: ice thickness, and status (i.e. whether
+        ! ice has appeared or disappeared between this time step and the
+        ! last).
+        !   ice_status =  2  ice present at this time step and previous
+        !   ice_status =  1  ice appeared at this step
+        !   ice_status =  0  no ice at either
+        !   ice_status = -1  ice disappeared at this step
+
+#ifdef ICE_BIO
+        DO i=Istr,Iend
+# if defined CLIM_ICE_1D
+
+          ! Ice thickness
+
+          ice_thick(i,j) = MAX(0.0_r8,tclm(3,3,N(ng),i1CI))
+
+          ! Ice status
+
+          if (ice_thick(i,j).gt.aidz) THEN
+            itL(i,j,nstp,iIceLog) =1.0_r8
+          else
+            itL(i,j,nstp,iIceLog) =-1.0_r8
+          endif
+
+          if     (itL(i,j,nstp,iIceLog).gt.0 .and. itL(i,j,nnew,iIceLog).le.0) THEN
+            ice_status(i,j) = 1.0
+          elseif (itL(i,j,nstp,iIceLog).gt.0 .and. itL(i,j,nnew,iIceLog).gt.0) THEN
+            ice_status(i,j) = 2.0
+          elseif (itL(i,j,nstp,iIceLog).le.0 .and. itL(i,j,nnew,iIceLog).gt.0) THEN
+            ice_status(i,j) = -1.0
+          else
+            ice_status(i,j) = 0.0
+          endif
+
+# elif defined BERING_10K
+
+          ! Ice thickness
+
+          if (hi(i,j,nstp).gt.0.0_r8)THEN
+            ice_thick(i,j) = hi(i,j,nstp)
+          else
+            ice_thick(i,j)=0.0_r8
+          end if
+
+          ! Ice status
+
+          cff1=IceLog(i,j,nnew)
+          cff2=IceLog(i,j,nstp)
+
+          IceLog(i,j,nnew)=cff2
+          IceLog(i,j,nstp)=cff1
+
+          if     (IceLog(i,j,nstp).gt.0 .and. IceLog(i,j,nnew).le.0) THEN
+            ice_status(i,j) = 1.0
+          elseif (IceLog(i,j,nstp).gt.0 .and. IceLog(i,j,nnew).gt.0) THEN
+            ice_status(i,j) = 2.0
+          elseif (IceLog(i,j,nstp).le.0 .and. IceLog(i,j,nnew).gt.0) THEN
+            ice_status(i,j) = -1.0
+          else
+            ice_status(i,j) = 0.0
+          endif
+
+# endif
+        END DO
 #endif
 
-#ifdef PROD2
+        ! Ice variables: Ice variables are passed into this function in
+        ! different arrays depending on whether the model is running with
+        ! climatological one-dimensional ice, or coupled to a full ice
+        ! model. In either case, they're originally stored in per-volume
+        ! concentrations in a single ice skeletal layer of prescribed
+        ! thickness (aidz).  For bookkeeping, we'll put this in the top
+        ! layer of the Bio3d/2d arrays, but remember that the conversion
+        ! factor assumes a different layer thickness than the top water
+        ! layer.
 
-            DO itrc=1,NPT2(ng)
+        ! If there ice is present in both this step and the last, start
+        ! by extracting ice biomass from the main ice bio tracer array.
+        ! Otherwise, no biomass to start (we'll deal with changing ice in
+        ! a moment).
 
-              OCEAN(ng) % pt2(:,:,nstp,itrc) = 0.0_r8
-            END DO
+#ifdef ICE_BIO
+        DO i=Istr,Iend
+          if (ice_status(i,j) .eq. 2.0) then
 
+# ifdef CLIM_ICE_1D
+            Bio3d(i,N(ng),iiIcePhL) = max(it(i,j,nstp,idice(1)), 0.0_r8)
+            Bio3d(i,N(ng),iiIceNO3) = max(it(i,j,nstp,idice(2)), 0.0_r8)
+            Bio3d(i,N(ng),iiIceNH4) = max(it(i,j,nstp,idice(3)), 0.0_r8)
+# elif defined BERING_10K
+            Bio3d(i,N(ng),iiIcePhL) = max(0.0_r8, IcePhL(i,j,nstp))
+            Bio3d(i,N(ng),iiIceNO3) = max(0.0_r8, IceNO3(i,j,nstp))
+            Bio3d(i,N(ng),iiIceNH4) = max(0.0_r8, IceNH4(i,j,nstp))
+# endif
+          endif
+
+          Bio2d(i,N(ng),iiIcePhL) = Bio3d(i,N(ng),iiIcePhL)*aidz
+          Bio2d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiIceNO3)*aidz
+          Bio2d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiIceNH4)*aidz
+
+        END DO
 #endif
-          END IF
-        END IF
+
+        ! Temperature and salinity, for easier reference
+
+        Temp = t(Istr:Iend,j,1:N(ng),nstp,itemp)
+        Salt = t(Istr:Iend,j,1:N(ng),nstp,isalt)
+
+        ! Initialize the rate of change, dB/dt, to 0 for all elements.
+        ! Same for all intermediate flux arrays.  Note that these fluxes
+        ! will hold the 2D equivalent of all the fluxes (i.e. per area,
+        ! rather than per volume); this makes it easier to keep track of
+        ! things that are moving between different-sized layers (e.g. ice
+        ! to surface layer, or benthos to water column)
+
+        DBio = 0
+        ! TODO: will set all Flx_aaa_bbb flux arrays = 0 here
+
+        ! Save a copy of the original biomass
+
+        Bio_bak = Bio2d
+
+        ! Move tracers between surface water layer and ice skeletal layer
+        ! if ice appeared or disappeared
+
+        DO i=Istr,Iend
+          if (ice_status(i,j) .eq. 1.0) then
+
+            ! If new ice appeared, assume the biomass from the surface
+            ! layer in the previous step is now spread evenly across the
+            ! surface water column and the ice skeletal layer.
+
+            Bio3d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL)/(Hz(i,j,N(ng))+aidz)
+            Bio3d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3)/(Hz(i,j,N(ng))+aidz)
+            Bio3d(i,N(ng),iiNH4) = Bio2d(i,N(ng),iiNH4)/(Hz(i,j,N(ng))+aidz)
+
+            Bio3d(i,N(ng),iiIcePhL) = Bio3d(i,N(ng),iiPhl)
+            Bio3d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiNO3)
+            Bio3d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiNH4)
+
+            Bio2d(i,N(ng),iiPhL)    = Bio3d(i,N(ng),iiPhl) * Hz(i,j,N(ng))
+            Bio2d(i,N(ng),iiNO3)    = Bio3d(i,N(ng),iiNO3) * Hz(i,j,N(ng))
+            Bio2d(i,N(ng),iiNH4)    = Bio3d(i,N(ng),iiNH4) * Hz(i,j,N(ng))
+
+            Bio2d(i,N(ng),iiIcePhL) = Bio3d(i,N(ng),iiIcePhl) * aidz
+            Bio2d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiIceNO3) * aidz
+            Bio2d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiIceNH4) * aidz
+
+          elseif (ice_status(i,j) .eq. -1.0) then
+
+            ! If ice disappeared, biomass that was in the ice gets dumped
+            ! into the water surface layer
+
+            Bio2d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL) + Bio2d(i,N(ng),iiIPhL)
+            Bio2d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3) + Bio2d(i,N(ng),iiINO3)
+            Bio2d(i,N(ng),iiNH4) = Bio2d(i,N(ng),iiNH4) + Bio2d(i,N(ng),iiINH4)
+
+            Bio2d(i,N(ng),iiIPhL) = 0.0_r8
+            Bio2d(i,N(ng),iiINO3) = 0.0_r8
+            Bio2d(i,N(ng),iiINH4) = 0.0_r8
+
+            Bio3d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL)/Hz(i,j,N(ng))
+            Bio3d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3)/Hz(i,j,N(ng))
+            Bio3d(i,N(ng),iiNH4) = Bio2d(i,N(ng),iiNH4)/Hz(i,j,N(ng))
+
+            Bio3d(i,N(ng),iiIPhL) = 0.0_r8
+            Bio3d(i,N(ng),iiINO3) = 0.0_r8
+            Bio3d(i,N(ng),iiINH4) = 0.0_r8
+
+          endif
+        END DO
+
+        ! TODO: ***** OLD CODE BELOW *****
 
         ! Calculate inverse layer thickness
 
@@ -993,7 +1234,7 @@
 
 #elif defined COKELET
         ! Version from Ned Cokelet
-       
+
         DO i=Istr,Iend
 
           cff10=grid(ng) % h(i,j)
@@ -1001,11 +1242,11 @@
           k_extV= k_ext
           cff0=PARs(i)
 
-          DO k=N(ng),1,-1  
+          DO k=N(ng),1,-1
 
             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
             cff5=(Bio(i,k,iPhS)/ccr)+ (Bio(i,k,iPhL)/ccrPhL)
-            cff2 = (k_chlA*(cff5)**(k_chlB))   
+            cff2 = (k_chlA*(cff5)**(k_chlB))
 
             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
@@ -1345,7 +1586,7 @@
             DO i=Istr,Iend
 
               ! Adjust AlphaPhL. Based on PAR. WIP:From discussions with Ken Coyle.
- 
+
               if (PARs(i).lt.30.0) then
                 alphaPhLv = 10
               elseif (PARs(i).gt.40.0) then
@@ -1960,16 +2201,16 @@
               !-----------------
               !Food preferences
               !-----------------
-              
+
               cff1 = fpPhSEup * Bio(i,k,iPhS)**2                        &
      &             + fpPhLEup * Bio(i,k,iPhL)**2                        &
      &             + fpMZLEup * Bio(i,k,iMZL)**2                        &
-     &             + fpCopEup * Bio(i,k,iCop)**2     ! live food                  
-     
-              
+     &             + fpCopEup * Bio(i,k,iCop)**2     ! live food
+
+
               cff0 = fpDetEup * Bio(i,k,iDet)**2                        &
      &             + fpDetEup * Bio(i,k,iDetF)**2    ! detrital food
-     
+
 #ifdef ICE_BIO
               if (k.eq.N(ng)) then
 # ifdef CLIM_ICE_1D
@@ -1996,12 +2237,12 @@
               !-------------------------
               !  Depth correction
               !-------------------------
-              
-              ! Force EupS to do better on the shelf.  
-              ! KK: This seems like a cheat to me; it prevents any growth 
-              ! in water deeper than 200 m.  What's the mechanism behind 
+
+              ! Force EupS to do better on the shelf.
+              ! KK: This seems like a cheat to me; it prevents any growth
+              ! in water deeper than 200 m.  What's the mechanism behind
               ! it?
-              
+
               cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((grid(ng) % h(i,j)-200_r8)/.3_r8))
 
               !------------------------
@@ -2009,12 +2250,12 @@
               !------------------------
 
               ! Live food growth
-              
+
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
      &          gammaEup * cff1 * cff2 * cff3 * cff4 * dtdays
-    
+
               ! Detrital food growth
-    
+
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
      &          0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
 
@@ -2060,15 +2301,15 @@
               !------------------------------------------------------------
 
               ! Live food egestion
-              
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * cff4 * dtdays
-     
+
               ! Detrital food egestion
-              
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3* cff4 * dtdays
-              
+
 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
@@ -2245,13 +2486,13 @@
               !-------------------
               !  Food preferences
               !-------------------
-              
+
               cff1 = fpPhSEup * Bio(i,k,iPhS)**2                        &
      &             + fpPhLEup * Bio(i,k,iPhL)**2                        &
      &             + fpMZLEup * Bio(i,k,iMZL)**2                        &
-     &             + fpCopEup * Bio(i,k,iCop)**2     ! live food                  
-     
-              
+     &             + fpCopEup * Bio(i,k,iCop)**2     ! live food
+
+
               cff0 = fpDetEupO * Bio(i,k,iDet)**2                        &
      &             + fpDetEupO * Bio(i,k,iDetF)**2   ! detrital food
 
@@ -2263,8 +2504,8 @@
                 cff1 = cff1 + fpPhLEup*(IcePhL(i,j,nstp)*aidz/Hz(i,j,N(ng)))**2
 # endif
 #endif
-						  endif
-							
+              endif
+
               !----------------
               !Food consumption
               !----------------
@@ -2281,9 +2522,9 @@
               !-----------------
               ! depth correction
               !-----------------
-              
+
               ! KK: See comment above... this is a cheat and I don't like it
-              
+
               cff4 = 1.0_r8-(0.5_r8+0.5_r8*tanh((200_r8-grid(ng) % h(i,j))/.3_r8))
 
               !----------------------
@@ -2292,7 +2533,7 @@
 
               DBio(i,k,iEupO) = DBio(i,k,iEupO) +                       &
      &          gammaEup * cff1 * cff2 * cff3 * cff4 * dtdays
-     
+
               DBio(i,k,iEupO) = DBio(i,k,iEupO) +                  &
      &          0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
 
@@ -2336,12 +2577,12 @@
               !-------------------------------------------------
 
               ! Live
-              
+
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * cff4 *  dtdays
-     
+
               ! Detrital
-              
+
               Bio(i,k,iDetF) = DBio(i,k,iDetF) +                        &
      &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3 * cff4* dtdays
 
@@ -3271,39 +3512,39 @@
             !----------------------------
 
             ! Pelagic food accessible to benthic infauna
-            
+
             dw = 1.0_r8 ! assume bottom 1 m is accessible
-            
+
             totD  = 0.0_r8
             totDF = 0.0_r8
             totPS = 0.0_r8
             totPL = 0.0_r8
-            
+
             cff2 = 0.0_r8 ! accounted-for height above bottom
             DO k = 1,N(ng)
-              
+
               ! Fraction of this layer contributing to benthic feeding
-              
+
               cff1 = max(min(dw, cff2 + Hz(i,j,k)) - cff2, 0.0_r8) ! m
               frac1(i,k) = cff1/Hz(i,j,k)
-              
+
               ! Fraction of benthic feeding coming from this level
-              
-              frac2(i,k) = cff1/dw 
-              
+
+              frac2(i,k) = cff1/dw
+
               ! Food available to benthos
-              
+
               totD  = totD  + Bio(i,k,iDet)  * Hz(i,j,k) * frac1(i,k)
               totDF = totDF + Bio(i,k,iDetF) * Hz(i,j,k) * frac1(i,k)
               totPS = totPS + Bio(i,k,iPhS)  * Hz(i,j,k) * frac1(i,k)
               totPL = totPL + Bio(i,k,iPhL)  * Hz(i,j,k) * frac1(i,k)
-              
+
               cff2 = cff2 + Hz(i,j,k)
             END DO
 
             ! Potential food available from water column
 
-            cff1=(prefD *totD /((prefD *totD )+LupP))*prefD *totD 
+            cff1=(prefD *totD /((prefD *totD )+LupP))*prefD *totD
             cff2=(prefD *totDF/((prefD *totDF)+LupP))*prefD *totDF
             cff3=(prefPS*totPS/((prefPS*totPS)+LupP))*prefPS*totPS
             cff4=(prefPL*totPL/((prefPL*totPL)+LupP))*prefPL*totPL
@@ -3314,9 +3555,9 @@
 
             cff5 = (prefD * BioB(i,k,iBenDet) / (prefD *                &
      &             BioB(i,k,iBenDet) + LupD)) * prefD * BioB(i,k,iBenDet)
-     
+
             ! Uptake rates mediated by bottom layer temperature
-     
+
              k = 1
              Temp1 = Bio(i,k,itemp)
              cff0 = q10r**((Temp1-T0benr)/10.0_r8)
@@ -3334,16 +3575,16 @@
             DBioB(i,1,iBen) = DBioB(i,1,iBen) + (cff7 +cff8+cff9+cff10+cff11) * dtdays
 
             ! Feeding losses from appropriate layers
-            
+
             DBioB(i,k,iBenDet) = DBioB(i,k,iBenDet) - dtdays*cff11
-            
+
             DO k = 1,N(ng)
-              
+
               DBio(i,k,iDet)  = DBio(i,k,iDet)  - cff7  * frac2(i,k) * dtdays / Hz(i,j,k)
               DBio(i,k,iDetF) = DBio(i,k,iDetF) - cff8  * frac2(i,k) * dtdays / Hz(i,j,k)
               DBio(i,k,iPhS)  = DBio(i,k,iPhS)  - cff9  * frac2(i,k) * dtdays / Hz(i,j,k)
               DBio(i,k,iPhL)  = DBio(i,k,iPhL)  - cff10 * frac2(i,k) * dtdays / Hz(i,j,k)
-              
+
             END DO
 
 # if defined BIOFLUX && defined BEST_NPZ
@@ -3379,7 +3620,7 @@
             !------------
 
             ! Assume all excretion occurs in the bottom layer
-            
+
             k = 1 ! I'm trying to hard-code the bottom layer thing, but just in case I missed some...
             cff1=cff7 *eexD
             cff2=cff8 *eexD
@@ -3483,7 +3724,7 @@
             !-------------------------------------
 
             ! Assume only the top 25% available -> NH4
-            
+
             PON = BioB(i,k,iBenDet)*0.25*xi/Hz(i,j,k)  !Benthic Particulate organic nitrogen
 
 !           cff5= q10**((Temp1-T0ben)/10.0_r8)
