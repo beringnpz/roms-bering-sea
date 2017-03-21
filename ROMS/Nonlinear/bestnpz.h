@@ -563,6 +563,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_PhS_EupO, Gra_PhL_EupO, Gra_MZL_EupO, Gra_Cop_EupO, Gra_IPhL_EupO, Gra_Det_EupO, Gra_DetF_EupO, Ege_EupO_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Cop_Jel, Gra_EupS_Jel, Gra_EupO_Jel, Gra_NCaS_Jel, Gra_NCaO_Jel, Ege_Jel_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Mor_PhS_Det, Mor_PhL_Det, Mor_MZL_Det, Mor_Cop_DetF, Mor_NCaS_DetF, Mor_EupS_DetF, Mor_NCaO_DetF, Mor_EupO_DetF, Mor_Jel_DetF
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Res_PhS_NH4, Res_PhL_NH4,Res_MZL_NH4, Res_Cop_NH4, Res_NCaS_NH4, Res_NCaO_NH4, Res_EupS_NH4, Res_EupO_NH4, Res_Jel_NH4
 
       ! Biological source/sinks
 
@@ -931,7 +932,15 @@
         Mor_NCaO_DetF  = 0
         Mor_EupO_DetF  = 0
         Mor_Jel_DetF   = 0
-
+        Res_PhS_NH4    = 0
+        Res_PhL_NH4    = 0
+        Res_MZL_NH4    = 0
+        Res_Cop_NH4    = 0
+        Res_NCaS_NH4   = 0
+        Res_NCaO_NH4   = 0
+        Res_EupS_NH4   = 0
+        Res_EupO_NH4   = 0
+        Res_Jel_NH4    = 0
 
         ! Save a copy of the original biomass
 
@@ -1563,440 +1572,49 @@
             END DO
           END DO
 
+          !------------------------------
+          ! Respiration
+          !------------------------------
+
+          ! Phytoplankton
+
+          Res_PhS_NH4 = exp(KtBm_PhS * (Temp - TmaxPhS)) * respPhS * Bio3d(:,:,iiPhS)
+          Res_PhL_NH4 = exp(KtBm_PhL * (Temp - TmaxPhL)) * respPhL * Bio3d(:,:,iiPhL)
+
+          ! Microzooplankton
+
+          Res_MZL_NH4 = exp(KtBm_MZL * (Temp - TmaxMZL)) * respMZL * Bio3d(:,:,iiMZL)
+
+          ! Mesozooplankton (BasMetXXX is respXXX w/ starvation response)
+
+          Res_Cop_NH4  = exp(ktbmC * (Temp - TrefC)) * BasMetCop * Bio3d(:,:,iiCop)
+          Res_NCaS_NH4 = exp(ktbmN * (Temp - TrefN)) * BasMetCM  * Bio3d(:,:,iiNCaS)
+          Res_NCaO_NH4 = exp(ktbmN * (Temp - TrefN)) * BasMetNC  * Bio3d(:,:,iiNCaO)
+          Res_EupS_NH4 = exp(ktbmE * (Temp - TrefE)) * BasMetEup * Bio3d(:,:,iiEupS)
+          Res_EupO_NH4 = exp(ktbmE * (Temp - TrefE)) * BasMetEup * Bio3d(:,:,iiEupO)
+
+          ! Jellyfish
+
+          Res_Jel_NH4 = Q10Jelr ** ((Temp-Q10JelTr)/10.0_r8) * respJel * Bio3d(:,:,iiJel)
+
+          ! Convert respiration fluxes from volumetric to integrated over
+          ! layer
+
+          DO k=1,N(ng)
+            DO i=Istr,Iend
+              Res_PhS_NH4(i,k)  = Res_PhS_NH4(i,k)  * Hz(i,j,k)
+              Res_PhL_NH4(i,k)  = Res_PhL_NH4(i,k)  * Hz(i,j,k)
+              Res_MZL_NH4(i,k)  = Res_MZL_NH4(i,k)  * Hz(i,j,k)
+              Res_Cop_NH4(i,k)  = Res_Cop_NH4(i,k)  * Hz(i,j,k)
+              Res_NCaS_NH4(i,k) = Res_NCaS_NH4(i,k) * Hz(i,j,k)
+              Res_NCaO_NH4(i,k) = Res_NCaO_NH4(i,k) * Hz(i,j,k)
+              Res_EupS_NH4(i,k) = Res_EupS_NH4(i,k) * Hz(i,j,k)
+              Res_EupO_NH4(i,k) = Res_EupO_NH4(i,k) * Hz(i,j,k)
+              Res_Jel_NH4(i,k)  = Res_Jel_NH4(i,k)  * Hz(i,j,k)
+            END DO
+          END DO
+
 ! TODO: overhauled to here
-
-          !=================================
-          !Phytoplankton respiration losses
-          !=================================
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-              BasalMet = respPhS
-
-#ifdef IRON_LIMIT
-              !----------------------------------------------
-              !  Correct basal metabolism for iron limitation
-              !----------------------------------------------
-
-!             Iron1 = Bio(i,k,iFe)
-!             respPh = respPhS
-!             kfePh = kfePhS
-!             BasalMet = GetBasalMetabolism(respPh,kfePh,Iron1)
-
-#endif
-
-              !-----------------------------------
-              !  Arhonditsis temperature functions
-              !-----------------------------------
-!
-              TempFuncPhS(i,k) = GetPhytoResp2(Temp1,TmaxPhS,KtBm_PhS)
-
-              !-------------------------------------------------
-              !  Change in concentration of Small Phytoplankton
-              !-------------------------------------------------
-
-              DBio(i,k,iPhS) = DBio(i,k,iPhS) -                         &
-     &          TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
-
-
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &          xi * TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
-
-
-              !--------------------------------------------
-              !  Primary production of Small phytoplankton
-              !--------------------------------------------
-#ifdef PROD3
-              Prod(i,k,iPHSprd) = Prod(i,k,iPHSprd) -                   &
-     &          TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
-
-
-#endif
-#ifdef STATIONARY
-              if(i.eq.2) THEN
-                if(j.eq.2) THEN
-    !             Stat3(i,k,1)=TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)
-                endif
-              endif
-#endif
-
-              BasalMet = respPhL
-#ifdef IRON_LIMIT
-
-              !-----------------------------------------------
-              !  Correct basal metabolism for iron limitation
-              !-----------------------------------------------
-
-!             respPh = respPhL
-!             kfePh = kfePhL
-!             BasalMet = GetBasalMetabolism(respPh,kfePh,Iron1)
-#endif
-              !------------------------------------
-              !  Arhonditsis temperature functions
-              !------------------------------------
-              TempFuncPhL(i,k) = GetPhytoResp2(Temp1,TmaxPhL,KtBm_PhL)
-
-              !-------------------------------------------------
-              !  Change in concentration of Large Phytoplankton
-              !-------------------------------------------------
-
-              DBio(i,k,iPhL) = DBio(i,k,iPhL) -                         &
-     &          TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-#ifdef STATIONARY
-
-              if(i.eq.3) THEN
-                if(j.eq.3) THEN
-!                 Stat3(i,k,1)=TempFuncPhL(i,k)*BasalMet*dtdays!*Bio(i,k,iPhL)
-                endif
-              endif
-#endif
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &           xi * TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-
-              !--------------------------------------------
-              !  Primary production of Large phytoplankton
-              !--------------------------------------------
-
-#ifdef PROD3
-              Prod(i,k,iPHLprd) = Prod(i,k,iPHLprd) -                   &
-     &          TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
-#endif
-
-
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iNH4)= bflx(iPhS,iNH4)+                       &
-     &            TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS)*xi
-
-                bflx(iPhL,iNH4)= bflx(iPhL,iNH4)+                       &
-     &            TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)*xi
-              END IF
-#endif
-
-            END DO
-          END DO
-
-          !======================================
-          !  Microzooplankton respiration losses
-          !======================================
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-!             cff1 = fpPhSMZL * Bio(i,k,iPhS)+ fpPhLMZL * Bio(i,k,iPhL)
-
-!             if(cff1.lt.1.0_r8)THEN
-!               BasalMetMZL=0.0_r8
-!             else
-!               BasalMetMZL=respMZL
-!             end if
-
-
-              !-------------------------
-              !  Small Microzooplankton
-              !-------------------------
-
-              !  Arhonditsis temperature functions
-
-!             TempFuncMZS(i,k) = GetPhytoResp2(Temp1,TmaxMZS,           &
-!    &                           KtBm_MZS)
-
-!             BasalMet = respMZS
-!             TFMZL = Q10MZS ** ( (Bio(i,k,itemp)-Q10MZST) / 10.0_r8 )
-!
-              !----------------------------------------------------
-              !  Change in concentration of small microzooplankton
-              !----------------------------------------------------
-
-!             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
-!     &         TempFuncMZS(i,k)*BasalMet*dtdays*Bio(i,k,iMZS)
-!     &         TFMZS*respMZS*dtdays*Bio(i,k,iMZS)
-
-              !------------------------------------
-              !  Small Microzooplankton production
-              !------------------------------------
-
-#ifdef PROD3
-!             Prod(i,k,iMZS) = Prod(i,k,iMZS) -                         &
-!     &         TempFuncMZS(i,k)*BasalMet*dtdays*Bio(i,k,iMZS)
-!     &         TFMZS*respMZS*dtdays*Bio(i,k,iMZS)
-#endif
-              !-------------------------------------------------------------
-              !  Add ammonium to correct for excretion related to metabolism
-              !-------------------------------------------------------------
-
-!             DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-!     &         xi*(TempFuncMZS(i,k)*BasalMet*dtdays*Bio(i,k,iMZS))
-!     &         xi*(TFMZS*respMZS*dtdays*Bio(i,k,iMZS))
-
-              !-------------------------
-              !  Large Microzooplankton
-              !-------------------------
-
-              !  Arhonditsis temperature functions
-
-
-              TFMZL = exp(KtBm_MZL * (Bio(i,k,itemp) - TmaxMZL))
-
-              BasalMetMZL = respMZL
-
-              !----------------------------------------------------
-              !  Change in concentration of large microzooplankton
-              !----------------------------------------------------
-              DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
-!    &          TempFuncMZL(i,k)*BasalMet*dtdays*Bio(i,k,iMZL)
-     &          TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL)
-#ifdef STATIONARY
-!             if(i.eq.2) THEN
-!               if(j.eq.2) THEN
-!                 Stat3(i,k,9)=TFMZL* BasalMetMZL*dtdays
-!               endif
-!             endif
-#endif
-
-              !---------------------------------------
-              !  Large Microzooplankton net production
-              !---------------------------------------
-
-#ifdef PROD3
-              Prod(i,k,iMZLprd) = Prod(i,k,iMZLprd) -                   &
-     &             TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL)
-#endif
-              !-------------------------------------------------------------
-              !  Add ammonium to correct for excretion related to metabolism
-              !-------------------------------------------------------------
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                        &
-!    &          xi*(TempFuncMZL(i,k)*BasalMetMZL*dtdays*Bio(i,k,iMZL))
-     &          xi*(TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL))
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-!               bflx(iMZS,iNH4)= bflx(iMZS,iNH4) + TempFuncMZS(i,k) *   &
-!    &            BasalMetMZL*dtdays*Bio(i,k,iMZS)*xi
-                bflx(iMZL,iNH4)= bflx(iMZL,iNH4) + xi * (TFMZL*         &
-     &            BasalMetMZL*dtdays*Bio(i,k,iMZL))
-
-              END IF
-#endif
-
-            END DO
-          END DO
-
-          !=====================================
-          !  Mesozooplankton respiration losses
-          !=====================================
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-              cff1 = fpPhSCop * Bio(i,k,iPhS)+ fpPhLCop * Bio(i,k,iPhL) &
-     &             + fpMZLCop * Bio(i,k,iMZL)
-
-
-
-              if(cff1.lt.0.01_r8)THEN  !0.05
-                BasalMetCop= respCop*cff1/0.01_r8
-              else
-                BasalMetCop= respCop
-              endif
-
-              !---------------------------------
-              !  Copepod respiration correction
-              !---------------------------------
-
-              TFCop = exp(ktbmC * (Bio(i,k,itemp) - TrefC))
-
-              !------------------------------------
-              !  Neocalanus respiration correction
-              !------------------------------------
-
-              TFNCa = exp(ktbmN * (Bio(i,k,itemp) - TrefN))
-
-              !-----------------------------------
-              !  Euphausiid respiration correction
-              !-----------------------------------
-
-              TFEup = exp(ktbmE * (Bio(i,k,itemp) - TrefE))
-
-
-              ! starvation response
-
-              cff1 = fpPhSEup * Bio(i,k,iPhS)                           &
-     &               + fpPhLEup * Bio(i,k,iPhL)                         &
-!    &               + fpMZSEup * Bio(i,k,iMZS)                         &
-     &               + fpMZLEup * Bio(i,k,iMZL)                         &
-     &               + fpCopEup * Bio(i,k,iCop)
-
-              cff2 = fpPhSNCa * Bio(i,k,iPhS)+ fpPhLNCa * Bio(i,k,iPhL) &
-!    &               + fpMZSNCa * Bio(i,k,iMZS)                         &
-     &               + fpMZLNCa * Bio(i,k,iMZL)
-
-
-
-
-              if(cff1.lt.0.01_r8)THEN
-                BasalMetEup=respEup*cff1/0.01_r8
-              else
-                BasalMetEup= respEup
-              endif
-
-
-
-              if(cff2.lt.0.01_r8)THEN
-                BasalMetNC= respNC*cff2/0.01_r8
-                BasalMetCM= respCM*cff2/0.01_r8
-              else
-                BasalMetNC=respNC
-                BasalMetCM=respCM
-              end if
-
-              !---------------------------------------------------------
-              !  Change in concentration from small copepod respiration
-              !---------------------------------------------------------
-
-              DBio(i,k,iCop) = DBio(i,k,iCop) -                         &
-     &          BasalMetCop*TFCop*Bio(i,k,iCop)*dtdays
-
-
-#ifdef PROD3
-              Prod(i,k,iCopprd) = Prod(i,k,iCopprd) -                   &
-     &          TFCop*BasalMetCop*Bio(i,k,iCop)*dtdays
-#endif
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &          xi*(TFCop*BasalMetCop*dtdays*Bio(i,k,iCop))
-
-              !----------------------------------------------------------
-              !  Change in concentration from large copepods respiration
-              !----------------------------------------------------------
-
-              DBio(i,k,iNCaS) = DBio(i,k,iNCaS) -                       &
-     &            TFNCa*BasalMetCM*Bio(i,k,iNCaS)*dtdays
-
-              DBio(i,k,iNCaO) = DBio(i,k,iNCaO) -                       &
-     &            TFNCa*BasalMetNC*Bio(i,k,iNCaO)*dtdays
-#ifdef PROD3
-              Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) -                   &
-      &           TFNCa*BasalMetCM*Bio(i,k,iNCaS)*dtdays
-
-              Prod(i,k,iNCaprd) = Prod(i,k,iNCaprd) -                   &
-     &            TFNCa*BasalMetNC*Bio(i,k,iNCaO)*dtdays
-#endif
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &            xi*(TFNCa*BasalMetCM*dtdays*Bio(i,k,iNCaS))
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &            xi*(TFNCa*BasalMetNC*dtdays*Bio(i,k,iNCaO))
-
-              !------------------------------------------------------
-              !  Change in concentration from euphausiid respiration
-              !------------------------------------------------------
-
-              DBio(i,k,iEupS) = DBio(i,k,iEupS) -                       &
-     &            TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays
-
-              DBio(i,k,iEupO) = DBio(i,k,iEupO) -                       &
-     &            TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays
-#ifdef PROD3
-              Prod(i,k,iEupprd) = Prod(i,k,iEupprd) -                   &
-     &            TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays
-              Prod(i,k,iEupprd) = Prod(i,k,iEupprd) -                   &
-     &            TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays
-#endif
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &            xi*(TFEup*BasalMetEup* dtdays*Bio(i,k,iEupS))
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &            xi*(TFEup*BasalMetEup*dtdays*Bio(i,k,iEupO))
-
-
-#ifdef STATIONARY
-              Stat3(i,k,10)= TFNCa*BasalMetCM*Bio(i,k,iNCaS)*dtdays
-#endif
-
-
-#if defined JELLY
-
-              BasalMetJel = respJel
-
-              TFJel = Q10Jelr ** ( (Bio(i,k,itemp)-Q10JelTr)/10.0_r8)
-
-!             TFJel =1.0_r8
-
-              DBio(i,k,iJel) = DBio(i,k,iJel) -                         &
-     &            TFJel *BasalMetJel* Bio(i,k,iJel)*dtdays
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &            xi*(TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))
-
-# ifdef STATIONARY
-!             Stat3(i,k,6) =  TFJel *BasalMetJel* Bio(i,k,iJel)
-
-# endif
-
-# ifdef STATIONARY
-              IF (i.eq.3.and.j.eq.3) THEN
-!               Stat3(i,k,12)= Ra !TFJel *BasalMetJel* Bio(i,k,iJel)*dtdays
-              endif
-
-# endif
-# ifdef PROD3
-              Prod(i,k,iJelprd) = Prod(i,k,iJelprd) -                   &
-     &            TFJel*BasalMetJel*Bio(i,k,iJel)*dtdays
-# endif
-
-
-#endif
-
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iCop,iNH4)  = bflx(iCop,iNH4)  +                   &
-     &              TFCop*BasalMetCop*Bio(i,k,iCop) *dtdays*xi
-                bflx(iNCaS,iNH4) = bflx(iNCaS,iNH4) +                   &
-     &              TFNCa*BasalMetNCa*Bio(i,k,iNCaS)*dtdays*xi
-                bflx(iNCaO,iNH4) = bflx(iNCaO,iNH4) +                   &
-     &              TFNCa*BasalMetNCa*Bio(i,k,iNCaO)*dtdays*xi
-                bflx(iEupS,iNH4) = bflx(iEupS,iNH4) +                   &
-     &              TFEup*BasalMetEup*Bio(i,k,iEupS)*dtdays*xi
-                bflx(iEupO,iNH4) = bflx(iEupO,iNH4) +                   &
-     &              TFEup*BasalMetEup*Bio(i,k,iEupO)*dtdays*xi
-                bflx(iJel,iNH4)  = bflx(iJel,iNH4)  +                   &
-     &              TFJel*BasalMetJel*Bio(i,k,iJel) *dtdays*xi
-              END IF
-#endif
-            END DO
-          END DO
-
-          !=============
-          ! Molting:
-          !=============
-
-          !--------------------------------------------------------
-          !  NOTE: It is unclear where molting equation came from.
-          !  This is present only for euphausiids, not copepods
-          !--------------------------------------------------------
-
-!g        DO k=1,N(ng)
-!g          DO i=Istr,Iend
-!g            cff1 = 0.02_r8 / (10.0_r8 - 0.4_r8 * Bio(i,k,itemp))*     &
-!g   &               Bio(i,k,iEupS)
-!g            DBio(i,k,iDet) = DBio(i,k,iDet) + cff1 * dtdays
-!g            DBio(i,k,iEupS) = DBio(i,k,iEupS) - cff1 * dtdays
-!g
-!g            cff1 = 0.02_r8 / (10.0_r8 - 0.4_r8 * Bio(i,k,itemp))*     &
-!g   &               Bio(i,k,iEupO)
-!g            DBio(i,k,iDet) = DBio(i,k,iDet) + cff1 * dtdays
-!g            DBio(i,k,iEupO) = DBio(i,k,iEupO) - cff1 * dtdays
-!g
-
-!g#if defined BIOFLUX && defined BEST_NPZ
-!g            IF (i.eq.3.and.j.eq.3) THEN
-!g              bflx(iEupS,iDet)= bflx(iEupS,iDet) + cff1* dtdays*xi
-!g              bflx(iEupO,iDet)= bflx(iEupO,iDet) + cff1* dtdays*xi
-!g            END IF
-!g#endif
-!g          END DO
-!g        END DO
 
           !==========================================
           ! Detrital Remineralization   (Det -> NH4)
