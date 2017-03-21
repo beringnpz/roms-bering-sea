@@ -562,6 +562,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_PhS_EupS, Gra_PhL_EupS, Gra_MZL_EupS, Gra_Cop_EupS, Gra_IPhL_EupS, Gra_Det_EupS, Gra_DetF_EupS, Ege_EupS_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_PhS_EupO, Gra_PhL_EupO, Gra_MZL_EupO, Gra_Cop_EupO, Gra_IPhL_EupO, Gra_Det_EupO, Gra_DetF_EupO, Ege_EupO_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Cop_Jel, Gra_EupS_Jel, Gra_EupO_Jel, Gra_NCaS_Jel, Gra_NCaO_Jel, Ege_Jel_DetF
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Mor_PhS_Det, Mor_PhL_Det, Mor_MZL_Det, Mor_Cop_DetF, Mor_NCaS_DetF, Mor_EupS_DetF, Mor_NCaO_DetF, Mor_EupO_DetF, Mor_Jel_DetF
 
       ! Biological source/sinks
 
@@ -921,6 +922,16 @@
         Gra_NCaS_Jel   = 0
         Gra_NCaO_Jel   = 0
         Ege_Jel_DetF   = 0
+        Mor_PhS_Det    = 0
+        Mor_PhL_Det    = 0
+        Mor_MZL_Det    = 0
+        Mor_Cop_DetF   = 0
+        Mor_NCaS_DetF  = 0
+        Mor_EupS_DetF  = 0
+        Mor_NCaO_DetF  = 0
+        Mor_EupO_DetF  = 0
+        Mor_Jel_DetF   = 0
+
 
         ! Save a copy of the original biomass
 
@@ -1472,232 +1483,87 @@
             END DO
           END DO
 
-          ! TODO: overhauled to here (still need to compile check)
+          !------------------------------
+          ! Mortality and senescence
+          !------------------------------
 
-          !=====================================================
-          ! Phytoplankton Linear Mortality and Senescence Terms
-          !=====================================================
-!
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-!             cff1 = MAX( minmPhS , maxmPhS -                           &
-!    &              ( maxmPhS - minmPhS ) * Bio(i,k,iNO3) / NcritPhS)
-!             cff2 = MAX( minmPhL , maxmPhL -                           &
-!    &              ( maxmPhL - minmPhL ) * Bio(i,k,iNO3) / NcritPhL)
+          ! TODO: might not need the loops here, but the GF%zoop_force
+          ! dimensions complicate things so I'm keeping it
 
-
-              DBio(i,k,iPhS) = DBio(i,k,iPhS) -                         &
-     &                         mPhS* Bio(i,k,iPhS) * dtdays
-              DBio(i,k,iPhL) = DBio(i,k,iPhL) -                     &
-     &                         mPhL* Bio(i,k,iPhL) * dtdays
-
-#ifdef STATIONARY
-              if(i.eq.2) THEN
-                if(j.eq.2) THEN
-!                 Stat3(i,k,2)=  mPhS * dtdays * Bio(i,k,iPhL)
-                endif
-              endif
-              if(i.eq.3) THEN
-                if(j.eq.3) THEN
-!                 Stat3(i,k,2)=  mPhL * dtdays * Bio(i,k,iPhL)
-                endif
-              endif
-#endif
-              !--------------------------------------------------
-              !  Additions to detritus pool - phytoplankton mort
-              !--------------------------------------------------
-
-              DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
-     &                         ( mPhS * Bio(i,k,iPhS)) * dtdays
-              DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
-     &                         ( mPhL * Bio(i,k,iPhL)) * dtdays
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iPhS,iDet) = bflx(iPhS,iDet)                       &
-     &            + mPhS*Bio(i,k,iPhS)* dtdays*xi
-                bflx(iPhL,iDetF) = bflx(iPhL,iDetF)                     &
-     &            + mPhL*Bio(i,k,iPhL)* dtdays*xi
-              END IF
-#endif
-            END DO
-          END DO
-
-          !============================================================
-          !  Microzooplankton Mortality - use only linear OR QUADRATIC
-          !============================================================
+          ! TODO: change so exponent is set by user?  Would simplify the
+          ! mXXX (linear) vs mpredXXX (quadratic) coefficient choice, but
+          ! then the user would need to be careful that they changed the
+          ! parameter and exponent in tandem
 
           DO k=1,N(ng)
             DO i=Istr,Iend
 
+              ! Phytoplankton (linear senescence)
 
-              !  Linear
+              Mor_PhS_Det(i,k) = mPhS * Bio3d(i,k,iiPhS)
+              Mor_PhL_Det(i,k) = mPhL * Bio3d(i,k,iiPhL)
 
-!             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
-!     &                        mMZS * Bio(i,k,iMZS) * dtdays
-!             DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
-!     &                         mMZL * Bio(i,k,iMZL) * dtdays
+              ! Microzooplankton (quadratic mortality, with hard-coded
+              ! option for linear)
 
-              !  Quadratic
-
-!             DBio(i,k,iMZS) = DBio(i,k,iMZS) -                         &
-!    &                         mpredMZS*dtdays*Bio(i,k,iMZS)**2
-              DBio(i,k,iMZL) = DBio(i,k,iMZL) -                         &
-     &                         mpredMZL*dtdays*Bio(i,k,iMZL)**2
-
-#ifdef STATIONARY
-              if(i.eq.2) THEN
-                if(j.eq.2) THEN
-!                 Stat3(i,k,7)=  mpredMZL*dtdays*Bio(i,k,iMZL)**2
-                endif
-              endif
-#endif
-              !----------------------------------------------------------
-              !  Additions to detritus pool - natural microzoo mortality
-              !----------------------------------------------------------
-
-              ! if linear (George)
-
-!             Bio(i,k,iDet) = DBio(i,k,iDet) +                          &
-!    &                        mMZL * Bio(i,k,iMZL) * dtdays
-
-              ! if quadratic (Ken)
-
-              DBio(i,k,iDet) = DBio(i,k,iDet) +                         &
-      &                        (mpredMZL * Bio(i,k,iMZL)**2 ) * dtdays
-
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-!               bflx(iMZS,iDet)= bflx(iMZS,iDet)                        &
-!     &           + mMZS * Bio(i,k,iMZS) * dtdays*xi
-
-                bflx(iMZL,iDet)= bflx(iMZL,iDet)                        &
-     &            + mpredMZL*( Bio(i,k,iMZL)**2) * dtdays*xi
-              END IF
-#endif
-            END DO
-          END DO
-
-          !============================================
-          !  Mesozooplankton Mortality (Closure terms)
-          !============================================
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-              TFEup = Q10Eup ** ( (Bio(i,k,itemp)-Q10EupT) / 10.0_r8)
+!             Mor_MZL_Det(i,k) = mMZL*Bio3d(i,k,iiMZL)          ! linear
+              Mor_MZL_Det(i,k) = mpredMZL*Bio3d(i,k,iiMZL)**2   ! quadratic
 
 #ifdef fixedPRED
-              DBio(i,k,iCop)  = DBio(i,k,iCop)  - 0.5*Hz(i,j,k)/dtdays
-              DBio(i,k,iNCaS) = DBio(i,k,iNCaS) - 0.5*Hz(i,j,k)/dtdays
-              DBio(i,k,iEupS) = DBio(i,k,iEupS) - 1  *Hz(i,j,k)/dtdays
-              DBio(i,k,iNCaO) = DBio(i,k,iNCaS) - 0.5*Hz(i,j,k)/dtdays
-              DBio(i,k,iEupO) = DBio(i,k,iEupS) - 1  *Hz(i,j,k)/dtdays
-
+              ! TODO: original DBio(i,k,iXXX) = DBio(i,k,iXXX) - 0.5*Hz(i,j,k)/dtdays
+              ! Implies coefficient units of mg C * day * m^-4???  Typo?
+              ! Supposed to be constant rate, or maybe constant fraction
+              ! of biomass?  Assuming the former for now.
+              Mor_Cop_DetF(i,k)  = 0.5
+              Mor_NCaS_DetF(i,k) = 0.5
+              Mor_EupS_DetF(i,k) = 1
+              Mor_NCaO_DetF(i,k) = 0.5
+              Mor_EupO_DetF(i,k) = 1
 #else
+              TFEup = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 # ifdef FEAST
-              predSumCop  = TFEup*(mpredCop + fpredCop  * GF%zoop_force(1,1,i,j,1))*Bio(i,k,iCop)**2
-              predSumNCaS = TFEup*(mpredNca + fpredNcaS * GF%zoop_force(1,2,i,j,1))*Bio(i,k,iNCaS)**2
-              predSumEupS = TFEup*(mpredEup + fpredEupS * GF%zoop_force(1,4,i,j,1))*Bio(i,k,iEupS)**2
-              predSumNCaO = TFEup*(mpredNca + fpredNcaO * GF%zoop_force(1,3,i,j,1))*Bio(i,k,iNCaO)**2
-              predSumEupO = TFEup*(mpredEup + fpredEupO * GF%zoop_force(1,5,i,j,1))*Bio(i,k,iEupO)**2
+              ! Mesozooplankton (based on predation by fish)
+
+              Mor_Cop_DetF(i,k)  = TFEup*(mpredCop + fpredCop  * GF%zoop_force(1,1,i,j,1))*Bio3d(i,k,iiCop)**2
+              Mor_NCaS_DetF(i,k) = TFEup*(mpredNca + fpredNcaS * GF%zoop_force(1,2,i,j,1))*Bio3d(i,k,iiNCaS)**2
+              Mor_EupS_DetF(i,k) = TFEup*(mpredEup + fpredEupS * GF%zoop_force(1,4,i,j,1))*Bio3d(i,k,iiEupS)**2
+              Mor_NCaO_DetF(i,k) = TFEup*(mpredNca + fpredNcaO * GF%zoop_force(1,3,i,j,1))*Bio3d(i,k,iiNCaO)**2
+              Mor_EupO_DetF(i,k) = TFEup*(mpredEup + fpredEupO * GF%zoop_force(1,5,i,j,1))*Bio3d(i,k,iiEupO)**2
 # else
-              predSumCop  = TFEup*(mpredCop)*Bio(i,k,iCop)**2
-              predSumNCaS = TFEup*(mpredNca)*Bio(i,k,iNCaS)**2
-              predSumEupS = TFEup*(mpredEup)*Bio(i,k,iEupS)**2
-              predSumNCaO = TFEup*(mpredNca)*Bio(i,k,iNCaO)**2
-              predSumEupO = TFEup*(mpredEup)*Bio(i,k,iEupO)**2
-# endif
-
-              DBio(i,k,iCop)  = DBio(i,k,iCop)  - predSumCop  * dtdays
-              DBio(i,k,iNCaS) = DBio(i,k,iNCaS) - predSumNCaS * dtdays
-              DBio(i,k,iEupS) = DBio(i,k,iEupS) - predSumEupS * dtdays
-              DBio(i,k,iNCaO) = DBio(i,k,iNCaO) - predSumNCaO * dtdays
-              DBio(i,k,iEupO) = DBio(i,k,iEupO) - predSumEupO * dtdays
-#endif
-
-#ifdef FEAST
-# ifdef PROD3
-              pt3(i,j,k,nnew,iQCopMort)  = predSumCop
-              pt3(i,j,k,nnew,iQNCaSMort) = predSumNCaS
-              pt3(i,j,k,nnew,iQEupSMort) = predSumEupS
-              pt3(i,j,k,nnew,iQNCaOMort) = predSumNCaO
-              pt3(i,j,k,nnew,iQEupOMort) = predSumEupO
+              ! Mesozooplankton (quadratic predation closure)
+              Mor_Cop_DetF(i,k)  = TFEup*(mpredCop)*Bio3d(i,k,iiCop)**2
+              Mor_NCaS_DetF(i,k) = TFEup*(mpredNca)*Bio3d(i,k,iiNCaS)**2
+              Mor_EupS_DetF(i,k) = TFEup*(mpredEup)*Bio3d(i,k,iiEupS)**2
+              Mor_NCaO_DetF(i,k) = TFEup*(mpredNca)*Bio3d(i,k,iiNCaO)**2
+              Mor_EupO_DetF(i,k) = TFEup*(mpredEup)*Bio3d(i,k,iiEupO)**2
 # endif
 #endif
 
-#ifdef STATIONARY
-!g            Stat3(i,k,8)=TFEup*mpredNCa*dtdays*Bio(i,k,iNCaS)**2
-#endif
+              ! Jellyfish (quadratic predation closure)
 
-              !-----------------------------------
-              !  Detritus from nonlinear mortality
-              !-----------------------------------
+              Mor_Jel_DetF(i,k) = mpredJel*Bio3d(i,k,iiJel)**2
 
-              DBio(i,k,iDetF) = DBio(i,k,iDetF) + dtdays *              &
-     &                          (predSumCop + predSumNCaS + predSumEupS &
-     &                          + predSumNCaO + predSumEupO)
-
-#ifdef STATIONARY
-
-# ifdef fixedPRED
-              Stat3(i,k,14) =                                           &
-     &          + 0.5*Hz(i,j,k)/dtdays                                  &
-     &          +0.5*Hz(i,j,k)/dtdays                                   &
-     &          + 1*Hz(i,j,k)/dtdays                                    &
-     &          0.5*Hz(i,j,k)/dtdays                                    &
-     &          +1*Hz(i,j,k)/dtdays
-
-# else
-
-              Stat3(i,k,14) = dtdays *                                  &
-     &                        (predSumCop + predSumNCaS + predSumEupS + &
-     &                         predSumNCaO + predSumEupO)
-
-# endif
-
-#endif
-
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iCop,iDetF)= bflx(iCop,iDetF)  + dtdays*xi*predSumCop
-                bflx(iNcaS,iDetF)= bflx(iNCaS,iDetF)+ dtdays*xi*predSumNCaS
-                bflx(iEupS,iDetF)= bflx(iEupS,iDetF)+ dtdays*xi*predSumEupS
-                bflx(iNcaO,iDetF)= bflx(iNCaO,iDetF)+ dtdays*xi*predSumNCaO
-                bflx(iEupO,iDetF)= bflx(iEupO,iDetF)+ dtdays*xi*predSumEupO
-              END IF
-#endif
-
-#if defined JELLY
-              DBio(i,k,iJel) = DBio(i,k,iJel) - mpredJel *              &
-     &                         Bio(i,k,iJel)**2  * dtdays
-
-
-# ifdef STATIONARY
-!             Stat3(i,k,5) =mpredJel *  Bio(i,k,iJel)**2
-
-# endif
-              DBio(i,k,iDetF) = DBio(i,k,iDetF)                         &
-     &                   + mpredJel * Bio(i,k,iJel)**2  * dtdays
-
-# if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iJel,iDet)= bflx(iJel,iDet)+                       &
-     &                           mpredJel*dtdays*Bio(i,k,iJel)*xi
-              END IF
-# endif
-
-# ifdef STATIONARY
-              IF (i.eq.3.and.j.eq.3) THEN
-!g              Stat3(i,k,11)=mpredJel*Bio(i,k,iJel)**2  * dtdays
-
-              END IF
-# endif
-
-
-#endif
             END DO
           END DO
 
+          ! Convert mortality fluxes from volumetric to integrated over
+          ! layer
+
+          DO k=1,N(ng)
+            DO i=Istr,Iend
+              Mor_PhS_Det(i,k)   = Mor_PhS_Det(i,k)   * Hz(i,j,k)
+              Mor_PhL_Det(i,k)   = Mor_PhL_Det(i,k)   * Hz(i,j,k)
+              Mor_MZL_Det(i,k)   = Mor_MZL_Det(i,k)   * Hz(i,j,k)
+              Mor_Cop_DetF(i,k)  = Mor_Cop_DetF(i,k)  * Hz(i,j,k)
+              Mor_NCaS_DetF(i,k) = Mor_NCaS_DetF(i,k) * Hz(i,j,k)
+              Mor_EupS_DetF(i,k) = Mor_EupS_DetF(i,k) * Hz(i,j,k)
+              Mor_NCaO_DetF(i,k) = Mor_NCaO_DetF(i,k) * Hz(i,j,k)
+              Mor_EupO_DetF(i,k) = Mor_EupO_DetF(i,k) * Hz(i,j,k)
+              Mor_Jel_DetF(i,k)  = Mor_Jel_DetF(i,k)  * Hz(i,j,k)
+            END DO
+          END DO
+
+! TODO: overhauled to here
 
           !=================================
           !Phytoplankton respiration losses
