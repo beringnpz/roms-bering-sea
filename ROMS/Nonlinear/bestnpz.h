@@ -565,6 +565,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Mor_PhS_Det, Mor_PhL_Det, Mor_MZL_Det, Mor_Cop_DetF, Mor_NCaS_DetF, Mor_EupS_DetF, Mor_NCaO_DetF, Mor_EupO_DetF, Mor_Jel_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Res_PhS_NH4, Res_PhL_NH4,Res_MZL_NH4, Res_Cop_NH4, Res_NCaS_NH4, Res_NCaO_NH4, Res_EupS_NH4, Res_EupO_NH4, Res_Jel_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Dec_Det_NH4, Dec_DetF_NH4, Dec_NH4_NO3
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Dec_BenDet_NH4
 
       ! Biological source/sinks
 
@@ -946,6 +947,18 @@
         Dec_Det_NH4    = 0
         Dec_DetF_NH4   = 0
         Dec_NH4_NO3    = 0
+        Gra_Det_Ben    = 0
+        Gra_DetF_Ben   = 0
+        Gra_PhS_Ben    = 0
+        Gra_PhL_Ben    = 0
+        Gra_BenDet_Ben = 0
+        Exc_Ben_NH4    = 0
+        Exc_Ben_BenDet = 0
+        Res_Ben_NH4    = 0
+        Mor_Ben_BenDet = 0
+        Pre_Ben_BenDet = 0
+        Dec_BenDet_NH4 = 0
+
 
 
 
@@ -1661,19 +1674,12 @@
           END DO
 
 
-! TODO: overhauled to here
-
-
 #ifdef BENTHIC
-          !=================
+          !-----------------
           !Benthic Sub Model
-          !=================
+          !-----------------
 
           DO i=Istr,Iend
-
-            !----------------------------
-            !  Growth of Benthic Infauna
-            !----------------------------
 
             ! Pelagic food accessible to benthic infauna
 
@@ -1698,10 +1704,10 @@
 
               ! Food available to benthos
 
-              totD  = totD  + Bio(i,k,iDet)  * Hz(i,j,k) * frac1(i,k)
-              totDF = totDF + Bio(i,k,iDetF) * Hz(i,j,k) * frac1(i,k)
-              totPS = totPS + Bio(i,k,iPhS)  * Hz(i,j,k) * frac1(i,k)
-              totPL = totPL + Bio(i,k,iPhL)  * Hz(i,j,k) * frac1(i,k)
+              totD  = totD  + Bio2d(i,k,iiDet) *frac1(i,k)
+              totDF = totDF + Bio2d(i,k,iiDetF)*frac1(i,k)
+              totPS = totPS + Bio2d(i,k,iiPhS) *frac1(i,k)
+              totPL = totPL + Bio2d(i,k,iiPhL) *frac1(i,k)
 
               cff2 = cff2 + Hz(i,j,k)
             END DO
@@ -1717,207 +1723,79 @@
 
             ! Potential food available from  sea floor
 
-            cff5 = (prefD * BioB(i,k,iBenDet) / (prefD *                &
-     &             BioB(i,k,iBenDet) + LupD)) * prefD * BioB(i,k,iBenDet)
+            cff5 = (prefD * Bio2d(i,1,iiBenDet) /                       &
+     &             (prefD * Bio2d(i,1,iiBenDet) + LupD)) *              &
+                    prefD * Bio2d(i,1,iiBenDet)
 
-            ! Uptake rates mediated by bottom layer temperature
+            ! Temperature mediation (for feeding and mortality)
 
-             k = 1
-             Temp1 = Bio(i,k,itemp)
-             cff0 = q10r**((Temp1-T0benr)/10.0_r8)
+            cff0 = q10r**((Temp(i,1)-T0benr)/10.0_r8)
 
-            !  uptake of each food category
+            ! Total uptake of each food category
 
-            cff7  = min(cff1,(cff0*cff1*BioB(i,k,iBen)*Rup/(cff6+KupP)))
-            cff8  = min(cff2,(cff0*cff2*BioB(i,k,iBen)*Rup/(cff6+KupP)))
-            cff9  = min(cff3,(cff0*cff3*BioB(i,k,iBen)*Rup/(cff6+KupP)))
-            cff10 = min(cff4,(cff0*cff4*BioB(i,k,iBen)*Rup/(cff6+KupP)))
-            cff11 = min(cff5,(cff0*cff5*BioB(i,k,iBen)*Rup/(cff5+KupD)))
+            cff7  = min(cff1,(cff0*cff1*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! D
+            cff8  = min(cff2,(cff0*cff2*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! DF
+            cff9  = min(cff3,(cff0*cff3*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! PS
+            cff10 = min(cff4,(cff0*cff4*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! PL
+            cff11 = min(cff5,(cff0*cff5*BioB(i,k,iBen)*Rup/(cff5+KupD))) ! BenDet
 
-            ! Addition to benthos
-
-            DBioB(i,1,iBen) = DBioB(i,1,iBen) + (cff7 +cff8+cff9+cff10+cff11) * dtdays
-
-            ! Feeding losses from appropriate layers
-
-            DBioB(i,k,iBenDet) = DBioB(i,k,iBenDet) - dtdays*cff11
+            ! Distribute pelagic feeding losses to appropriate water
+            ! column layers
+            ! TODO: will need to account for multi-layers-to-bottom-layer
+            ! for input to Ben when calculating total Ben DBio
 
             DO k = 1,N(ng)
 
-              DBio(i,k,iDet)  = DBio(i,k,iDet)  - cff7  * frac2(i,k) * dtdays / Hz(i,j,k)
-              DBio(i,k,iDetF) = DBio(i,k,iDetF) - cff8  * frac2(i,k) * dtdays / Hz(i,j,k)
-              DBio(i,k,iPhS)  = DBio(i,k,iPhS)  - cff9  * frac2(i,k) * dtdays / Hz(i,j,k)
-              DBio(i,k,iPhL)  = DBio(i,k,iPhL)  - cff10 * frac2(i,k) * dtdays / Hz(i,j,k)
+              Gra_Det_Ben(i,k)  = cff7  * frac2(i,k) ! mg C m^-2 d^-1
+              Gra_DetF_Ben(i,k) = cff8  * frac2(i,k)
+              Gra_PhS_Ben(i,k)  = cff9  * frac2(i,k)
+              Gra_PhL_Ben(i,k)  = cff10 * frac2(i,k)
 
             END DO
 
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+2,NT(ng)+1)=bflx(NT(ng)+2,NT(ng)+1)           &
-     &            +dtdays*cff9*xi
-            ENDIF
-# endif
+            ! Benthic feeding takes place in bottom layer for bookkeeping
+            ! purposes
 
-            !--------------------
-            ! Benthic Production
-            !--------------------
-!
-# ifdef PROD2
-            Prod2(i,iBenPrd)=Prod2(i,iBenPrd) + (cff11)*dtdays
-            Prod2(i,iBenPrd)=Prod2(i,iBenPrd) + (cff7+cff8+cff9+cff10)*dtdays
-# endif
+            Gra_BenDet_Ben(i,1) = cff11 ! mg C m^-2 d^-1
 
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
+            ! Assume all excretion occurs in the bottom layer too.  Half
+            ! goes to NH4 and half to BenDet
 
-              bflx(iDet,NT(ng)+1) = bflx(iDet,NT(ng)+1) +               &
-    &             dtdays*cff6/Hz(i,j,k)*xi
-              bflx(iPhL,NT(ng)+1) = bflx(iPhL,NT(ng)+1) +               &
-    &             dtdays*cff7/Hz(i,j,k)*xi
-              bflx(iPhS,NT(ng)+1) = bflx(iPhS,NT(ng)+1) +               &
-    &             dtdays*cff8/Hz(i,j,k)*xi
+            Exc_Ben_BenDet(i,1) = (eexD * (cff7 + cff8 + cff11) +       &
+     &                             eex  * (cff9 + cff10)) * 0.5_r8
+            Exc_Ben_NH4(i,1) = Exc_Ben_BenDet(i,1)
 
-            END IF
-# endif
-            !------------
-            !  Excretion
-            !------------
+            ! Respiration (also takes place in bottom layer)
 
-            ! Assume all excretion occurs in the bottom layer
+            cff3 = cff0 * Bio2d(i,1,iiBen) * Rres
+            cff4 = ((1_r8 - eexD) * (cff7 + cff8 + cff11) +             &
+     &              (1_r8 - eex)  * (cff9 + cff10)) * Qres
 
-            k = 1 ! I'm trying to hard-code the bottom layer thing, but just in case I missed some...
-            cff1=cff7 *eexD
-            cff2=cff8 *eexD
-            cff3=cff9 *eex
-            cff4=cff10*eex
-            cff5=cff11*eexD
+            Res_Ben_NH4(i,1) = cff3 + cff4 ! mg C m^-2 d^-1
 
-            DBioB(i,1,iBen) = DBioB(i,1,iBen)                             &
-     &                        -(cff1+cff2+cff3+cff4+cff5)*dtdays
+            ! Mortality
 
+            Mor_Ben_BenDet(i,1) = rmort*Bio2d(i,1,iiBen)*cff0 ! mg C m^-2 d^-1
 
-            !  Material excreted is considered inorganic and not available
-            !  for further secondary production
+            ! Additional predation TODO: is it right that this goes immediately to BenDet?
+            ! This additional loss is due to undefined predation on
+            ! benthic infauna, which is assumed to make its way back to
+            ! the benthic detritus pool
 
-            DBio(i,1,iNH4)= DBio(i,1,iNH4)+ xi * dtdays * 0.5_r8        &
-     &         *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,1)
+            Pre_Ben_BenDet(i,1) = Bio2d(i,1,iiBen)**2 * cff0 * BenPred ! mg C m^-2 d^-1
 
-            DBioB(i,1,iBenDet)= DBioB(i,1,iBenDet)+dtdays               &
-     &         *(cff1+cff2+cff3+cff4+cff5)*0.5_r8
+            ! Benthic remineralization: assumes only the top 25% is
+            ! available to remineralize to NH4 (in bottom layer)
 
+            PON = Bio3d(i,k,iiBenDet)*0.25*xi  ! Benthic Particulate organic nitrogen
+            cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
 
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
-     &          + (cff6+cff7+cff8+cff9+cff10)*dtdays*xi
-            ENDIF
-# endif
-            !--------------
-            !  Respiration
-            !--------------
-
-            cff3=cff0*BioB(i,1,iBen)*Rres
-            cff4=Qres*(((1_r8-eexD)*cff7) + ((1_r8-eexD)*cff8) +        &
-    &            ((1_r8-eex)*cff9) + ((1_r8-eex)*cff10) +               &
-    &            ((1_r8-eexD)*cff11))
-
-
-
-            cff6=cff3+cff4
-
-            DBioB(i,1,iBen)=DBioB(i,1,iBen) -cff6*dtdays
-            DBio(i,1,iNH4)= DBio(i,1,iNH4)+ xi*dtdays*cff6/Hz(i,j,1)
-
-
-# ifdef STATIONARY2
-            Stat2(i,4)=cff3*dtdays
-            Stat2(i,5)=cff4*dtdays
-
-# endif
-
-
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+1,iNH4)=bflx(NT(ng)+1,iNH4)                   &
-     &          +xi*dtdays*cff6/Hz(i,j,1)
-            ENDIF
-# endif
-            !---------------------
-            !  Benthic Production
-            !---------------------
-# ifdef PROD2
-            Prod2(i,iBenPrd) = Prod2(i,iBenPrd) - cff6*dtdays
-
-# endif
-            !------------
-            !  Mortality
-            !------------
-
-            cff1= rmort*BioB(i,k,iBen)*cff0
-            DBioB(i,k,iBen) = DBioB(i,k,iBen)- cff1 * dtdays
-            DBioB(i,k,iBenDet)= DBioB(i,k,iBenDet)+cff1*dtdays
-# ifdef STATIONARY2
-
-            Stat2(i,6)= cff1 * dtdays
-# endif
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
-     &          + cff1*dtdays*xi
-            ENDIF
-# endif
-
-            !------------
-            !  Predation
-            !------------
-
-            DBioB(i,k,iBen) =DBioB(i,k,iBen)                            &
-     &           -cff0*BenPred*dtdays*BioB(i,k,iBen)**2
-
-            DBioB(i,k,iBenDet) =DBioB(i,k,iBenDet)                      &
-     &           +cff0*BenPred*dtdays*BioB(i,k,iBen)**2
-
-
-# ifdef STATIONARY2
-
-            Stat2(i,7)=cff0*BenPred*dtdays*BioB(i,k,iBen)**2
-# endif
-
-            !-------------------------------------
-            !  (Det -> NH4) temperature dependent
-            !-------------------------------------
-
-            ! Assume only the top 25% available -> NH4
-
-            PON = BioB(i,k,iBenDet)*0.25*xi/Hz(i,j,k)  !Benthic Particulate organic nitrogen
-
-!           cff5= q10**((Temp1-T0ben)/10.0_r8)
-            cff1=Pv0*exp(PvT*Temp1)*PON       !-Kawamiya 2000
-!           cff1=Pv0*cff5*PON
-
-            !  Arhonditsis
-
-            cff2 = Bio(i,k,iNH4)/(KNH4Nit +Bio(i,k,iNH4))
-
-            DBioB(i,k,iBenDet) =DBioB(i,k,iBenDet)                      &
-     &           - (cff1/xi)*dtdays*Hz(i,j,k)
-
-            DBio(i,k,iNH4)= DBio(i,k,iNH4)                              &
-     &           + (cff1)*dtdays
-
-
-# if defined BIOFLUX && defined BEST_NPZ
-            IF (i.eq.3.and.j.eq.3) THEN
-              bflx(NT(ng)+2,iNH4)=bflx(NT(ng)+2,iNH4)                   &
-     &            +  iremin*(cff1)*dtdays
-            ENDIF
-# endif
+            Dec_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2
 
           END DO
-
 #endif
 
-
+! TODO: overhauled to here
 
           !
           !==============================================================
