@@ -564,6 +564,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Cop_Jel, Gra_EupS_Jel, Gra_EupO_Jel, Gra_NCaS_Jel, Gra_NCaO_Jel, Ege_Jel_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Mor_PhS_Det, Mor_PhL_Det, Mor_MZL_Det, Mor_Cop_DetF, Mor_NCaS_DetF, Mor_EupS_DetF, Mor_NCaO_DetF, Mor_EupO_DetF, Mor_Jel_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Res_PhS_NH4, Res_PhL_NH4,Res_MZL_NH4, Res_Cop_NH4, Res_NCaS_NH4, Res_NCaO_NH4, Res_EupS_NH4, Res_EupO_NH4, Res_Jel_NH4
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Dec_Det_NH4, Dec_DetF_NH4, Dec_NH4_NO3
 
       ! Biological source/sinks
 
@@ -572,6 +573,7 @@
       real(r8) :: alphaPhSv, alphaPhLv, DrateS, DrateL, PmaxS, PmaxL, PmaxsS, PmaxsL
       real(r8) :: IcePhlAvail
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
+      real(r8) :: ParW
 
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
@@ -941,6 +943,11 @@
         Res_EupS_NH4   = 0
         Res_EupO_NH4   = 0
         Res_Jel_NH4    = 0
+        Dec_Det_NH4    = 0
+        Dec_DetF_NH4   = 0
+        Dec_NH4_NO3    = 0
+
+
 
         ! Save a copy of the original biomass
 
@@ -1614,127 +1621,48 @@
             END DO
           END DO
 
+          !------------------------------
+          ! Decomposition, nitrification,
+          ! and remineralization
+          !------------------------------
+
+          DO k=1,N(ng)
+            DO i=Istr,Iend
+
+              ! Detrital remineralization
+
+              PON = Bio3d(i,k,iiDet)*xi  ! Particulate organic nitrogen in Det
+              Dec_Det_NH4(i,k) = (Pv0 * exp(PvT*Temp(i,k)) * PON) ! mmol N m^-3 d^-1
+
+              PON = Bio3d(i,k,iiDetF)*xi  ! Particulate organic nitrogen in DetF
+              Dec_DetF_NH4(i,k) = (Pv0 * exp(PvT*Temp(i,k)) * PON) ! mmol N m^-3 d^-1
+
+              ! Nitrification
+
+              ParW = PAR(i,k)/0.394848_r8 ! convert to W TODO: is this supposed to be PAR(i,k) or PARs(i)?
+              NitrifMax = Nitr0 * exp(-ktntr*(Temp(i,k) - ToptNtr)**2)     ! Arhonditsis 2005 temperature dependence
+              DLNitrif = (1 - MAX(0.0_r8, (ParW - tI0)/(KI + ParW - tI0))) ! Fennel light dependence
+              cff1 = Bio3d(i,k,iiNH4)/(KNH4Nit +Bio3d(i,k,iiNH4))          ! Arhonditsis saturation
+
+              Dec_NH4_NO3(i,k) = NitrifMax * Bio3d(i,k,iiNH4) * DLNitrif * cff1 !  mmol N m^-3 d^-1
+
+            END DO
+          END DO
+
+          ! Convert decomp fluxes from volumetric to integrated over
+          ! layer, and from N to C for consistency with other fluxes
+
+          DO k=1,N(ng)
+            DO i=Istr,Iend
+              Dec_Det_NH4(i,k)  = Dec_Det_NH4(i,k)  * Hz(i,j,k)/xi
+              Dec_DetF_NH4(i,k) = Dec_DetF_NH4(i,k) * Hz(i,j,k)/xi
+              Dec_NH4_NO3(i,k)  = Dec_NH4_NO3(i,k)  * Hz(i,j,k)/xi
+            END DO
+          END DO
+
+
 ! TODO: overhauled to here
 
-          !==========================================
-          ! Detrital Remineralization   (Det -> NH4)
-          !==========================================
-
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-              Temp1 = Bio(i,k,itemp)
-              !----------------------
-              !  From Frost (1993).
-              !----------------------
-!             cff1 = regen * dgrad * Bio(i,k,iDet)
-!             DBio(i,k,iNH4) = DBio(i,k,iNH4) + xi * cff1 * dtdays
-!             DBio(i,k,iDet) = DBio(i,k,iDet) - cff1 * dtdays
-
-              !-----------------------
-              !  From Kawamiya(2000)
-              !-----------------------
-              PON = Bio(i,k,iDet)*xi  !Particulate organic nitrogen
-
-              DBio(i,k,iDet) = DBio(i,k,iDet) -                         &
-     &            ((Pv0*exp(PvT*Temp1)*PON)/xi)*dtdays
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iDet,iNH4)= bflx(iDet,iNH4) +                      &
-     &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-              END IF
-#endif
-
-              PON = Bio(i,k,iDetF)*xi  !Particulate organic nitrogen
-
-              DBio(i,k,iDetF) = DBio(i,k,iDetF) -                       &
-     &            ((Pv0*exp(PvT*Temp1)*PON)/xi)*dtdays
-              DBio(i,k,iNH4) = DBio(i,k,iNH4) +                         &
-     &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-
-
-
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iDetF,iNH4)= bflx(iDetF,iNH4) +                    &
-     &            ((Pv0*exp(PvT*Temp1)*PON))*dtdays
-              END IF
-#endif
-            END DO
-          END DO
-          !=============================
-          !Nitrification  (NH4 -> NO3)
-          !=============================
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-
-
-              !-----------------------
-              !Temperature dependance
-              !-----------------------
-
-              ! Kawamiya 2000  NitrMax=Nitr0*exp(KnT*Temp1) - Ken
-
-!             NitrifMax=GetNitrifMaxK(Temp1,KnT,Nitr0)
-
-              ! Arhonditsis NitrMax=Nitr0*exp(-ktntr*(Temp1 - ToptNtr)**2)
-
-              NitrifMax=GetNitrifMaxA(Nitr0, ktntr,Temp1,ToptNtr)
-
-              !  No temperaure effects - NitrMax is constant
-
-!             NitrifMax=Nitr0
-
-
-              !-------------------------
-              !  Light/Depth dependance
-              !-------------------------
-
-              !  Fennel
-
-              DLNitrif=GetNitrifLight(Par1,tI0,KI)
-
-              ! Denman
-
-!             DLNitrif = (z_wL(k)**10_r8)/( (20_r8**10_r8) +            &
-!    &                    z_wL(k)**10_r8)
-
-              !  No Depth/Ligt effects
-
-!               DLNitrif= 1.0_r8
-
-
-              !-------------
-              !  Saturation
-              !-------------
-
-              ! Arhonditsis
-
-              cff1 = Bio(i,k,iNH4)/(KNH4Nit +Bio(i,k,iNH4))
-
-              !  No saturation -ken
-
-!               cff1 =1.0_r8
-
-
-              DBio(i,k,iNH4) = DBio(i,k,iNH4)  - NitrifMax *            &
-     &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays
-
-              DBio(i,k,iNO3) = DBio(i,k,iNO3) + NitrifMax *             &
-     &            Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays
-
-#if defined BIOFLUX && defined BEST_NPZ
-              IF (i.eq.3.and.j.eq.3) THEN
-                bflx(iNH4,iNO3)= bflx(iNH4,iNO3) +                      &
-     &            NitrifMax  * Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays
-              END IF
-#endif
-            END DO
-          END DO
 
 #ifdef BENTHIC
           !=================
