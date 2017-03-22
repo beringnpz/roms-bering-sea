@@ -2052,7 +2052,7 @@
      &                        -  Mor_EupO_DetF                          &
      &                        -  Res_EupO_NH4)*dtdays ! EupO: mg C m^-2
 
-           DBio(:,:,iiDet   ) = (Ege_MZL_Det                            &
+          DBio(:,:,iiDet   )  = (Ege_MZL_Det                            &
      &                        +  Mor_PhS_Det                            &
      &                        +  Mor_PhL_Det                            &
      &                        +  Mor_MZL_Det                            &
@@ -2061,7 +2061,7 @@
      &                        -  Dec_Det_NH4                            &
      &                        -  Gra_Det_Ben)*dtdays ! Det: mg C m^-2
 
-           DBio(:,:,iiDetF  ) = (Ege_Cop_DetF                           &
+          DBio(:,:,iiDetF  )  = (Ege_Cop_DetF                           &
      &                        +  Ege_NCaS_DetF                          &
      &                        +  Ege_NCaO_DetF                          &
      &                        +  Ege_EupS_DetF                          &
@@ -2078,7 +2078,7 @@
      &                        -  Dec_DetF_NH4                           &
      &                        -  Gra_DetF_Ben)*dtdays ! DetF: mg C m^-2
 
-           DBio(:,:,iiJel   ) = (Gra_Cop_Jel                            &
+          DBio(:,:,iiJel   )  = (Gra_Cop_Jel                            &
      &                        +  Gra_EupS_Jel                           &
      &                        +  Gra_EupO_Jel                           &
      &                        +  Gra_NCaS_Jel                           &
@@ -2087,11 +2087,11 @@
      &                        -  Mor_Jel_DetF                           &
      &                        -  Res_Jel_NH4)*dtdays ! Jel: mg C m^-2
 
-           DBio(:,:,iiFe    ) = (                                       &
+          DBio(:,:,iiFe    )  = (                                       &
      &                        -  Gpp_NO3_PhS                            &
      &                        -  Gpp_NO3_PhL)*FeC*dtdays ! Fe: umol Fe m^-2
 
-           DBio(:,:,iiBen   ) = (Gra_Det_Ben                            &
+          DBio(:,:,iiBen   )  = (Gra_Det_Ben                            &
      &                        +  Gra_DetF_Ben                           &
      &                        +  Gra_PhS_Ben                            &
      &                        +  Gra_PhL_Ben                            &
@@ -2102,13 +2102,13 @@
      &                        -  Mor_Ben_BenDet                         &
      &                        -  Pre_Ben_BenDet)*dtdays ! Ben: mg C m^-2
 
-           DBio(:,:,iiBenDet) = (Exc_Ben_BenDet                         &
+          DBio(:,:,iiBenDet)  = (Exc_Ben_BenDet                         &
      &                        +  Mor_Ben_BenDet                         &
      &                        +  Pre_Ben_BenDet                         &
      &                        -  Gra_BenDet_Ben                         &
      &                        -  Dec_BenDet_NH4)*dtdays ! BenDet: mg C m^-2
 
-           DBio(:,:,iiIcePhL) = (Gpp_INO3_IPhL                          &
+          DBio(:,:,iiIcePhL)  = (Gpp_INO3_IPhL                          &
      &                        +  Gpp_INH4_IPhL                          &
      &                        -  Gra_IPhL_Cop                           &
      &                        -  Gra_IPhL_NCaS                          &
@@ -2119,16 +2119,49 @@
      &                        -  Mor_IPhL_INH4                          &
      &                        -  Twi_IPhL_PhL)*dtdays ! IcePhL: mg C m^-2
 
-           DBio(:,:,iiIceNO3) = (Dec_INH4_INO3                          &
+          DBio(:,:,iiIceNO3)  = (Dec_INH4_INO3                          &
      &                        -  Gpp_INO3_IPhL                          &
      &                        -  Twi_INO3_NO3)*xi*dtdays ! IceNO3: mmol N m^-2
 
-           DBio(:,:,iiIceNH4) = (Res_IPhL_INH4                          &
+          DBio(:,:,iiIceNH4)  = (Res_IPhL_INH4                          &
      &                        +  Mor_IPhL_INH4                          &
      &                        -  Gpp_INH4_IPhL                          &
      &                        -  Dec_INH4_INO3                          &
      &                        -  Twi_INH4_NH4)*xi*dtdays ! IceNH4: mmol N m^-2
 
+
+          ! TODO: Collect net production, bflux values
+
+          ! Add DBio terms to existing biomass
+
+          Bio2d = Bio2d + DBio
+
+          ! Infauna (Ben) group can receive flux from water column layers.
+          ! Move these additions to the bottom layer now, consistent with
+          ! the initial setup of the Bio2d and Bio3d arrays.
+
+          Bio2d(:,1,iiBen) = sum(Bio2d(:,:,iiBen), DIM=2)
+          Bio2d(:,2:N(ng),iiBen) = 0
+
+          ! TODO: Eliminate negatives?  Hopefully processes are
+          ! formulated to prevent any, but very fast overturning might
+          ! result in numerical issues.  Brute force zero traps will
+          ! eliminate conservation of mass, so I'd prefer to look into
+          ! increasing BioIter if this is a problem
+
+
+          ! Sync volumetric version to the updated per-area values
+
+          DO i=Istr,Iend
+            DO k = 1,N(ng)
+              DO itrc = 1:NBT+NBEN ! Pelagic (and benthic, for bookkeeping)
+                Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/Hz(i,j,k)
+              END DO
+              DO itrc = 18,20 ! Ice
+                Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/aidz
+              END DO
+            END DO
+          END DO
 
 ! TODO: overhauled to here
 
