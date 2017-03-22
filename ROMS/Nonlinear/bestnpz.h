@@ -1937,7 +1937,6 @@
 
 ! TODO: overhauled to here
 
-
           !==============================================================
           ! Vertical Movement
           !==============================================================
@@ -3080,15 +3079,15 @@
 
       Subroutine TracerSink(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
       ! Arguments:
-      ! nn:     scalar, # layers
-      ! Hz:     n x 1, layer thickness (m)
-      ! z_w:    n+1 x 1, depths of layer edges (m, negative down)
-      ! dtdays: time step (days)
-      ! wBio:   sinking rate (m d^-1, positive down)
-      ! zlimit: depth below which sinking stops (m, negative down, >=0 = no limit)
-      ! Bio:    n x 1, biomass concentration input (g m^-3)
-      ! Bout:   n x 1, biomass concentration output (g m^-3)
-      ! lost:   scalar, amount of biomass lost across lower boundary (g m^-2)
+      ! nn:     1 x 1,        # layers
+      ! Hz:     1 x 1 x nn,   layer thickness (m)
+      ! z_w:    1 x 1 x nn+1, depths of layer edges (m, negative down)
+      ! dtdays: 1 x 1,        time step (days)
+      ! wBio:   1 x 1,        sinking rate (m d^-1, positive down)
+      ! zlimit: 1 x 1,        depth below which sinking stops (m, negative down, if zlimit is outside z_w range then no limit)
+      ! Bio:    1 x n x 1,    biomass concentration input (g m^-3)
+      ! Bout:   n x 1,        biomass concentration output (g m^-3)
+      ! lost:   1 x 1,        amount of biomass lost across lower boundary (g m^-2)
 
       USE mod_param
       implicit none
@@ -3130,15 +3129,15 @@
 
       Subroutine TracerRise(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
       ! Arguments:
-      ! n:      scalar, # layers
-      ! Hz:     1 x 1 x n, slice, layer thickness array (m)
-      ! z_w:    1 x 1 x n+1 slice, depths of layer edges (m, negative down)
-      ! dtdays: time step (days)
-      ! wBio:   rising rate (m d^-1, positive up)
-      ! zlimit: depth above which rising stops (m, negative down, >=0 = no limit)
-      ! Bio:    1 x n x 1 slice, biomass concentration input (g m^-3)
-      ! Bout:   n x 1, biomass concentration output (g m^-3)
-      ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
+      ! nn:     1 x 1,        # layers
+      ! Hz:     1 x 1 x nn,   layer thickness (m)
+      ! z_w:    1 x 1 x nn+1, depths of layer edges (m, negative down)
+      ! dtdays: 1 x 1,        time step (days)
+      ! wBio:   1 x 1,        rising rate (m d^-1, positive up)
+      ! zlimit: 1 x 1,        depth above which rising stops (m, negative down, if zlimit is outside z_w range then no limit)
+      ! Bio:    1 x n x 1,    biomass concentration input (g m^-3)
+      ! Bout:   n x 1,        biomass concentration output (g m^-3)
+      ! lost:   1 x 1,        amount of biomass lost across upper boundary (g m^-2)
 
       USE mod_param
       implicit none
@@ -3160,8 +3159,10 @@
       real(r8) :: Btmp(nn)
       real(r8) :: zlimflip
 
-      ! Flip the water column upside down.  The bottom is now at z = 0
-      ! and the surface at water depth+free surface height.
+      ! Flip the water column upside down.  This new water column has its
+      ! surface at z = 0 and bottom at -(water depth + free surface height).
+      ! Layer thicknesses and biomass concentrations are the same as 
+      ! before, but in reverse order.
 
       DO k = 1,nn
         Btmp(k) = Bio(1,nn+1-k) ! flip
@@ -3171,7 +3172,7 @@
         zwtmp(k) = z_w(1,1,0) - z_w(1,1,nn-k) ! make surface the bottom
       END DO
 
-      zlimflip = z_w(1,1,0) - zlimit
+      zlimflip = z_w(1,1,0) - zlimit ! relocate in flipped layers
 
       ! Call the sinking routine
 
@@ -3194,14 +3195,14 @@
       ! Computes redistribution of a tracer in the water column due to
       ! sinking.  After J. Warner sed sink code.
       !
-      !   n       = # layers
-      !   Btmp    = n x 1 array, tracer concentration (bottom to top)
-      !   wBio    = sinking rate (m d^-1)
-      !   HzL     = n x 1 array, thickness of layers (m)
-      !   dtdays  = time step (d)
-      !   z_wL    = n+1 x 1 array, depth of layer edges (m, negative)
-      !   zlimit  = maximum depth for sinking (m, negative)
-      !   sinkout = amount lost out of bottom cell (concentration)
+      !   n       = 1   x 1  # layers
+      !   Btmp    = n   x 1  tracer concentration (bottom to top, per volume units)
+      !   wBio    = 1   x 1  sinking rate (m d^-1, positive down)
+      !   HzL     = n   x 1  thickness of layers (m)
+      !   dtdays  = 1   x 1  time step (d)
+      !   z_wL    = n+1 x 1  depth of layer edges (m, negative down)
+      !   zlimit  = 1   x 1  maximum depth for sinking (m, negative down)
+      !   sinkout = 1   x 1  amount lost out of bottom cell (per area units)
       !
       ! Modifies Btmp and sinkout in the calling program
       !------------------------------------------------------------------
@@ -3240,7 +3241,7 @@
 
       ! Modify sinking rates as necessary
 
-      IF ( zlimit .lt. 0 ) THEN
+      IF ((zlimit .ge. minval(z_wL)) .and. (zlimit .le. maxval(z_wL))) THEN
         DO k=0,n
           IF ( z_wL(k) .ge. zlimit ) THEN
             wBiod(k) = wBio*exp(-1*(z_wL(k)-(zlimit/2))**2/(zlimit/2)**2)
