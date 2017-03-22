@@ -1935,6 +1935,201 @@
           END DO
 #endif
 
+          !------------------------------
+          ! Combine bio source/sinks
+          !------------------------------
+
+          DBio(:,:,iiNO3   ) = (Dec_NH4_NO3                             &
+     &                       +  Twi_INO3_NO3                            &
+     &                       -  Gpp_NO3_PhS                             &
+     &                       -  Gpp_NO3_PhL)*xi*dtdays ! NO3: mmolN m^-2
+
+          DBio(:,:,iiNH4   ) = (Res_PhS_NH4                             &
+     &                       +  Res_PhL_NH4                             &
+     &                       +  Res_MZL_NH4                             &
+     &                       +  Res_Cop_NH4                             &
+     &                       +  Res_NCaS_NH4                            &
+     &                       +  Res_NCaO_NH4                            &
+     &                       +  Res_EupS_NH4                            &
+     &                       +  Res_EupO_NH4                            &
+     &                       +  Res_Jel_NH4                             &
+     &                       +  Dec_Det_NH4                             &
+     &                       +  Dec_DetF_NH4                            &
+     &                       +  Exc_Ben_NH4                             &
+     &                       +  Res_Ben_NH4                             &
+     &                       +  Dec_BenDet_NH4                          &
+     &                       +  Twi_INH4_NH4                            &
+     &                       -  Gpp_NH4_PhS                             &
+     &                       -  Gpp_NH4_PhL                             &
+     &                       -  Dec_NH4_NO3)*xi*dtdays ! NH4: mmol N m^-2
+
+          DBio(:,:,iiPhS   ) = (Gpp_NO3_PhS                             &
+     &                       +  Gpp_NH4_PhS                             &
+     &                       -  Gra_PhS_MZL                             &
+     &                       -  Gra_PhS_Cop                             &
+     &                       -  Gra_PhS_NCaS                            &
+     &                       -  Gra_PhS_NCaO                            &
+     &                       -  Gra_PhS_EupS                            &
+     &                       -  Gra_PhS_EupO                            &
+     &                       -  Mor_PhS_Det                             &
+     &                       -  Res_PhS_NH4                             &
+     &                       -  Gra_PhS_Ben)*dtdays ! PhS: mg C m^-2
+
+          DBio(:,:,iiPhL   ) = (Gpp_NO3_PhL                             &
+     &                       +  Gpp_NH4_PhL                             &
+     &                       +  Twi_IPhL_PhL                            &
+     &                       -  Gra_PhL_MZL                             &
+     &                       -  Gra_PhL_Cop                             &
+     &                       -  Gra_PhL_NCaS                            &
+     &                       -  Gra_PhL_NCaO                            &
+     &                       -  Gra_PhL_EupS                            &
+     &                       -  Gra_PhL_EupO                            &
+     &                       -  Mor_PhL_Det                             &
+     &                       -  Res_PhL_NH4                             &
+     &                       -  Gra_PhL_Ben)*dtdays ! PhL: mg C m^-2
+
+          DBio(:,:,iiMZL   ) = (Gra_PhS_MZL                             &
+     &                       +  Gra_PhL_MZL                             &
+     &                       -  Ege_MZL_Det                             &
+     &                       -  Gra_MZL_Cop                             &
+     &                       -  Gra_MZL_NCaS                            &
+     &                       -  Gra_MZL_NCaO                            &
+     &                       -  Gra_MZL_EupS                            &
+     &                       -  Gra_MZL_EupO                            &
+     &                       -  Mor_MZL_Det                             &
+     &                       -  Res_MZL_NH4)*dtdays ! MZL: mg C m^-2
+
+          DBio(:,:,iiCop   ) = (Gra_PhS_Cop                             &
+     &                       +  Gra_PhL_Cop                             &
+     &                       +  Gra_MZL_Cop                             &
+     &                       +  Gra_IPhL_Cop                            &
+     &                       -  Ege_Cop_DetF                            &
+     &                       -  Gra_Cop_EupS                            &
+     &                       -  Gra_Cop_EupO                            &
+     &                       -  Gra_Cop_Jel                             &
+     &                       -  Mor_Cop_DetF                            &
+     &                       -  Res_Cop_NH4)*dtdays ! Cop: mg C m^-2
+
+          DBio(:,:,iiNCaS  ) = (Gra_PhS_NCaS                            &
+     &                       +  Gra_PhL_NCaS                            &
+     &                       +  Gra_MZL_NCaS                            &
+     &                       +  Gra_IPhL_NCaS                           &
+     &                       -  Ege_NCaS_DetF                           &
+     &                       -  Gra_NCaS_Jel                            &
+     &                       -  Mor_NCaS_DetF                           &
+     &                       -  Res_NCaS_NH4)*dtdays ! NCaS: mg C m^-2
+
+          DBio(:,:,iiEupS  ) = (Gra_PhS_EupS                            &
+     &                       +  Gra_PhL_EupS                            &
+     &                       +  Gra_MZL_EupS                            &
+     &                       +  Gra_Cop_EupS                            &
+     &                       +  Gra_IPhL_EupS                           &
+     &                       +  Gra_Det_EupS                            &
+     &                       +  Gra_DetF_EupS                           &
+     &                       -  Ege_EupS_DetF                           &
+     &                       -  Gra_EupS_Jel                            &
+     &                       -  Mor_EupS_DetF                           &
+     &                       -  Res_EupS_NH4)*dtdays ! EupS: mg C m^-2
+
+          DBio(:,:,iiNCaO  ) = (Gra_PhS_NCaO                            &
+     &                       +  Gra_PhL_NCaO                            &
+     &                       +  Gra_MZL_NCaO                            &
+     &                       +  Gra_IPhL_NCaO                           &
+     &                       -  Ege_NCaO_DetF                           &
+     &                       -  Gra_NCaO_Jel                            &
+     &                       -  Mor_NCaO_DetF                           &
+     &                       -  Res_NCaO_NH4)*dtdays ! NCaO: mg C m^-2
+
+          DBio(:,:,iiEupO  ) = (Gra_PhS_EupO                            &
+     &                        +  Gra_PhL_EupO                           &
+     &                        +  Gra_MZL_EupO                           &
+     &                        +  Gra_Cop_EupO                           &
+     &                        +  Gra_IPhL_EupO                          &
+     &                        +  Gra_Det_EupO                           &
+     &                        +  Gra_DetF_EupO                          &
+     &                        -  Ege_EupO_DetF                          &
+     &                        -  Gra_EupO_Jel                           &
+     &                        -  Mor_EupO_DetF                          &
+     &                        -  Res_EupO_NH4)*dtdays ! EupO: mg C m^-2
+
+           DBio(:,:,iiDet   ) = (Ege_MZL_Det                            &
+     &                        +  Mor_PhS_Det                            &
+     &                        +  Mor_PhL_Det                            &
+     &                        +  Mor_MZL_Det                            &
+     &                        -  Gra_Det_EupS                           &
+     &                        -  Gra_Det_EupO                           &
+     &                        -  Dec_Det_NH4                            &
+     &                        -  Gra_Det_Ben)*dtdays ! Det: mg C m^-2
+
+           DBio(:,:,iiDetF  ) = (Ege_Cop_DetF                           &
+     &                        +  Ege_NCaS_DetF                          &
+     &                        +  Ege_NCaO_DetF                          &
+     &                        +  Ege_EupS_DetF                          &
+     &                        +  Ege_EupO_DetF                          &
+     &                        +  Ege_Jel_DetF                           &
+     &                        +  Mor_Cop_DetF                           &
+     &                        +  Mor_NCaS_DetF                          &
+     &                        +  Mor_EupS_DetF                          &
+     &                        +  Mor_NCaO_DetF                          &
+     &                        +  Mor_EupO_DetF                          &
+     &                        +  Mor_Jel_DetF                           &
+     &                        -  Gra_DetF_EupS                          &
+     &                        -  Gra_DetF_EupO                          &
+     &                        -  Dec_DetF_NH4                           &
+     &                        -  Gra_DetF_Ben)*dtdays ! DetF: mg C m^-2
+
+           DBio(:,:,iiJel   ) = (Gra_Cop_Jel                            &
+     &                        +  Gra_EupS_Jel                           &
+     &                        +  Gra_EupO_Jel                           &
+     &                        +  Gra_NCaS_Jel                           &
+     &                        +  Gra_NCaO_Jel                           &
+     &                        -  Ege_Jel_DetF                           &
+     &                        -  Mor_Jel_DetF                           &
+     &                        -  Res_Jel_NH4)*dtdays ! Jel: mg C m^-2
+
+           DBio(:,:,iiFe    ) = (                                       &
+     &                        -  Gpp_NO3_PhS                            &
+     &                        -  Gpp_NO3_PhL)*FeC*dtdays ! Fe: umol Fe m^-2
+
+           DBio(:,:,iiBen   ) = (Gra_Det_Ben                            &
+     &                        +  Gra_DetF_Ben                           &
+     &                        +  Gra_PhS_Ben                            &
+     &                        +  Gra_PhL_Ben                            &
+     &                        +  Gra_BenDet_Ben                         &
+     &                        -  Exc_Ben_NH4                            &
+     &                        -  Exc_Ben_BenDet                         &
+     &                        -  Res_Ben_NH4                            &
+     &                        -  Mor_Ben_BenDet                         &
+     &                        -  Pre_Ben_BenDet)*dtdays ! Ben: mg C m^-2
+
+           DBio(:,:,iiBenDet) = (Exc_Ben_BenDet                         &
+     &                        +  Mor_Ben_BenDet                         &
+     &                        +  Pre_Ben_BenDet                         &
+     &                        -  Gra_BenDet_Ben                         &
+     &                        -  Dec_BenDet_NH4)*dtdays ! BenDet: mg C m^-2
+
+           DBio(:,:,iiIcePhL) = (Gpp_INO3_IPhL                          &
+     &                        +  Gpp_INH4_IPhL                          &
+     &                        -  Gra_IPhL_Cop                           &
+     &                        -  Gra_IPhL_NCaS                          &
+     &                        -  Gra_IPhL_NCaO                          &
+     &                        -  Gra_IPhL_EupS                          &
+     &                        -  Gra_IPhL_EupO                          &
+     &                        -  Res_IPhL_INH4                          &
+     &                        -  Mor_IPhL_INH4                          &
+     &                        -  Twi_IPhL_PhL)*dtdays ! IcePhL: mg C m^-2
+
+           DBio(:,:,iiIceNO3) = (Dec_INH4_INO3                          &
+     &                        -  Gpp_INO3_IPhL                          &
+     &                        -  Twi_INO3_NO3)*xi*dtdays ! IceNO3: mmol N m^-2
+
+           DBio(:,:,iiIceNH4) = (Res_IPhL_INH4                          &
+     &                        +  Mor_IPhL_INH4                          &
+     &                        -  Gpp_INH4_IPhL                          &
+     &                        -  Dec_INH4_INO3                          &
+     &                        -  Twi_INH4_NH4)*xi*dtdays ! IceNH4: mmol N m^-2
+
+
 ! TODO: overhauled to here
 
           !==============================================================
@@ -3161,7 +3356,7 @@
 
       ! Flip the water column upside down.  This new water column has its
       ! surface at z = 0 and bottom at -(water depth + free surface height).
-      ! Layer thicknesses and biomass concentrations are the same as 
+      ! Layer thicknesses and biomass concentrations are the same as
       ! before, but in reverse order.
 
       DO k = 1,nn
