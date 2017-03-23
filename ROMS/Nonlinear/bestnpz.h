@@ -533,12 +533,15 @@
 			
 			! Vertical movement
 
-			real(r8), dimension(N(ng)) :: Btmp, Hztmp
+			real(r8), dimension(N(ng)) :: Btmp, Rtmp,Stmp,Hztmp
 			real(r8), dimension(0:N(ng)) :: zwtmp
-			real(r8) :: sinkout2   
+			real(r8) :: sinkout2   , riseout2
 			
 			real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
 
+#ifdef SEBS1D
+       real(r8) :: rmask=1.0_r8
+#endif 
            
 !----------------------
 #include "set_bounds.h"
@@ -645,7 +648,14 @@
               OCEAN(ng) % pt2(:,:,nstp,itrc) = 0.0_r8
             END DO
     
-#endif       
+#endif  
+#ifdef BIOFLUX
+         DO itrc=1,NBF(ng)
+                    
+              OCEAN(ng) % bflx(:,:,:,nstp,itrc) = 0.0_r8 
+          END DO
+	     
+#endif     
           END IF
         END IF
        
@@ -1923,6 +1933,7 @@
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
      &          gammaEup * cff1 * cff2 * cff3 * cff4 * dtdays
     
+    !efficiency less when grazing on detritus
               DBio(i,k,iEupS) = DBio(i,k,iEupS) +                       &
      &          0.3_r8 * cff0 * cff2 * cff3 * cff4 * dtdays
      
@@ -1932,6 +1943,9 @@
 #ifdef PROD3    
               Prod(i,k,iEupprd) = Prod(i,k,iEupprd) +                   &
      &          gammaEup * cff1 * cff2 * cff3 * dtdays
+     
+              Prod(i,k,iEupprd) = Prod(i,k,iEupprd) +                   &
+     &          0.3_r8 * cff0 * cff2 * cff3 * dtdays
           
 #endif    
 !-----------------------------------------------------------------------
@@ -2181,6 +2195,8 @@
               
               Prod(i,k,iEupprd) = Prod(i,k,iEupprd) +                   &
      &          gammaEup * cff1 * cff2 * cff3 * dtdays
+              Prod(i,k,iEupprd) = Prod(i,k,iEupprd) +                   &
+     &          0.3_r8 * cff0 * cff2 * cff3 * dtdays
               
 #endif    
 !-----------------------------------------------------------------------
@@ -2214,7 +2230,7 @@
 !-----------------------------------------------------------------------
               DBio(i,k,iDetF) = DBio(i,k,iDetF) +                       &
      &          (1.0_r8 - gammaEup) * cff1 * cff2 * cff3 * cff4 *  dtdays
-              Bio(i,k,iDetF) = DBio(i,k,iDetF) +                        &
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) +                        &
      &          (1.0_r8 - 0.3_r8) * cff0 * cff2 * cff3 * cff4* dtdays
      
 
@@ -2431,6 +2447,7 @@
 	      
 # else
 #   ifdef DIAPAUSE
+!predation impact reduced when in diapause
               if(k.eq.1.and.downward)THEN
                cff1=0.2_r8
 	      else
@@ -2448,10 +2465,10 @@
 	      cff2=1
 #   endif
 	      	      
-              predSumCop  = cff1*TFEup*(mpredCop)*Bio(i,k,iCop)**2
+              predSumCop  = TFEup*(mpredCop)*Bio(i,k,iCop)**2
               predSumNCaS = cff2*TFEup*(mpredNca)*Bio(i,k,iNCaS)**2     
               predSumEupS = TFEup*(mpredEup)*Bio(i,k,iEupS)**2
-              predSumNCaO = TFEup*(mpredNca)*Bio(i,k,iNCaO)**2
+              predSumNCaO = cff1*TFEup*(mpredNca)*Bio(i,k,iNCaO)**2
               predSumEupO = TFEup*(mpredEup)*Bio(i,k,iEupO)**2 
 	      
 	     
@@ -3182,9 +3199,9 @@
 !-----------------------------------------------------------------------
       
             cff3=cff0*BioB(i,k,iBen)*Rres 
-            cff4=Qres*(((1_r8-eexD)*cff1) + ((1_r8-eexD)*cff2) +        &
-    &            ((1_r8-eex)*cff3) + ((1_r8-eex)*cff4) +                &
-    &            ((1_r8-eexD)*cff5))
+            cff4=Qres*(((1_r8-eexD)*cff7) + ((1_r8-eexD)*cff8) +        &
+    &            ((1_r8-eex)*cff9) + ((1_r8-eex)*cff10) +                &
+    &            ((1_r8-eexD)*cff11))
 
 
             
@@ -3290,32 +3307,28 @@
 	! Initialize temporary arrays to 0
 
 	Btmp = 0    ! tracer profile, (1:n)
+	Rtmp =0 
+	Stmp =0
 	Hztmp = 0   ! layer thickness, (1:n)
 	zwtmp = 0   ! layer edges, (0:n)
 	sinkout2 = 0 ! loss out of bottom cell (1)
+	riseout2 = 0
 
 
 !   Small phytoplankton: sinks, and 79% of what sinks out of the 
 !   bottom goes to benthic detritus 
 
 	DO i=Istr,Iend
-  	  
-	  DO k = 1,N(ng)
-	    Btmp(k) = Bio(i,k,iPhS)
-	    Hztmp(k) = Hz(i,j,k)
-	  END DO
+  	      call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhS, 1.0_r8, Bio(i,:,iPhS), Btmp, sinkout2)
+
+            DO k = 1,N(ng)
+              DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
+            END DO
 	  
-	  DO k = 0,N(ng)
-	    zwtmp(k) = z_w(i,j,k)
-	  END DO
-  	  
-	  call BioSink(N(ng), Btmp, wPhS, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
-	  
-	  DO k = 1,N(ng)
-	   DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
-	  END DO
-	  
+# ifdef BENTHIC	  
 	  DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+  
+# endif
   
 	END DO
 
@@ -3324,23 +3337,14 @@
 					
 	DO i=Istr,Iend
   	  
-	  DO k = 1,N(ng)
-	   Btmp(k) = Bio(i,k,iPhL)
-	   Hztmp(k) = Hz(i,j,k)
-	  END DO
-          
-	  DO k = 0,N(ng)
-	   zwtmp(k) = z_w(i,j,k)
-	  END DO
-          
-	  call BioSink(N(ng), Btmp, wPhL, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
-          
-	  DO k = 1,N(ng)
-	   DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
-	  END DO
-	  
+	     call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhL, 1.0_r8, Bio(i,:,iPhL), Btmp, sinkout2)
+
+            DO k = 1,N(ng)
+              DBio(i,k,iPhL) = DBio(i,k,iPhL) + (Btmp(k) - Bio(i,k,iPhL))
+            END DO
+# ifdef BENTHIC	  
 	  DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-  
+# endif  
 	END DO
 
 !  Slow-sinking detritus: sinks, and 79% of what sinks out of the 
@@ -3348,47 +3352,28 @@
 					
 	 DO i=Istr,Iend
 	 
-  	  DO k = 1,N(ng)
-	   Btmp(k) = Bio(i,k,iDet)
-	   Hztmp(k) = Hz(i,j,k)
-	  END DO
-	  
-	  DO k = 0,N(ng)
-	   zwtmp(k) = z_w(i,j,k)
-	  END DO
-	  
-  	  call BioSink(N(ng), Btmp, wDet, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
+            call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wDet, 1.0_r8, Bio(i,:,iDet), Btmp, sinkout2)
 
-	  DO k = 1,N(ng)
-	   DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
-	  END DO
-	  
+            DO k = 1,N(ng)
+              DBio(i,k,iDet) = DBio(i,k,iDet) + (Btmp(k) - Bio(i,k,iDet))
+            END DO
+#ifdef BENTHIC	  
 	  DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-  
+#endif  
 	 END DO
 
 !  Fast-sinking detritus: sinks, and 79% of what sinks out of the 
 !  bottom goes to benthic detritus 
 					
 	DO i=Istr,Iend
-	
-         DO k = 1,N(ng)
-	  Btmp(k) = Bio(i,k,iDetF)
-	  Hztmp(k) = Hz(i,j,k)
-	 END DO
-	 
-	 DO k = 0,N(ng)
-	  zwtmp(k) = z_w(i,j,k)
-	 END DO
-	 
-  	 call BioSink(N(ng), Btmp, wDetF, Hztmp, dtdays, zwtmp, 1.0_r8, sinkout2,FC)
+	call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wDetF, 1.0_r8, Bio(i,:,iDetF), Btmp, sinkout2)
 
-	 DO k = 1,N(ng)
-	  DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
-	 END DO
-	
+            DO k = 1,N(ng)
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) + (Btmp(k) - Bio(i,k,iDetF))
+            END DO
+#ifdef BENTHIC	
 	 DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-	 
+#endif	 
         END DO
 	
 
@@ -3411,43 +3396,74 @@
          
             if (downwardCM) then
             
-              DO k = 1,N(ng)
-		Btmp(k) = Bio(i,k,iNCaS)
-                Hztmp(k) = Hz(i,j,k)
-              END DO
-              DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,k)
-              END DO
-            
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -200.0_r8, sinkout2,FC)
-
+	    
+	    call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), Bio(i,:,iNCaS), Btmp, sinkout2)
 
               DO k = 1,N(ng)
-	       	DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
-              END DO
+                DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
+              
+	      END DO
 	      
-              if(grid(ng) % h(i,j).le.200_r8)then
-	         DBio(i,1,iNCaS) = DBio(i,1,iNCaS) + sinkout2/Hz(i,j,1)
-              else
-	       DBio(i,1,iDetF) =DBio(i,1,iDetF) + sinkout2/Hz(i,j,1)
-	      end if
+	      if(grid(ng) % h(i,j).gt.200)THEN
+#ifdef BENTHIC	  
+	    DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2
+#else 
+            DBio(i,1,iDetF) = DBio(i,1,iDetF) + sinkout2/Hz(i,j,1)
+#endif 
+	      else
+	   !zoopalnkton dont sink out the bottom they accumulate in the bottom layer
+	       DBio(i,1,iNCaS) = DBio(i,1,iNCaS) + sinkout2/Hz(i,j,1)
+	      endif
+	       
+	       
+!              DO k = 1,N(ng)
+!		Btmp(k) = Bio(i,k,iNCaS)
+!                Hztmp(k) = Hz(i,j,k)
+!              END DO
+!              DO k = 0,N(ng)
+!                zwtmp(k) = z_w(i,j,k)
+!              END DO
+            
+!              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -200.0_r8, sinkout2,FC)
+
+
+!              DO k = 1,N(ng)
+!	       	DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
+!              END DO
+	      
+!              if(grid(ng) % h(i,j).le.200_r8)then
+!	         DBio(i,1,iNCaS) = DBio(i,1,iNCaS) + sinkout2/Hz(i,j,1)
+!              else
+!	       DBio(i,1,iDetF) =DBio(i,1,iDetF) + sinkout2/Hz(i,j,1)
+!	      end if
 	      
             else if (upwardCM) then
-              
+             
+
+              call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaS), Btmp, sinkout2)
+
               DO k = 1,N(ng)
-                Btmp(k) = Bio(i,N(ng)+1-k,iNCaS) ! flip
-                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
-              END DO
+                DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(k) - Bio(i,k,iNCaS))
+              END DO 
+	      
+	            
+	      
+	      
+	      
+!              DO k = 1,N(ng)
+!                Btmp(k) = Bio(i,N(ng)+1-k,iNCaS) ! flip
+!                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
+!              END DO
               
-	      DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
-              END DO
+!	      DO k = 0,N(ng)
+!                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
+!              END DO
               
-              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2,FC)
+!              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2,FC)
               
-              DO k = 1,N(ng)
-!		DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaS)) ! flip back
-              END DO
+!              DO k = 1,N(ng)
+!g		DBio(i,k,iNCaS) = DBio(i,k,iNCaS) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaS)) ! flip back
+!              END DO
               
             end if
             
@@ -3455,55 +3471,125 @@
           
           
           ! Off-shelf large copepods (NCaO): Move up and down 
-          ! based on dates set in input file.  If water is shallower than 
-          ! 400 m, stop at 400m.  If shallower, when they hit the bottom, 
-          ! the biomass is transferred to benthic detritus.  Uses zlimit 
+          ! based on dates set in input file.  If water is deeper than 
+          ! 400 m, stop diapausing at 400m.  If water shallower than 200 m when they hit the bottom, 
+          ! they are assumed unable to complete life cycle and become detritus.   Uses zlimit 
           ! to enforce 400-m limit when going down, and to prevent rising 
           ! out of the surface layer on the way up
           DO i=Istr,Iend
             
             if (downward) then
-            
-              DO k = 1,N(ng)
-                Btmp(k) = Bio(i,k,iNCaO)
-                Hztmp(k) = Hz(i,j,k)
-              END DO
-              DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,k)
-              END DO
-            
-              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2,FC)
+	    
+	     call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCsink, -400.0_r8, Bio(i,:,iNCaO), Btmp, sinkout2)
 
               DO k = 1,N(ng)
                 DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
               END DO
+
+  
+	      if(grid(ng) % h(i,j).lt.200)THEN
+	      !off-shelf copepods cant complete life cycle and become detritus
+#ifdef BENTHIC	  
+	    DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2
+#else 
+            DBio(i,1,iDetF) = DBio(i,1,iDetF) + sinkout2/Hz(i,j,1)
+#endif 
+	      else
 	      
-	      if(grid(ng) % h(i,j).le.400_r8)then
-	       DBio(i,1,iBenDet) =   DBioB(i,1,iBenDet) + sinkout2*0.79_r8
-              else
-	       DBio(i,1,iDetF) =DBio(i,1,iDetF) + sinkout2/Hz(i,j,1)
-	      end if
+	   !off-shelf copepods dont sink out of the bottom they accumulate in the bottom layer (or at 400m)
+	       DBio(i,1,iNCaO) = DBio(i,1,iNCaO) + sinkout2/Hz(i,j,1)
+	     
+	      endif
+	          
+!              DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2
+
+            
+!              DO k = 1,N(ng)
+!                Btmp(k) = Bio(i,k,iNCaO)
+!                Hztmp(k) = Hz(i,j,k)
+!              END DO
+!              DO k = 0,N(ng)
+!                zwtmp(k) = z_w(i,j,k)
+!              END DO
+!            
+!              call BioSink(N(ng), Btmp, wNCsink, Hztmp, dtdays, zwtmp, -400.0_r8, sinkout2,FC)!
+!
+!              DO k = 1,N(ng)
+!                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
+!              END DO
+!	      
+!	      if(grid(ng) % h(i,j).le.200_r8)then
+!	       DBio(i,1,iBenDet) =   DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+!              else
+!	       DBio(i,1,iDetF) =DBio(i,1,iDetF) + sinkout2/Hz(i,j,1)
+!	      end if
 	      
             else if (upward) then
-              
+                call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wNCrise, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iNCaO), Btmp, sinkout2)
+
               DO k = 1,N(ng)
-                Btmp(k) = Bio(i,N(ng)+1-k,iNCaO) ! flip
-                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
+                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(k) - Bio(i,k,iNCaO))
               END DO
-              DO k = 0,N(ng)
-                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
-              END DO
-              
-              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2,FC)
-              
-              DO k = 1,N(ng)
-                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaO)) ! flip back
-              END DO
+
+!              DO k = 1,N(ng)
+!                Btmp(k) = Bio(i,N(ng)+1-k,iNCaO) ! flip
+!                Hztmp(k) = Hz(i,j,N(ng)+1-k)     ! flip
+!              END DO
+!              DO k = 0,N(ng)
+!                zwtmp(k) = z_w(i,j,0) - z_w(i,j,N(ng)-k) ! make surface the bottom
+!              END DO
+!              
+!              call BioSink(N(ng), Btmp, wNCrise, Hztmp, dtdays, zwtmp, z_w(i,j,0)-z_w(i,j,N(ng))+eps, sinkout2,FC)
+!              
+!              DO k = 1,N(ng)
+!                DBio(i,k,iNCaO) = DBio(i,k,iNCaO) + (Btmp(N(ng)+1-k) - Bio(i,k,iNCaO)) ! flip back
+!              END DO
               
             end if
             
           END DO
 #endif
+ 
+#ifdef EUP_VM    
+!=======================================================================
+! Euphausiid vertical Migration shelf
+!=======================================================================
+! Use the ambient light field to determine if the Euphausiids migrate up or down
+ 
+   ! WIP: This routine presently does not accurately account for the situation when the 
+          light field would cause Euphausiids to migrate into, but not out of, a layer...so have non conservation of material  
+   
+       DO i=Istr,Iend
+        
+!          call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, 100.0_r8, !max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), Bio(i,:,iEupS), Stmp, sinkout2)
+	   
+	   call TracerRise(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, 100.0_r8, (z_w(i,j,N(ng)-1) + z_w(i,j,N(ng)))/2, Bio(i,:,iEupS), Rtmp, riseout2)
+	   
+
+	   DO  k=1,N(ng),1
+ !            if(PAR(i,k).gt.0.5_r8.and.PAR(i,k-1).gt.0.5_r8)THEN
+	     if(PAR(i,k).gt.0.5_r8)THEN
+	      
+              DBio(i,k,iEupS) = DBio(i,k,iEupS) + (Stmp(k) - Bio(i,k,iEupS))
+	       if(k.eq.1)THEN 
+	        DBio(i,1,iEupS) = DBio(i,1,iEupS) + sinkout2/Hz(i,j,1)
+	       endif
+	           
+	     elseif(PAR(i,k).lt.0.01_r8)THEN
+	      
+	      DBio(i,k,iEupS) = DBio(i,k,iEupS) + (Rtmp(k) - Bio(i,k,iEupS))
+	       if(k.eq.N(ng))THEN 
+	        DBio(i,1,iEupS) = DBio(i,1,iEupS) + riseout2/Hz(i,j,N(ng))
+	       endif
+	     endif
+	    
+           END DO
+   
+       END DO	
+      
+#endif
+   
+   
          
 !=======================================================================
 !Ice Sub Model
@@ -4402,6 +4488,370 @@
 
       RETURN
       END SUBROUTINE biology_tile
+
+!=====================================================================
+! TracerSink, TracerRise (and BioSink, called by both)
+! New subroutine for vertical movement, replaces BIOSINK_1, BIORISE_1
+!=====================================================================
+
+!************************************************************************
+
+      Subroutine TracerSink(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
+      ! Arguments:
+      ! nn:     scalar, # layers
+      ! Hz:     n x 1, layer thickness (m)
+      ! z_w:    n+1 x 1, depths of layer edges (m, negative down)
+      ! dtdays: time step (days)
+      ! wBio:   sinking rate (m d^-1, positive down)
+      ! zlimit: depth below which sinking stops (m, negative down, >=0 = no limit)
+      ! Bio:    n x 1, biomass concentration input (g m^-3)
+      ! Bout:   n x 1, biomass concentration output (g m^-3)
+      ! lost:   scalar, amount of biomass lost across lower boundary (g m^-2)
+
+      USE mod_param
+      implicit none
+
+      integer,  intent(in) :: nn
+      real(r8), intent(in) :: wBio
+      real(r8), intent(in) :: zlimit
+      real(r8), intent(in) :: dtdays
+      real(r8), intent(in)  :: Hz(1,1,nn)
+      real(r8), intent(in)  :: z_w(1,1,0:nn)
+      real(r8), intent(in)  :: Bio(1,nn)
+
+      real(r8), intent(out) :: Bout(nn)
+      real(r8), intent(out) :: lost
+
+      integer  :: k
+      real(r8) :: zwtmp(0:nn)
+      real(r8) :: Hztmp(nn)
+
+      ! Pack the array slices into appropriate 1D arrays
+
+      DO k = 1,nn
+        Bout(k) = Bio(1,k)
+        Hztmp(k) = Hz(1,1,k)
+      END DO
+      DO k = 0,nn
+        zwtmp(k) = z_w(1,1,k)
+      END DO
+
+      ! Call the sinking routine
+
+      call BioSink(nn, Bout, wBio, Hztmp, dtdays, zwtmp, zlimit, lost)
+
+      RETURN
+      END SUBROUTINE TracerSink
+      
+!************************************************************************
+
+      Subroutine TracerRise(nn, Hz, z_w, dtdays, wBio, zlimit, Bio, Bout, lost)
+      ! Arguments:
+      ! n:      scalar, # layers
+      ! Hz:     1 x 1 x n, slice, layer thickness array (m)
+      ! z_w:    1 x 1 x n+1 slice, depths of layer edges (m, negative down)
+      ! dtdays: time step (days)
+      ! wBio:   rising rate (m d^-1, positive up)
+      ! zlimit: depth above which rising stops (m, negative down, >=0 = no limit)
+      ! Bio:    1 x n x 1 slice, biomass concentration input (g m^-3)
+      ! Bout:   n x 1, biomass concentration output (g m^-3)
+      ! lost:   scalar, amount of biomass lost across upper boundary (g m^-2)
+
+      USE mod_param
+      implicit none
+
+      integer,  intent(in)  :: nn
+      real(r8), intent(in)  :: wBio
+      real(r8), intent(in)  :: zlimit
+      real(r8), intent(in)  :: dtdays
+      real(r8), intent(in)  :: Hz(1,1,nn)
+      real(r8), intent(in)  :: z_w(1,1,0:nn)
+      real(r8), intent(in)  :: Bio(1,nn)
+
+      real(r8), intent(out) :: Bout(nn)
+      real(r8), intent(out) :: lost
+
+      integer  :: k
+      real(r8) :: zwtmp(0:nn)
+      real(r8) :: Hztmp(nn)
+      real(r8) :: Btmp(nn)
+      real(r8) :: zlimflip
+
+      ! Flip the water column upside down.  The bottom is now at z = 0
+      ! and the surface at water depth+free surface height.
+
+      DO k = 1,nn
+        Btmp(k) = Bio(1,nn+1-k) ! flip
+        Hztmp(k) = Hz(1,1,nn+1-k) ! flip
+      END DO
+      DO k = 0,nn
+        zwtmp(k) = z_w(1,1,0) - z_w(1,1,nn-k) ! make surface the bottom
+      END DO
+
+      zlimflip = z_w(1,1,0) - zlimit
+
+      ! Call the sinking routine
+
+      call BioSink(nn, Btmp, wBio, Hztmp, dtdays, zwtmp, zlimflip, lost)
+
+      ! Flip the water column back
+
+      DO k = 1,nn
+        Bout(k) = Btmp(nn+1-k) ! flip back
+      END DO
+
+      RETURN
+      END SUBROUTINE TracerRise
+
+!************************************************************************    
+      
+
+ Subroutine BioSink(n, Btmp, wBio, HzL, dtdays, z_wL, zlimit, sinkout)
+
+      !------------------------------------------------------------------
+      ! Computes redistribution of a tracer in the water column due to
+      ! sinking.  After J. Warner sed sink code.
+      !
+      !   n       = # layers
+      !   Btmp    = n x 1 array, tracer concentration (bottom to top)
+      !   wBio    = sinking rate (m d^-1)
+      !   HzL     = n x 1 array, thickness of layers (m)
+      !   dtdays  = time step (d)
+      !   z_wL    = n+1 x 1 array, depth of layer edges (m, negative)
+      !   zlimit  = maximum depth for sinking (m, negative)
+      !   sinkout = amount lost out of bottom cell (concentration)
+      !
+      ! Modifies Btmp and sinkout in the calling program
+      !------------------------------------------------------------------
+
+      USE mod_param
+      implicit none
+
+      integer,  intent(in) :: n
+      real(r8), intent(in) :: wBio
+      real(r8), intent(in) :: zlimit
+      real(r8), intent(in) :: dtdays
+      real(r8), intent(in) :: z_wL(0:n)
+      real(r8), intent(inout) :: Btmp(n)
+      real(r8), intent(in) :: HzL(n)
+      real(r8), intent(inout) :: sinkout
+
+      integer :: i,k,ks
+      real(r8) :: aL, aR, cff1, cff2
+      real(r8) :: cffL, cffR, cu, dltL, dltR,cff
+
+      real(r8):: dBio(0:n), wBiod(0:n)
+      real(r8) :: FC(0:n)
+
+      real(r8) :: Hz_inv(n)
+      real(r8) :: Hz_inv2(n)
+      real(r8) :: Hz_inv3(n)
+
+      integer :: ksource(n)
+
+      real(r8) :: qR(n)
+      real(r8) :: qL(n)
+      real(r8) :: WL(n)
+      real(r8) :: WR(n)
+      real(r8), dimension(n) :: qc
+
+
+      ! Modify sinking rates as necessary
+
+      IF ( zlimit .lt. 0 ) THEN
+        DO k=0,n
+          IF ( z_wL(k) .ge. zlimit ) THEN
+            wBiod(k) = wBio*exp(-1*(z_wL(k)-(zlimit/2))**2/(zlimit/2)**2)
+          ELSE
+            wBiod(k) = 0.0_r8
+          END IF
+        END DO
+      ELSE
+        DO k=0,n
+          wBiod(k) = wBio
+        END DO
+      END IF
+
+
+      ! Compute inverse thickness to avoid repeated divisions.
+
+
+      DO k=1,n
+        Hz_inv(k)=1.0_r8/HzL(k)
+      END DO
+      DO k=1,n-1
+        Hz_inv2(k)=1.0_r8/(HzL(k)+HzL(k+1))
+      END DO
+      DO k=2,n-1
+        Hz_inv3(k)=1.0_r8/(HzL(k-1)+HzL(k)+HzL(k+1))
+      END DO
+
+      DO k=1,n
+        qc(k)=Btmp(k)
+      END DO
+
+
+      ! Reconstruct vertical profile of suspended sediment "qc" in terms
+      ! of a set of parabolic segments within each grid box. Then,
+      ! compute semi-Lagrangian flux due to sinking.
+
+      DO k=n-1,1,-1
+          FC(k)=(qc(k+1)-qc(k))*Hz_inv2(k)
+      END DO
+
+      DO k=2,n-1
+          dltR=HzL(k)*FC(k)
+          dltL=HzL(k)*FC(k-1)
+          cff=HzL(k-1)+2.0_r8*HzL(k)+HzL(k+1)
+          cffR=cff*FC(k)
+          cffL=cff*FC(k-1)
+
+          ! Apply PPM monotonicity constraint to prevent oscillations
+          ! within the grid box.
+
+          IF ((dltR*dltL).le.0.0_r8) THEN
+            dltR=0.0_r8
+            dltL=0.0_r8
+          ELSE IF (ABS(dltR).gt.ABS(cffL)) THEN
+            dltR=cffL
+          ELSE IF (ABS(dltL).gt.ABS(cffR)) THEN
+            dltL=cffR
+          END IF
+
+          ! Compute right and left side values (qR,qL) of parabolic
+          ! segments within grid box Hz(k); (WR,WL) are measures of
+          ! quadratic variations.
+          !
+          !  NOTE: Although each parabolic segment is monotonic within
+          !        its grid box, monotonicity of the whole profile is not
+          !        guaranteed, because qL(k+1)-qR(k) may still have
+          !        different sign than qc(k+1)-qc(k).  This possibility
+          !        is excluded, after qL and qR are reconciled using WENO
+          !        procedure.
+
+          cff=(dltR-dltL)*Hz_inv3(k)
+          dltR=dltR-cff*HzL(k+1)
+          dltL=dltL+cff*HzL(k-1)
+          qR(k)=qc(k)+dltR
+          qL(k)=qc(k)-dltL
+          WR(k)=(2.0_r8*dltR-dltL)**2
+          WL(k)=(dltR-2.0_r8*dltL)**2
+      END DO
+
+      cff=1.0E-14_r8
+
+      DO k=2,n-2
+        dltL=MAX(cff,WL(k  ))
+        dltR=MAX(cff,WR(k+1))
+        qR(k)=(dltR*qR(k)+dltL*qL(k+1))/(dltR+dltL)
+        qL(k+1)=qR(k)
+      END DO
+
+
+      FC(n)=0.0_r8                  ! no-flux boundary condition
+#if defined LINEAR_CONTINUATION
+      qL(n)=qR(n-1)
+      qR(n)=2.0_r8*qc(n)-qL(n)
+#elif defined NEUMANN
+      qL(n)=qR(n-1)
+      qR(n)=1.5_r8*qc(n)-0.5_r8*qL(n)
+#else
+      qR(n)=qc(n)                   ! default strictly monotonic
+      qL(n)=qc(n)                   ! conditions
+      qR(n-1)=qc(n)
+#endif
+#if defined LINEAR_CONTINUATION
+      qR(1)=qL(2)
+      qL(1)=2.0_r8*qc(1)-qR(1)
+#elif defined NEUMANN
+      qR(1)=qL(2)
+      qL(1)=1.5_r8*qc(1)-0.5_r8*qR(1)
+#else
+      qL(2)=qc(1)                   ! bottom grid boxes are
+      qR(1)=qc(1)                   ! re-assumed to be
+      qL(1)=qc(1)                   ! piecewise constant.
+#endif
+
+
+      ! Apply monotonicity constraint again, since the reconciled
+      ! interfacial values may cause a non-monotonic behavior of the
+      ! parabolic segments inside the grid box.
+
+      DO k=1,n
+          dltR=qR(k)-qc(k)
+          dltL=qc(k)-qL(k)
+          cffR=2.0_r8*dltR
+          cffL=2.0_r8*dltL
+          IF ((dltR*dltL).lt.0.0_r8) THEN
+            dltR=0.0_r8
+            dltL=0.0_r8
+          ELSE IF (ABS(dltR).gt.ABS(cffL)) THEN
+            dltR=cffL
+          ELSE IF (ABS(dltL).gt.ABS(cffR)) THEN
+            dltL=cffR
+          END IF
+          qR(k)=qc(k)+dltR
+          qL(k)=qc(k)-dltL
+      END DO
+
+      ! After this moment reconstruction is considered complete. The next
+      ! stage is to compute vertical advective fluxes, FC. It is expected
+      ! that sinking may occurs relatively fast, the algorithm is designed
+      ! to be free of CFL criterion, which is achieved by allowing
+      ! integration bounds for semi-Lagrangian advective flux to use as
+      ! many grid boxes in upstream direction as necessary.
+      !
+      ! In the two code segments below, WL is the z-coordinate of the
+      ! departure point for grid box interface z_w with the same indices;
+      ! FC is the finite volume flux; ksource(:,k) is index of vertical
+      ! grid box which contains the departure point (restricted by N(ng)).
+      ! During the search: also add in content of whole grid boxes
+      ! participating in FC.
+
+      DO k=1,n
+        cff=dtdays*ABS(wBiod(k))
+        FC(k-1)=0.0_r8
+        WL(k)=z_wL(k-1)+cff
+        WR(k)=HzL(k)*qc(k)
+        ksource(k)=k
+      END DO
+      DO k=1,n
+        DO ks=k,n-1
+          IF (WL(k).gt.z_wL(ks)) THEN
+            ksource(k)=ks+1
+            FC(k-1)=FC(k-1)+WR(ks)
+          END IF
+        END DO
+      END DO
+
+      ! Finalize computation of flux: add fractional part.
+
+      DO k=1,n
+
+        ks=ksource(k)
+        cu=MIN(1.0_r8,(WL(k)-z_wL(ks-1))*Hz_inv(ks))
+        FC(k-1)=FC(k-1)+                                                &
+     &                HzL(ks)*cu*                                       &
+     &                (qL(ks)+                                          &
+     &                 cu*(0.5_r8*(qR(ks)-qL(ks))-                      &
+     &                     (1.5_r8-cu)*                                 &
+     &                     (qR(ks)+qL(ks)-2.0_r8*qc(ks))))
+
+      END DO
+
+      ! New profile of tracer Btmp (mass per volume)
+
+      DO k=1,n
+        Btmp(k)=qc(k)+(FC(k)-FC(k-1))*Hz_inv(k)
+      END DO
+
+      ! Amount lost out of bottom cell (mass per area)
+
+      sinkout = FC(0)
+
+      RETURN
+END SUBROUTINE BioSink
+
 !=====================================================================
 ! BIOSINK_1  particle sinking subroutine After J. Warner sed sink code
 ! G. Gibson July 2008
@@ -5015,7 +5465,7 @@
 !     BioSink: New subroutine to replace BIOSINK_1, BIORISE_1
 !=====================================================================
 
-      Subroutine BioSink(n, Btmp, wBio, HzL, dtdays, z_wL, zlimit, sinkout,FC)
+      Subroutine BioSinkOld(n, Btmp, wBio, HzL, dtdays, z_wL, zlimit, sinkout,FC)
     
       !------------------------------------------------------------------
       ! Computes redistribution of a tracer in the water column due to 
@@ -5259,7 +5709,7 @@
       sinkout = FC(0)
   
       RETURN
-      END SUBROUTINE BioSink
+      END SUBROUTINE BioSinkold
    
 !=======================================================================
 !    DetSINK 
