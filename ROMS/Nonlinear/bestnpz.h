@@ -2170,37 +2170,45 @@
           !==============================================================
 
           ! This section includes all vertical movement of state
-          ! variables.  The redistribution of biomass across the water
-          ! column is handled by the TracerSink and TracerRise
-          ! subroutines.
+          ! variables, including sinking of phytoplankton and particulate 
+					! detritus, large copepod seasonal diapause, and (evenuntually) 
+					! euphausiid diel vertical migration.  
+					!
+					! The redistribution of biomass across the water column is 
+					! handled by the TracerSink  and TracerRise subroutines.  Both 
+					! subroutines require identical syntax, with the exception that 
+					! TracerSink interprets the 5th input (wBio) as a sinking rate 
+					! and TracerRise interprets it as a rising rate (wBio values 
+					! should be positive in both cases).
+					
+					Btmp = 0 ! output array
+          lost = 0 ! loss across lower (for sinking) or upper (for rising) boundary
 
-          ! Initialize temporary arrays to 0
-
-          Btmp = 0    ! tracer profile, (1:n)
-          Hztmp = 0   ! layer thickness, (1:n)
-          zwtmp = 0   ! layer edges, (0:n)
-          sinkout2 = 0 ! loss out of bottom cell (1)
-
+          ! TODO: eliminate repeated inputs, maybe rearrange to more intuitive order?
+					! Eliminate need to get Btmp
+					
           ! Small phytoplankton: sinks, and 79% of what sinks out of the
           ! bottom goes to benthic detritus
 
           DO i=Istr,Iend
 
-            call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhS, 1.0_r8, Bio(i,:,iPhS), Btmp, sinkout2)
+            zlim = z_w(i,j,N(ng)) + 1 ! out of z_w range = no limit
+            call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhS, zlim, Bio3d(i,:,iiPhS), Btmp, sinkout2)
 
             DO k = 1,N(ng)
-              DBio(i,k,iPhS) = DBio(i,k,iPhS) + (Btmp(k) - Bio(i,k,iPhS))
+							Bio3d(i,k,iiPhS) = Btmp(k)
+							Bio2d(i,k,iiPhS) = Bio3d(i,k,iiPhS)*Hz(i,j,k)
             END DO
-            DBio(i,1,iBenDet) = DBioB(i,1,iBenDet) + sinkout2*0.79_r8
+						Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + lost*0.79_r8
 
           END DO
-
 
           ! Large phytoplankton: sinks, and 79% of what sinks out of the
           ! bottom goes to benthic detritus
 
           DO i=Istr,Iend
 
+            zlim = z_w(i,j,N(ng)) + 1 ! out of z_w range = no limit
             call TracerSink(N(ng), Hz(i,j,:), z_w(i,j,:), dtdays, wPhL, 1.0_r8, Bio(i,:,iPhL), Btmp, sinkout2)
 
             DO k = 1,N(ng)
