@@ -3543,8 +3543,8 @@
 
             call BioVert(N(ng), -wPhS, Bio(i,:,iPhS), dBtmp,            &
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
-     &                   z_w(i,j,N(ng)+10, flxtmp)
-            DBio(i,:,iPhS) = DBio(i,:,iPhS) + dBtmp
+     &                   z_w(i,j,N(ng))+10, flxtmp)
+            DBio(i,1:N(ng),iPhS) = DBio(i,1:N(ng),iPhS) + dBtmp(1,1:N(ng))
             DBioB(i,1,iBenDet) = DBioB(i,1,iBenDet) + flxtmp*0.79_r8
 
           END DO
@@ -3556,8 +3556,8 @@
 
             call BioVert(N(ng), -wPhL, Bio(i,:,iPhL), dBtmp,            &
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
-     &                   z_w(i,j,N(ng)+10, flxtmp)
-            DBio(i,:,iPhL) = DBio(i,:,iPhL) + dBtmp
+     &                   z_w(i,j,N(ng))+10, flxtmp)
+            DBio(i,1:N(ng),iPhL) = DBio(i,1:N(ng),iPhL) + dBtmp(1,1:N(ng))
             DBioB(i,1,iBenDet) = DBioB(i,1,iBenDet) + flxtmp*0.79_r8
 
           END DO
@@ -3569,8 +3569,8 @@
 
             call BioVert(N(ng), -wDet, Bio(i,:,iDet), dBtmp,            &
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
-     &                   z_w(i,j,N(ng)+10, flxtmp)
-            DBio(i,:,iDet) = DBio(i,:,iDet) + dBtmp
+     &                   z_w(i,j,N(ng))+10, flxtmp)
+            DBio(i,1:N(ng),iDet) = DBio(i,1:N(ng),iDet) + dBtmp(1,1:N(ng))
             DBioB(i,1,iBenDet) = DBioB(i,1,iBenDet) + flxtmp*0.79_r8
 
           END DO
@@ -3582,8 +3582,8 @@
 
             call BioVert(N(ng), -wDetF, Bio(i,:,iDetF), dBtmp,          &
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
-     &                   z_w(i,j,N(ng)+10, flxtmp)
-            DBio(i,:,iDetF) = DBio(i,:,iDetF) + dBtmp
+     &                   z_w(i,j,N(ng))+10, flxtmp)
+            DBio(i,1:N(ng),iDetF) = DBio(i,1:N(ng),iDetF) + dBtmp(1,1:N(ng))
             DBioB(i,1,iBenDet) = DBioB(i,1,iBenDet) + flxtmp*0.79_r8
 
           END DO
@@ -3602,14 +3602,14 @@
               call BioVert(N(ng), -wNCsink, Bio(i,:,iNCaS), dBtmp,      &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), flxtmp)
-              DBio(i,:,iNCaS) = DBio(i,:,iNCaS) + dBtmp
+              DBio(i,1:N(ng),iNCaS) = DBio(i,1:N(ng),iNCaS) + dBtmp(1,1:N(ng))
 
             else if (upwardCM) then
 
               call BioVert(N(ng), wNCrise, Bio(i,:,iNCaS), dBtmp,       &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     (z_w(i,j,N(ng)-1)+z_w(i,j,N(ng)))/2, flxtmp)
-              DBio(i,:,iNCaS) = DBio(i,:,iNCaS) + dBtmp
+              DBio(i,1:N(ng),iNCaS) = DBio(i,1:N(ng),iNCaS) + dBtmp(1,1:N(ng))
 
             end if
 
@@ -3630,15 +3630,15 @@
               call BioVert(N(ng), -wNCsink, Bio(i,:,iNCaO), dBtmp,      &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     -400.0_r8, flxtmp)
-              DBio(i,:,iNCaO) = DBio(i,:,iNCaO) + dBtmp
-              DBioB(i,1,iBenDet) = DBioB(i,1,iBenDet) + flx
+              DBio(i,1:N(ng),iNCaO) = DBio(i,1:N(ng),iNCaO) + dBtmp(1,1:N(ng))
+              DBioB(i,1,iBenDet) = DBioB(i,1,iBenDet) + flxtmp
 
             else if (upwardNC) then
 
               call BioVert(N(ng), wNCrise, Bio(i,:,iNCaO), dBtmp,       &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     (z_w(i,j,N(ng)-1)+z_w(i,j,N(ng)))/2, flxtmp)
-              DBio(i,:,iNCaO) = DBio(i,:,iNCaO) + dBtmp
+              DBio(i,1:N(ng),iNCaO) = DBio(i,1:N(ng),iNCaO) + dBtmp(1,1:N(ng))
 
             end if
 
@@ -4561,8 +4561,9 @@
 !=====================================================================
       subroutine BioVert(nn,wBio,Bio,dBioOut,HzL,dtdays,z_wL,zlimit,flx)
 
+			USE mod_kinds
       implicit none
-
+			
       integer,  intent(in) :: nn
       real(r8), intent(in) :: wBio    ! negative down, positive up
       real(r8), intent(in) :: zlimit
@@ -4654,6 +4655,7 @@
 !=====================================================================
       subroutine BIOSINK(nn,wBio,Bio,dBioOut,HzL,dtdays,z_wL,zlimit,flx)
 !
+			USE mod_kinds
       implicit none
 !
       integer, intent(in)  :: nn
