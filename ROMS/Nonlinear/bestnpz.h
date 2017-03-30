@@ -682,19 +682,27 @@
         !---------------------------------
 
         ! The various biological state variables are passed into this
-        ! function in a few different arrays, depending on whether the
-        ! variable was part of the original GOANPZ model, added with the
-        ! benthic submodel, or added with the ice model (and for ice,
-        ! whether we're running ROMS with a full ice model or with 1D
-        ! climatological ice).
+        ! function in a few different arrays, depending on whether it's a
+        ! tracer variable in the water (subject to advection and
+        ! diffusion), a benthic variable (no movement), or an ice
+        ! variable (subject to movement within the ice submodel, if
+        ! running with the ice submodel, or being set analytically in
+        ! climatological 1D mode).
         !
-        ! To make long-term maintenance of this code easier, we'll place
-        ! all these variables into a single i x k x var array, where
+        ! Further complicating things is the mix of units.  The main
+        ! tracer array uses a mix of units: Tunits (i.e. tracer units, in
+        ! this case mass m^-3) for t(:,:,:,nstp,:) but m Tunits for
+        ! t(:,:,:,nnew,:) (b/c we don't yet know the layer thicknesses
+        ! that will be used in the predictor step nnew).  The benthic
+        ! Tunits are mass m^-2, and the ice Tunits are mass m^-3.
+        !
+        ! To make long-term maintenance of this code easier, within this
+        ! J_LOOP section we'll work with i x k x var arrays, where
         ! i = horizontal grid cell looping dimension, k = depth (counting
         ! from bottom to top), and var is the biological state variable
         ! index.
 
-        ! First, some handy indices, so I don't have to switch around
+        ! First, set up the var indices, so I don't have to switch around
         ! between the 3 different sets used for pelagic, benthic, and ice
         ! variables in the input arrays.
 
@@ -720,8 +728,8 @@
         iiIceNH4 = 20
 
         ! All state variables will be saved in two different versions:
-        ! per-volume (Bio3d) and per-area (Bio2d).  This redundancy makes
-        ! for clearer (for human readers) code.
+        ! mass m^-3 (Bio3d) and mass m^-2 (Bio2d).  This redundancy
+        ! makes for clearer (for human readers) code,
 
         Bio3d = 0 ! Initialize to 0
         Bio2d = 0
@@ -2286,7 +2294,15 @@
 
           END DO
 
-          ! TODO: overhauled to here
+          ! Sync 2d arrays to 3d again
+
+          DO i=Istr,Iend
+            DO k = 1,N(ng)
+              DO itrc = 1,NBT ! Pelagic
+                Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
+              END DO
+            END DO
+          END DO
 
         END DO ITER_LOOP
 
@@ -2294,141 +2310,99 @@
         !  Update global tracer variables (m Tunits).
         !=============================================
 
-        ! Place the appropriate biomass values (2d for benthic, 3d for
-        ! everything else) back in the main tracer arrays.
+        ! Place the appropriate biomass values into main tracer arrays
+        ! (recall that everything in the t(nnew) step is in m*Tunits)
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            t(i,j,k,nnew,iNO3 ) = Bio3d(i,k,iiNO3  )
-            t(i,j,k,nnew,iNH4 ) = Bio3d(i,k,iiNH4  )
-            t(i,j,k,nnew,iPhS ) = Bio3d(i,k,iiPhS  )
-            t(i,j,k,nnew,iPhL ) = Bio3d(i,k,iiPhL  )
-            t(i,j,k,nnew,iMZL ) = Bio3d(i,k,iiMZL  )
-            t(i,j,k,nnew,iCop ) = Bio3d(i,k,iiCop  )
-            t(i,j,k,nnew,iNCaS) = Bio3d(i,k,iiNCaS )
-            t(i,j,k,nnew,iEupS) = Bio3d(i,k,iiEupS )
-            t(i,j,k,nnew,iNCaO) = Bio3d(i,k,iiNCaO )
-            t(i,j,k,nnew,iEupO) = Bio3d(i,k,iiEupO )
-            t(i,j,k,nnew,iDet ) = Bio3d(i,k,iiDet  )
-            t(i,j,k,nnew,iDetF) = Bio3d(i,k,iiDetF )
-            t(i,j,k,nnew,iJel ) = Bio3d(i,k,iiJel  )
-            t(i,j,k,nnew,iFe  ) = Bio3d(i,k,iiFe   )
-
+            t(i,j,k,nnew,iNO3 ) = Bio2d(i,k,iiNO3  ) ! TODO: max(x,0)? Bio_bak process?  Should I add these?
+            t(i,j,k,nnew,iNH4 ) = Bio2d(i,k,iiNH4  )
+            t(i,j,k,nnew,iPhS ) = Bio2d(i,k,iiPhS  )
+            t(i,j,k,nnew,iPhL ) = Bio2d(i,k,iiPhL  )
+            t(i,j,k,nnew,iMZL ) = Bio2d(i,k,iiMZL  )
+            t(i,j,k,nnew,iCop ) = Bio2d(i,k,iiCop  )
+            t(i,j,k,nnew,iNCaS) = Bio2d(i,k,iiNCaS )
+            t(i,j,k,nnew,iEupS) = Bio2d(i,k,iiEupS )
+            t(i,j,k,nnew,iNCaO) = Bio2d(i,k,iiNCaO )
+            t(i,j,k,nnew,iEupO) = Bio2d(i,k,iiEupO )
+            t(i,j,k,nnew,iDet ) = Bio2d(i,k,iiDet  )
+            t(i,j,k,nnew,iDetF) = Bio2d(i,k,iiDetF )
+            t(i,j,k,nnew,iJel ) = Bio2d(i,k,iiJel  )
+            t(i,j,k,nnew,iFe  ) = Bio2d(i,k,iiFe   )
             t(i,j,k,nnew,iMZS ) = 0
-          END DO
-        END DO
-
-
-        t(Istr:Iend,j,1:N(ng),nnew,iNO3) = Bio3d(Istr:Iend,1:N(ng))
-
-
-        DO i=Istr,Iend
-          DO itrc=1,NBT
-            ibio=idbio(itrc)
-            DO k=1,N(ng)
-
-              t(i,j,k,nnew,ibio)=MAX(t(i,j,k,nnew,ibio)+                &
-      &                               (Bio(i,k,ibio)-Bio_bak(i,k,ibio)) &
-      &                               *Hz(i,j,k)                        &
-      &                               ,0.0_r8)
 
 #ifdef TS_MPDATA
-              t(i,j,k,3,ibio)=t(i,j,k,nnew,ibio)*Hz_inv(i,k)
-
+            t(i,j,k,3,iNO3 ) = Bio3d(i,k,iiNO3  )
+            t(i,j,k,3,iNH4 ) = Bio3d(i,k,iiNH4  )
+            t(i,j,k,3,iPhS ) = Bio3d(i,k,iiPhS  )
+            t(i,j,k,3,iPhL ) = Bio3d(i,k,iiPhL  )
+            t(i,j,k,3,iMZL ) = Bio3d(i,k,iiMZL  )
+            t(i,j,k,3,iCop ) = Bio3d(i,k,iiCop  )
+            t(i,j,k,3,iNCaS) = Bio3d(i,k,iiNCaS )
+            t(i,j,k,3,iEupS) = Bio3d(i,k,iiEupS )
+            t(i,j,k,3,iNCaO) = Bio3d(i,k,iiNCaO )
+            t(i,j,k,3,iEupO) = Bio3d(i,k,iiEupO )
+            t(i,j,k,3,iDet ) = Bio3d(i,k,iiDet  )
+            t(i,j,k,3,iDetF) = Bio3d(i,k,iiDetF )
+            t(i,j,k,3,iJel ) = Bio3d(i,k,iiJel  )
+            t(i,j,k,3,iFe  ) = Bio3d(i,k,iiFe   )
+            t(i,j,k,3,iMZS ) = 0
 #endif
-
-              t(i,j,k,nnew,iMZS)=0.0_r8
-
-            END DO
           END DO
         END DO
 
 #ifdef BENTHIC
 
-        DO itrc=1,NBEN
-          ibioB=idben(itrc)
-          DO k=1,NBL(ng)
-            DO i=Istr,Iend
-
-              !  check indexing here. think it ok.
-              bt(i,j,k,nnew,ibioB)=MAX(bt(i,j,k,nstp,ibioB)+            &
-     &                           (BioB(i,k,ibioB)-Bio_bakB(i,k,ibioB))  &
-     &                           ,0.0_r8)
+        DO i=Istr,Iend
+          bt(i,j,1,nnew,iBen   ) = Bio2d(i,1,iiBen   )
+          bt(i,j,1,nnew,iBenDet) = Bio2d(i,1,iiBenDet)
 
 # ifdef MASKING
-              bt(i,j,k,nnew,ibioB)=  bt(i,j,k,nnew,ibioB)*rmask(i,j)
+          bt(i,j,1,nnew,iBen)    = bt(i,j,1,nnew,iBen   )*rmask(i,j)
+          bt(i,j,1,nnew,iBenDet) = bt(i,j,1,nnew,iBenDet)*rmask(i,j)
 # endif
-            END DO
-          END DO
         END DO
-
 #endif
+
 #ifdef ICE_BIO
+        ! TODO: eliminated check for whether ice is present, b/c if not
+        ! Bio3d of ice vars should be 0 anyway... might need to check
+        ! this though
 # if defined CLIM_ICE_1D
 
-
         DO i=Istr,Iend
+          it(i,j,nnew,iIceNO3) = Bio3d(i,N(ng),iiIceNO3)
+          it(i,j,nnew,iIceNH4) = Bio3d(i,N(ng),iiIceNH4)
+          it(i,j,nnew,iIcePhL) = Bio3d(i,N(ng),iiIcePhL)
 
-          if(itL(i,j,nstp,1).gt.0_r8)THEN
-
-            it(i,j,nnew,iIceNO3)=MAX(it(i,j,nstp,iIceNO3)+              &
-     &                           BioBI(i,iIceNO3)-Bio_bakBI(i,iIceNO3)  &
-     &                               ,0.0_r8)
-            it(i,j,nnew,iIceNH4)=MAX(it(i,j,nstp,iIceNH4)+              &
-     &                           BioBI(i,iIceNH4)-Bio_bakBI(i,iIceNH4)  &
-     &                               ,0.0_r8)
-            it(i,j,nnew,iIcePhL)=MAX(it(i,j,nstp,iIcePhL)+              &
-     &                           BioBI(i,iIcePhL)-Bio_bakBI(i,iIcePhL)  &
-     &                               ,0.0_r8)
-
-          else
-
-            it(i,j,nnew,iIcePhL)=0_r8
-            it(i,j,nnew,iIceNH4)=0_r8
-            it(i,j,nnew,iIceNO3)=0_r8
-          endif
-
-
-          itL(i,j,nnew,iIceLog)=itL(i,j,nstp,iIceLog)
-
+          itL(i,j,nnew,iIceLog) = itL(i,j,nstp,iIceLog)
 
 #  ifdef MASKING
-          it(i,j,nnew,iIcePhL)  = it(i,j,nnew,iIcePhL)*rmask(i,j)
-          it(i,j,nnew,iIceNH4)  = it(i,j,nnew,iIceNH4)*rmask(i,j)
-          it(i,j,nnew,iIceNO3)  = it(i,j,nnew,iIceNO3)*rmask(i,j)
+          it( i,j,nnew,iIcePhL) = it( i,j,nnew,iIcePhL)*rmask(i,j)
+          it( i,j,nnew,iIceNH4) = it( i,j,nnew,iIceNH4)*rmask(i,j)
+          it( i,j,nnew,iIceNO3) = it( i,j,nnew,iIceNO3)*rmask(i,j)
           itL(i,j,nnew,iIceLog) = itL(i,j,nnew,iIceLog)*rmask(i,j)
 #  endif
-
         END DO
-
-# elif defined BERING_10K
+# else
         DO i=Istr,Iend
-          if (IceLog(i,j,nstp).ge.0_r8 )THEN
+          IcePhL(i,j,nnew) = Bio3d(i,N(ng),iiIceNO3)
+          IceNO3(i,j,nnew) = Bio3d(i,N(ng),iiIceNH4)
+          IceNH4(i,j,nnew) = Bio3d(i,N(ng),iiIcePhL)
 
-            !  ajh added zero trap on these
-
-            IcePhL(i,j,nnew) = max(0.,IcePhL(i,j,nnew))
-            IceNO3(i,j,nnew) =  max(0.,IceNO3(i,j,nnew))
-            IceNH4(i,j,nnew) =  max(0.,IceNH4(i,j,nnew))
-          else
-            IcePhL(i,j,nnew) =0_r8
-            IceNO3(i,j,nnew) =  0_r8
-            IceNH4(i,j,nnew) =  0_r8
-          endif
+          IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: still not certain of the flipflop thing
 
 #  ifdef MASKING
           IcePhL(i,j,nnew) = IcePhL(i,j,nnew)*rmask(i,j)
-          IceNO3(i,j,nnew) =  IceNO3(i,j,nnew)*rmask(i,j)
-          IceNH4(i,j,nnew) =  IceNH4(i,j,nnew)*rmask(i,j)
+          IceNO3(i,j,nnew) = IceNO3(i,j,nnew)*rmask(i,j)
+          IceNH4(i,j,nnew) = IceNH4(i,j,nnew)*rmask(i,j)
 #  endif
-            IceLog(i,j,nnew)=IceLog(i,j,nstp)
-
         END DO
 
 # endif
-
-
 #endif
+
+! TODO overhauled to here
 
 
 #ifdef STATIONARY
