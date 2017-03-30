@@ -536,7 +536,7 @@
 
       ! Vertical movement
 
-      real(r8), dimension(N(ng)) :: dBtmp
+      real(r8), dimension(1,N(ng)) :: dBtmp
       real(r8) :: flxtmp
 
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
@@ -2153,7 +2153,7 @@
 
           DO i=Istr,Iend
             DO k = 1,N(ng)
-              DO itrc = 1:NBT+NBEN ! Pelagic (and benthic, for bookkeeping)
+              DO itrc = 1,NBT+NBEN ! Pelagic (and benthic, for bookkeeping)
                 Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/Hz(i,j,k)
               END DO
               DO itrc = 18,20 ! Ice
