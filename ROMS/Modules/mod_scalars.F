@@ -237,7 +237,7 @@
          integer, pointer :: idice(:)  ! Ice tracers
 #   ifdef CLIM_ICE_1D	 
          integer, pointer :: idiceLog(:)  ! Ice tracers
-#endif	 
+#   endif	 
          integer :: iIcePhL
          integer :: iIceNO3
          integer :: iIceNH4

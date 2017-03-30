@@ -2288,85 +2288,39 @@
 
           ! TODO: overhauled to here
 
-          !==============================================================
-          ! Update Bio array
-          !==============================================================
-          DO i=Istr,Iend
-
-            DO itrc=1,NBT
-              ibio=idbio(itrc)
-              DO k=1,N(ng)
-
-                Bio(i,k,ibio)=Bio(i,k,ibio)+DBio(i,k,ibio)
-
-              END DO
-            END DO
-          END DO
-#ifdef BENTHIC
-          DO itrc=1,NBEN
-            ibioB=idben(itrc)
-            DO k=1,NBL(ng)
-              DO i=Istr,Iend
-
-                BioB(i,k,ibioB)=BioB(i,k,ibioB)+DBioB(i,k,ibioB)
-
-              END DO
-            END DO
-          END DO
-
-#endif
-#ifdef ICE_BIO
-# if defined CLIM_ICE_1D
-
-          DO i=Istr,Iend
-
-            if(itL(i,j,nstp,1).gt.0_r8)THEN
-              BioBI(i,iIceNO3)=BioBI(i,iIceNO3)+DBioBI(i,iIceNO3)
-              BioBI(i,iIceNH4)=BioBI(i,iIceNH4)+DBioBI(i,iIceNH4)
-              BioBI(i,iIcePhL)=BioBI(i,iIcePhL)+DBioBI(i,iIcePhL)
-
-            else
-              BioBI(i,iIceNO3)=0_r8
-              BioBI(i,iIceNH4)=0_r8
-              BioBI(i,iIcePhL)=0_r8
-            endif
-
-          END DO
-
-# elif defined BERING_10K
-
-          DO i=Istr,Iend
-
-            if (IceLog(i,j,nstp).gt.0 )THEN
-
-              IcePhL(i,j,nnew) = IcePhL(i,j,nstp) + DBioBI(i,iIcePhL)
-              IceNO3(i,j,nnew) = IceNO3(i,j,nstp) + DBioBI(i,iIceNO3)
-              IceNH4(i,j,nnew) = IceNH4(i,j,nstp) + DBioBI(i,iIceNH4)
-            else
-              IcePhL(i,j,nnew) = 0_r8
-              IceNO3(i,j,nnew) = 0_r8
-              IceNH4(i,j,nnew) = 0_r8
-            endif
-
-#  ifdef STATIONARY2
-
-
-!           Stat2(i,5)=IceNH4(i,j,nstp)
-!           Stat2(i,6)=IceNH4(i,j,nnew)
-#  endif
-
-
-          END DO
-
-# endif
-#endif
-
-
         END DO ITER_LOOP
 
         !=============================================
         !  Update global tracer variables (m Tunits).
         !=============================================
+
+        ! Place the appropriate biomass values (2d for benthic, 3d for
+        ! everything else) back in the main tracer arrays.
+
+        DO i=Istr,Iend
+          DO k = 1,N(ng)
+            t(i,j,k,nnew,iNO3 ) = Bio3d(i,k,iiNO3  )
+            t(i,j,k,nnew,iNH4 ) = Bio3d(i,k,iiNH4  )
+            t(i,j,k,nnew,iPhS ) = Bio3d(i,k,iiPhS  )
+            t(i,j,k,nnew,iPhL ) = Bio3d(i,k,iiPhL  )
+            t(i,j,k,nnew,iMZL ) = Bio3d(i,k,iiMZL  )
+            t(i,j,k,nnew,iCop ) = Bio3d(i,k,iiCop  )
+            t(i,j,k,nnew,iNCaS) = Bio3d(i,k,iiNCaS )
+            t(i,j,k,nnew,iEupS) = Bio3d(i,k,iiEupS )
+            t(i,j,k,nnew,iNCaO) = Bio3d(i,k,iiNCaO )
+            t(i,j,k,nnew,iEupO) = Bio3d(i,k,iiEupO )
+            t(i,j,k,nnew,iDet ) = Bio3d(i,k,iiDet  )
+            t(i,j,k,nnew,iDetF) = Bio3d(i,k,iiDetF )
+            t(i,j,k,nnew,iJel ) = Bio3d(i,k,iiJel  )
+            t(i,j,k,nnew,iFe  ) = Bio3d(i,k,iiFe   )
+
+            t(i,j,k,nnew,iMZS ) = 0
+          END DO
+        END DO
+
+
+        t(Istr:Iend,j,1:N(ng),nnew,iNO3) = Bio3d(Istr:Iend,1:N(ng))
+
 
         DO i=Istr,Iend
           DO itrc=1,NBT
