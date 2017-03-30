@@ -133,55 +133,42 @@
 #endif
      &                         Hz, z_r, z_w, srflx, t                   &
 #if defined BENTHIC
-     &                            ,bt                                   &
+     &                         ,bt                                      &
 #endif
 #if defined FEAST
-     &                           ,u,v                                   &
-     &                           ,GF                                &
+     &                         ,u,v                                     &
+     &                         ,GF                                      &
 #endif
 #if defined ICE_BIO
 # ifdef CLIM_ICE_1D
-     &                            ,it                                   &
-     &                            ,itL                                  &
-     &                            ,tclm                                 &
+     &                         ,it, itL, tclm                           &
 # elif defined BERING_10K
-     &                            , IcePhL                              &
-     &                            , IceNO3                              &
-     &                            , IceNH4                              &
-     &                            , IceLog                              &
-     &                            ,ti                                   &
-     &                            ,hi                                   &
-     &                            ,ai                                   &
-     &                            ,ageice                               &
-     &                            ,ui,vi                                &
+     &                         ,IcePhL, IceNO3, IceNH4, IceLog          &                            &
+     &                         ,ti, hi, ai, ageice, ui, vi              &
 # endif
 #endif
 #ifdef STATIONARY
-     &                          ,st                                     &
-     &                          ,UBst                                   &
+     &                          ,st,UBst                                &
 #endif
 #ifdef STATIONARY2
-     &                          ,st2                                    &
-     &                          ,UBst2                                  &
+     &                          ,st2,UBst2                              &
 #endif
 #ifdef PROD3
-     &                          ,pt3                                    &
-     &                          ,UBpt3                                  &
+     &                          ,pt3,UBpt3                              &
 #endif
 #ifdef PROD2
-     &                          ,pt2                                    &
-     &                          ,UBpt2                                  &
+     &                          ,pt2,UBpt2                              &
 #endif
 #ifdef BIOFLUX
      &                          ,bflx                                   &
 #endif
-     &                          ,Akt                                    &
-
-     &                                  )
+     &                          ,Akt )
 
      !==================================================================
      !  VARIABLE DECLARATIONS
      !==================================================================
+
+     ! Modules
 
       USE mod_param
       USE mod_biology
@@ -220,33 +207,20 @@
 
       !  Imported variable declarations.
 
-      integer, intent(in) :: ng, tile
-      integer, intent(in) :: LBi, UBi, LBj, UBj
-      integer, intent(in) :: IminS, ImaxS, JminS, JmaxS
-      integer, intent(in) :: UBk, UBt
-      integer, intent(in) :: nnew, nstp
-!
-#ifdef STATIONARY
-      integer, intent(in) :: UBst
-#endif
-#if defined STATIONARY2
-      integer, intent(in) :: UBst2
-#endif
-#if defined PROD3
-      integer, intent(in) :: UBpt3
-#endif
-#if defined PROD2
-      integer, intent(in) :: UBpt2
-#endif
+      integer, intent(in)     :: ng, tile
+      integer, intent(in)     :: LBi, UBi, LBj, UBj
+      integer, intent(in)     :: IminS, ImaxS, JminS, JmaxS
+      integer, intent(in)     :: UBk, UBt
+      integer, intent(in)     :: nnew, nstp
 
 #ifdef ASSUMED_SHAPE
 # ifdef MASKING
-      real(r8), intent(in) :: rmask(LBi:,LBj:)
+      real(r8), intent(in)    :: rmask(LBi:,LBj:)
 # endif
-      real(r8), intent(in) :: Hz(LBi:,LBj:,:)
-      real(r8), intent(in) :: z_r(LBi:,LBj:,:)
-      real(r8), intent(in) :: z_w(LBi:,LBj:,0:)
-      real(r8), intent(in) :: srflx(LBi:,LBj:)
+      real(r8), intent(in)    :: Hz(LBi:,LBj:,:)
+      real(r8), intent(in)    :: z_r(LBi:,LBj:,:)
+      real(r8), intent(in)    :: z_w(LBi:,LBj:,0:)
+      real(r8), intent(in)    :: srflx(LBi:,LBj:)
       real(r8), intent(inout) :: t(LBi:,LBj:,:,:,:)
 
 # ifdef STATIONARY
@@ -265,14 +239,8 @@
       real(r8), intent(inout) :: bt(LBi:,LBj:,:,:,:)
 # endif
 # if defined FEAST
-      real(r8), intent(in) :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
-      TYPE (T_FEAST) :: GF
-      !real(r8), intent(inout) :: ghfal(LBi:UBi,LBj:UBj,nrates,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
-      !real(r8), intent(inout) :: ghfl(LBi:UBi,LBj:UBj,nrates,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS)
-      !real(r8), intent(inout) :: ghfsp(LBi:UBi,LBj:UBj,nrates,NUM_SIMPLE_SPECIES)
-      !real(r8), intent(inout) :: ozm(LBi:UBi,LBj:UBj,UBk,NUM_PLANKTON)
-      !real(r8), intent(inout) :: ofdat(LBi:UBi,LBj:UBj,UBk,NFDAT)
-      !real(r8), intent(inout) :: incatch (LBi:UBi,LBj:UBj,NUM_GEARS,TOT_FEAST)
+      real(r8), intent(in)    :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
+      TYPE (T_FEAST)          :: GF
 # endif
 # if defined ICE_BIO
 #  ifdef CLIM_ICE_1D
@@ -280,10 +248,10 @@
       real(r8), intent(inout) :: itL(LBi:,LBj:,:,:)
 
 #  elif defined BERING_10K
-      real(r8), intent(in) :: ti(LBi:,LBj:,:)
-      real(r8), intent(in) :: hi(LBi:,LBj:,:)
-      real(r8), intent(in) :: ai(LBi:,LBj:,:)
-      real(r8), intent(in) :: ageice(LBi:,LBj:,:)
+      real(r8), intent(in)    :: ti(LBi:,LBj:,:)
+      real(r8), intent(in)    :: hi(LBi:,LBj:,:)
+      real(r8), intent(in)    :: ai(LBi:,LBj:,:)
+      real(r8), intent(in)    :: ageice(LBi:,LBj:,:)
       real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
@@ -299,12 +267,12 @@
 
 #else
 # ifdef MASKING
-      real(r8), intent(in) :: rmask(LBi:UBi,LBj:UBj)
+      real(r8), intent(in)    :: rmask(LBi:UBi,LBj:UBj)
 # endif
-      real(r8), intent(in) :: Hz(LBi:UBi,LBj:UBj,UBk)
-      real(r8), intent(in) :: z_r(LBi:UBi,LBj:UBj,UBk)
-      real(r8), intent(in) :: z_w(LBi:UBi,LBj:UBj,0:UBk)
-      real(r8), intent(in) :: srflx(LBi:UBi,LBj:UBj)
+      real(r8), intent(in)    :: Hz(LBi:UBi,LBj:UBj,UBk)
+      real(r8), intent(in)    :: z_r(LBi:UBi,LBj:UBj,UBk)
+      real(r8), intent(in)    :: z_w(LBi:UBi,LBj:UBj,0:UBk)
+      real(r8), intent(in)    :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
 # ifdef STATIONARY
       real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,NTS(ng))
@@ -322,7 +290,7 @@
       real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,UBk,3,1)
 # endif
 # if defined FEAST
-      real(r8), intent(in) :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
+      real(r8), intent(in)    :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
 # endif
 # if defined ICE_BIO
 #  ifdef CLIM_ICE_1D
@@ -332,10 +300,10 @@
       real(r8), intent(inout) ::tclmG(LBi:UBi,LBj:UBj,UBk,3,NH(ng)+2)
       real(r8), intent(inout) ::tclm(LBi:UBi,LBj:UBj,UBk,NT(ng)+2)
 #  elif defined BERING_10K
-      real(r8), intent(in) :: ti(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in) :: hi(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in) :: ai(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in) :: ageice(LBi:UBi,LBj:UBj,2)
+      real(r8), intent(in)    :: ti(LBi:UBi,LBj:UBj,2)
+      real(r8), intent(in)    :: hi(LBi:UBi,LBj:UBj,2)
+      real(r8), intent(in)    :: ai(LBi:UBi,LBj:UBj,2)
+      real(r8), intent(in)    :: ageice(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IcePhL(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNO3(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNH4(LBi:UBi,LBj:UBj,2)
@@ -348,26 +316,38 @@
       real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj)
 # endif
 #endif
+
+#ifdef STATIONARY
+      integer, intent(in)     :: UBst
+#endif
+#if defined STATIONARY2
+      integer, intent(in)     :: UBst2
+#endif
+#if defined PROD3
+      integer, intent(in)     :: UBpt3
+#endif
+#if defined PROD2
+      integer, intent(in)     :: UBpt2
+#endif
+
+      real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
+
+
+      ! Local variable declarations
+
 #if defined FEAST
 
       real(r8) :: ROMS_depth(LBi:UBi,LBj:UBj,UBk)
       real(r8) :: ROMS_edges(LBi:UBi,LBj:UBj,UBk+1)
       real(r8) :: ROMS_temp(LBi:UBi,LBj:UBj,UBk)
       real(r8) :: ROMS_zoop(LBi:UBi,LBj:UBj,UBk,NUM_PLANKTON)
-      !real :: ZoopFishDeath(LBi:UBi,LBj:UBj,UBk,NUM_PLANKTON)
-      !real :: out_zoop_mort(LBi:UBi,LBj:UBj,UBk,NUM_PLANKTON)
-      !real :: tvar(LBi:UBi,LBj:UBj,NUM_TVAR)
-
       real(r8) :: fal(LBi:UBi,LBj:UBj,nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
       real(r8) :: fl(LBi:UBi,LBj:UBj,nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
       real(r8) :: fsp(LBi:UBi,LBj:UBj,nfvar,NUM_SIMPLE_SPECIES)
       real(r8) :: ratepar(nrates)
       real(r8) :: t_new(LBi:Ubi,LBj:UBj)
-      !real(r8) :: t_old(LBi:Ubi,LBj:UBj)
       real(r8) :: base_speed, diff_coeff
       real(r8) :: delN, Ftot, Fmax, BB, CC, delCF, delCAL
-!     real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
-
       real(r8) :: diff_xiup(LBi:Ubi,LBj:UBj)
       real(r8) :: diff_xidn(LBi:Ubi,LBj:UBj)
       real(r8) :: diff_etup(LBi:Ubi,LBj:UBj)
@@ -378,76 +358,47 @@
       real(r8) :: u_dn(LBi:Ubi,LBj:UBj)
       real(r8) :: v_up(LBi:Ubi,LBj:UBj)
       real(r8) :: v_dn(LBi:Ubi,LBj:UBj)
-
       real(r8), dimension(LBi:Ubi,LBj:UBj) :: t_left, CFmat, CAmat, CA_left, CF_left, CFnew, CAnew
       real(r8), dimension(LBi:Ubi,LBj:UBj) :: gT_u_up, gT_u_dn, gT_v_up, gT_v_dn
       real(r8), dimension(LBi:Ubi,LBj:UBj) :: gCF_u_up, gCF_u_dn, gCF_v_up, gCF_v_dn
       real(r8), dimension(LBi:Ubi,LBj:UBj) :: gCA_u_up, gCA_u_dn, gCA_v_up, gCA_v_dn
       integer :: nfeast,nng, feast_calls
-      !integer :: dilo,dihi,djlo,djhi
-      !integer :: itrczoop(10),ip
       integer :: fvaral,fvarl,fvar,spal,spl,sp,spy,lc,ac,gr,isp,izoop,klev
       integer :: ictr,jctr
       real(r8) :: ftstp
       real(r8) :: NNstart, CFstart, CAstart, WW, Navail, Nloss, Ngloss, rec
       real(r8), dimension(TOT_LINKS):: NNbase,CFbase,CAbase,Npromote
       real(r8), dimension(TOT_FEAST):: eggs
-      !real :: damper,dampex
-      !real :: cff
-      !real :: FXF(IminS:ImaxS,JminS:JmaxS),FEF(IminS:ImaxS,JminS:JmaxS)
-      !real :: happy(IminS:ImaxS,JminS:JmaxS)
-      !real :: happy2(IminS:ImaxS,JminS:JmaxS)
-      !real :: happy3(IminS:ImaxS,JminS:JmaxS)
-      !real :: hape(IminS:ImaxS,JminS:JmaxS),hapx(IminS:ImaxS,JminS:JmaxS)
-      !real :: hapcente(IminS:ImaxS,JminS:JmaxS),hapcentx(IminS:ImaxS,JminS:JmaxS)
-      !real :: v_swim(IminS:ImaxS,JminS:JmaxS),u_swim(IminS:ImaxS,JminS:JmaxS)
-      !real :: hapgrad,maxswim,actswim,zoofac,crowdfac,locfac,tempfac
-      !real :: mid_var1,mid_var2,mid_var3,mid_var4,var1,var2,var3,var4
-
       real :: CurD
 
-#endif
-      real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
-
-      real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:)
-
-      !  Local variable declarations.
-
-      integer :: i, j, k, ibio, ibio2,itr, itrmx, itrc, itrc2
-      real(r8) :: cff5,cff6,cff6b,cff7,cff8,cff9,cff10,cff11
-#ifdef FEAST
       integer :: iv, spn,lcp,elder,younger
+
 #endif
+
+      integer :: i, j, k, ibio, itrc
+      real(r8) :: cff0,cff1, cff1b,cff2,cff3,cff4
+      real(r8) :: cff5,cff6,cff6b,cff7,cff8,cff9,cff10,cff11
+
+
 #if defined BENTHIC
       integer :: ibioB
-      real(r8) :: bf,fbase,TSS,Ifs,atss,btss,SF
-      real(r8) :: avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum
+      real(r8) :: dw
       real(r8) :: totD, totDF, totPS, totPL
       real(r8), dimension(IminS:ImaxS,N(ng)) :: frac1, frac2
-      real(r8) ::sumD,sumDF,sumPL
 #endif
-#ifdef ICE_BIO
-      integer :: ibioBI
-#endif
+
       integer :: Iter,is
       integer :: iday, month, year
+      real(r8) :: hour, yday
 
-      real(r8) :: cff0,cff1, cff1b,cff2,cff3,cff4,dz
-      real(r8) :: TFMZS,TFMZL,TFCop,TFNCa,TFEup,TFJel
-      real(r8) :: Drate, Pmax,NOup, NHup,offset
-      real(r8) :: dtdays,Ra,Rf
-      real(r8) :: LightLim,NOLim,NHLim,IronLim
-      real(r8) :: hour,yday,lat,k_phy,Dl,Par1,k_extV,k_chlV
-      real(r8) :: Sal1,Temp1
-      real(r8) :: ParMax
-      real(r8) :: BasalMetMZL, BasalMetCop, BasalMetNC, BasalMetCM, BasalMetEup
-      real(r8) :: Iron1,kfePh,respPh,BasalMet,BasalMetJel
-      real(r8) :: PON,Dep1,Nitrif,NH4R
-      real(r8) :: NitrifMax,DLNitrif
+      real(r8) :: dz
+      real(r8) :: TFEup
+      real(r8) :: dtdays
+      real(r8) :: lat, Dl, Par1, k_extV, k_chlV
+      real(r8) :: Temp1
+      real(r8) :: PON
+      real(r8) :: NitrifMax, DLNitrif
 
-      real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: Bio
-      real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: DBio
-!       real(r8), dimension(IminS:ImaxS,N(ng),NT(ng)) :: Bio_bak
 #if defined PROD3
       real(r8), dimension(IminS:ImaxS,N(ng),NBPT3) :: Prod
 #endif
@@ -461,16 +412,7 @@
       real(r8), dimension(IminS:ImaxS,NBTS2) :: Stat2
 #endif
 
-#if defined BENTHIC
-      real(r8), dimension(IminS:ImaxS,NBL(ng),NBeT(ng)) :: BioB
-      real(r8), dimension(IminS:ImaxS,NBL(ng),NBeT(ng)) :: DBioB
-      real(r8), dimension(IminS:ImaxS,NBL(ng),NBeT(ng)) :: Bio_bakB
-#endif
-#if defined ICE_BIO
-      real(r8), dimension(IminS:ImaxS,NIceT(ng)) :: BioBI
-      real(r8), dimension(IminS:ImaxS,NIceT(ng)) :: DBioBI
-      real(r8), dimension(IminS:ImaxS,NIceT(ng)) :: Bio_bakBI
-#endif
+
 #if defined BIOFLUX
       real(r8), dimension(NT(ng),NT(ng)) :: BioFlx
 #endif
@@ -480,59 +422,13 @@
       real(r8), dimension(IminS:ImaxS) :: PARs
 
       real(r8), dimension(IminS:ImaxS,N(ng)) :: PAR
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: Dens
-      real(r8), dimension(N(ng)) :: DensV
-      real(r8), dimension(N(ng)) :: ZW_V
-      real(r8), dimension(IminS:ImaxS) :: StabParam
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TestVal
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncPhS
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncPhL
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncMZS
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncMZL
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncCop
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncNeo
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: TempFuncEup
 
-#ifdef JELLY
-      real(r8),dimension(PRIVATE_1D_SCRATCH_ARRAY,N(ng))::TempFuncJel
-#endif
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: HzL
-      real(r8), dimension(IminS:ImaxS,0:N(ng)) :: z_wL
-
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: sinkIN,sinkOUT
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: riseIN,riseOUT
 #ifdef ICE_BIO
-      real(r8) :: aiceIfrac,aiceNfrac,dhicedt,trs,cwi,twi
-      real(r8) ::grow1, GROWAice,reN,fNO3,RAi0,RgAi
+      real(r8) :: aiceIfrac, aiceNfrac, dhicedt, trs, twi
+      real(r8) :: grow1, GROWAice, fNO3, RAi0, RgAi
       real(r8) :: sb, gesi
-      real(r8), dimension(PRIVATE_1D_SCRATCH_ARRAY,N(ng),3):: aib
       real(r8), dimension(PRIVATE_2D_SCRATCH_ARRAY) :: ice_thick, ice_status
 #endif
-!
-#ifdef DISTRIBUTE
-# ifdef EW_PERIODIC
-      logical :: EWperiodic=.TRUE.
-# else
-      logical :: EWperiodic=.FALSE.
-# endif
-# ifdef NS_PERIODIC
-      logical :: NSperiodic=.TRUE.
-# else
-      logical :: NSperiodic=.FALSE.
-# endif
-#endif
-
-#ifdef DIAPAUSE
-      logical :: downwardNC = .false., upwardNC = .false.
-      logical :: downwardCM = .false., upwardCM = .false.
-#endif
-
-      real(r8), parameter :: eps  = 1.0E-20_r8
-      real(r8), parameter :: minv = 0.0E-20_r8
-
-      real(r8) :: Alpha
-      real(r8) :: ALPHA_N,ALPHA_P, kN, kP
-      real(r8) ::respNC, respCM, eCM, eNC
 
       ! Vertical movement
 
@@ -540,6 +436,7 @@
       real(r8) :: flxtmp
 
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
+      real(r8) :: respNC, respCM, eCM, eNC
 
       ! Bio tracer setup
 
@@ -575,6 +472,30 @@
       real(r8) :: IcePhlAvail
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
       real(r8) :: ParW
+
+      ! Parameter default values
+
+#ifdef DISTRIBUTE
+# ifdef EW_PERIODIC
+      logical :: EWperiodic=.TRUE.
+# else
+      logical :: EWperiodic=.FALSE.
+# endif
+# ifdef NS_PERIODIC
+      logical :: NSperiodic=.TRUE.
+# else
+      logical :: NSperiodic=.FALSE.
+# endif
+#endif
+
+#ifdef DIAPAUSE
+      logical :: downwardNC = .false., upwardNC = .false.
+      logical :: downwardCM = .false., upwardCM = .false.
+#endif
+
+      real(r8), parameter :: eps  = 1.0E-20_r8
+      real(r8), parameter :: minv = 0.0E-20_r8
+
 
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
@@ -2238,6 +2159,7 @@
 
           END DO
 
+#ifdef DIAPAUSE
           ! On-shelf large copepods (NCaS i.e. CM): Move up and down
           ! based on dates set in input file.  Downward movement is
           ! stopped at 200 m or halfway through the bottom layer,
@@ -2293,6 +2215,7 @@
             end if
 
           END DO
+#endif
 
           ! Sync 2d arrays to 3d again
 
