@@ -897,8 +897,6 @@
         Twi_INH4_NH4   = 0
 
 
-
-
         ! Save a copy of the original biomass
 
         Bio_bak = Bio2d
