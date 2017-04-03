@@ -444,7 +444,7 @@
       integer  :: iiNCaS,   iiNCaO,   iiEupS, iiEupO, iiDet, iiDetF
       integer  :: iiJel,    iiFe,     iiBen,  iiBenDet
       integer  :: iiIcePhL, iiIceNO3, iiIceNH4
-      real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, Bio_bak ! TODO: add DBio
+      real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, Bio_bak, DBio
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Temp, Salt
 
       ! Intermediate fluxes
@@ -471,7 +471,7 @@
       real(r8) :: alphaPhSv, alphaPhLv, DrateS, DrateL, PmaxS, PmaxL, PmaxsS, PmaxsL
       real(r8) :: IcePhlAvail
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
-      real(r8) :: ParW
+      real(r8) :: ParW, OffSet
 
       ! Parameter default values
 
@@ -895,8 +895,6 @@
         Twi_IPhL_PhL   = 0
         Twi_INO3_NO3   = 0
         Twi_INH4_NH4   = 0
-
-
 
 
         ! Save a copy of the original biomass
@@ -1332,7 +1330,7 @@
               cff0 = fpDetEup * Bio3d(i,k,iiDet)**2                      &
      &             + fpDetEup * Bio3d(i,k,iiDetF)**2 ! detrital food
 
-              cff2 = eEup * Bio3d(i,k,iEupS) / (fEup + cff1 + cff0)
+              cff2 = eEup * Bio3d(i,k,iiEupS) / (fEup + cff1 + cff0)
               cff3 = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 
               cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((grid(ng)%h(i,j) - 200_r8)/.3_r8)) ! depth-limiter, stops growth if they move deeper than 200m TODO
@@ -1357,7 +1355,7 @@
 
               ! Off-shelf euphausiids
 
-              cff2 = eEup * Bio3d(i,k,iEupO) / (fEup + cff1 + cff0)
+              cff2 = eEup * Bio3d(i,k,iiEupO) / (fEup + cff1 + cff0)
 
               cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((200_r8 - grid(ng)%h(i,j))/.3_r8)) ! depth-limiter, stops growth if they move shallower than 200m TODO
 
@@ -1670,16 +1668,14 @@
 
             ! Total uptake of each food category
 
-            cff7  = min(cff1,(cff0*cff1*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! D
-            cff8  = min(cff2,(cff0*cff2*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! DF
-            cff9  = min(cff3,(cff0*cff3*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! PS
-            cff10 = min(cff4,(cff0*cff4*BioB(i,k,iBen)*Rup/(cff6+KupP))) ! PL
-            cff11 = min(cff5,(cff0*cff5*BioB(i,k,iBen)*Rup/(cff5+KupD))) ! BenDet
+            cff7  = min(cff1,(cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! D
+            cff8  = min(cff2,(cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! DF
+            cff9  = min(cff3,(cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PS
+            cff10 = min(cff4,(cff0*cff4*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PL
+            cff11 = min(cff5,(cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD))) ! BenDet
 
             ! Distribute pelagic feeding losses to appropriate water
             ! column layers
-            ! TODO: will need to account for multi-layers-to-bottom-layer
-            ! for input to Ben when calculating total Ben DBio
 
             DO k = 1,N(ng)
 
@@ -2203,7 +2199,7 @@
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     -400.0_r8, flxtmp)
               Bio3d(i,1:N(ng),iiNCaO) = Bio3d(i,1:N(ng),iiNCaO) + dBtmp(1,1:N(ng))
-              Bio2d(i,1,iBenDet) = Bio2d(i,1,iBenDet) + flxtmp
+              Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp
 
             else if (upwardNC) then
 
