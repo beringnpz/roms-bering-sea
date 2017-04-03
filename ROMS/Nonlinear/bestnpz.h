@@ -2440,11 +2440,25 @@
           pt2(i,j,nnew,iXPrd) = pt2(i,j,nstp,iXPrd)+Prod2(i,iXPrd)
         END DO
 #endif
-
-
       END DO J_LOOP
 
-#if defined EW_PERIODIC || defined NS_PERIODIC
+      !=============================================
+      !  FEAST
+      !=============================================
+
+#ifdef FEAST
+      ! This block has something to do with updating the ghost points
+      ! along the tile edges prior to running the FEAST advection code
+      ! (which defines fish movement, independent from water advection).
+			! The history is a little murky...
+      !
+      ! TODO: maybe separate the fish movement code from the source/sinks
+      ! code?  So the movement doesn't require this extra kludginess?
+      ! (Copy/pasting the physics here seems like a recipe for disaster
+      ! if we ever want to move to a more recent version of ROMS where
+      ! these things may change slightly).
+
+# if defined EW_PERIODIC || defined NS_PERIODIC
 
       ! Apply periodic boundary conditions.
 
@@ -2455,17 +2469,15 @@
      &                          LBi, UBi, LBj, UBj, 1, N(ng),           &
      &                          t(:,:,:,nnew,ibio))
       END DO
-#endif
+# endif
 
-#ifdef DISTRIBUTE
-
+# ifdef DISTRIBUTE
       ! Exchange boundary data.
-
 
       !ajh
       !added block on this for passives when feast is present
       !NOTE will need to exchange when passives/fish are changed elsewhere
-# ifdef FEAST_NOEXCHANGE
+#  ifdef FEAST_NOEXCHANGE
       CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NAT,         &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
@@ -2473,61 +2485,51 @@
 
       CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng),                 &
-     &                    NAT+NPT+1, NT(ng),                    &
+     &                    NAT+NPT+1, NT(ng),                            &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
 
-# else
+#  else
       CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NT(ng),      &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
-# endif
+#  endif
 !
-# ifdef STATIONARY
+#  ifdef STATIONARY
       CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NBTS,        &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    st(:,:,:,nnew,:))
+#  endif
 # endif
 
-#endif
+# if defined ICE_BIO
+#  ifdef BERING_10K
 
-
-#if defined ICE_BIO
-# ifdef BERING_10K
-
-      CALL IcePhLbc_tile (ng, tile,                                    &
+      CALL IcePhLbc_tile (ng, tile,                                     &
      &                LBi, UBi, LBj, UBj,                               &
-     &                nstp, nnew,                                     &
+     &                nstp, nnew,                                       &
      &                ui, vi, IcePhL)
       CALL IceNO3bc_tile (ng, tile,                                     &
      &                LBi, UBi, LBj, UBj,                               &
-     &                nstp, nnew,                                     &
+     &                nstp, nnew,                                       &
      &                ui, vi, IceNO3)
       CALL IceNH4bc_tile (ng, tile,                                     &
      &                LBi, UBi, LBj, UBj,                               &
-     &                nstp, nnew,                                     &
+     &                nstp, nnew,                                       &
      &                ui, vi, IceNH4)
 
-#  if defined EW_PERIODIC || defined NS_PERIODIC || defined DISTRIBUTE
+#   if defined EW_PERIODIC || defined NS_PERIODIC || defined DISTRIBUTE
       CALL mp_exchange2d (ng, tile, iNLM, 3,                            &
      &                    LBi, UBi, LBj, UBj,                           &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
-     &                    IcePhL(:,:,nnew), IceNO3(:,:,nnew),         &
+     &                    IcePhL(:,:,nnew), IceNO3(:,:,nnew),           &
      &                    IceNH4(:,:,nnew))
-
+#   endif
 #  endif
-
-
-
-
-
-
 # endif
-#endif
 
-#if defined FEAST
 # include "feast_step.h"
 #endif
 
