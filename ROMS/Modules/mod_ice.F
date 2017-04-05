@@ -125,7 +125,7 @@
       allocate ( ICE(ng) % sig12(LBi:UBi,LBj:UBj,2) )
 
 #  if defined ICE_BIO  
-# if defined BERING_10K
+#   if defined BERING_10K
  
       allocate (ICE(ng) % IcePhL(LBi:UBi,LBj:UBj,2) )
   
@@ -134,7 +134,7 @@
       allocate (ICE(ng) % IceNH4(LBi:UBi,LBj:UBj,2) )
      
       allocate (ICE(ng) % IceLog(LBi:UBi,LBj:UBj,2) )
-#  endif
+#   endif
 #  endif	      
              
          

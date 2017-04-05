@@ -24,6 +24,7 @@
       USE mod_stepping
       USE mod_mixing
 
+      ! TODO: is ICE_BIO bestnpz-specific?
 #if defined BERING_10K
 #if defined ICE_BIO
       USE mod_ice
@@ -143,7 +144,7 @@
 # ifdef CLIM_ICE_1D
      &                         ,it, itL, tclm                           &
 # elif defined BERING_10K
-     &                         ,IcePhL, IceNO3, IceNH4, IceLog          &                            &
+     &                         ,IcePhL, IceNO3, IceNH4, IceLog          &
      &                         ,ti, hi, ai, ageice, ui, vi              &
 # endif
 #endif
@@ -287,7 +288,7 @@
       real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
 # endif
 # if defined BENTHIC
-      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,UBk,3,1)
+      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,UBk,3,1) ! TODO: why UBk? Shouldn't it be NBL?  Also, no room for 2 tracers in last dim?
 # endif
 # if defined FEAST
       real(r8), intent(in)    :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
@@ -302,14 +303,14 @@
 #  elif defined BERING_10K
       real(r8), intent(in)    :: ti(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in)    :: hi(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in)    :: ai(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in)    :: ageice(LBi:UBi,LBj:UBj,2)
+      real(r8), intent(in)    :: ai(LBi:UBi,LBj:UBj,2) ! TODO: never used?
+      real(r8), intent(in)    :: ageice(LBi:UBi,LBj:UBj,2) ! TODO: never used?
       real(r8), intent(inout) :: IcePhL(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNO3(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNH4(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceLog(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in)    :: ui(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2)
+      real(r8), intent(in)    :: ui(LBi:UBi,LBj:UBj,2) ! TODO: never used?
+      real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2) ! TODO: never used?
 #  endif
 # endif
 # ifdef BIOFLUX
@@ -434,6 +435,7 @@
 
       real(r8), dimension(1,N(ng)) :: dBtmp
       real(r8) :: flxtmp
+      logical :: defaultCMdp
 
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
       real(r8) :: respNC, respCM, eCM, eNC
@@ -526,14 +528,19 @@
       SSNC = MOD(SinkStart, 366.0_r8)
       SENC = MOD(SinkEnd,   366.0_r8)
 
-      if ((RiseStartCM .eq. 0.0_r8) .and. (RiseEndCM .eq. 0.0_r8) .and. &
-        (SinkStartCM .eq. 0.0_r8) .and. (SinkEndCM .eq. 0.0_r8)) then
+      ! All 0 is the shortcut for lagging the onshelf group movement
+      ! 1 month behind the offshelf group.  This maintains back-
+      ! compatibility with input files that don't include the newer
+      ! Rise/SinkCM parameters, since missing parameters are set to 0 by
+      ! default.  The one-month lag was the hard-coded behavior before I
+      ! added separate input parameters for the NCaS (i.e. CM) group.
 
-        ! All 0 is the shortcut for lagging the onshelf group movement
-        ! 1 month behind the offshelf group (this was the original
-        ! hard-coded behavior, and I wanted to maintain
-        ! back-compatibility with an input parameter file that doesn't
-        ! include the newer Rise/SinkCM parameters)
+      defaultCMdp = ((RiseStartCM .eq. 0.0_r8) .and.                    &
+     &               (RiseEndCM   .eq. 0.0_r8) .and.                    &
+     &               (SinkStartCM .eq. 0.0_r8) .and.                    &
+     &               (SinkEndCM   .eq. 0.0_r8))
+
+      if (defaultCMdp) then
 
         RSCM = MOD(RiseStart + 30, 366.0_r8)
         RECM = MOD(RiseEnd   + 30, 366.0_r8)
@@ -736,7 +743,7 @@
 
           ! Ice status
 
-          cff1=IceLog(i,j,nnew)
+          cff1=IceLog(i,j,nnew)  ! TODO: verify that the flip-flop is just an easy way to track ice without adding to the dimensions of this array
           cff2=IceLog(i,j,nstp)
 
           IceLog(i,j,nnew)=cff2
@@ -2446,7 +2453,7 @@
       ! This block has something to do with updating the ghost points
       ! along the tile edges prior to running the FEAST advection code
       ! (which defines fish movement, independent from water advection).
-			! The history is a little murky...
+      ! The history is a little murky...
       !
       ! TODO: maybe separate the fish movement code from the source/sinks
       ! code?  So the movement doesn't require this extra kludginess?
