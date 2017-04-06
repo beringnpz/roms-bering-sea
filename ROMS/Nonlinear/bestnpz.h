@@ -423,7 +423,9 @@
       real(r8) :: bf,fbase,TSS,Ifs,atss,btss,SF
       real(r8) :: avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum
       real(r8) :: totD, totDF, totPS, totPL
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: frac1, frac2
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: frac1
+      real(r8), dimension(N(ng),4) :: frac2
+      real(r8), dimension(N(ng)) :: mfromlayer
       real(r8) ::sumD,sumDF,sumPL
 #endif
 #ifdef ICE_BIO
@@ -3284,11 +3286,8 @@
               ! Fraction of this layer contributing to benthic feeding
 
               cff1 = max(min(dw, cff2 + Hz(i,j,k)) - cff2, 0.0_r8) ! m
+              mfromlayer(k) = cff1
               frac1(i,k) = cff1/Hz(i,j,k)
-
-              ! Fraction of benthic feeding coming from this level
-
-              frac2(i,k) = cff1/dw
 
               ! Food available to benthos
 
@@ -3298,6 +3297,15 @@
               totPL = totPL + Bio(i,k,iPhL)  * Hz(i,j,k) * frac1(i,k)
 
               cff2 = cff2 + Hz(i,j,k)
+            END DO
+
+            ! Fraction each layer contributes to each food source
+
+            DO k = 1,N(ng)
+              frac2(k,1) = mfromlayer(k)*Bio(i,k,iDet) /totD
+              frac2(k,2) = mfromlayer(k)*Bio(i,k,iDetF)/totDF
+              frac2(k,3) = mfromlayer(k)*Bio(i,k,iPhS) /totPS
+              frac2(k,4) = mfromlayer(k)*Bio(i,k,iPhL) /totPL
             END DO
 
             ! Potential food available from water column
@@ -3316,9 +3324,9 @@
 
             ! Uptake rates mediated by bottom layer temperature
 
-             k = 1
-             Temp1 = Bio(i,k,itemp)
-             cff0 = q10r**((Temp1-T0benr)/10.0_r8)
+            k = 1
+            Temp1 = Bio(i,k,itemp)
+            cff0 = q10r**((Temp1-T0benr)/10.0_r8)
 
             !  uptake of each food category
 
@@ -3338,10 +3346,10 @@
 
             DO k = 1,N(ng)
 
-              DBio(i,k,iDet)  = DBio(i,k,iDet)  - cff7  * frac2(i,k) * dtdays / Hz(i,j,k)
-              DBio(i,k,iDetF) = DBio(i,k,iDetF) - cff8  * frac2(i,k) * dtdays / Hz(i,j,k)
-              DBio(i,k,iPhS)  = DBio(i,k,iPhS)  - cff9  * frac2(i,k) * dtdays / Hz(i,j,k)
-              DBio(i,k,iPhL)  = DBio(i,k,iPhL)  - cff10 * frac2(i,k) * dtdays / Hz(i,j,k)
+              DBio(i,k,iDet)  = DBio(i,k,iDet)  - cff7  * frac2(k,1) * dtdays / Hz(i,j,k)
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) - cff8  * frac2(k,2) * dtdays / Hz(i,j,k)
+              DBio(i,k,iPhS)  = DBio(i,k,iPhS)  - cff9  * frac2(k,3) * dtdays / Hz(i,j,k)
+              DBio(i,k,iPhL)  = DBio(i,k,iPhL)  - cff10 * frac2(k,4) * dtdays / Hz(i,j,k)
 
             END DO
 
@@ -4561,9 +4569,9 @@
 !=====================================================================
       subroutine BioVert(nn,wBio,Bio,dBioOut,HzL,dtdays,z_wL,zlimit,flx)
 
-			USE mod_kinds
+      USE mod_kinds
       implicit none
-			
+
       integer,  intent(in) :: nn
       real(r8), intent(in) :: wBio    ! negative down, positive up
       real(r8), intent(in) :: zlimit
@@ -4655,7 +4663,7 @@
 !=====================================================================
       subroutine BIOSINK(nn,wBio,Bio,dBioOut,HzL,dtdays,z_wL,zlimit,flx)
 !
-			USE mod_kinds
+      USE mod_kinds
       implicit none
 !
       integer, intent(in)  :: nn
