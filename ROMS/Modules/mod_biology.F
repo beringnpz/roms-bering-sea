@@ -2043,7 +2043,6 @@
 
       end SUBROUTINE initialize_feast
 # endif
-
 #endif
 
       END MODULE mod_biology

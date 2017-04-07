@@ -60,15 +60,17 @@
      &                   LBi, UBi, LBj, UBj,                            &
      &                   IminS, ImaxS, JminS, JmaxS,                    &
      &                   N(ng), NT(ng),                                 &
-     &                   nnew(ng), nstp(ng),                            &
+     &                   nnew(ng), nstp(ng)                             &
 #ifdef MASKING
-     &                   GRID(ng) % rmask,                              &
+     &                   ,GRID(ng) % rmask                              &
 #endif
-     &                   GRID(ng) % Hz,                                 &
-     &                   GRID(ng) % z_r,                                &
-     &                   GRID(ng) % z_w,                                &
-     &                   FORCES(ng) % srflx,                            &
-     &                   OCEAN(ng) % t                                  &
+     &                   ,GRID(ng) % Hz                                 &
+     &                   ,GRID(ng) % z_r                                &
+     &                   ,GRID(ng) % z_w                                &
+     &                   ,GRID(ng) % h                                  &
+     &                   ,GRID(ng) % latr                               &
+     &                   ,FORCES(ng) % srflx                            &
+     &                   ,OCEAN(ng) % t                                 &
 #if defined BENTHIC
      &                   ,OCEAN(ng) % bt                                &
 #endif
@@ -114,7 +116,7 @@
 #ifdef BIOFLUX
      &                  ,OCEAN(ng) % bflx                               &
 #endif
-     &                  ,MIXING(ng) % Akt                               &
+!      &                  ,MIXING(ng) % Akt                               &
      &                              )
 
 #ifdef PROFILE
@@ -128,42 +130,64 @@
      &                         LBi, UBi, LBj, UBj,                      &
      &                         IminS, ImaxS, JminS, JmaxS,              &
      &                         UBk, UBt,                                &
-     &                         nnew, nstp,                              &
+     &                         nnew, nstp                               &
 #ifdef MASKING
-     &                         rmask,                                   &
+     &                         ,rmask                                   &
 #endif
-     &                         Hz, z_r, z_w, srflx, t                   &
+     &                         ,Hz                                      &
+     &                         ,z_r                                     &
+     &                         ,z_w                                     &
+     &                         ,h                                       &
+     &                         ,lat                                     &
+     &                         ,srflx                                   &
+     &                         ,t                                       &
 #if defined BENTHIC
      &                         ,bt                                      &
 #endif
 #if defined FEAST
-     &                         ,u,v                                     &
+     &                         ,u                                       &
+     &                         ,v                                       &
      &                         ,GF                                      &
 #endif
 #if defined ICE_BIO
 # ifdef CLIM_ICE_1D
-     &                         ,it, itL, tclm                           &
+     &                         ,it                                      &
+     &                         ,itL                                     &
+     &                         ,tclm                                    &
 # elif defined BERING_10K
-     &                         ,IcePhL, IceNO3, IceNH4, IceLog          &
-     &                         ,ti, hi, ai, ageice, ui, vi              &
+     &                         ,IcePhL                                  &
+     &                         ,IceNO3                                  &
+     &                         ,IceNH4                                  &
+     &                         ,IceLog                                  &
+     &                         ,ti                                      &
+     &                         ,hi                                      &
+     &                         ,ai                                      &
+     &                         ,ageice                                  &
+     &                         ,ui                                      &
+     &                         ,vi                                      &
 # endif
 #endif
 #ifdef STATIONARY
-     &                          ,st,UBst                                &
+     &                         ,st                                      &
+     &                         ,UBst                                    &
 #endif
 #ifdef STATIONARY2
-     &                          ,st2,UBst2                              &
+     &                         ,st2                                     &
+     &                         ,UBst2                                   &
 #endif
 #ifdef PROD3
-     &                          ,pt3,UBpt3                              &
+     &                         ,pt3                                     &
+     &                         ,UBpt3                                   &
 #endif
 #ifdef PROD2
-     &                          ,pt2,UBpt2                              &
+     &                         ,pt2                                     &
+     &                         ,UBpt2                                   &
 #endif
 #ifdef BIOFLUX
-     &                          ,bflx                                   &
+     &                         ,bflx                                    &
 #endif
-     &                          ,Akt )
+!      &                         ,Akt
+     &                          )
 
      !==================================================================
      !  VARIABLE DECLARATIONS
@@ -221,6 +245,8 @@
       real(r8), intent(in)    :: Hz(LBi:,LBj:,:)
       real(r8), intent(in)    :: z_r(LBi:,LBj:,:)
       real(r8), intent(in)    :: z_w(LBi:,LBj:,0:)
+      real(r8), intent(in)    :: h(LBi:,LBj:)
+      real(r8), intent(in)    :: lat(LBi:,LBj:)
       real(r8), intent(in)    :: srflx(LBi:,LBj:)
       real(r8), intent(inout) :: t(LBi:,LBj:,:,:,:)
 
@@ -273,6 +299,8 @@
       real(r8), intent(in)    :: Hz(LBi:UBi,LBj:UBj,UBk)
       real(r8), intent(in)    :: z_r(LBi:UBi,LBj:UBj,UBk)
       real(r8), intent(in)    :: z_w(LBi:UBi,LBj:UBj,0:UBk)
+      real(r8), intent(in)    :: h(LBi:UBi,LBj:UBj)
+      real(r8), intent(in)    :: lat(LBi:UBi,LBj:UBj)
       real(r8), intent(in)    :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
 # ifdef STATIONARY
@@ -288,7 +316,7 @@
       real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
 # endif
 # if defined BENTHIC
-      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,UBk,3,1) ! TODO: why UBk? Shouldn't it be NBL?  Also, no room for 2 tracers in last dim?
+      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,1,3,2) ! TODO: why UBk? Shouldn't it be NBL?  Also, no room for 2 tracers in last dim?
 # endif
 # if defined FEAST
       real(r8), intent(in)    :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
@@ -331,8 +359,7 @@
       integer, intent(in)     :: UBpt2
 #endif
 
-      real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
-
+!       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
 
       ! Local variable declarations
 
@@ -385,7 +412,8 @@
       integer :: ibioB
       real(r8) :: dw
       real(r8) :: totD, totDF, totPS, totPL
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: frac1, frac2
+      real(r8), dimension(N(ng)) :: frac1, mfromlayer
+      real(r8), dimension(N(ng),4) :: frac2
 #endif
 
       integer :: Iter,is
@@ -395,7 +423,7 @@
       real(r8) :: dz
       real(r8) :: TFEup
       real(r8) :: dtdays
-      real(r8) :: lat, Dl, Par1, k_extV, k_chlV
+      real(r8) :: Dl, Par1, k_extV, k_chlV
       real(r8) :: Temp1
       real(r8) :: PON
       real(r8) :: NitrifMax, DLNitrif
@@ -498,16 +526,19 @@
       real(r8), parameter :: eps  = 1.0E-20_r8
       real(r8), parameter :: minv = 0.0E-20_r8
 
-
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
       !==================================================================
 
 #include "set_bounds.h"
 
+      print *, "  Modules & declarations complete"
+
       ! Extract year, yday, month, day, and hour
 
       CALL caldate (r_date, tdays(ng), year, yday, month, iday, hour)
+
+      print *, "  Date calc complete"
 
       ! A few parameters...
 
@@ -598,6 +629,7 @@
 
 #endif
 
+      print *, "  Setup calcs done, entering J-LOOP"
 
       !==================================================================
       !  JLOOP: BEGIN HORIZONTAL LOOP
@@ -667,6 +699,12 @@
         ! mmol N m^-3, Fe is in umol Fe m^-3, and the rest are in mg C
         ! m^-3.
 
+        print *, "  t shape: ", shape(t)
+        print *, "  Bio3d shape: ", shape(Bio3d)
+        print *, "  NBT: ", NBT
+        print *, "  iNO3...: ", iNO3, iNH4, iPhS, iPhL
+        print *, "  idbio: ", idbio
+
         DO itrc=1,NBT  ! Pelagic variables
           DO k=1,N(ng)
             DO i=Istr,Iend
@@ -675,6 +713,8 @@
             END DO
           END DO
         END DO
+
+        print *, "  Pelagic variables extracted"
 
         ! Benthic variables: These are originally stored in per-area
         ! concentrations in each benthic layer, in mg C m^-2.  The
@@ -695,6 +735,8 @@
             END DO
           END DO
         END DO
+
+        print *, "  Benthic variables extracted"
 
 #ifdef ICE_BIO
         ! Before we get to the ice variables, we'll collect some info
@@ -798,12 +840,16 @@
           Bio2d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiIceNH4)*aidz
 
         END DO
+
+        print *, "  Ice variables extracted"
 #endif
 
         ! Temperature and salinity, for easier reference
 
         Temp = t(Istr:Iend,j,1:N(ng),nstp,itemp)
         Salt = t(Istr:Iend,j,1:N(ng),nstp,isalt)
+
+        print *, "  Temp & salt extracted"
 
 #ifdef CORRECT_TEMP_BIAS
         Temp = Temp - 1.94_r8 ! bias correction for bio only, not fed back
@@ -908,6 +954,8 @@
 
         Bio_bak = Bio2d
 
+        print *, "  Flux vars created"
+
 #ifdef ICE_BIO
         ! Move tracers between surface water layer and ice skeletal layer
         ! if ice appeared or disappeared
@@ -978,6 +1026,8 @@
           END DO
         END DO
 
+        print *, "  Biology extraction complete"
+
         !-------------------------------------
         ! Calculate Day Length and Surface PAR
         !-------------------------------------
@@ -993,13 +1043,12 @@
           ! Day Length calculation (orig from R. Davis) from latitude and
           ! declination.
 
-          lat = GRID(ng) % latr(i,j)
           cff1 = 2.0_r8 * pi * ( yday-1.0_r8 ) / 365.0_r8
           cff2 = 0.006918_r8 - 0.399912_r8*cos(cff1)                    &
      &           + 0.070257_r8*sin(cff1) - 0.006758_r8*cos(2*cff1)      &
      &           + 0.000907_r8*sin(2*cff1) - 0.002697_r8*cos(3*cff1)    &
      &           + 0.00148_r8*sin(3*cff1) ! Solar declination from Oberhuber (1988) (COADS documentation)
-          cff3 = lat * pi /180.0_r8
+          cff3 = lat(i,j) * pi /180.0_r8
           IF ( abs( -tan(cff3)*tan(cff2) ) .le. 1.0_r8 ) THEN
             cff1 = acos( -tan(cff3)*tan(cff2) ) * 180.0_r8 / pi
             Dl = 2.0_r8 / 15.0_r8 * cff1
@@ -1039,7 +1088,7 @@
 
         DO i=Istr,Iend
 
-          cff10=grid(ng) % h(i,j)
+          cff10=h(i,j)
           k_extV= k_ext+2.00_r8*exp(-cff10*.05)
 
           cff0=PARs(i)
@@ -1061,7 +1110,7 @@
 
         DO i=Istr,Iend
 
-          cff10=grid(ng) % h(i,j)
+          cff10=h(i,j)
           !  k_extV= k_ext+k_extZ*exp(-cff10*.05)
           k_extV= k_ext
           cff0=PARs(i)
@@ -1340,7 +1389,7 @@
               cff2 = eEup * Bio3d(i,k,iiEupS) / (fEup + cff1 + cff0)
               cff3 = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 
-              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((grid(ng)%h(i,j) - 200_r8)/.3_r8)) ! depth-limiter, stops growth if they move deeper than 200m TODO
+              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((h(i,j) - 200_r8)/.3_r8)) ! depth-limiter, stops growth if they move deeper than 200m TODO
 
               if (cff1 .lt. 0.01_r8)THEN
                 BasMetEup = respEup*cff1/0.01_r8 ! TODO: doesn't consider detrital food?
@@ -1364,7 +1413,7 @@
 
               cff2 = eEup * Bio3d(i,k,iiEupO) / (fEup + cff1 + cff0)
 
-              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((200_r8 - grid(ng)%h(i,j))/.3_r8)) ! depth-limiter, stops growth if they move shallower than 200m TODO
+              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((200_r8 - h(i,j))/.3_r8)) ! depth-limiter, stops growth if they move shallower than 200m TODO
 
               Gra_PhS_EupO(i,k)  = fpPhSEup * Bio3d(i,k,iiPhS)**2  * cff2 * cff3 * cff4
               Gra_PhL_EupO(i,k)  = fpPhLEup * Bio3d(i,k,iiPhL)**2  * cff2 * cff3 * cff4
@@ -1638,20 +1687,26 @@
               ! Fraction of this layer contributing to benthic feeding
 
               cff1 = max(min(dw, cff2 + Hz(i,j,k)) - cff2, 0.0_r8) ! m
-              frac1(i,k) = cff1/Hz(i,j,k)
-
-              ! Fraction of benthic feeding coming from this level
-
-              frac2(i,k) = cff1/dw
+              mfromlayer(k) = cff1
+              frac1(k) = cff1/Hz(i,j,k)
 
               ! Food available to benthos
 
-              totD  = totD  + Bio2d(i,k,iiDet) *frac1(i,k)
-              totDF = totDF + Bio2d(i,k,iiDetF)*frac1(i,k)
-              totPS = totPS + Bio2d(i,k,iiPhS) *frac1(i,k)
-              totPL = totPL + Bio2d(i,k,iiPhL) *frac1(i,k)
+              totD  = totD  + Bio2d(i,k,iiDet) *frac1(k)
+              totDF = totDF + Bio2d(i,k,iiDetF)*frac1(k)
+              totPS = totPS + Bio2d(i,k,iiPhS) *frac1(k)
+              totPL = totPL + Bio2d(i,k,iiPhL) *frac1(k)
 
               cff2 = cff2 + Hz(i,j,k)
+            END DO
+
+            ! Fraction each layer contributing to each food source
+
+            DO k = 1,N(ng)
+              frac2(k,1) = mfromlayer(k)*Bio(i,k,iDet) /totD
+              frac2(k,2) = mfromlayer(k)*Bio(i,k,iDetF)/totDF
+              frac2(k,3) = mfromlayer(k)*Bio(i,k,iPhS) /totPS
+              frac2(k,4) = mfromlayer(k)*Bio(i,k,iPhL) /totPL
             END DO
 
             ! Potential food available from water column
@@ -1686,10 +1741,10 @@
 
             DO k = 1,N(ng)
 
-              Gra_Det_Ben(i,k)  = cff7  * frac2(i,k) ! mg C m^-2 d^-1
-              Gra_DetF_Ben(i,k) = cff8  * frac2(i,k)
-              Gra_PhS_Ben(i,k)  = cff9  * frac2(i,k)
-              Gra_PhL_Ben(i,k)  = cff10 * frac2(i,k)
+              Gra_Det_Ben(i,k)  = cff7  * frac2(k,1) ! mg C m^-2 d^-1
+              Gra_DetF_Ben(i,k) = cff8  * frac2(k,1)
+              Gra_PhS_Ben(i,k)  = cff9  * frac2(k,1)
+              Gra_PhL_Ben(i,k)  = cff10 * frac2(k,1)
 
             END DO
 
@@ -2094,6 +2149,8 @@
             END DO
           END DO
 
+          print *, "  Source+sinks complete"
+
           !==============================================================
           ! Vertical Movement
           !==============================================================
@@ -2229,6 +2286,8 @@
               END DO
             END DO
           END DO
+
+          print *, "  Vertical movement complete"
 
         END DO ITER_LOOP
 
@@ -2443,6 +2502,8 @@
           pt2(i,j,nnew,iXPrd) = pt2(i,j,nstp,iXPrd)+Prod2(i,iXPrd)
         END DO
 #endif
+
+      print *, "  J-Loop complete"
       END DO J_LOOP
 
       !=============================================
@@ -2921,4 +2982,12 @@
 
       RETURN
       END SUBROUTINE BIOSINK
+
+
+
+
+
+
+
+
 
