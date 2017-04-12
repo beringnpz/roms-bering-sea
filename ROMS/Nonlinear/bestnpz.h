@@ -96,24 +96,24 @@
 #endif
 #ifdef STATIONARY
      &                   ,OCEAN(ng) % st                                & 
-     &                   ,NTS(ng)                                       &
+!     &                   ,NTS(ng)                                       &
 #endif 
 #ifdef STATIONARY2
      &                   ,OCEAN(ng) % st2                               &  
-     &                   ,NTS2(ng)                                      & 
+!     &                   ,NTS2(ng)                                      & 
 #endif 
 #ifdef PROD3
      &                   ,OCEAN(ng) % pt3                               &
-     &                   ,NPT3(ng)                                      &  
+!     &                   ,NPT3(ng)                                      &  
 #endif   
 #ifdef PROD2
      &                   ,OCEAN(ng) % pt2                               &  
-     &                   ,NPT2(ng)                                      &
+!     &                   ,NPT2(ng)                                      &
 #endif 
 #ifdef BIOFLUX
      &                  ,OCEAN(ng) % bflx                               &
 #endif
-     &                  ,MIXING(ng) % Akt                               &
+!     &                  ,MIXING(ng) % Akt                               &
      &                              )     
  
 #ifdef PROFILE
@@ -158,24 +158,24 @@
 #endif
 #ifdef STATIONARY
      &                          ,st                                     &
-     &                          ,UBst                                   &
+!     &                          ,NTS                                   &
 #endif   
 #ifdef STATIONARY2
      &                          ,st2                                    &
-     &                          ,UBst2                                  &
+!     &                          ,NTS2                                  &
 #endif    
 #ifdef PROD3
      &                          ,pt3                                    &
-     &                          ,UBpt3                                  &
+!     &                          ,NPT3                                  &
 #endif   
 #ifdef PROD2
      &                          ,pt2                                    &
-     &                          ,UBpt2                                  &
+!     &                          ,NPT2                                  &
 #endif
 #ifdef BIOFLUX
      &                          ,bflx                                   &
 #endif   
-     &                          ,Akt                                    & 
+!     &                          ,Akt                                    & 
      
      &                                  )    
  
@@ -226,17 +226,21 @@
       integer, intent(in) :: nnew, nstp
 !
 #ifdef STATIONARY 
-      integer, intent(in) :: UBst
+!      integer, intent(in) :: NTS
 #endif
 #if defined STATIONARY2    
-      integer, intent(in) :: UBst2
+!      integer, intent(in) :: NTS2
 #endif       
 #if defined PROD3
-      integer, intent(in) :: UBpt3
+!      integer, intent(in) :: NPT3
 #endif
 #if defined PROD2    
-      integer, intent(in) :: UBpt2
+!      integer, intent(in) :: NPT2
 #endif 
+#if defined BENTHIC
+!      integer, intent(in) :: NBeT
+!      integer, intent(in) :: NBL
+#endif
 
 #ifdef ASSUMED_SHAPE
 # ifdef MASKING
@@ -306,19 +310,19 @@
       real(r8), intent(in) :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
 # ifdef STATIONARY      
-      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,NTS(ng))
+      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,NTS)
 # endif
 # ifdef STATIONARY2      
-      real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,NTS2(ng))
+      real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,NTS2)
 # endif
 # ifdef PROD3      
-      real(r8), intent(inout) :: pt3(LBi:UBi,LBj:UBj,UBk,3,NPT3(ng))
+      real(r8), intent(inout) :: pt3(LBi:UBi,LBj:UBj,UBk,3,NPT3)
 # endif
 # ifdef PROD2      
-      real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
+      real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,NPT2)
 # endif
 # if defined BENTHIC
-      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,UBk,3,1)
+      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL,3,NBeT)
 # endif
 # if defined FEAST
       real(r8), intent(in) :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
@@ -406,20 +410,24 @@
 #endif
       real(r8) :: predSumCop, predSumNCaS, predSumEupS, predSumNCaO, predSumEupO
 
-      real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:)
+!      real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:)
 !
 !  Local variable declarations.
 !   
       integer :: i, j, k, ibio, ibio2,itr, itrmx, itrc, itrc2
       real(r8) :: cff5,cff6,cff6b,cff7,cff8,cff9,cff10,cff11
-      real(r8) :: totD,totDF,totPS,totPL,frac1
+     
 #ifdef FEAST
       integer :: iv, spn,lcp,elder,younger
 #endif
 #if defined BENTHIC
       integer :: ibioB     
       real(r8) :: bf,fbase,TSS,Ifs,atss,btss,SF
-      real(r8) ::avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum  
+      real(r8) ::avgD,avgDF,avgPS,avgPL,dw,wcPS,wcPL,wcD,wcDF,PSsum 
+      real(r8) :: totD,totDF,totPS,totPL
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: frac1
+      real(r8), dimension(N(ng),4) :: frac2
+      real(r8), dimension(N(ng)) :: mfromlayer
       real(r8) ::sumD,sumDF,sumPL
 #endif
 #ifdef ICE_BIO
@@ -635,7 +643,7 @@
 
 #ifdef PROD3
             DO itrc=1,NPT3(ng)
-                    
+	                       
               OCEAN(ng) % pt3(:,:,:,nstp,itrc) = 0.0_r8 
             END DO
        
@@ -737,7 +745,7 @@
         END DO
 #endif
 #ifdef STATIONARY2
-        DO itrc=1,UBst2
+        DO itrc=1,NBTS2
    
           ibio=idbio2(itrc)
           DO i=Istr,Iend
@@ -956,6 +964,9 @@
 !----------------------------------------------------------------------- 
 !  George Gibsons version after Morel 1988 (in Loukos 1997) 
 !-----------------------------------------------------------------------
+
+
+       
 #ifdef NEWSHADE
        
         DO i=Istr,Iend
@@ -2324,7 +2335,7 @@
               DBio(i,k,iNCaO) = DBio(i,k,iNCaO) - fpNCaJel *            &
      &          Bio(i,k,iNCaO)**2* cff2 * cff3 * dtdays
 
-              DBio(i,k,iDetF)=DBio(i,k,iDetF) +(1-gammaJel)             &
+              DBio(i,k,iDetF)=DBio(i,k,iDetF) +min(0.0_r8,(1-gammaJel)) &
      &             * cff1 * cff2 * cff3 * Bio(i,k,iJel)*dtdays
 
 
@@ -2409,7 +2420,7 @@
 ! 
 !  if linear (George)
 ! 
-             Bio(i,k,iDet) = DBio(i,k,iDet) +                          &
+             DBio(i,k,iDet) = DBio(i,k,iDet) +                          &
     &                        mMZL * Bio(i,k,iMZL) * dtdays   
 ! 
 !  if quadratic (Ken)
@@ -3007,13 +3018,14 @@
 !-----------------------------------------------------------------------
 ! 
 !  Fennel  
-              DLNitrif=GetNitrifLight(Par1,tI0,KI)
+
+              DLNitrif=GetNitrifLight(Par(i,k),tI0,KI)
 ! 
 ! Denman
 !             DLNitrif = (z_wL(k)**10_r8)/( (20_r8**10_r8) +            &
 !    &                    z_wL(k)**10_r8)
 ! 
-!  No Depth/Ligt effects
+!  No Depth/Light effects
 ! 
               DLNitrif= 1.0_r8
      
@@ -3070,19 +3082,32 @@
             totPL = 0.0_r8
 	    
 	    
-            do k = 1,N(ng)  
-	      frac1=max(0.0_r8,min(1.0_r8,                               &
-     &      (Hz(i,j,k)+dw-grid(ng)%h(i,j)-z_w(i,j,k))/Hz(i,j,k)))
-              totD  = totD  + Bio(i,k,iDet) * Hz(i,j,k) * frac1
-              totDF = totDF + Bio(i,k,iDetF)* Hz(i,j,k) * frac1
-              totPS = totPS + Bio(i,k,iPhS) * Hz(i,j,k) * frac1
-              totPL = totPL + Bio(i,k,iPhL) * Hz(i,j,k) * frac1
-            end do
-       
-          
-            k = 1
-            Temp1 = Bio(i,k,itemp)
-            cff0 = q10r**((Temp1-T0benr)/10.0_r8) 
+            DO k = 1,N(ng)  
+	       ! Fraction of this layer contributing to benthic feeding
+	       
+	      cff1 = max(min(dw, cff2 + Hz(i,j,k)) - cff2, 0.0_r8) ! m
+              mfromlayer(k) = cff1
+              frac1(i,k) = cff1/Hz(i,j,k)
+
+              ! Food available to benthos
+              totD  = totD  + Bio(i,k,iDet) * Hz(i,j,k) * frac1(i,k)
+              totDF = totDF + Bio(i,k,iDetF)* Hz(i,j,k) * frac1(i,k)
+              totPS = totPS + Bio(i,k,iPhS) * Hz(i,j,k) * frac1(i,k)
+              totPL = totPL + Bio(i,k,iPhL) * Hz(i,j,k) * frac1(i,k)
+	      
+	      cff2 = cff2 + Hz(i,j,k)
+            END DO
+
+            ! Fraction each layer contributes to each food source
+
+            DO k = 1,N(ng)
+              frac2(k,1) = mfromlayer(k)*Bio(i,k,iDet)*Hz(i,j,k) /totD
+              frac2(k,2) = mfromlayer(k)*Bio(i,k,iDetF)*Hz(i,j,k)/totDF
+              frac2(k,3) = mfromlayer(k)*Bio(i,k,iPhS)*Hz(i,j,k) /totPS
+              frac2(k,4) = mfromlayer(k)*Bio(i,k,iPhL)*Hz(i,j,k) /totPL
+            END DO
+	    
+	  
 ! 
 ! Potential food available from water column
 ! 
@@ -3105,7 +3130,13 @@
 
        
 
-!  uptake of each food category
+
+
+  
+            k = 1
+            Temp1 = Bio(i,k,itemp)
+            cff0 = q10r**((Temp1-T0benr)/10.0_r8) 
+	    
       
             cff7  = min(cff1,(cff0*cff1*BioB(i,k,iBen)*Rup/(cff6+KupP)))
             cff8  = min(cff2,(cff0*cff2*BioB(i,k,iBen)*Rup/(cff6+KupP)))
@@ -3122,18 +3153,12 @@
 !  remove from the impacted water column layers only	
         
       	DO k = 1,N(ng)
-             frac1=max(0.0_r8,min(1.0_r8,(Hz(i,j,k)+dw-grid(ng) % h(i,j)-z_w(i,j,k))/Hz(i,j,k)))
-	     
-              DBio(i,k,iDet)  = DBio(i,k,iDet) -                        &
-     &                          ((Bio(i,k,iDet)*Hz(i,j,k)*frac1/TotD) * cff7 *dtdays)/Hz(i,j,k)   
-              DBio(i,k,iDetF) = DBio(i,k,iDetF) -                       &
-     &                          ((Bio(i,k,iDetF) * Hz(i,j,k)*frac1/TotDF) * cff8 *dtdays)/Hz(i,j,k)
-              DBio(i,k,iPhS)  = DBio(i,k,iPhS) -                        &
-     &                          ((Bio(i,k,iPhS) * Hz(i,j,k)*frac1/TotPS) * cff9 *dtdays)/Hz(i,j,k)
-              DBio(i,k,iPhL)  = DBio(i,k,iPhL) -                        &
-     &                          ((Bio(i,k,iPhL) * Hz(i,j,k)*frac1/TotPL)* cff10*dtdays)/Hz(i,j,k)
-        END DO
-
+             	     
+              DBio(i,k,iDet)  = DBio(i,k,iDet) - cff7 *frac2(k,1)*dtdays/Hz(i,j,k)   
+              DBio(i,k,iDetF) = DBio(i,k,iDetF) - cff8 *frac2(k,2)*dtdays/Hz(i,j,k)
+              DBio(i,k,iPhS)  = DBio(i,k,iPhS) - cff9 * frac2(k,3)*dtdays/Hz(i,j,k)
+              DBio(i,k,iPhL)  = DBio(i,k,iPhL) - cff10 * frac2(k,4)*dtdays/Hz(i,j,k)
+         END DO
 ! 
 !  if just removing from base layer 
 ! 
@@ -3557,7 +3582,7 @@
 ! Use the ambient light field to determine if the Euphausiids migrate up or down
  
    ! WIP: This routine presently does not accurately account for the situation when the 
-          light field would cause Euphausiids to migrate into, but not out of, a layer...so have non conservation of material  
+  !        light field would cause Euphausiids to migrate into, but not out of, a layer...so have non conservation of material  
    
        DO i=Istr,Iend
         
@@ -4085,7 +4110,8 @@
               DO k=1,N(ng)
 	     
 	   
-	       
+	     
+	  
                 Bio(i,k,ibio)=Bio(i,k,ibio)+DBio(i,k,ibio)
           
               END DO
