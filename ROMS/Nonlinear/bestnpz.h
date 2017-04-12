@@ -532,13 +532,9 @@
 
 #include "set_bounds.h"
 
-      print *, "  Modules & declarations complete"
-
       ! Extract year, yday, month, day, and hour
 
       CALL caldate (r_date, tdays(ng), year, yday, month, iday, hour)
-
-      print *, "  Date calc complete"
 
       ! A few parameters...
 
@@ -629,8 +625,6 @@
 
 #endif
 
-      print *, "  Setup calcs done, entering J-LOOP"
-
       !==================================================================
       !  JLOOP: BEGIN HORIZONTAL LOOP
       !==================================================================
@@ -699,12 +693,6 @@
         ! mmol N m^-3, Fe is in umol Fe m^-3, and the rest are in mg C
         ! m^-3.
 
-        print *, "  t shape: ", shape(t)
-        print *, "  Bio3d shape: ", shape(Bio3d)
-        print *, "  NBT: ", NBT
-        print *, "  iNO3...: ", iNO3, iNH4, iPhS, iPhL
-        print *, "  idbio: ", idbio
-
         DO itrc=1,NBT  ! Pelagic variables
           DO k=1,N(ng)
             DO i=Istr,Iend
@@ -713,8 +701,6 @@
             END DO
           END DO
         END DO
-
-        print *, "  Pelagic variables extracted"
 
         ! Benthic variables: These are originally stored in per-area
         ! concentrations in each benthic layer, in mg C m^-2.  The
@@ -735,8 +721,6 @@
             END DO
           END DO
         END DO
-
-        print *, "  Benthic variables extracted"
 
 #ifdef ICE_BIO
         ! Before we get to the ice variables, we'll collect some info
@@ -840,8 +824,6 @@
           Bio2d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiIceNH4)*aidz
 
         END DO
-
-        print *, "  Ice variables extracted"
 #endif
 
         ! Temperature and salinity, for easier reference
@@ -849,7 +831,6 @@
         Temp = t(Istr:Iend,j,1:N(ng),nstp,itemp)
         Salt = t(Istr:Iend,j,1:N(ng),nstp,isalt)
 
-        print *, "  Temp & salt extracted"
 
 #ifdef CORRECT_TEMP_BIAS
         Temp = Temp - 1.94_r8 ! bias correction for bio only, not fed back
@@ -954,8 +935,6 @@
 
         Bio_bak = Bio2d
 
-        print *, "  Flux vars created"
-
 #ifdef ICE_BIO
         ! Move tracers between surface water layer and ice skeletal layer
         ! if ice appeared or disappeared
@@ -1026,8 +1005,6 @@
           END DO
         END DO
 
-        print *, "  Biology extraction complete"
-
         !-------------------------------------
         ! Calculate Day Length and Surface PAR
         !-------------------------------------
@@ -1071,9 +1048,23 @@
      &           * COS( ( 12.0_r8 + yday) * 2.0_r8 * pi / 365.0_r8 )
 #else
 
-          ! Calculate PAR at the surface: use Shortwave radiation
-          ! ( = surface solar irradiance) converted from deg C m/s to
-          ! E/m2/day   rho0=1025 Cp=3985
+          ! Calculate PAR at the surface
+          ! Shortwave radiation input (in deg C m/s) is converted to
+          ! W/m^2 (assuming standard density rho0=1025 kg/m^3 and heat
+          ! capacity Cp=3985 J/kg/degC of seawater), then to photon flux
+          ! (E/m^2/day)
+          !
+          ! Eq = I * lambda/(h*c*A) * s2d
+          !   where Eq = photon flux (E/m^2/d)
+          !   lambda = wavelength (m)
+          !   I = irradiance (W/m^2)
+          !   h = Plank's constant (Js)
+          !   c = speed of light (m/s)
+          !   A = Avogadro's number (mol^-1)
+          !   s2d = 86400 s/d
+          !
+          ! The constant used here (copied from GOANPZ) implies an
+          ! wavelegth of ~547 nm
 
           PARs(i) =PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
 #endif
@@ -1087,7 +1078,7 @@
         ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
 
         DO i=Istr,Iend
-
+          srfl
           cff10=h(i,j)
           k_extV= k_ext+2.00_r8*exp(-cff10*.05)
 
@@ -1646,6 +1637,7 @@
               ParW = PAR(i,k)/0.394848_r8 ! convert to W TODO: is this supposed to be PAR(i,k) or PARs(i)?
               NitrifMax = Nitr0 * exp(-ktntr*(Temp(i,k) - ToptNtr)**2)     ! Arhonditsis 2005 temperature dependence
               DLNitrif = (1 - MAX(0.0_r8, (ParW - tI0)/(KI + ParW - tI0))) ! Fennel light dependence
+              DLNitrif = 1.0_r8                                            ! No light/depth dependence TODO: two options on in GG's code
               cff1 = Bio3d(i,k,iiNH4)/(KNH4Nit +Bio3d(i,k,iiNH4))          ! Arhonditsis saturation
 
               Dec_NH4_NO3(i,k) = NitrifMax * Bio3d(i,k,iiNH4) * DLNitrif * cff1 !  mmol N m^-3 d^-1
@@ -1703,10 +1695,10 @@
             ! Fraction each layer contributing to each food source
 
             DO k = 1,N(ng)
-              frac2(k,1) = mfromlayer(k)*Bio(i,k,iDet) /totD
-              frac2(k,2) = mfromlayer(k)*Bio(i,k,iDetF)/totDF
-              frac2(k,3) = mfromlayer(k)*Bio(i,k,iPhS) /totPS
-              frac2(k,4) = mfromlayer(k)*Bio(i,k,iPhL) /totPL
+              frac2(k,1) = mfromlayer(k)*Bio3d(i,k,iiDet) /totD
+              frac2(k,2) = mfromlayer(k)*Bio3d(i,k,iiDetF)/totDF
+              frac2(k,3) = mfromlayer(k)*Bio3d(i,k,iiPhS) /totPS
+              frac2(k,4) = mfromlayer(k)*Bio3d(i,k,iiPhL) /totPL
             END DO
 
             ! Potential food available from water column
@@ -2149,8 +2141,6 @@
             END DO
           END DO
 
-          print *, "  Source+sinks complete"
-
           !==============================================================
           ! Vertical Movement
           !==============================================================
@@ -2286,8 +2276,6 @@
               END DO
             END DO
           END DO
-
-          print *, "  Vertical movement complete"
 
         END DO ITER_LOOP
 
@@ -2502,8 +2490,6 @@
           pt2(i,j,nnew,iXPrd) = pt2(i,j,nstp,iXPrd)+Prod2(i,iXPrd)
         END DO
 #endif
-
-      print *, "  J-Loop complete"
       END DO J_LOOP
 
       !=============================================
