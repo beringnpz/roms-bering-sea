@@ -116,7 +116,7 @@
 #ifdef BIOFLUX
      &                  ,OCEAN(ng) % bflx                               &
 #endif
-!      &                  ,MIXING(ng) % Akt                               &
+     &                  ,MIXING(ng) % Akt                               &
      &                              )
 
 #ifdef PROFILE
@@ -186,7 +186,7 @@
 #ifdef BIOFLUX
      &                         ,bflx                                    &
 #endif
-!      &                         ,Akt
+     &                         ,Akt                                     &
      &                          )
 
      !==================================================================
@@ -291,7 +291,7 @@
       real(r8), intent(inout) :: bflx(:,:)
 #  endif
 # endif
-
+      real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
 #else
 # ifdef MASKING
       real(r8), intent(in)    :: rmask(LBi:UBi,LBj:UBj)
@@ -326,8 +326,8 @@
       real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,1)
       real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
 
-      real(r8), intent(inout) ::tclmG(LBi:UBi,LBj:UBj,UBk,3,NH(ng)+2)
-      real(r8), intent(inout) ::tclm(LBi:UBi,LBj:UBj,UBk,NT(ng)+2)
+      real(r8), intent(inout) :: tclmG(LBi:UBi,LBj:UBj,UBk,3,NH(ng)+2)
+      real(r8), intent(inout) :: tclm(LBi:UBi,LBj:UBj,UBk,NT(ng)+2)
 #  elif defined BERING_10K
       real(r8), intent(in)    :: ti(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in)    :: hi(LBi:UBi,LBj:UBj,2)
@@ -344,6 +344,7 @@
 # ifdef BIOFLUX
       real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj)
 # endif
+      real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
 #endif
 
 #ifdef STATIONARY
@@ -358,8 +359,6 @@
 #if defined PROD2
       integer, intent(in)     :: UBpt2
 #endif
-
-!       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
 
       ! Local variable declarations
 
