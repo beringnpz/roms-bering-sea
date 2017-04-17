@@ -2776,7 +2776,6 @@
 
       DO k=nn-1,1,-1
         DO i=1,1
-
           FC(i,k)=(qc(i,k+1)-qc(i,k))*Hz_inv2(i,k)
         END DO
       END DO

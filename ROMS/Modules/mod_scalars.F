@@ -204,7 +204,7 @@
         integer :: iPhS               ! Small Phytoplankton
         integer :: iPhL               ! Large Phytoplankton
         integer :: iMZS               ! Small Microzooplankton
-        integer :: iMZL               ! Large Microzooplankton 
+        integer :: iMZL               ! Large Microzooplankton
         integer :: iCop               ! Small Coastal Copepods
         integer :: iNCaS               ! Neocalanus
         integer :: iEupS               ! Euphausiids
@@ -231,13 +231,13 @@
          integer, pointer :: idben(:)  ! Benthic tracers
          integer :: iBen
          integer :: iBenDet
-	 
+
 # endif
 # ifdef ICE_BIO
          integer, pointer :: idice(:)  ! Ice tracers
-#   ifdef CLIM_ICE_1D	 
+#   ifdef CLIM_ICE_1D
          integer, pointer :: idiceLog(:)  ! Ice tracers
-#   endif	 
+#   endif
          integer :: iIcePhL
          integer :: iIceNO3
          integer :: iIceNH4
@@ -283,7 +283,7 @@
         integer, pointer :: idbioP2(:)
         integer :: iIAPrd
         integer :: iBenPrd
-	integer :: iXPrd
+  integer :: iXPrd
 # endif
 # ifdef PROD3
         integer, pointer :: idbioP3(:)
@@ -498,7 +498,7 @@
         integer, dimension(Ngrids) :: iif
         integer, dimension(Ngrids) :: ndtfast
         integer, dimension(Ngrids) :: nfast
- 
+
         real(r8), dimension(Ngrids) :: dt                ! seconds
         real(r8), dimension(Ngrids) :: dtfast            ! seconds
         real(r8), dimension(Ngrids) :: tdays             ! days
@@ -523,7 +523,7 @@
 !  Power-law shape filter parameters for time-averaging of barotropic
 !  Fields.  The power-law shape filters are given by:
 !
-!     F(xi)=xi^Falpha*(1-xi^Fbeta)-Fgamma*xi 
+!     F(xi)=xi^Falpha*(1-xi^Fbeta)-Fgamma*xi
 !
 !  Possible settings of parameters to yield the second-order accuracy:
 !
@@ -609,7 +609,7 @@
         logical, dimension(Ngrids) :: Lstations
 !
 !-----------------------------------------------------------------------
-!  Physical constants.   
+!  Physical constants.
 !-----------------------------------------------------------------------
 !
 !    Cp            Specific heat for seawater (Joules/Kg/degC).
@@ -631,7 +631,7 @@
         real(r8) :: Eradius = 6371315.0_r8      ! m
         real(r8) :: StefBo = 5.67E-8_r8         ! Watts/m2/K4
         real(r8) :: emmiss = 0.97_r8            ! non_dimensional
-        real(r8) :: rhow = 1000.0_r8            ! kg/m3         
+        real(r8) :: rhow = 1000.0_r8            ! kg/m3
 #ifdef SOLITON
         real(r8) :: g = 1.0_r8                  ! non-dimensional
 # elif defined WBC_1 || defined WBC_2 || defined WBC_3
@@ -668,7 +668,7 @@
 !    exit_flag = 6   Partition error
 !    exit_flag = 7   Illegal input parameter
 !    exit_flag = 8   Fatal algorithm result
-!     
+!
         integer :: exit_flag = 0
         integer :: blowup = 0
         integer :: NoError = 0
@@ -712,7 +712,7 @@
 !
 !         z_r(x,y,s,t) = zeta(x,y,t) + [zeta(x,y,t)+ h(x,y)] * Zo_r
 !
-!                 Zo_r = [hc * s(k) + C(k) * h(x,y)] / [hc + h(x,y)] 
+!                 Zo_r = [hc * s(k) + C(k) * h(x,y)] / [hc + h(x,y)]
 !
         integer :: Vtransform(Ngrids)
 !
@@ -808,7 +808,7 @@
 !
 !  Background potential temperature (Celsius) and salinity (PSU) values
 !  used in analytical initializations.
-!                              
+!
         real(r8), dimension(Ngrids) :: T0
         real(r8), dimension(Ngrids) :: S0
 !
@@ -1286,7 +1286,7 @@
 !    ieast         East  identification index in boundary arrays.
 !    inorth        North identification index in boundary arrays.
 !    obcfac        Factor between passive and active open boundary
-!                    conditions (nondimensional and greater than one).  
+!                    conditions (nondimensional and greater than one).
 !                    The nudging time scales for the active conditions
 !                    are obtained by multiplying the passive values by
 !                    factor.
@@ -1764,7 +1764,7 @@
 !
         logical, dimension(Ngrids) :: assi_SSH      ! Sea surface height
         logical, dimension(Ngrids) :: assi_SST      ! SST
-        logical, dimension(Ngrids) :: assi_UVsur    ! Surface currents 
+        logical, dimension(Ngrids) :: assi_UVsur    ! Surface currents
         logical, dimension(Ngrids) :: assi_UV       ! 3D currents
         logical, allocatable :: assi_T(:,:)         ! Tracers
 !
@@ -1931,6 +1931,7 @@
 !
       allocate ( SCALARS(Ngrids) )
 
+
       DO ng=1,Ngrids
 
 #ifdef SOLVE3D
@@ -1942,10 +1943,10 @@
 #endif
 #ifdef SOLVE3D
         allocate ( SCALARS(ng) % SOstate(2+MT) )
-        SCALARS(ng) % SOstate(1:2+MT) = .FALSE.      
+        SCALARS(ng) % SOstate(1:2+MT) = .FALSE.
 #else
         allocate ( SCALARS(ng) % SOstate(2) )
-        SCALARS(ng) % SOstate(1:2) = .FALSE.      
+        SCALARS(ng) % SOstate(1:2) = .FALSE.
 #endif
 #if defined READ_WATER && defined MASKING && defined DISTRIBUTE
         allocate ( SCALARS(ng) % IJwater((Lm(ng)+2)*(Mm(ng)+2),4) )
@@ -1964,7 +1965,7 @@
         allocate ( SCALARS(ng) % sc_w(0:N(ng)) )
         SCALARS(ng) % sc_w(0:N(ng)) = IniVal
 
-      END DO                
+      END DO
 !
 !-----------------------------------------------------------------------
 !  Select the bigger value of number of tracer between all grids. Then,
@@ -2015,7 +2016,7 @@
 #   endif
 #   ifdef ICE_BIO
        allocate ( idice(NIB) )
-#   ifdef CLIM_ICE_1D       
+#   ifdef CLIM_ICE_1D
         allocate ( idiceLog(1) )
 #   endif
 #   endif
@@ -2070,6 +2071,7 @@
 !
       itemp=1
       isalt=2
+
       ic=NAT
 
 #ifdef T_PASSIVE
@@ -2122,7 +2124,7 @@
 # ifdef OXYGEN
       iOxyg=ic+1
       ic=ic+1
-# endif 
+# endif
 #elif defined BIO_UMAINE
 !
 !  Set UMaine CoSiNE model biological tracer indices.
@@ -2144,7 +2146,7 @@
 # ifdef OXYGEN
       iOxyg=ic+1
       ic=ic+1
-# endif 
+# endif
 # ifdef CARBON
       iTIC_=ic+1
       iTAlk=ic+2
@@ -2442,9 +2444,9 @@
           DO i=1,NIB
             idice(i)=i
           END DO
-#   ifdef CLIM_ICE_1D	  
+#   ifdef CLIM_ICE_1D
           iIceLog=1
-      
+
        iIcePhL=1
        iIceNO3=2
        iIceNH4=3
@@ -2454,9 +2456,9 @@
         iIcePhL=1
        iIceNO3=2
        iIceNH4=3
-      
-# endif       
-# endif 
+
+# endif
+# endif
 
 #elif defined BIO_GOANPZ
 !
@@ -2465,15 +2467,15 @@
       DO i=1,NBT
         idbio(i)=ic+i
       END DO
-      iNO3=ic+1 
-      iNH4=ic+2  
+      iNO3=ic+1
+      iNH4=ic+2
       iPhS=ic+3
       iPhL=ic+4
       iMZS=ic+5
       iMZL=ic+6
       iCop=ic+7
       iNCa=ic+8
-      iEup=ic+9 
+      iEup=ic+9
       iDet=ic+10
       ic=ic+10
       iPhSprd = 1
@@ -2484,7 +2486,7 @@
       iNCaPrd = 6
       iEupPrd = 7
 # ifdef IRON_LIMIT
-      iFe=ic+1  
+      iFe=ic+1
       ic=ic+1
 # endif
 #endif
