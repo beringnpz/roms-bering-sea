@@ -187,6 +187,9 @@
      &                         ,bflx                                    &
 #endif
      &                         ,Akt                                     &
+#ifdef BESTNPZ_INTERMEDIATES
+                               ,Flx                                     &
+#endif
      &                          )
 
      !==================================================================
@@ -207,10 +210,12 @@
 
 # if defined ICE_BIO
 #  ifdef BERING_10K
+#   ifndef BESTNPZ_INTERMEDIATES
       USE mod_ice
       USE IcePhLbc_mod, ONLY : IcePhLbc_tile
       USE IceNO3bc_mod, ONLY : IceNO3bc_tile
       USE IceNH4bc_mod, ONLY : IceNH4bc_tile
+#   endif
 #  endif
 # endif
 
@@ -286,13 +291,18 @@
       real(r8), intent(in)    :: ui(LBi:,LBj:,:)
       real(r8), intent(in)    :: vi(LBi:,LBj:,:)
 #  endif
+# endif
 
-#  ifdef BIOFLUX
+# ifdef BIOFLUX
       real(r8), intent(inout) :: bflx(:,:)
-#  endif
 # endif
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
+# ifdef BESTNPZ_INTERMEDIATES
+      real(r8), intent(out) :: Flx(LBi:,LBj:,:,:)
+# endif
+
 #else
+
 # ifdef MASKING
       real(r8), intent(in)    :: rmask(LBi:UBi,LBj:UBj)
 # endif
@@ -345,7 +355,11 @@
       real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj)
 # endif
       real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
+# ifdef BESTNPZ_INTERMEDIATES
+      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,84)
+# endif
 #endif
+
 
 #ifdef STATIONARY
       integer, intent(in)     :: UBst
@@ -359,6 +373,7 @@
 #if defined PROD2
       integer, intent(in)     :: UBpt2
 #endif
+
 
       ! Local variable declarations
 
@@ -455,7 +470,7 @@
       real(r8) :: aiceIfrac, aiceNfrac, dhicedt, trs, twi
       real(r8) :: grow1, GROWAice, fNO3, RAi0, RgAi
       real(r8) :: sb, gesi
-      real(r8), dimension(PRIVATE_2D_SCRATCH_ARRAY) :: ice_thick, ice_status
+      real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: ice_thick, ice_status
 #endif
 
       ! Vertical movement
@@ -525,11 +540,11 @@
       real(r8), parameter :: eps  = 1.0E-20_r8
       real(r8), parameter :: minv = 0.0E-20_r8
 
+#include "set_bounds.h"
+
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
       !==================================================================
-
-#include "set_bounds.h"
 
       ! Extract year, yday, month, day, and hour
 
@@ -1077,7 +1092,7 @@
         ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
 
         DO i=Istr,Iend
-          srfl
+
           cff10=h(i,j)
           k_extV= k_ext+2.00_r8*exp(-cff10*.05)
 
@@ -2276,6 +2291,97 @@
             END DO
           END DO
 
+#ifdef BESTNPZ_INTERMEDIATES
+          DO i = Istr,Iend
+            DO k = 1,N(ng)
+              Flx(i,j,k, 1) = Gpp_NO3_PhS(i,k)
+              Flx(i,j,k, 2) = Gpp_NO3_PhL(i,k)
+              Flx(i,j,k, 3) = Gpp_NH4_PhS(i,k)
+              Flx(i,j,k, 4) = Gpp_NH4_PhL(i,k)
+              Flx(i,j,k, 5) = Gra_PhS_MZL(i,k)
+              Flx(i,j,k, 6) = Gra_PhL_MZL(i,k)
+              Flx(i,j,k, 7) = Ege_MZL_Det(i,k)
+              Flx(i,j,k, 8) = Gra_PhS_Cop(i,k)
+              Flx(i,j,k, 9) = Gra_PhL_Cop(i,k)
+              Flx(i,j,k,10) = Gra_MZL_Cop(i,k)
+              Flx(i,j,k,11) = Gra_IPhL_Cop(i,k)
+              Flx(i,j,k,12) = Ege_Cop_DetF(i,k)
+              Flx(i,j,k,13) = Gra_PhS_NCaS(i,k)
+              Flx(i,j,k,14) = Gra_PhL_NCaS(i,k)
+              Flx(i,j,k,15) = Gra_MZL_NCaS(i,k)
+              Flx(i,j,k,16) = Gra_IPhL_NCaS(i,k)
+              Flx(i,j,k,17) = Ege_NCaS_DetF(i,k)
+              Flx(i,j,k,18) = Gra_PhS_NCaO(i,k)
+              Flx(i,j,k,19) = Gra_PhL_NCaO(i,k)
+              Flx(i,j,k,20) = Gra_MZL_NCaO(i,k)
+              Flx(i,j,k,21) = Gra_IPhL_NCaO(i,k)
+              Flx(i,j,k,22) = Ege_NCaO_DetF(i,k)
+              Flx(i,j,k,23) = Gra_PhS_EupS(i,k)
+              Flx(i,j,k,24) = Gra_PhL_EupS(i,k)
+              Flx(i,j,k,25) = Gra_MZL_EupS(i,k)
+              Flx(i,j,k,26) = Gra_Cop_EupS(i,k)
+              Flx(i,j,k,27) = Gra_IPhL_EupS(i,k)
+              Flx(i,j,k,28) = Gra_Det_EupS(i,k)
+              Flx(i,j,k,29) = Gra_DetF_EupS(i,k)
+              Flx(i,j,k,30) = Ege_EupS_DetF(i,k)
+              Flx(i,j,k,31) = Gra_PhS_EupO(i,k)
+              Flx(i,j,k,32) = Gra_PhL_EupO(i,k)
+              Flx(i,j,k,33) = Gra_MZL_EupO(i,k)
+              Flx(i,j,k,34) = Gra_Cop_EupO(i,k)
+              Flx(i,j,k,35) = Gra_IPhL_EupO(i,k)
+              Flx(i,j,k,36) = Gra_Det_EupO(i,k)
+              Flx(i,j,k,37) = Gra_DetF_EupO(i,k)
+              Flx(i,j,k,38) = Ege_EupO_DetF(i,k)
+              Flx(i,j,k,39) = Gra_Cop_Jel(i,k)
+              Flx(i,j,k,40) = Gra_EupS_Jel(i,k)
+              Flx(i,j,k,41) = Gra_EupO_Jel(i,k)
+              Flx(i,j,k,42) = Gra_NCaS_Jel(i,k)
+              Flx(i,j,k,43) = Gra_NCaO_Jel(i,k)
+              Flx(i,j,k,44) = Ege_Jel_DetF(i,k)
+              Flx(i,j,k,45) = Mor_PhS_Det(i,k)
+              Flx(i,j,k,46) = Mor_PhL_Det(i,k)
+              Flx(i,j,k,47) = Mor_MZL_Det(i,k)
+              Flx(i,j,k,48) = Mor_Cop_DetF(i,k)
+              Flx(i,j,k,49) = Mor_NCaS_DetF(i,k)
+              Flx(i,j,k,50) = Mor_EupS_DetF(i,k)
+              Flx(i,j,k,51) = Mor_NCaO_DetF(i,k)
+              Flx(i,j,k,52) = Mor_EupO_DetF(i,k)
+              Flx(i,j,k,53) = Mor_Jel_DetF(i,k)
+              Flx(i,j,k,54) = Res_PhS_NH4(i,k)
+              Flx(i,j,k,55) = Res_PhL_NH4(i,k)
+              Flx(i,j,k,56) = Res_MZL_NH4(i,k)
+              Flx(i,j,k,57) = Res_Cop_NH4(i,k)
+              Flx(i,j,k,58) = Res_NCaS_NH4(i,k)
+              Flx(i,j,k,59) = Res_NCaO_NH4(i,k)
+              Flx(i,j,k,60) = Res_EupS_NH4(i,k)
+              Flx(i,j,k,61) = Res_EupO_NH4(i,k)
+              Flx(i,j,k,62) = Res_Jel_NH4(i,k)
+              Flx(i,j,k,63) = Dec_Det_NH4(i,k)
+              Flx(i,j,k,64) = Dec_DetF_NH4(i,k)
+              Flx(i,j,k,65) = Dec_NH4_NO3(i,k)
+              Flx(i,j,k,66) = Gra_Det_Ben(i,k)
+              Flx(i,j,k,67) = Gra_DetF_Ben(i,k)
+              Flx(i,j,k,68) = Gra_PhS_Ben(i,k)
+              Flx(i,j,k,69) = Gra_PhL_Ben(i,k)
+              Flx(i,j,k,70) = Gra_BenDet_Ben(i,k)
+              Flx(i,j,k,71) = Exc_Ben_NH4(i,k)
+              Flx(i,j,k,72) = Exc_Ben_BenDet(i,k)
+              Flx(i,j,k,73) = Res_Ben_NH4(i,k)
+              Flx(i,j,k,74) = Mor_Ben_BenDet(i,k)
+              Flx(i,j,k,75) = Pre_Ben_BenDet(i,k)
+              Flx(i,j,k,76) = Dec_BenDet_NH4(i,k)
+              Flx(i,j,k,77) = Gpp_INO3_IPhL(i,k)
+              Flx(i,j,k,78) = Gpp_INH4_IPhL(i,k)
+              Flx(i,j,k,79) = Res_IPhL_INH4(i,k)
+              Flx(i,j,k,80) = Mor_IPhL_INH4(i,k)
+              Flx(i,j,k,81) = Dec_INH4_INO3(i,k)
+              Flx(i,j,k,82) = Twi_IPhL_PhL(i,k)
+              Flx(i,j,k,83) = Twi_INO3_NO3(i,k)
+              Flx(i,j,k,84) = Twi_INH4_NH4(i,k)
+            END DO
+          END DO
+#endif
+
         END DO ITER_LOOP
 
         !=============================================
@@ -2555,6 +2661,7 @@
 
 # if defined ICE_BIO
 #  ifdef BERING_10K
+#   ifndef BESTNPZ_INTERMEDIATES
 
       CALL IcePhLbc_tile (ng, tile,                                     &
      &                LBi, UBi, LBj, UBj,                               &
@@ -2569,12 +2676,13 @@
      &                nstp, nnew,                                       &
      &                ui, vi, IceNH4)
 
-#   if defined EW_PERIODIC || defined NS_PERIODIC || defined DISTRIBUTE
+#    if defined EW_PERIODIC || defined NS_PERIODIC || defined DISTRIBUTE
       CALL mp_exchange2d (ng, tile, iNLM, 3,                            &
      &                    LBi, UBi, LBj, UBj,                           &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    IcePhL(:,:,nnew), IceNO3(:,:,nnew),           &
      &                    IceNH4(:,:,nnew))
+#    endif
 #   endif
 #  endif
 # endif
