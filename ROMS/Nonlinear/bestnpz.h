@@ -356,7 +356,7 @@
 # endif
       real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
 # ifdef BESTNPZ_INTERMEDIATES
-      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,84)
+      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,93)
 # endif
 #endif
 
@@ -507,6 +507,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Dec_Det_NH4, Dec_DetF_NH4, Dec_NH4_NO3
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Dec_BenDet_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_INO3_IPhL, Gpp_INH4_IPhL, Res_IPhL_INH4, Mor_IPhL_INH4, Dec_INH4_INO3, Twi_IPhL_PhL, Twi_INO3_NO3, Twi_INH4_NH4
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_BenDet, Ver_PhS_Out, Ver_PhL_BenDet, Ver_PhL_Out, Ver_Det_BenDet, Ver_Det_Out, Ver_DetF_BenDet, Ver_DetF_Out, Ver_NCaO_BenDet
 
       ! Biological source/sinks
 
@@ -706,6 +707,7 @@
         ! concentrations in each water column layer. NO3 and NH4 are in
         ! mmol N m^-3, Fe is in umol Fe m^-3, and the rest are in mg C
         ! m^-3.
+        ! TODO: Move zero traps together?  And better accounting?
 
         DO itrc=1,NBT  ! Pelagic variables
           DO k=1,N(ng)
@@ -943,7 +945,15 @@
         Twi_IPhL_PhL   = 0
         Twi_INO3_NO3   = 0
         Twi_INH4_NH4   = 0
-
+        Ver_PhS_BenDet = 0
+        Ver_PhS_Out    = 0
+        Ver_PhL_BenDet = 0
+        Ver_PhL_Out    = 0
+        Ver_Det_BenDet = 0
+        Ver_Det_Out    = 0
+        Ver_DetF_BenDet= 0
+        Ver_DetF_Out   = 0
+        Ver_NCaO_BenDet= 0
 
         ! Save a copy of the original biomass
 
@@ -999,6 +1009,8 @@
 
           endif
         END DO
+
+
 #endif
 
         ! Calculate inverse layer thickness
@@ -1791,7 +1803,7 @@
             PON = Bio3d(i,k,iiBenDet)*0.25*xi  ! Benthic Particulate organic nitrogen
             cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
 
-            Dec_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2
+            Dec_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1
 
           END DO
 #endif
@@ -2171,7 +2183,9 @@
           flxtmp = 0
 
           ! Small phytoplankton: sinks, and 79% of what sinks out of the
-          ! bottom goes to benthic detritus
+          ! bottom goes to benthic detritus (20% becomes biologically
+          ! unavailable and 1% is lost to nitrification, both of which
+          ! are considered exports from the system in this model)
 
           DO i=Istr,Iend
 
@@ -2181,6 +2195,8 @@
             Bio3d(i,1:N(ng),iiPhS) = Bio3d(i,1:N(ng),iiPhS) + dBtmp(1,1:N(ng))
             Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
 
+            Ver_PhS_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1
+            Ver_PhS_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
           END DO
 
 
@@ -2195,6 +2211,9 @@
             Bio3d(i,1:N(ng),iiPhL) = Bio3d(i,1:N(ng),iiPhL) + dBtmp(1,1:N(ng))
             Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
 
+            Ver_PhL_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1
+            Ver_PhL_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
+
           END DO
 
           ! Slow-sinking detritus: sinks, and 79% of what sinks out of the
@@ -2208,6 +2227,9 @@
             Bio3d(i,1:N(ng),iiDet) = Bio3d(i,1:N(ng),iiDet) + dBtmp(1,1:N(ng))
             Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
 
+            Ver_Det_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1 
+            Ver_Det_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
+
           END DO
 
           ! Fast-sinking detritus: sinks, and 79% of what sinks out of the
@@ -2220,6 +2242,9 @@
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiDetF) = Bio3d(i,1:N(ng),iiDetF) + dBtmp(1,1:N(ng))
             Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
+
+            Ver_DetF_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1
+            Ver_DetF_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
 
           END DO
 
@@ -2268,6 +2293,8 @@
      &                     -400.0_r8, flxtmp)
               Bio3d(i,1:N(ng),iiNCaO) = Bio3d(i,1:N(ng),iiNCaO) + dBtmp(1,1:N(ng))
               Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp
+
+              Ver_NCaO_BenDet(i,1) = flxtmp/dtdays ! TODO: should this be subject to the 21% loss too?
 
             else if (upwardNC) then
 
@@ -2378,6 +2405,15 @@
               Flx(i,j,k,82) = Twi_IPhL_PhL(i,k)
               Flx(i,j,k,83) = Twi_INO3_NO3(i,k)
               Flx(i,j,k,84) = Twi_INH4_NH4(i,k)
+              Flx(i,j,k,85) = Ver_PhS_BenDet(i,k)
+              Flx(i,j,k,86) = Ver_PhS_Out(i,k)
+              Flx(i,j,k,87) = Ver_PhL_BenDet(i,k)
+              Flx(i,j,k,88) = Ver_PhL_Out(i,k)
+              Flx(i,j,k,89) = Ver_Det_BenDet(i,k)
+              Flx(i,j,k,90) = Ver_Det_Out(i,k)
+              Flx(i,j,k,91) = Ver_DetF_BenDet(i,k)
+              Flx(i,j,k,92) = Ver_DetF_Out(i,k)
+              Flx(i,j,k,93) = Ver_NCaO_BenDet(i,k)
             END DO
           END DO
 #endif
