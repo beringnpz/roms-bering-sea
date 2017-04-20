@@ -1726,6 +1726,18 @@
               frac2(k,3) = mfromlayer(k)*Bio3d(i,k,iiPhS) /totPS
               frac2(k,4) = mfromlayer(k)*Bio3d(i,k,iiPhL) /totPL
             END DO
+            if (totD .le. 0) then
+              frac2(:,1) = 0
+            endif
+            if (totDF .le. 0) then
+              frac2(:,2) = 0
+            endif
+            if (totPS .le. 0) then
+              frac2(:,3) = 0
+            endif
+            if (totPL .le. 0) then
+              frac2(:,4) = 0
+            endif
 
             ! Potential food available from water column
 
