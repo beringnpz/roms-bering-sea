@@ -332,6 +332,10 @@
         integer  :: idZtlf        ! Free-surface impulse forcing
 
         integer  :: idRunoff       ! Surface freshwater runoff rate
+# ifdef CARBON_FLUX
+        integer  :: idTAFlux       ! ALK input with runoff
+        integer  :: idDICFlux       ! DIC input with runoff
+# endif
         integer  :: idIcec         ! observed (NCEP) ice concentration
         integer  :: idSkt          ! observed (NCEP) skin temperature
         integer  :: idUnms         ! surface U-momentum stress (NCEP)
@@ -3215,6 +3219,12 @@
               CASE ('idTbry(inorth,iTAlk)')
                 idTbry(inorth,iTAlk)=varid
 
+# endif
+# ifdef CARBON_FLUX
+              CASE ('idTAFlux')
+                idTAFlux = varid
+              CASE ('idDICFlux')
+                idDICFlux = varid
 # endif
 # ifdef DIAGNOSTICS_BIO
               CASE ('iDbio2(iCOfx)')

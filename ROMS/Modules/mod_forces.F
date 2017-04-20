@@ -500,6 +500,13 @@
 #  endif
 # endif
 #endif
+#ifdef CARBON_FLUX
+          real(r8), pointer :: TAFlux(:,:)
+          real(r8), pointer :: TAFluxG(:,:,:)
+          real(r8), pointer :: DICFlux(:,:)
+          real(r8), pointer :: DICFluxG(:,:,:)
+#endif
+
 
         END TYPE T_FORCES
 
@@ -868,6 +875,13 @@
 # endif
 #endif
 
+#ifdef CARBON_FLUX
+      allocate ( FORCES(ng) % TAFlux(LBi:UBi,LBj:UBj) )
+      allocate ( FORCES(ng) % TAFluxG(LBi:UBi,LBj:UBj,2) )
+      allocate ( FORCES(ng) % DICFlux(LBi:UBi,LBj:UBj) )
+      allocate ( FORCES(ng) % DICFluxG(LBi:UBi,LBj:UBj,2) )
+#endif
+
 #if defined ADJUST_WSTRESS || defined ADJUST_STFLUX
 !
 !  Working arrays to store adjoint impulse forcing, background error
@@ -1040,6 +1054,14 @@
             FORCES(ng) % tau_aiy_n(i,j) = IniVal
             FORCES(ng) % sustr_aw(i,j) = IniVal
             FORCES(ng) % svstr_aw(i,j) = IniVal
+#ifdef CARBON_FLUX
+            FORCES(ng) % TAFlux(i,j) = IniVal
+            FORCES(ng) % TAFluxG(i,j,1) = IniVal
+            FORCES(ng) % TAFluxG(i,j,2) = IniVal
+            FORCES(ng) % DICFlux(i,j) = IniVal
+            FORCES(ng) % DICFluxG(i,j,1) = IniVal
+            FORCES(ng) % DICFluxG(i,j,2) = IniVal
+#endif
           END DO
         END DO
       END IF
@@ -1272,6 +1294,14 @@
               FORCES(ng) % avcos(i,j,itrc) = IniVal
             END DO
 # endif
+#ifdef CARBON_FLUX
+            FORCES(ng) % TAFlux(i,j) = IniVal
+            FORCES(ng) % TAFluxG(i,j,1) = IniVal
+            FORCES(ng) % TAFluxG(i,j,2) = IniVal
+            FORCES(ng) % DICFlux(i,j) = IniVal
+            FORCES(ng) % DICFluxG(i,j,1) = IniVal
+            FORCES(ng) % DICFluxG(i,j,2) = IniVal
+#endif
 #endif
           END DO
         END DO

@@ -713,7 +713,27 @@ end do
      &                FORCES(ng) % btflxG(LBi,LBj,1,isalt))
 #  endif
 # endif
+!-----------------------------------------------------------------------
+! Get the Carbon and ALK runoff data
+!-----------------------------------------------------------------------
+#ifdef CARBON_FLUX
+ CALL get_2dfld (ng,iNLM,idTAFlux,ncfrcid(idTAFlux,ng),            &
+     &                nFfiles(ng), frcname(1,ng),                       &
+     &                update(1), LBi, UBi, LBj, UBj, 2, 1,              &
+# ifdef MASKING
+     &                GRID(ng) % rmask(LBi,LBj),                        &
+# endif
+     &                FORCES(ng) % TAFluxG(LBi,LBj,1))
+ CALL get_2dfld (ng,iNLM,idDICFlux,ncfrcid(idDICFlux,ng),            &
+     &                nFfiles(ng), frcname(1,ng),                       &
+     &                update(1), LBi, UBi, LBj, UBj, 2, 1,              &
+# ifdef MASKING
+     &                GRID(ng) % rmask(LBi,LBj),                        &
+# endif
+     &                FORCES(ng) % DICFluxG(LBi,LBj,1))
 
+#endif
+!-----------------------------------------------------------------------
 # if defined SEDIMENT || defined BIOLOGY
 #  ifndef ANA_SPFLUX
 !

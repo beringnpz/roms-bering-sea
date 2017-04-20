@@ -125,6 +125,10 @@
 # endif
 # ifdef RUNOFF
      &                     FORCES(ng) % runoff,                         &
+# ifdef CARBON_FLUX
+     &                     FORCES(ng) % TAFlux,                         &
+     &                     FORCES(ng) % DICFlux,                        &
+# endif
 # endif
      &                     FORCES(ng) % rain,                           &
      &                     FORCES(ng) % lhflx,                          &
@@ -204,6 +208,9 @@
 # endif
 # ifdef RUNOFF
      &                           runoff,                                &
+# endif
+# ifdef CARBON_FLUX
+     &                           TAFlux, DICFlux,                       &
 # endif
      &                           rain, lhflx, lrflx, shflx,             &
      &                           srflx, stflx,                          &
@@ -297,7 +304,11 @@
 #  ifdef RUNOFF
       real(r8), intent(in) :: runoff(LBi:,LBj:)
 #  endif
-
+#  ifdef CARBON_FLUX
+      real(r8), intent(in) :: TAFlux(LBi:,LBj:)
+      real(r8), intent(in) :: DICFlux(LBi:,LBj:)
+      real(r8) :: stalk,stdic
+# endif
       real(r8), intent(inout) :: lhflx(LBi:,LBj:)
       real(r8), intent(inout) :: lrflx(LBi:,LBj:)
       real(r8), intent(inout) :: shflx(LBi:,LBj:)
@@ -380,7 +391,10 @@
 #  ifdef RUNOFF
       real(r8), intent(in) :: runoff(LBi:UBi,LBj:UBj)
 #  endif
-
+#  ifdef CARBON_FLUX
+      real(r8), intent(in) :: TAFlux(LBi:UBi,LBj:UBj)
+      real(r8), intent(in) :: DICFlux(LBi:UBi,LBj:UBj)
+#  endif
       real(r8), intent(inout) :: lhflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: lrflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: shflx(LBi:UBi,LBj:UBj)
@@ -1184,6 +1198,17 @@
      &                        cff*runoff(i,j)
 #  ifdef MASKING
           stflx(i,j,isalt)=stflx(i,j,isalt)*rmask(i,j)
+#  endif
+# endif
+# ifdef CARBON_FLUX
+          stflx(i,j,iTAlk) = stflx(i,j,iTAlk) - cff*TAFlux(i,j)
+          stflx(i,j,iTIC) = stflx(i,j,iTIC) - cff*DICFlux(i,j)
+           print *, 'stalk', stflx(i,j,iTAlk) 
+           print *, 'stdic', stflx(i,j,iTIC) 
+
+#  ifdef MASKING
+          stflx(i,j,iTAlk)=stflx(i,j,iTAlk)*rmask(i,j)
+          stflx(i,j,iTIC)=stflx(i,j,iTIC)*rmask(i,j)
 #  endif
 # endif
 

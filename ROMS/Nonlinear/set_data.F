@@ -329,6 +329,22 @@
      &                     update)
 #   endif
 #  endif
+# ifdef CARBON_FLUX
+!--------------------------------------- 
+! Set the DIC and ALK flux from the runoff file 
+!---------------------------------------
+      CALL set_2dfld_tile (ng, tile, iNLM, idTAFlux,                    &
+     &                     LBi, UBi, LBj, UBj,                          &
+     &                     FORCES(ng)%TAFluxG,                          &
+     &                     FORCES(ng)%TAFlux,                           &
+     &                     update)
+      CALL set_2dfld_tile (ng, tile, iNLM, idDICFlux,                   &
+     &                     LBi, UBi, LBj, UBj,                          &
+     &                     FORCES(ng)%DICFluxG,                         &
+     &                     FORCES(ng)%DICFlux,                          &
+     &                     update)
+
+# endif
 
 #  ifdef SHORTWAVE
 !
