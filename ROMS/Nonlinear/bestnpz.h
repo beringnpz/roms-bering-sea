@@ -517,6 +517,7 @@
       real(r8) :: IcePhlAvail
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
       real(r8) :: ParW, OffSet
+      real(r8) :: fracUsed
 
       ! Parameter default values
 
@@ -1228,8 +1229,8 @@
 
               ! Iron limitation
 
-              IronLimS = eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS
-              IronLimL = eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL
+              IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS)
+              IronLimL = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL)
 #endif
 
               ! Light limitation
@@ -1815,7 +1816,7 @@
             PON = Bio3d(i,k,iiBenDet)*0.25*xi  ! Benthic Particulate organic nitrogen
             cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
 
-            Dec_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1
+            Dec_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac
 
           END DO
 #endif
@@ -2188,6 +2189,8 @@
           ! detritus, large copepod seasonal diapause, and (evenuntually)
           ! euphausiid diel vertical migration.
 
+!           fracUsed = 0.79_r8
+          fracUsed = 0.80_r8
 
           ! Initialize temporary arrays to 0
 
@@ -2205,10 +2208,10 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiPhS) = Bio3d(i,1:N(ng),iiPhS) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
+            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
 
-            Ver_PhS_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1
-            Ver_PhS_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
+            Ver_PhS_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
+            Ver_PhS_Out(i,1)    = flxtmp*(1_r8-fracUsed)/dtdays ! mg C m^-2 d^-1
           END DO
 
 
@@ -2221,10 +2224,10 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiPhL) = Bio3d(i,1:N(ng),iiPhL) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
+            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
 
-            Ver_PhL_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1
-            Ver_PhL_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
+            Ver_PhL_BenDet(i,1) = (flxtmp*fracUsed)/dtdays ! mg C m^-2 d^-1
+            Ver_PhL_Out(i,1)    = (flxtmp*(1_r8-fracUsed))/dtdays ! mg C m^-2 d^-1
 
           END DO
 
@@ -2237,10 +2240,10 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiDet) = Bio3d(i,1:N(ng),iiDet) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
+            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
 
-            Ver_Det_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1 
-            Ver_Det_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
+            Ver_Det_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1 
+            Ver_Det_Out(i,1)    = flxtmp*(1_r8-fracUsed)/dtdays ! mg C m^-2 d^-1
 
           END DO
 
@@ -2253,10 +2256,10 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiDetF) = Bio3d(i,1:N(ng),iiDetF) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*0.79_r8
+            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
 
-            Ver_DetF_BenDet(i,1) = flxtmp*0.79_r8/dtdays ! mg C m^-2 d^-1
-            Ver_DetF_Out(i,1)    = flxtmp*0.21_r8/dtdays ! mg C m^-2 d^-1
+            Ver_DetF_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
+            Ver_DetF_Out(i,1)    = flxtmp*(1_r8-fracUsed)/dtdays ! mg C m^-2 d^-1
 
           END DO
 
