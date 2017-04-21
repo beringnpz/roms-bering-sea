@@ -708,13 +708,12 @@
         ! concentrations in each water column layer. NO3 and NH4 are in
         ! mmol N m^-3, Fe is in umol Fe m^-3, and the rest are in mg C
         ! m^-3.
-        ! TODO: Move zero traps together?  And better accounting?
 
         DO itrc=1,NBT  ! Pelagic variables
           DO k=1,N(ng)
             DO i=Istr,Iend
-              Bio3d(i,k,itrc)=max(t(i,j,k,nstp,idbio(itrc)),0.0_r8)
-              Bio2d(i,k,itrc)=Bio3d(i,k,itrc)*Hz(i,j,k)
+              Bio3d(i,k,itrc) = t(i,j,k,nstp,idbio(itrc))
+              Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
           END DO
         END DO
@@ -733,8 +732,8 @@
           ibioB=idben(itrc) ! Note: idben(i) = i
           DO k=1,NBL(ng) ! Note: For BESTNPZ, NBL = 1 is hard-coded in mod_param.F
             DO i=Istr,Iend
-              Bio2d(i,k,itrc+NBT)=bt(i,j,k,nstp,ibioB) ! TODO: not restricted to >0?
-              Bio3d(i,k,itrc+NBT)=Bio2d(i,k,itrc+NBT)/Hz(i,j,k)
+              Bio2d(i,k,itrc+NBT) = bt(i,j,k,nstp,ibioB)
+              Bio3d(i,k,itrc+NBT) = Bio2d(i,k,itrc+NBT)/Hz(i,j,k)
             END DO
           END DO
         END DO
@@ -826,13 +825,13 @@
           if (ice_status(i,j) .eq. 2.0) then
 
 # ifdef CLIM_ICE_1D
-            Bio3d(i,N(ng),iiIcePhL) = max(it(i,j,nstp,idice(1)), 0.0_r8)
-            Bio3d(i,N(ng),iiIceNO3) = max(it(i,j,nstp,idice(2)), 0.0_r8)
-            Bio3d(i,N(ng),iiIceNH4) = max(it(i,j,nstp,idice(3)), 0.0_r8)
+            Bio3d(i,N(ng),iiIcePhL) = it(i,j,nstp,idice(1))
+            Bio3d(i,N(ng),iiIceNO3) = it(i,j,nstp,idice(2))
+            Bio3d(i,N(ng),iiIceNH4) = it(i,j,nstp,idice(3))
 # elif defined BERING_10K
-            Bio3d(i,N(ng),iiIcePhL) = max(0.0_r8, IcePhL(i,j,nstp))
-            Bio3d(i,N(ng),iiIceNO3) = max(0.0_r8, IceNO3(i,j,nstp))
-            Bio3d(i,N(ng),iiIceNH4) = max(0.0_r8, IceNH4(i,j,nstp))
+            Bio3d(i,N(ng),iiIcePhL) = IcePhL(i,j,nstp)
+            Bio3d(i,N(ng),iiIceNO3) = IceNO3(i,j,nstp)
+            Bio3d(i,N(ng),iiIceNH4) = IceNH4(i,j,nstp)
 # endif
           endif
 
@@ -959,6 +958,12 @@
         ! Save a copy of the original biomass
 
         Bio_bak = Bio2d
+        
+        ! If any biomass is negtive, replace with 0 for all source/sink 
+        ! calculations
+        
+        Bio2d = max(0.0_r8, Bio2d)
+        Bio3d = max(0.0_r8, Bio3d)
 
 #ifdef ICE_BIO
         ! Move tracers between surface water layer and ice skeletal layer
@@ -1082,7 +1087,9 @@
           ! (E/m^2/day)
           !
           ! Eq = I * lambda/(h*c*A) * s2d
-          !   where Eq = photon flux (E/m^2/d)
+          !   where 
+          !   
+          !   Eq = photon flux (E/m^2/d)
           !   lambda = wavelength (m)
           !   I = irradiance (W/m^2)
           !   h = Plank's constant (Js)
@@ -1524,9 +1531,6 @@
           !------------------------------
           ! Mortality and senescence
           !------------------------------
-
-          ! TODO: might not need the loops here, but the GF%zoop_force
-          ! dimensions complicate things so I'm keeping it
 
           ! TODO: change so exponent is set by user?  Would simplify the
           ! mXXX (linear) vs mpredXXX (quadratic) coefficient choice, but
@@ -2189,8 +2193,11 @@
           ! detritus, large copepod seasonal diapause, and (evenuntually)
           ! euphausiid diel vertical migration.
 
-!           fracUsed = 0.79_r8
-          fracUsed = 0.80_r8
+          ! Fraction used: 20% of what hits the bottom becomes 
+          ! biologically unavailable, and 1% is lost to nitrification.  
+          ! These fractions apply to PhS, PhL, Det, and DetF.
+
+          fracUsed = 0.79_r8
 
           ! Initialize temporary arrays to 0
 
@@ -2198,9 +2205,7 @@
           flxtmp = 0
 
           ! Small phytoplankton: sinks, and 79% of what sinks out of the
-          ! bottom goes to benthic detritus (20% becomes biologically
-          ! unavailable and 1% is lost to nitrification, both of which
-          ! are considered exports from the system in this model)
+          ! bottom goes to benthic detritus
 
           DO i=Istr,Iend
 
@@ -2326,14 +2331,20 @@
           ! Sync 2d arrays to 3d again
 
           DO i=Istr,Iend
+            ! Sync pelagic (3D modified in sinking portion of code)
             DO k = 1,N(ng)
               DO itrc = 1,NBT ! Pelagic
                 Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
               END DO
             END DO
+            ! Sync benthic (2D modified in sinking portion of code)
+            Bio3d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet)/Hz(i,j,1)
           END DO
-
+          
+          
 #ifdef BESTNPZ_INTERMEDIATES
+          ! Save intermediate fluxes for output
+          
           DO i = Istr,Iend
             DO k = 1,N(ng)
               Flx(i,j,k, 1) = Gpp_NO3_PhS(i,k)
@@ -2441,40 +2452,46 @@
 
         ! Place the appropriate biomass values into main tracer arrays
         ! (recall that everything in the t(nnew) step is in m*Tunits)
+        !
+        ! The Bio_bak step accounts for the fact that tracer values may 
+        ! have been negative when passed to this function, and this 
+        ! conserves that biomass.
+        
+        ! TODO: Georgina's code has a max(t,0) applied to all tracers... maybe add?  Or is it okay for things to go slightly negative
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            t(i,j,k,nnew,iNO3 ) = Bio2d(i,k,iiNO3  ) ! TODO: max(x,0)? Bio_bak process?  Should I add these?
-            t(i,j,k,nnew,iNH4 ) = Bio2d(i,k,iiNH4  )
-            t(i,j,k,nnew,iPhS ) = Bio2d(i,k,iiPhS  )
-            t(i,j,k,nnew,iPhL ) = Bio2d(i,k,iiPhL  )
-            t(i,j,k,nnew,iMZL ) = Bio2d(i,k,iiMZL  )
-            t(i,j,k,nnew,iCop ) = Bio2d(i,k,iiCop  )
-            t(i,j,k,nnew,iNCaS) = Bio2d(i,k,iiNCaS )
-            t(i,j,k,nnew,iEupS) = Bio2d(i,k,iiEupS )
-            t(i,j,k,nnew,iNCaO) = Bio2d(i,k,iiNCaO )
-            t(i,j,k,nnew,iEupO) = Bio2d(i,k,iiEupO )
-            t(i,j,k,nnew,iDet ) = Bio2d(i,k,iiDet  )
-            t(i,j,k,nnew,iDetF) = Bio2d(i,k,iiDetF )
-            t(i,j,k,nnew,iJel ) = Bio2d(i,k,iiJel  )
-            t(i,j,k,nnew,iFe  ) = Bio2d(i,k,iiFe   )
+            t(i,j,k,nnew,iNO3 ) = Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )) 
+            t(i,j,k,nnew,iNH4 ) = Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 ))
+            t(i,j,k,nnew,iPhS ) = Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS ))
+            t(i,j,k,nnew,iPhL ) = Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL ))
+            t(i,j,k,nnew,iMZL ) = Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL ))
+            t(i,j,k,nnew,iCop ) = Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop ))
+            t(i,j,k,nnew,iNCaS) = Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS))
+            t(i,j,k,nnew,iEupS) = Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS))
+            t(i,j,k,nnew,iNCaO) = Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO))
+            t(i,j,k,nnew,iEupO) = Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO))
+            t(i,j,k,nnew,iDet ) = Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet ))
+            t(i,j,k,nnew,iDetF) = Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF))
+            t(i,j,k,nnew,iJel ) = Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel ))
+            t(i,j,k,nnew,iFe  ) = Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  ))
             t(i,j,k,nnew,iMZS ) = 0
 
 #ifdef TS_MPDATA
-            t(i,j,k,3,iNO3 ) = Bio3d(i,k,iiNO3  )
-            t(i,j,k,3,iNH4 ) = Bio3d(i,k,iiNH4  )
-            t(i,j,k,3,iPhS ) = Bio3d(i,k,iiPhS  )
-            t(i,j,k,3,iPhL ) = Bio3d(i,k,iiPhL  )
-            t(i,j,k,3,iMZL ) = Bio3d(i,k,iiMZL  )
-            t(i,j,k,3,iCop ) = Bio3d(i,k,iiCop  )
-            t(i,j,k,3,iNCaS) = Bio3d(i,k,iiNCaS )
-            t(i,j,k,3,iEupS) = Bio3d(i,k,iiEupS )
-            t(i,j,k,3,iNCaO) = Bio3d(i,k,iiNCaO )
-            t(i,j,k,3,iEupO) = Bio3d(i,k,iiEupO )
-            t(i,j,k,3,iDet ) = Bio3d(i,k,iiDet  )
-            t(i,j,k,3,iDetF) = Bio3d(i,k,iiDetF )
-            t(i,j,k,3,iJel ) = Bio3d(i,k,iiJel  )
-            t(i,j,k,3,iFe  ) = Bio3d(i,k,iiFe   )
+            t(i,j,k,3,iNO3 ) = t(i,j,k,nnew,iNO3 ) * Hz_inv(i,k)
+            t(i,j,k,3,iNH4 ) = t(i,j,k,nnew,iNH4 ) * Hz_inv(i,k)
+            t(i,j,k,3,iPhS ) = t(i,j,k,nnew,iPhS ) * Hz_inv(i,k)
+            t(i,j,k,3,iPhL ) = t(i,j,k,nnew,iPhL ) * Hz_inv(i,k)
+            t(i,j,k,3,iMZL ) = t(i,j,k,nnew,iMZL ) * Hz_inv(i,k)
+            t(i,j,k,3,iCop ) = t(i,j,k,nnew,iCop ) * Hz_inv(i,k)
+            t(i,j,k,3,iNCaS) = t(i,j,k,nnew,iNCaS) * Hz_inv(i,k)
+            t(i,j,k,3,iEupS) = t(i,j,k,nnew,iEupS) * Hz_inv(i,k)
+            t(i,j,k,3,iNCaO) = t(i,j,k,nnew,iNCaO) * Hz_inv(i,k)
+            t(i,j,k,3,iEupO) = t(i,j,k,nnew,iEupO) * Hz_inv(i,k)
+            t(i,j,k,3,iDet ) = t(i,j,k,nnew,iDet ) * Hz_inv(i,k)
+            t(i,j,k,3,iDetF) = t(i,j,k,nnew,iDetF) * Hz_inv(i,k)
+            t(i,j,k,3,iJel ) = t(i,j,k,nnew,iJel ) * Hz_inv(i,k)
+            t(i,j,k,3,iFe  ) = t(i,j,k,nnew,iFe  ) * Hz_inv(i,k)
             t(i,j,k,3,iMZS ) = 0
 #endif
           END DO
@@ -2483,8 +2500,8 @@
 #ifdef BENTHIC
 
         DO i=Istr,Iend
-          bt(i,j,1,nnew,iBen   ) = Bio2d(i,1,iiBen   )
-          bt(i,j,1,nnew,iBenDet) = Bio2d(i,1,iiBenDet)
+          bt(i,j,1,nnew,iBen   ) = Bio_bak(i,1,iiBen   ) + (Bio2d(i,1,iiBen   ) - Bio_bak(i,1,iiBen   ))
+          bt(i,j,1,nnew,iBenDet) = Bio_bak(i,1,iiBenDet) + (Bio2d(i,1,iiBenDet) - Bio_bak(i,1,iiBenDet))
 
 # ifdef MASKING
           bt(i,j,1,nnew,iBen)    = bt(i,j,1,nnew,iBen   )*rmask(i,j)
@@ -2500,9 +2517,9 @@
 # if defined CLIM_ICE_1D
 
         DO i=Istr,Iend
-          it(i,j,nnew,iIceNO3) = Bio3d(i,N(ng),iiIceNO3)
-          it(i,j,nnew,iIceNH4) = Bio3d(i,N(ng),iiIceNH4)
-          it(i,j,nnew,iIcePhL) = Bio3d(i,N(ng),iiIcePhL)
+          it(i,j,nnew,iIceNO3) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
+          it(i,j,nnew,iIceNH4) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
+          it(i,j,nnew,iIcePhL) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
 
           itL(i,j,nnew,iIceLog) = itL(i,j,nstp,iIceLog)
 
@@ -2515,9 +2532,9 @@
         END DO
 # else
         DO i=Istr,Iend
-          IcePhL(i,j,nnew) = Bio3d(i,N(ng),iiIceNO3)
-          IceNO3(i,j,nnew) = Bio3d(i,N(ng),iiIceNH4)
-          IceNH4(i,j,nnew) = Bio3d(i,N(ng),iiIcePhL)
+          IceNO3(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
+          IceNH4(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
+          IcePhL(i,j,nnew) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
 
           IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: still not certain of the flipflop thing
 
