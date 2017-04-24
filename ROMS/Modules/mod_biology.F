@@ -1768,9 +1768,9 @@
             if (Ratio .le. Smax ) then
               simple_preference(spn,spy) = fsh_q_G(sp,py)
             else
-              simple_preference(spn,spy) = fsh_q_G(sp,py) *               &
-                             &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-                             & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+              simple_preference(spn,spy) = fsh_q_G(sp,py) *             &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                      * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
             end if
           else
             if (L_all(spn) <= fsh_simple_len(spy)) THEN
@@ -1781,9 +1781,9 @@
               !if (Ratio .ge. Smax) then
               !  simple_preference(spn,spy) = fsh_q_G(sp,py)
               !else
-              simple_preference(spn,spy) = fsh_q_G(sp,py) *               &
-                             &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-                             & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+              simple_preference(spn,spy) = fsh_q_G(sp,py) *             &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                      * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
               !end if
             end if
           end if
@@ -1821,9 +1821,9 @@
               !if (Ratio .ge. Smax) then
               ! zoop_preference(spn,spy) = fsh_q_G(sp,py)
               !else
-               zoop_preference(spn,spy) = fsh_q_G(sp,py) *                 &
-                              &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-                              & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+               zoop_preference(spn,spy) = fsh_q_G(sp,py) *              &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                      * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
               !end if
             end if
           end if
