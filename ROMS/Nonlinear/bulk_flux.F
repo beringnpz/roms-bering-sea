@@ -1203,9 +1203,6 @@
 # ifdef CARBON_FLUX
           stflx(i,j,iTAlk) = stflx(i,j,iTAlk) - cff*TAFlux(i,j)
           stflx(i,j,iTIC) = stflx(i,j,iTIC) - cff*DICFlux(i,j)
-           print *, 'stalk', stflx(i,j,iTAlk) 
-           print *, 'stdic', stflx(i,j,iTIC) 
-
 #  ifdef MASKING
           stflx(i,j,iTAlk)=stflx(i,j,iTAlk)*rmask(i,j)
           stflx(i,j,iTIC)=stflx(i,j,iTIC)*rmask(i,j)
