@@ -504,9 +504,9 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Cop_Jel, Gra_EupS_Jel, Gra_EupO_Jel, Gra_NCaS_Jel, Gra_NCaO_Jel, Ege_Jel_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Mor_PhS_Det, Mor_PhL_Det, Mor_MZL_Det, Mor_Cop_DetF, Mor_NCaS_DetF, Mor_EupS_DetF, Mor_NCaO_DetF, Mor_EupO_DetF, Mor_Jel_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Res_PhS_NH4, Res_PhL_NH4,Res_MZL_NH4, Res_Cop_NH4, Res_NCaS_NH4, Res_NCaO_NH4, Res_EupS_NH4, Res_EupO_NH4, Res_Jel_NH4
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: Dec_Det_NH4, Dec_DetF_NH4, Dec_NH4_NO3
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Dec_BenDet_NH4
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_INO3_IPhL, Gpp_INH4_IPhL, Res_IPhL_INH4, Mor_IPhL_INH4, Dec_INH4_INO3, Twi_IPhL_PhL, Twi_INO3_NO3, Twi_INH4_NH4
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Rem_Det_NH4, Rem_DetF_NH4, Nit_NH4_NO3
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Rem_BenDet_NH4
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_INO3_IPhL, Gpp_INH4_IPhL, Res_IPhL_INH4, Mor_IPhL_INH4, Nit_INH4_INO3, Twi_IPhL_PhL, Twi_INO3_NO3, Twi_INH4_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_BenDet, Ver_PhS_Out, Ver_PhL_BenDet, Ver_PhL_Out, Ver_Det_BenDet, Ver_Det_Out, Ver_DetF_BenDet, Ver_DetF_Out, Ver_NCaO_BenDet
 
       ! Biological source/sinks
@@ -923,9 +923,9 @@
         Res_EupS_NH4   = 0
         Res_EupO_NH4   = 0
         Res_Jel_NH4    = 0
-        Dec_Det_NH4    = 0
-        Dec_DetF_NH4   = 0
-        Dec_NH4_NO3    = 0
+        Rem_Det_NH4    = 0
+        Rem_DetF_NH4   = 0
+        Nit_NH4_NO3    = 0
         Gra_Det_Ben    = 0
         Gra_DetF_Ben   = 0
         Gra_PhS_Ben    = 0
@@ -936,12 +936,12 @@
         Res_Ben_NH4    = 0
         Mor_Ben_BenDet = 0
         Pre_Ben_BenDet = 0
-        Dec_BenDet_NH4 = 0
+        Rem_BenDet_NH4 = 0
         Gpp_INO3_IPhL  = 0
         Gpp_INH4_IPhL  = 0
         Res_IPhL_INH4  = 0
         Mor_IPhL_INH4  = 0
-        Dec_INH4_INO3  = 0
+        Nit_INH4_INO3  = 0
         Twi_IPhL_PhL   = 0
         Twi_INO3_NO3   = 0
         Twi_INH4_NH4   = 0
@@ -1163,7 +1163,6 @@
                 cff1 = 0.077_r8
             END IF
             PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
-
 
           END DO
         END DO
@@ -1648,8 +1647,8 @@
           END DO
 
           !------------------------------
-          ! Decomposition, nitrification,
-          ! and remineralization
+          ! Nitrification and 
+          ! remineralization
           !------------------------------
 
           DO k=1,N(ng)
@@ -1658,10 +1657,10 @@
               ! Detrital remineralization
 
               PON = Bio3d(i,k,iiDet)*xi  ! Particulate organic nitrogen in Det
-              Dec_Det_NH4(i,k) = (Pv0 * exp(PvT*Temp(i,k)) * PON) ! mmol N m^-3 d^-1
+              Rem_Det_NH4(i,k) = (Pv0 * exp(PvT*Temp(i,k)) * PON) ! mmol N m^-3 d^-1
 
               PON = Bio3d(i,k,iiDetF)*xi  ! Particulate organic nitrogen in DetF
-              Dec_DetF_NH4(i,k) = (Pv0 * exp(PvT*Temp(i,k)) * PON) ! mmol N m^-3 d^-1
+              Rem_DetF_NH4(i,k) = (Pv0 * exp(PvT*Temp(i,k)) * PON) ! mmol N m^-3 d^-1
 
               ! Nitrification
 
@@ -1671,7 +1670,7 @@
               DLNitrif = 1.0_r8                                            ! No light/depth dependence TODO: two options on in GG's code
               cff1 = Bio3d(i,k,iiNH4)/(KNH4Nit +Bio3d(i,k,iiNH4))          ! Arhonditsis saturation
 
-              Dec_NH4_NO3(i,k) = NitrifMax * Bio3d(i,k,iiNH4) * DLNitrif * cff1 !  mmol N m^-3 d^-1
+              Nit_NH4_NO3(i,k) = NitrifMax * Bio3d(i,k,iiNH4) * DLNitrif * cff1 !  mmol N m^-3 d^-1
 
             END DO
           END DO
@@ -1681,9 +1680,9 @@
 
           DO k=1,N(ng)
             DO i=Istr,Iend
-              Dec_Det_NH4(i,k)  = Dec_Det_NH4(i,k)  * Hz(i,j,k)/xi
-              Dec_DetF_NH4(i,k) = Dec_DetF_NH4(i,k) * Hz(i,j,k)/xi
-              Dec_NH4_NO3(i,k)  = Dec_NH4_NO3(i,k)  * Hz(i,j,k)/xi
+              Rem_Det_NH4(i,k)  = Rem_Det_NH4(i,k)  * Hz(i,j,k)/xi
+              Rem_DetF_NH4(i,k) = Rem_DetF_NH4(i,k) * Hz(i,j,k)/xi
+              Nit_NH4_NO3(i,k)  = Nit_NH4_NO3(i,k)  * Hz(i,j,k)/xi
             END DO
           END DO
 
@@ -1820,7 +1819,7 @@
             PON = Bio3d(i,k,iiBenDet)*0.25*xi  ! Benthic Particulate organic nitrogen
             cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
 
-            Dec_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac
+            Rem_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac
 
           END DO
 #endif
@@ -1911,7 +1910,7 @@
 
               ! Nitrification
 
-              Dec_INH4_INO3(i,N(ng)) = (annit*Bio3d(i,N(ng),iiIceNH4)/xi)*aidz ! mg C m^-2 d^-1
+              Nit_INH4_INO3(i,N(ng)) = (annit*Bio3d(i,N(ng),iiIceNH4)/xi)*aidz ! mg C m^-2 d^-1
 
               ! Ice/water convective exchange covers transfer of algae,
               ! NO3, and NH4 between the ice and surface water based on
@@ -1960,7 +1959,7 @@
           ! Combine bio source/sinks
           !------------------------------
 
-          DBio(:,:,iiNO3   ) = (Dec_NH4_NO3                             &
+          DBio(:,:,iiNO3   ) = (Nit_NH4_NO3                             &
      &                       +  Twi_INO3_NO3                            &
      &                       -  Gpp_NO3_PhS                             &
      &                       -  Gpp_NO3_PhL)*xi*dtdays ! NO3: mmolN m^-2
@@ -1974,15 +1973,15 @@
      &                       +  Res_EupS_NH4                            &
      &                       +  Res_EupO_NH4                            &
      &                       +  Res_Jel_NH4                             &
-     &                       +  Dec_Det_NH4                             &
-     &                       +  Dec_DetF_NH4                            &
+     &                       +  Rem_Det_NH4                             &
+     &                       +  Rem_DetF_NH4                            &
      &                       +  Exc_Ben_NH4                             &
      &                       +  Res_Ben_NH4                             &
-     &                       +  Dec_BenDet_NH4                          &
+     &                       +  Rem_BenDet_NH4                          &
      &                       +  Twi_INH4_NH4                            &
      &                       -  Gpp_NH4_PhS                             &
      &                       -  Gpp_NH4_PhL                             &
-     &                       -  Dec_NH4_NO3)*xi*dtdays ! NH4: mmol N m^-2
+     &                       -  Nit_NH4_NO3)*xi*dtdays ! NH4: mmol N m^-2
 
           DBio(:,:,iiPhS   ) = (Gpp_NO3_PhS                             &
      &                       +  Gpp_NH4_PhS                             &
@@ -2079,7 +2078,7 @@
      &                        +  Mor_MZL_Det                            &
      &                        -  Gra_Det_EupS                           &
      &                        -  Gra_Det_EupO                           &
-     &                        -  Dec_Det_NH4                            &
+     &                        -  Rem_Det_NH4                            &
      &                        -  Gra_Det_Ben)*dtdays ! Det: mg C m^-2
 
           DBio(:,:,iiDetF  )  = (Ege_Cop_DetF                           &
@@ -2096,7 +2095,7 @@
      &                        +  Mor_Jel_DetF                           &
      &                        -  Gra_DetF_EupS                          &
      &                        -  Gra_DetF_EupO                          &
-     &                        -  Dec_DetF_NH4                           &
+     &                        -  Rem_DetF_NH4                           &
      &                        -  Gra_DetF_Ben)*dtdays ! DetF: mg C m^-2
 
           DBio(:,:,iiJel   )  = (Gra_Cop_Jel                            &
@@ -2127,7 +2126,7 @@
      &                        +  Mor_Ben_BenDet                         &
      &                        +  Pre_Ben_BenDet                         &
      &                        -  Gra_BenDet_Ben                         &
-     &                        -  Dec_BenDet_NH4)*dtdays ! BenDet: mg C m^-2
+     &                        -  Rem_BenDet_NH4)*dtdays ! BenDet: mg C m^-2
 
           DBio(:,:,iiIcePhL)  = (Gpp_INO3_IPhL                          &
      &                        +  Gpp_INH4_IPhL                          &
@@ -2140,14 +2139,14 @@
      &                        -  Mor_IPhL_INH4                          &
      &                        -  Twi_IPhL_PhL)*dtdays ! IcePhL: mg C m^-2
 
-          DBio(:,:,iiIceNO3)  = (Dec_INH4_INO3                          &
+          DBio(:,:,iiIceNO3)  = (Nit_INH4_INO3                          &
      &                        -  Gpp_INO3_IPhL                          &
      &                        -  Twi_INO3_NO3)*xi*dtdays ! IceNO3: mmol N m^-2
 
           DBio(:,:,iiIceNH4)  = (Res_IPhL_INH4                          &
      &                        +  Mor_IPhL_INH4                          &
      &                        -  Gpp_INH4_IPhL                          &
-     &                        -  Dec_INH4_INO3                          &
+     &                        -  Nit_INH4_INO3                          &
      &                        -  Twi_INH4_NH4)*xi*dtdays ! IceNH4: mmol N m^-2
 
 
@@ -2409,9 +2408,9 @@
               Flx(i,j,k,60) = Res_EupS_NH4(i,k)
               Flx(i,j,k,61) = Res_EupO_NH4(i,k)
               Flx(i,j,k,62) = Res_Jel_NH4(i,k)
-              Flx(i,j,k,63) = Dec_Det_NH4(i,k)
-              Flx(i,j,k,64) = Dec_DetF_NH4(i,k)
-              Flx(i,j,k,65) = Dec_NH4_NO3(i,k)
+              Flx(i,j,k,63) = Rem_Det_NH4(i,k)
+              Flx(i,j,k,64) = Rem_DetF_NH4(i,k)
+              Flx(i,j,k,65) = Nit_NH4_NO3(i,k)
               Flx(i,j,k,66) = Gra_Det_Ben(i,k)
               Flx(i,j,k,67) = Gra_DetF_Ben(i,k)
               Flx(i,j,k,68) = Gra_PhS_Ben(i,k)
@@ -2422,12 +2421,12 @@
               Flx(i,j,k,73) = Res_Ben_NH4(i,k)
               Flx(i,j,k,74) = Mor_Ben_BenDet(i,k)
               Flx(i,j,k,75) = Pre_Ben_BenDet(i,k)
-              Flx(i,j,k,76) = Dec_BenDet_NH4(i,k)
+              Flx(i,j,k,76) = Rem_BenDet_NH4(i,k)
               Flx(i,j,k,77) = Gpp_INO3_IPhL(i,k)
               Flx(i,j,k,78) = Gpp_INH4_IPhL(i,k)
               Flx(i,j,k,79) = Res_IPhL_INH4(i,k)
               Flx(i,j,k,80) = Mor_IPhL_INH4(i,k)
-              Flx(i,j,k,81) = Dec_INH4_INO3(i,k)
+              Flx(i,j,k,81) = Nit_INH4_INO3(i,k)
               Flx(i,j,k,82) = Twi_IPhL_PhL(i,k)
               Flx(i,j,k,83) = Twi_INO3_NO3(i,k)
               Flx(i,j,k,84) = Twi_INH4_NH4(i,k)
