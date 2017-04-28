@@ -292,7 +292,6 @@ contains
 #  ifdef CARBON_FLUX
       real(r8), intent(in) :: TAFlux(LBi:,LBj:)
       real(r8), intent(in) :: DICFlux(LBi:,LBj:)
-      real(r8) :: stalk,stdic
 # endif
       real(r8), intent(inout) :: lhflx(LBi:,LBj:)
       real(r8), intent(inout) :: lrflx(LBi:,LBj:)
@@ -972,33 +971,41 @@ contains
 # ifdef RUNOFF
           stflx(i,j,isalt) = stflx(i,j,isalt) -                         &
      &                        cff*runoff(i,j)
-               IF (j.EQ.20.0_r8) THEN
-                         IF (i.EQ.20.0_r8) THEN
-          print *, 'stsalt', stflx(i,j,isalt)
-                         END IF
-               END IF
+!               IF (j.EQ.95.0_r8) THEN
+!                         IF (i.EQ.144.0_r8) THEN
+!          print *, 'runoff', runoff(i,j)
+!                         END IF
+!               END IF
 #  ifdef MASKING
           stflx(i,j,isalt)=stflx(i,j,isalt)*rmask(i,j)
 #  endif
 # endif
 # ifdef CARBON_FLUX
-          stflx(i,j,iTAlk) = stflx(i,j,iTAlk) - cff*TAFlux(i,j)
-          stflx(i,j,iTIC_) = stflx(i,j,iTIC_) - cff*DICFlux(i,j)
-               IF (j.EQ.20.0_r8) THEN
-                         IF (i.EQ.20.0_r8) THEN
-          print *, 'sttic', stflx(i,j,iTIC_)
-          print *, 'stalk', stflx(i,j,iTAlk)
-                         END IF
-               END IF 
+          stflx(i,j,iTAlk) = (stflx(i,j,iTAlk) + cff*TAFlux(i,j)        &
+     &         + (1._r8 - (cff*runoff(i,j)))*t(i,j,N(ng),nrhs,iTAlk))   &
+     &         - t(i,j,N(ng),nrhs,iTAlk) 
+          stflx(i,j,iTIC_) = (stflx(i,j,iTIC_) + cff*DICFlux(i,j)       &
+     &         + (1._r8 - (cff*runoff(i,j)))*t(i,j,N(ng),nrhs,iTIC_))   &
+     &         - t(i,j,N(ng),nrhs,iTIC_)
+!               IF (j.EQ.95.0_r8) THEN
+!                         IF (i.EQ.144.0_r8) THEN
+!          print *, 'cff', cff
+!          print *, 'TAflux', TAFlux(i,j)
+!          print *, 'runoff', runoff(i,j)
+!          print *, 'Alk', t(i,j,N(ng),nrhs,iTAlk)
+!          print *, 'stalk', stflx(i,j,iTAlk)
+!          print *, 'stalk', stflx(i,j,iTIC_)
+!                         END IF
+!               END IF 
 #  ifdef MASKING
           stflx(i,j,iTAlk)=stflx(i,j,iTAlk)*rmask(i,j)
           stflx(i,j,iTIC_)=stflx(i,j,iTIC_)*rmask(i,j)
-               IF (j.EQ.20.0_r8) THEN
-                         IF (i.EQ.20.0_r8) THEN
-          print *, 'sttic', stflx(i,j,iTIC_)
-          print *, 'stalk', stflx(i,j,iTAlk)
-                         END IF
-               END IF
+!               IF (j.EQ.95.0_r8) THEN
+!                         IF (i.EQ.144.0_r8) THEN
+!          print *, 'sttic', stflx(i,j,iTIC_)
+!          print *, 'stalk', stflx(i,j,iTAlk)
+!                         END IF
+!               END IF
 #  endif
 # endif
      
