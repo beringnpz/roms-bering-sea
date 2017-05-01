@@ -47,3 +47,4 @@ core*
 .svn*
 Compilers/make_macros.mk
 *~
+*.h.gch
