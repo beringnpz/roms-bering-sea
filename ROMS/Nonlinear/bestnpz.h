@@ -425,7 +425,7 @@
 #if defined BENTHIC
       integer :: ibioB
       real(r8) :: dw
-      real(r8) :: totD, totDF, totPS, totPL
+      real(r8) :: totD, totDF, totPS, totPL, totBD
       real(r8), dimension(N(ng)) :: frac1, mfromlayer
       real(r8), dimension(N(ng),4) :: frac2
 #endif
@@ -1745,18 +1745,17 @@
 
             ! Potential food available from water column
 
-            cff1=(prefD *totD /((prefD *totD )+LupP))*prefD *totD
-            cff2=(prefD *totDF/((prefD *totDF)+LupP))*prefD *totDF
-            cff3=(prefPS*totPS/((prefPS*totPS)+LupP))*prefPS*totPS
-            cff4=(prefPL*totPL/((prefPL*totPL)+LupP))*prefPL*totPL
+            cff1 = (prefD *totD /((prefD *totD )+LupP))*prefD *totD
+            cff2 = (prefD *totDF/((prefD *totDF)+LupP))*prefD *totDF
+            cff3 = (prefPS*totPS/((prefPS*totPS)+LupP))*prefPS*totPS
+            cff4 = (prefPL*totPL/((prefPL*totPL)+LupP))*prefPL*totPL
 
             cff6 = cff1+cff2+cff3+cff4 ! Total pelagic food
 
             ! Potential food available from  sea floor
 
-            cff5 = (prefD * Bio2d(i,1,iiBenDet) /                       &
-     &             (prefD * Bio2d(i,1,iiBenDet) + LupD)) *              &
-                    prefD * Bio2d(i,1,iiBenDet)
+            totBD = Bio2d(i,1,iiBenDet)
+            cff5 = (prefD *totBD/((prefD *totBD)+LupD))*prefD *totBD
 
             ! Temperature mediation (for feeding and mortality)
 
