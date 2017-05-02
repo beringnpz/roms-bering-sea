@@ -935,7 +935,6 @@
         Exc_Ben_BenDet = 0
         Res_Ben_NH4    = 0
         Mor_Ben_BenDet = 0
-        Pre_Ben_BenDet = 0
         Rem_BenDet_NH4 = 0
         Gpp_INO3_IPhL  = 0
         Gpp_INH4_IPhL  = 0
@@ -1801,16 +1800,10 @@
 
             Res_Ben_NH4(i,1) = cff3 + cff4 ! mg C m^-2 d^-1
 
-            ! Mortality
+            ! Mortality (linear senescence and quadratic predation closure)
 
-            Mor_Ben_BenDet(i,1) = rmort*Bio2d(i,1,iiBen)*cff0 ! mg C m^-2 d^-1
-
-            ! Additional predation TODO: is it right that this goes immediately to BenDet?
-            ! This additional loss is due to undefined predation on
-            ! benthic infauna, which is assumed to make its way back to
-            ! the benthic detritus pool
-
-            Pre_Ben_BenDet(i,1) = Bio2d(i,1,iiBen)**2 * cff0 * BenPred ! mg C m^-2 d^-1
+            Mor_Ben_BenDet(i,1) = cff0*rmort  *Bio2d(i,1,iiBen) +         &
+     &                            cff0*BenPred*Bio2d(i,1,iiBen)**2  ! mg C m^-2 d^-1
 
             ! Benthic remineralization: assumes only the top 25% is
             ! available to remineralize to NH4 (in bottom layer)
@@ -2118,12 +2111,10 @@
      &                        -  Exc_Ben_NH4                            &
      &                        -  Exc_Ben_BenDet                         &
      &                        -  Res_Ben_NH4                            &
-     &                        -  Mor_Ben_BenDet                         &
-     &                        -  Pre_Ben_BenDet)*dtdays ! Ben: mg C m^-2
+     &                        -  Mor_Ben_BenDet)*dtdays ! Ben: mg C m^-2
 
           DBio(:,:,iiBenDet)  = (Exc_Ben_BenDet                         &
      &                        +  Mor_Ben_BenDet                         &
-     &                        +  Pre_Ben_BenDet                         &
      &                        -  Gra_BenDet_Ben                         &
      &                        -  Rem_BenDet_NH4)*dtdays ! BenDet: mg C m^-2
 
@@ -2419,7 +2410,6 @@
               Flx(i,j,k,72) = Exc_Ben_BenDet(i,k)
               Flx(i,j,k,73) = Res_Ben_NH4(i,k)
               Flx(i,j,k,74) = Mor_Ben_BenDet(i,k)
-              Flx(i,j,k,75) = Pre_Ben_BenDet(i,k)
               Flx(i,j,k,76) = Rem_BenDet_NH4(i,k)
               Flx(i,j,k,77) = Gpp_INO3_IPhL(i,k)
               Flx(i,j,k,78) = Gpp_INH4_IPhL(i,k)
