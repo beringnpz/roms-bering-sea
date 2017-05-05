@@ -2183,7 +2183,7 @@
           ! euphausiid diel vertical migration.
 
           ! Fraction used: 20% of what hits the bottom becomes 
-          ! biologically unavailable, and 1% is lost to nitrification.  
+          ! biologically unavailable, and 1% is lost to denitrification.  
           ! These fractions apply to PhS, PhL, Det, and DetF.
 
           fracUsed = 0.79_r8
