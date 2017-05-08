@@ -356,7 +356,7 @@
 # endif
       real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
 # ifdef BESTNPZ_INTERMEDIATES
-      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,93)
+      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,92)
 # endif
 #endif
 
@@ -2410,24 +2410,24 @@
               Flx(i,j,k,72) = Exc_Ben_BenDet(i,k)
               Flx(i,j,k,73) = Res_Ben_NH4(i,k)
               Flx(i,j,k,74) = Mor_Ben_BenDet(i,k)
-              Flx(i,j,k,76) = Rem_BenDet_NH4(i,k)
-              Flx(i,j,k,77) = Gpp_INO3_IPhL(i,k)
-              Flx(i,j,k,78) = Gpp_INH4_IPhL(i,k)
-              Flx(i,j,k,79) = Res_IPhL_INH4(i,k)
-              Flx(i,j,k,80) = Mor_IPhL_INH4(i,k)
-              Flx(i,j,k,81) = Nit_INH4_INO3(i,k)
-              Flx(i,j,k,82) = Twi_IPhL_PhL(i,k)
-              Flx(i,j,k,83) = Twi_INO3_NO3(i,k)
-              Flx(i,j,k,84) = Twi_INH4_NH4(i,k)
-              Flx(i,j,k,85) = Ver_PhS_BenDet(i,k)
-              Flx(i,j,k,86) = Ver_PhS_Out(i,k)
-              Flx(i,j,k,87) = Ver_PhL_BenDet(i,k)
-              Flx(i,j,k,88) = Ver_PhL_Out(i,k)
-              Flx(i,j,k,89) = Ver_Det_BenDet(i,k)
-              Flx(i,j,k,90) = Ver_Det_Out(i,k)
-              Flx(i,j,k,91) = Ver_DetF_BenDet(i,k)
-              Flx(i,j,k,92) = Ver_DetF_Out(i,k)
-              Flx(i,j,k,93) = Ver_NCaO_BenDet(i,k)
+              Flx(i,j,k,75) = Rem_BenDet_NH4(i,k)
+              Flx(i,j,k,76) = Gpp_INO3_IPhL(i,k)
+              Flx(i,j,k,77) = Gpp_INH4_IPhL(i,k)
+              Flx(i,j,k,78) = Res_IPhL_INH4(i,k)
+              Flx(i,j,k,79) = Mor_IPhL_INH4(i,k)
+              Flx(i,j,k,80) = Nit_INH4_INO3(i,k)
+              Flx(i,j,k,81) = Twi_IPhL_PhL(i,k)
+              Flx(i,j,k,82) = Twi_INO3_NO3(i,k)
+              Flx(i,j,k,83) = Twi_INH4_NH4(i,k)
+              Flx(i,j,k,84) = Ver_PhS_BenDet(i,k)
+              Flx(i,j,k,85) = Ver_PhS_Out(i,k)
+              Flx(i,j,k,86) = Ver_PhL_BenDet(i,k)
+              Flx(i,j,k,87) = Ver_PhL_Out(i,k)
+              Flx(i,j,k,88) = Ver_Det_BenDet(i,k)
+              Flx(i,j,k,89) = Ver_Det_Out(i,k)
+              Flx(i,j,k,90) = Ver_DetF_BenDet(i,k)
+              Flx(i,j,k,91) = Ver_DetF_Out(i,k)
+              Flx(i,j,k,92) = Ver_NCaO_BenDet(i,k)
             END DO
           END DO
 #endif
