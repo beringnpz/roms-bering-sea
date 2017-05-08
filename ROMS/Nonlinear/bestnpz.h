@@ -356,7 +356,7 @@
 # endif
       real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
 # ifdef BESTNPZ_INTERMEDIATES
-      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,92)
+      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,94)
 # endif
 #endif
 
@@ -507,7 +507,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Rem_Det_NH4, Rem_DetF_NH4, Nit_NH4_NO3
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Rem_BenDet_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_INO3_IPhL, Gpp_INH4_IPhL, Res_IPhL_INH4, Mor_IPhL_INH4, Nit_INH4_INO3, Twi_IPhL_PhL, Twi_INO3_NO3, Twi_INH4_NH4
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_BenDet, Ver_PhS_Out, Ver_PhL_BenDet, Ver_PhL_Out, Ver_Det_BenDet, Ver_Det_Out, Ver_DetF_BenDet, Ver_DetF_Out, Ver_NCaO_BenDet
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_BenDet, Ver_PhS_Out, Ver_PhL_BenDet, Ver_PhL_Out, Ver_Det_BenDet, Ver_Det_Out, Ver_DetF_BenDet, Ver_DetF_Out, Ver_NCaO_BenDet, Ver_NCaS_DetF, Ver_NCaS_BenDet
 
       ! Biological source/sinks
 
@@ -953,6 +953,8 @@
         Ver_DetF_BenDet= 0
         Ver_DetF_Out   = 0
         Ver_NCaO_BenDet= 0
+        Ver_NCaS_DetF  = 0
+        Ver_NCaS_BenDet = 0
 
         ! Save a copy of the original biomass
 
@@ -1412,7 +1414,11 @@
               cff2 = eEup * Bio3d(i,k,iiEupS) / (fEup + cff1 + cff0)
               cff3 = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 
+#ifdef DEPTHLIMITER
               cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((h(i,j) - 200_r8)/.3_r8)) ! depth-limiter, stops growth if they move deeper than 200m TODO
+#else
+              cff4 = 1.0_r8
+#endif
 
               if (cff1 .lt. 0.01_r8)THEN
                 BasMetEup = respEup*cff1/0.01_r8 ! TODO: doesn't consider detrital food?
@@ -1429,15 +1435,22 @@
               Gra_DetF_EupS(i,k) = fpDetEup * Bio3d(i,k,iiDetF)**2 * cff2 * cff3 * cff4
 
               Ege_EupS_DetF(i,k) = ((1.0_r8 - gammaEup) * cff1 +        &
-      &                             (1.0_r8 - 0.3_r8)   * cff0) *       &
-      &                            cff2 * cff3 * cff4
+     &                              (1.0_r8 - 0.3_r8)   * cff0) *       &
+     &                              cff2 * cff3 * cff4
 
               ! Off-shelf euphausiids
 
+              cff0 = fpDetEupO * Bio3d(i,k,iiDet)**2                    &
+     &             + fpDetEupO * Bio3d(i,k,iiDetF)**2 ! detrital food
+
               cff2 = eEup * Bio3d(i,k,iiEupO) / (fEup + cff1 + cff0)
 
+#ifdef DEPTHLIMITER
               cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((200_r8 - h(i,j))/.3_r8)) ! depth-limiter, stops growth if they move shallower than 200m TODO
-
+#else
+              cff4 = 1.0_r8
+#endif
+              
               Gra_PhS_EupO(i,k)  = fpPhSEup * Bio3d(i,k,iiPhS)**2  * cff2 * cff3 * cff4
               Gra_PhL_EupO(i,k)  = fpPhLEup * Bio3d(i,k,iiPhL)**2  * cff2 * cff3 * cff4
               Gra_MZL_EupO(i,k)  = fpMZLEup * Bio3d(i,k,iiMZL)**2  * cff2 * cff3 * cff4
@@ -1447,16 +1460,16 @@
               Gra_DetF_EupO(i,k) = fpDetEup * Bio3d(i,k,iiDetF)**2 * cff2 * cff3 * cff4
 
               Ege_EupO_DetF(i,k) = ((1.0_r8 - gammaEup) * cff1 +        &
-      &                             (1.0_r8 - 0.3_r8)   * cff0) *       &
-      &                            cff2 * cff3 * cff4
+     &                              (1.0_r8 - 0.3_r8)   * cff0) *       &
+     &                              cff2 * cff3 * cff4
 
               ! Jellyfish
 
               cff1 = fpCopJel * Bio3d(i,k,iiCop)**2 +                   &
-    &                fpNCaJel * Bio3d(i,k,iiNCaS)**2 +                  &
-    &                fpNCaJel * Bio3d(i,k,iiNCaO)**2 +                  &
-    &                fpEupJel * Bio3d(i,k,iiEupS)**2 +                  &
-    &                fpEupJel * Bio3d(i,k,iiEupO)**2
+     &               fpNCaJel * Bio3d(i,k,iiNCaS)**2 +                  &
+     &               fpNCaJel * Bio3d(i,k,iiNCaO)**2 +                  &
+     &               fpEupJel * Bio3d(i,k,iiEupS)**2 +                  &
+     &               fpEupJel * Bio3d(i,k,iiEupO)**2
 
               cff2 = eJel * Bio3d(i,k,iiJel) / (fJel + cff1)
               cff3= Q10Jele ** ((Temp(i,k)-Q10JelTe) / 10.0_r8)
@@ -1811,7 +1824,7 @@
             PON = Bio3d(i,k,iiBenDet)*0.25*xi  ! Benthic Particulate organic nitrogen
             cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
 
-            Rem_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac
+            Rem_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac, but inconsistent
 
           END DO
 #endif
@@ -2262,17 +2275,59 @@
           ! based on dates set in input file.  Downward movement is
           ! stopped at 200 m or halfway through the bottom layer,
           ! whichever is shallower; upward movement is stopped halfway
-          ! through the top layer. No biomass should cross the bottom or
-          ! surface boundary.
+          ! through the top layer.
 
           DO i=Istr,Iend
 
             if (downwardCM) then
 
+#ifdef DEPTHLIMITER
+              if (z_w(i,j,1) < -200.0_r8) then
+                
+                ! If water is deeper than 200m, no flux boundary imposed.
+                ! Die and go to DetF when cross 200m (this assumes there 
+                ! was nothing deeper than 200m to begin with... if there 
+                ! was, that also gets killed off)
+                
+                call BioVert(N(ng), -wNCsink, Bio3d(i,:,iiNCaS), dBtmp, &
+     &                       Hz(i,j,:), dtdays, z_w(i,j,:),             &
+     &                       z_w(i,j,N(ng))+10, flxtmp)
+     
+                Bio3d(i,1:N(ng),iiNCaS) = Bio3d(i,1:N(ng),iiNCaS) + dBtmp(1,1:N(ng))
+                do k = 1,N(ng)
+                  if (z_w(i,j,k) < -200.0_r8) then
+                    Ver_NCaS_DetF(i,k) = (Bio3d(i,k,iiNCaS)*Hz(i,j,k))/dtdays ! mg C m^-2 d^-1
+                    Bio3d(i,k,iiDetF) = Bio3d(i,k,iiDetF) + Bio3d(i,k,iiNCaS)
+                    Bio3d(i,k,iiNCaS) = 0;
+                  endif
+                enddo
+                
+                ! If water depth is just over the 200m limit, 
+                ! there might be some flux across the bottom boundary.  
+                ! Send this to BenDet.
+                
+                Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp
+                
+                Ver_NCaS_BenDet(i,1) = flxtmp/dtdays ! TODO: should this be subject to the 21% loss too?
+              else
+                
+                ! In shallow water, flux boundary at bottom.
+                
+                call BioVert(N(ng), -wNCsink, Bio3d(i,:,iiNCaS), dBtmp, &
+     &                       Hz(i,j,:), dtdays, z_w(i,j,:),             &
+     &                       max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), &
+     &                       flxtmp)
+                Bio3d(i,1:N(ng),iiNCaS) = Bio3d(i,1:N(ng),iiNCaS) + dBtmp(1,1:N(ng))
+                
+              endif
+          
+#else
+              
               call BioVert(N(ng), -wNCsink, Bio3d(i,:,iiNCaS), dBtmp,   &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), flxtmp)
               Bio3d(i,1:N(ng),iiNCaS) = Bio3d(i,1:N(ng),iiNCaS) + dBtmp(1,1:N(ng))
+#endif
 
             else if (upwardCM) then
 
@@ -2428,6 +2483,9 @@
               Flx(i,j,k,90) = Ver_DetF_BenDet(i,k)
               Flx(i,j,k,91) = Ver_DetF_Out(i,k)
               Flx(i,j,k,92) = Ver_NCaO_BenDet(i,k)
+              Flx(i,j,k,93) = Ver_NCaS_DetF(i,k)
+              Flx(i,j,k,94) = Ver_NCaS_BenDet(i,k)
+              
             END DO
           END DO
 #endif

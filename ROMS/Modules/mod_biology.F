@@ -1241,7 +1241,8 @@
       real(r8) :: fpPhSMZL, fpPhLMZL, fpMZSMZL
       real(r8) :: fpPhSCop, fpPhLCop, fpMZLCop
       real(r8) :: fpPhSNCa, fpPhLNCa, fpMZLNCa
-      real(r8) :: fpPhSEup, fpPhLEup, fpMZLEup, fpCopEup, fpDetEup, fpDetEupO
+      real(r8) :: fpPhSEup, fpPhLEup, fpMZLEup, fpCopEup, fpDetEup 
+      real(r8) :: fpDetEupO
       real(r8) :: fpCopJel, fpNCaJel, fpEupJel
 
       ! Zooplankton growth and feeding
