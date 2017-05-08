@@ -481,6 +481,7 @@
 
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
       real(r8) :: respNC, respCM, eCM, eNC
+      real(r8) :: targetdepth
 
       ! Bio tracer setup
 
@@ -784,8 +785,19 @@
           end if
 
           ! Ice status
+          ! (Note: Most arrays have data arranged such that time 
+          ! dimensions = [1 2 3] 
+          !            = [nstp nnew 3] 
+          !            = [current predictor intermediate]
+          ! Ice needs to hold on to the previous step, so those arrays 
+          ! are [1 2] = [nprev nstp] = [previous current].  The flipflop 
+          ! of values below is simply done so we can keep all the nstp 
+          ! values at the same index location (1) and therefore access 
+          ! them with the nstp shorthand.  Side effect is the confusing 
+          ! shorthand that for ice, nnew refers to the previous step 
+          ! when reading, and the predictor step later when writing.
 
-          cff1=IceLog(i,j,nnew)  ! TODO: verify that the flip-flop is just an easy way to track ice without adding to the dimensions of this array
+          cff1=IceLog(i,j,nnew)
           cff2=IceLog(i,j,nstp)
 
           IceLog(i,j,nnew)=cff2
@@ -1075,7 +1087,8 @@
 
           ! Calculate PAR at the surface
           ! Eyeball fit of data from Hinckley''s ezeroday.dat (E d-1 m-2)
-          ! TODO: this option seems to be missing the actual setting of PARs(i)??
+          ! TODO: this option is definitely deprecated, and doesn't 
+          ! actually calculate PAR.  Should be removed soon.
 
           cff2 = 41.0_r8 - 35.0_r8                                      &
      &           * COS( ( 12.0_r8 + yday) * 2.0_r8 * pi / 365.0_r8 )
@@ -1244,7 +1257,7 @@
 
 #ifdef DENMAN
               LightLimS = TANH(alphaPhSv * PAR(i,k) / PmaxsS)
-              LightLimL = TANH(alphaPhLv * PAR(i,k) / PmaxsL) ! TODO: alphaPhLv was Alpha in orig code, but the code to set its value was commented out.
+              LightLimL = TANH(alphaPhLv * PAR(i,k) / PmaxsL) 
 #else
               OffSet = 0.0_r8
               LightLimS = TANH(alphaPhSv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsS)
@@ -1415,7 +1428,7 @@
               cff3 = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 
 #ifdef DEPTHLIMITER
-              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((h(i,j) - 200_r8)/.3_r8)) ! depth-limiter, stops growth if they move deeper than 200m TODO
+              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((h(i,j) - 200_r8)/.3_r8)) ! depth-limiter, stops growth if they move deeper than 200m
 #else
               cff4 = 1.0_r8
 #endif
@@ -1446,7 +1459,7 @@
               cff2 = eEup * Bio3d(i,k,iiEupO) / (fEup + cff1 + cff0)
 
 #ifdef DEPTHLIMITER
-              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((200_r8 - h(i,j))/.3_r8)) ! depth-limiter, stops growth if they move shallower than 200m TODO
+              cff4 = 1.0_r8 - (0.5_r8 + 0.5_r8*tanh((200_r8 - h(i,j))/.3_r8)) ! depth-limiter, stops growth if they move shallower than 200m
 #else
               cff4 = 1.0_r8
 #endif
@@ -1484,7 +1497,9 @@
               ! for an outside food source.  However, GG's code doesn't
               ! spefify how the flux to detritus might change in that
               ! case (as written currently, that extra would come out of
-              ! the DetF biomass via a negative egestion flux) TODO
+              ! the DetF biomass via a negative egestion flux) TODO: Do 
+              ! we want to allow gammaJel>1, and if so, how should we 
+              ! handle egestion?
 
               Ege_Jel_DetF(i,k) = (1.0_r8 - gammaJel) * cff1 * cff2 * cff3
 
@@ -1566,7 +1581,8 @@
               ! TODO: original DBio(i,k,iXXX) = DBio(i,k,iXXX) - 0.5*Hz(i,j,k)/dtdays
               ! Implies coefficient units of mg C * day * m^-4???  Typo?
               ! Supposed to be constant rate, or maybe constant fraction
-              ! of biomass?  Assuming the former for now.
+              ! of biomass?  Assuming the former for now.  This option 
+              ! seems deprecated and should probably be removed.
               Mor_Cop_DetF(i,k)  = 0.5
               Mor_NCaS_DetF(i,k) = 0.5
               Mor_EupS_DetF(i,k) = 1
@@ -1676,10 +1692,13 @@
 
               ! Nitrification
 
-              ParW = PAR(i,k)/0.394848_r8 ! convert to W TODO: is this supposed to be PAR(i,k) or PARs(i)?
+              
               NitrifMax = Nitr0 * exp(-ktntr*(Temp(i,k) - ToptNtr)**2)     ! Arhonditsis 2005 temperature dependence
+              
+              ParW = PAR(i,k)/0.394848_r8 ! convert to W 
               DLNitrif = (1 - MAX(0.0_r8, (ParW - tI0)/(KI + ParW - tI0))) ! Fennel light dependence
-              DLNitrif = 1.0_r8                                            ! No light/depth dependence TODO: two options on in GG's code
+              DLNitrif = 1.0_r8  ! No light/depth dependence (overrides previous line)
+                                                        
               cff1 = Bio3d(i,k,iiNH4)/(KNH4Nit +Bio3d(i,k,iiNH4))          ! Arhonditsis saturation
 
               Nit_NH4_NO3(i,k) = NitrifMax * Bio3d(i,k,iiNH4) * DLNitrif * cff1 !  mmol N m^-3 d^-1
@@ -2281,7 +2300,7 @@
 
             if (downwardCM) then
 
-#ifdef DEPTHLIMITER
+# ifdef DEPTHLIMITER
               if (z_w(i,j,1) < -200.0_r8) then
                 
                 ! If water is deeper than 200m, no flux boundary imposed.
@@ -2321,13 +2340,13 @@
                 
               endif
           
-#else
+# else
               
               call BioVert(N(ng), -wNCsink, Bio3d(i,:,iiNCaS), dBtmp,   &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), flxtmp)
               Bio3d(i,1:N(ng),iiNCaS) = Bio3d(i,1:N(ng),iiNCaS) + dBtmp(1,1:N(ng))
-#endif
+# endif
 
             else if (upwardCM) then
 
@@ -2369,6 +2388,42 @@
 
             end if
 
+          END DO
+#endif
+
+#ifdef EUPDIEL
+
+          ! Euphausiid migration controlled by light level.  To achieve 
+          ! the effect of swimming towards a target depth, I run two 
+          ! passes, first with sinking and then with rising.
+            
+          DO i=Istr,Iend
+            
+            ! Still testing... if entire water column is bright or dark, 
+            ! no migration movement.  If not, target depth is midpoint of 
+            ! highest layer where PAR < 0.5 E/m^2/d
+            
+            if (      (ANY(PAR(i,:) < 0.5_r8)) .and.                    &
+     &          (.not. ALL(PAR(i,:) < 0.5_r8))) then
+              
+              do k = 1,N(ng)
+                if (PAR(i,k) < 0.5_r8) then
+                  targetdepth = (z_w(i,j,k-1) + z_w(i,j,k))/2
+                endif
+              end do
+              
+              call BioVert(N(ng), -100.0_r8, Bio3d(i,:,iiEupS), dBtmp,  &
+     &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
+     &                     targetdepth, flxtmp)
+     
+              Bio3d(i,1:N(ng),iiEupS) = Bio3d(i,1:N(ng),iiEupS) + dBtmp(1,1:N(ng))
+
+              call BioVert(N(ng), 100.0_r8, Bio3d(i,:,iiEupS), dBtmp,   &
+     &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
+     &                     targetdepth, flxtmp)
+
+              Bio3d(i,1:N(ng),iiEupS) = Bio3d(i,1:N(ng),iiEupS) + dBtmp(1,1:N(ng))     
+            endif
           END DO
 #endif
 
@@ -2582,7 +2637,7 @@
           IceNH4(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
           IcePhL(i,j,nnew) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
 
-          IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: still not certain of the flipflop thing
+          IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: Current step value now in both positions... real update in ice model, I assume?
 
 #  ifdef MASKING
           IcePhL(i,j,nnew) = IcePhL(i,j,nnew)*rmask(i,j)
@@ -2593,9 +2648,6 @@
 
 # endif
 #endif
-
-! TODO overhauled to here
-
 
 #ifdef STATIONARY
         DO k=1,N(ng)
@@ -2966,7 +3018,7 @@
       real(r8), dimension(1,nn) :: qc
 
 !  Compute inverse thickness to avoid repeated divisions.
-!
+!     
 
       DO k=1,nn
        DO i=1,1
