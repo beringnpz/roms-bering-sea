@@ -1859,7 +1859,7 @@
               ! Ice algae production limitation terms
 
               Temp1 = Temp(i,N(ng)) ! Assume temperature of top layer = temp ice skeletal layer
-              Par1  = PARs(i)       ! surface light
+              Par1  = PARs(i)/0.394848_r8  ! surface light, W m^-2
 
               aiceIfrac = (1-exp(-alphaIb*Par1))*exp(-betaI*Par1) ! light limitation
 
@@ -2211,8 +2211,8 @@
 
           ! This section includes all vertical movement of state
           ! variables, including sinking of phytoplankton and particulate
-          ! detritus, large copepod seasonal diapause, and (evenuntually)
-          ! euphausiid diel vertical migration.
+          ! detritus, large copepod seasonal diapause, and euphausiid 
+          ! diel vertical migration.
 
           ! Fraction used: 20% of what hits the bottom becomes 
           ! biologically unavailable, and 1% is lost to denitrification.  
@@ -2361,9 +2361,8 @@
 
           ! Off-shelf large copepods (NCaO i.e. NC): Move up and down
           ! based on dates set in input file.  Downward movement is
-          ! stopped at 400 m or halfway through the bottom layer,
-          ! whichever is shallower; upward movement is stopped halfway
-          ! through the top layer.  If the water depth is less than 400 m,
+          ! stopped at 400 m ; upward movement is stopped halfway
+          ! through the top layer. If the water depth is less than 400 m,
           ! copepods are assumed to die when they hit the bottom, and
           ! biomass is transferred to benthic detritus.
 
