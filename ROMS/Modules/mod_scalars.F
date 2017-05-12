@@ -231,6 +231,9 @@
         integer :: iTIC_              ! Total inorganic carbon
         integer :: iTAlk              ! Total alkalinity
 #endif
+# ifdef OXYGEN
+        integer :: iOxyg              ! Dissolved oxygen concentration
+# endif
 # ifdef BENTHIC
          integer, pointer :: idben(:)  ! Benthic tracers
          integer :: iBen
@@ -2346,6 +2349,10 @@
       iTAlk=ic+2
       ic=ic+2
 # endif
+# ifdef OXYGEN
+      iOxyg=ic+1
+      ic=ic+1
+# endif 
 # ifdef CLIM_ICE_1D
        i1CI=ic+1
        ic=ic+1

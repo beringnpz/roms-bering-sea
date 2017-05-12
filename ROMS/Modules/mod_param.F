@@ -442,34 +442,66 @@
 !
 #  if defined CARBON
 #    if defined JELLY
+#     if defined OXYGEN 
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 18
+#      else
+          integer, parameter :: NBT = 17
+#      endif
+#     else
 #      if defined IRON_LIMIT
           integer, parameter :: NBT = 17
 #      else
           integer, parameter :: NBT = 16
 #      endif
-#    else 
+#     endif 
+
+#    else
+#     if defined OXYGEN 
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 17
+#      else
+          integer, parameter :: NBT = 16
+#      endif
+#     else
 #      if defined IRON_LIMIT
           integer, parameter :: NBT = 16
 #      else
           integer, parameter :: NBT = 15
 #      endif
+#     endif  
 #    endif
 
 #  else
 #    if defined JELLY
+#     if defined OXYGEN
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 16
+#      else
+          integer, parameter :: NBT = 15
+#      endif
+#     else
 #      if defined IRON_LIMIT
           integer, parameter :: NBT = 15
 #      else
           integer, parameter :: NBT = 14
 #      endif
-#    else
+#     endif
 
+#    else
+#     if defined OXYGEN
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 15
+#      else
+          integer, parameter :: NBT = 14
+#      endif
+#     else
 #      if defined IRON_LIMIT
           integer, parameter :: NBT = 14
 #      else
           integer, parameter :: NBT = 13
 #      endif
-
+#     endif
 #    endif
 
 #  endif
@@ -854,7 +886,7 @@
 !
 !  Source and sink biology diagnostic terms.
 !
-        NDbio3d=5
+        NDbio3d=6
         NDbio2d=2
 
 #endif

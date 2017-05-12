@@ -426,7 +426,7 @@
         integer  :: iCOfx=1                     ! air-sea CO2 flux
 !        integer  :: iDNIT                     ! denitrification flux
         integer  :: ipCO2=2                     ! partial pressure of CO2
-!        integer  :: iO2fx                     ! air-sea O2 flux
+        integer  :: iO2fx=3                     ! air-sea O2 flux
 !
 !  Biological 3D diagnostic variable IDs.
 !
@@ -3226,6 +3226,19 @@
               CASE ('idDICFlux')
                 idDICFlux = varid
 # endif
+# ifdef OXYGEN
+              CASE ('idTvar(iOxyg)')
+                idTvar(iOxyg)=varid
+              CASE ('idTbry(iwest,iOxyg)')
+                idTbry(iwest,iOxyg)=varid
+              CASE ('idTbry(ieast,iOxyg)')
+                idTbry(ieast,iOxyg)=varid
+              CASE ('idTbry(isouth,iOxyg)')
+                idTbry(isouth,iOxyg)=varid
+              CASE ('idTbry(inorth,iOxyg)')
+                idTbry(inorth,iOxyg)=varid
+# endif
+
 # ifdef DIAGNOSTICS_BIO
               CASE ('iDbio2(iCOfx)')
                 iDbio2(iCOfx)=varid
@@ -3241,7 +3254,10 @@
                 iDbio3(iGraz)=varid
               CASE ('iDbio3(iNit)')
                 iDbio3(iNit)=varid
-
+#  ifdef OXYGEN
+              CASE ('iDbio2(iO2fx)')
+                iDbio2(iO2fx)=varid
+#  endif
 # endif
 # ifdef BENTHIC
               CASE ('idBvar(iBen)')

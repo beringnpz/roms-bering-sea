@@ -71,7 +71,7 @@
      &                   GRID(ng) % z_w,                                &
      &                   FORCES(ng) % srflx,                            &
      &                   OCEAN(ng) % t,                                 &
-# ifdef CARBON 
+# if defined CARBON || defined OXYGEN 
 # ifdef BULK_FLUXES
      &                   FORCES(ng) % Uwind,                            &
      &                   FORCES(ng) % Vwind,                            &
@@ -151,7 +151,7 @@
      &                         rmask,                                   &
 #endif
      &                         Hz, z_r, z_w, srflx, t,                   & 
-#ifdef CARBON 
+#if defined CARBON || defined OXYGEN
 #ifdef BULK_FLUXES
      &                         Uwind, Vwind,                            &
 # else
@@ -278,7 +278,7 @@
       real(r8), intent(in) :: z_w(LBi:,LBj:,0:)
       real(r8), intent(in) :: srflx(LBi:,LBj:)
       real(r8), intent(inout) :: t(LBi:,LBj:,:,:,:)
-#ifdef CARBON 
+#if defined CARBON || defined OXYGEN  
 #  ifdef BULK_FLUXES
       real(r8), intent(in) :: Uwind(LBi:,LBj:)
       real(r8), intent(in) :: Vwind(LBi:,LBj:)
@@ -351,7 +351,7 @@
       real(r8), intent(in) :: z_w(LBi:UBi,LBj:UBj,0:UBk)
       real(r8), intent(in) :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
-# ifdef CARBON
+# if defined CARBON  || defined OXYGEN 
 #  ifdef BULK_FLUXES
       real(r8), intent(in) :: Uwind(LBi:UBi,LBj:UBj)
       real(r8), intent(in) :: Vwind(LBi:UBi,LBj:UBj)
@@ -412,7 +412,7 @@
       real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj)
 # endif      
 #endif
-#ifdef CARBON
+#if defined CARBON || defined OXYGEN 
 !      integer, parameter :: Nsink = 4
       real(r8) :: u10squ
 #else
@@ -628,6 +628,26 @@
       real(r8), parameter :: D6 =-0.80_r8
       real(r8), parameter :: D7 = 0.06_r8
       real(r8), parameter :: P2CN = 6.625_r8 ! Phyto C:N ratio [mole_C/mole_N]
+#endif
+#ifdef OXYGEN
+      real(r8), parameter :: OA0 = 2.00907_r8       ! Oxygen
+      real(r8), parameter :: OA1 = 3.22014_r8       ! saturation
+      real(r8), parameter :: OA2 = 4.05010_r8       ! coefficients
+      real(r8), parameter :: OA3 = 4.94457_r8
+      real(r8), parameter :: OA4 =-0.256847_r8
+      real(r8), parameter :: OA5 = 3.88767_r8
+      real(r8), parameter :: OB0 =-0.00624523_r8
+      real(r8), parameter :: OB1 =-0.00737614_r8
+      real(r8), parameter :: OB2 =-0.0103410_r8
+      real(r8), parameter :: OB3 =-0.00817083_r8
+      real(r8), parameter :: OC0 =-0.000000488682_r8
+      real(r8), parameter :: rOxNO3= 8.625_r8       ! 138/16
+      real(r8), parameter :: rOxNH4= 6.625_r8       ! 106/16
+      real(r8) :: l2mol = 1000.0_r8/22.9316_r8      ! liter to mol
+#endif
+#ifdef OXYGEN
+      real(r8) :: SchmidtN_Ox, O2satu, O2_Flux
+      real(r8) :: TS, AA
 #endif
 #ifdef CARBON
       real(r8) :: C_Flux_RemineL, C_Flux_RemineS
@@ -1406,6 +1426,11 @@
                   END IF
                 END IF
 #endif
+#ifdef OXYGEN
+                Bio(i,k,iOxyg)=Bio(i,k,iOxyg)+                          &
+     &                         NOup*xi*rOxNO3+                          &
+     &                         NHup*xi*rOxNH4
+#endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iPPro)=DiaBio3d(i,j,k,iPPro)+            &
      &         (NHup+NOup)*dtdays/12._r8
@@ -1656,6 +1681,11 @@
                   END IF
                 END IF
 #endif
+#ifdef OXYGEN
+                Bio(i,k,iOxyg)=Bio(i,k,iOxyg)+                          &
+     &                         NOup*xi*rOxNO3+                          &
+     &                         NHup*xi*rOxNH4
+#endif     
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iPPro)=DiaBio3d(i,j,k,iPPro)+            &
      &         (NHup+NOup)*dtdays/12._r8
@@ -2884,6 +2914,10 @@
              END IF
           END IF
 #endif
+#ifdef OXYGEN
+          Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-                                &
+     &        xi*rOxNH4*TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS) 
+#endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
      &        (TempFuncPhS(i,k)*BasalMet*dtdays*Bio(i,k,iPhS))/12._r8
@@ -2958,6 +2992,10 @@
                END IF
              END IF
           END IF
+#endif
+#ifdef OXYGEN
+          Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-                                &
+     &        xi*rOxNH4*TempFuncPhL(i,k)*BasalMet*dtdays*Bio(i,k,iPhL)
 #endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
@@ -3082,6 +3120,10 @@
           Bio(i,k,iTAlk)=Bio(i,k,iTAlk)+                                &
      &          xi*(TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL))
 # endif
+#ifdef OXYGEN
+          Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-                                &
+     &        xi*rOxNH4*(TFMZL* BasalMetMZL*dtdays*Bio(i,k,iMZL))  
+#endif         
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
      &         +((TFMZL*BasalMetMZL*dtdays*Bio(i,k,iMZL)))/12._r8
@@ -3295,6 +3337,19 @@
 		 Bio(i,k,iTAlk)=Bio(i,k,iTALK)+                         &
      &            xi*(TFJel*BasalMetJel*dtdays*Bio(i,k,iJel)) 
 #endif
+#endif
+#ifdef OXYGEN
+          Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-                                &
+     &        xi*rOxNH4*(TFCop*BasalMetCop*dtdays*Bio(i,k,iCop))        &
+     &        - xi*rOxNH4*(TFNCa*BasalMetCM*dtdays*Bio(i,k,iNCaS))      &
+     &        - xi*rOxNH4*(TFNCa*BasalMetNC*dtdays*Bio(i,k,iNCaO))      &
+     &        - xi*rOxNH4*(TFEup*BasalMetEup*dtdays*Bio(i,k,iEupS))     &
+     &        - xi*rOxNH4*(TFEup*BasalMetEup*dtdays*Bio(i,k,iEupO))  
+#ifdef JELLY
+          Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-                                &
+     &        xi*rOxNH4*(TFJel*BasalMetJel*dtdays*Bio(i,k,iJel))        
+#endif 
+#endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iGraz)=DiaBio3d(i,j,k,iGraz)+            &
      &         + ((TFCop*BasalMetCop*dtdays*Bio(i,k,iCop))          &
@@ -3340,7 +3395,6 @@
              END IF
           END IF
 #endif 
-#endif
 #endif     
 
 #if defined BIOFLUX && defined BEST_NPZ
@@ -3439,7 +3493,11 @@
              END IF
           END IF
 #endif
-#endif     
+#endif
+#ifdef OXYGEN 
+              Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-                            &
+     &           ((Pv0*exp(PvT*Temp1)*PON))*dtdays*rOxNH4 
+#endif 
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iDet,iNH4)= bflx(iDet,iNH4) +                      &
@@ -3545,6 +3603,12 @@
 #endif
 #endif
 
+! For Nitrification, lose 2 moles of O2 per mole NH4  
+
+#ifdef OXYGEN 
+               Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-2.0_r8*NitrifMax *         &
+     &           Bio(i,k,iNH4) * DLNitrif * cff1 * dtdays
+#endif   
 #if defined BIOFLUX && defined BEST_NPZ
               IF (i.eq.3.and.j.eq.3) THEN
                 bflx(iNH4,iNO3)= bflx(iNH4,iNO3) +                      &
@@ -4699,6 +4763,66 @@
           END DO
        
 #endif 
+
+#ifdef OXYGEN
+!
+!-----------------------------------------------------------------------
+!  Surface O2 gas exchange.
+!-----------------------------------------------------------------------
+!
+!  Compute surface O2 gas exchange.
+!
+          cff1=rho0*550.0_r8
+          cff2=dtdays*0.31_r8*24.0_r8/100.0_r8
+          k=N(ng)
+          DO i=Istr,Iend
+!
+!  Compute O2 transfer velocity : u10squared (u10 in m/s)
+!
+# ifdef BULK_FLUXES
+            u10squ=Uwind(i,j)*Uwind(i,j)+Vwind(i,j)*Vwind(i,j)
+# else
+            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
+     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
+# endif
+
+!
+!  Calculate the Schmidt number for O2 in sea water (Wanninkhof, 1992).
+!
+            SchmidtN_Ox=1953.4_r8-                                      &
+     &                  Bio(i,k,itemp)*(128.0_r8-                       &
+     &                                  Bio(i,k,itemp)*                 &
+     &                                  (3.9918_r8-                     &
+     &                                   Bio(i,k,itemp)*0.050091_r8))
+
+            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN_Ox)
+!
+!  Calculate O2 saturation concentration using Garcia and Gordon
+!  L&O (1992) formula, (EXP(AA) is in ml/l).
+!
+            TS=LOG((298.15_r8-Bio(i,k,itemp))/                          &
+     &             (273.15_r8+Bio(i,k,itemp)))
+            AA=OA0+TS*(OA1+TS*(OA2+TS*(OA3+TS*(OA4+TS*OA5))))+          &
+     &             Bio(i,k,isalt)*(OB0+TS*(OB1+TS*(OB2+TS*OB3)))+       &
+     &             OC0*Bio(i,k,isalt)*Bio(i,k,isalt)
+!
+!  Convert from ml/l to mmol/m3.
+!
+            O2satu=l2mol*EXP(AA)
+!
+!  Add in O2 gas exchange.
+!
+            O2_Flux=cff3*(O2satu-Bio(i,k,iOxyg))*(1.0_r8-ai(i,j,nstp))
+            Bio(i,k,iOxyg)=Bio(i,k,iOxyg)+                              &
+     &                     O2_Flux*Hz_inv(i,k)
+# ifdef DIAGNOSTICS_BIO
+            DiaBio2d(i,j,iO2fx)=DiaBio2d(i,j,iO2fx)+                    &
+     &                          O2_Flux
+# endif
+
+          END DO
+#endif
+
 
 #ifdef CARBON
 !

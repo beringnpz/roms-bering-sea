@@ -7722,6 +7722,19 @@
             DO ng=1,Ngrids
               Hout(i,ng)=Lbio(ng)
             END DO
+#   ifdef OXYGEN
+          ELSE IF (TRIM(KeyWord).eq.'Hout(iO2fx)') THEN
+            IF (iDbio2(iO2fx).eq.0) THEN
+              IF (Master) WRITE (out,30) 'iDbio2(iO2fx)'
+              exit_flag=5
+              RETURN
+            END IF
+            Npts=load_l(Nval, Cval, Ngrids, Lbio)
+            i=iDbio2(iO2fx)
+            DO ng=1,Ngrids
+              Hout(i,ng)=Lbio(ng)
+            END DO
+#   endif
 #  endif
 #  endif
          
