@@ -3797,6 +3797,10 @@
                   END IF
                 END IF
 #endif
+#ifdef OXYGEN
+        Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-xi*rOxNH4*dtdays*0.5_r8           &
+     &      *(cff1+cff2+cff3+cff4+cff5)/Hz(i,j,k) 
+#endif
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+1,NT(ng)+2)=bflx(NT(ng)+1,NT(ng)+2)           &
@@ -3833,7 +3837,9 @@
                   END IF
                 END IF
 #endif 
-        
+#ifdef OXYGEN
+        Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-xi*rOxNH4*dtdays*cff6/Hz(i,j,k)
+#endif  
 # ifdef STATIONARY2           
             Stat2(i,4)=cff3*dtdays
             Stat2(i,5)=cff4*dtdays
@@ -3922,7 +3928,9 @@
                   END IF
                 END IF
 #endif
-     
+#ifdef OXYGEN
+        Bio(i,k,iOxyg)=Bio(i,k,iOxyg)-rOxNH4*dtdays*cff1           
+#endif 
 # if defined BIOFLUX && defined BEST_NPZ
             IF (i.eq.3.and.j.eq.3) THEN
               bflx(NT(ng)+2,iNH4)=bflx(NT(ng)+2,iNH4)                   &
