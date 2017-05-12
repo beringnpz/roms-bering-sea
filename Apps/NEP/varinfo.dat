@@ -6575,156 +6575,968 @@
 !STATIONARY
 !-----------------------
 'Stat1_3d'
-  '1st 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 1: LightLimS'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat1)'
   'r3dvar'
-  1.0d0
+  1.0d3
 
 'Stat2_3d'
-  '2nd 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 2: LightLimL'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat2)'
   'r3dvar'
-  1.0d0
+  1.0d3
 
 'Stat3_3d'
-  '3rd 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 3: NOLimS'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat3)'
   'r3dvar'
-  1.0d0
+  1.0d3
 
 'Stat4_3d'
-  '4th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 4: NOLimL'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat4)'
   'r3dvar'
-  1.0d0
+  1.0d3
 
 'Stat5_3d'
-  '5th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 5: NHLimS'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat5)'
   'r3dvar'
-  1.0d0
+  1.0d3
 
 'Stat6_3d'
-  '6th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 6: NHLimL'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat6)'
   'r3dvar'
-  1.0d0
+  1.0d3
 
 'Stat7_3d'
-  '7th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 7: IronLimS'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat7)'
   'r3dvar'
-  1.0d0
-  
+  1.0d3
+
 'Stat8_3d'
-  '8th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 8: IronLimL'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat8)'
   'r3dvar'
-  1.0d0
-  
-  
+  1.0d3
+
 'Stat9_3d'
-  '9th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 9: Gpp_NO3_PhS'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat9)'
   'r3dvar'
-  1.0d0
-  
-  
+  1.0d3
+
 'Stat10_3d'
-  '10th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 10: Gpp_NO3_PhL'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat10)'
   'r3dvar'
-  1.0d0    
-  
-   
+  1.0d3
+
 'Stat11_3d'
-  '11th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 11: Gpp_NH4_PhS'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat11)'
   'r3dvar'
-  1.0d0    
-    
+  1.0d3
+
 'Stat12_3d'
-  '12th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 12: Gpp_NH4_PhL'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat12)'
   'r3dvar'
-  1.0d0    
-  
-   
+  1.0d3
+
 'Stat13_3d'
-  '13th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 13: Gra_PhS_MZL'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat13)'
   'r3dvar'
-  1.0d0    
-  
-   
-   
+  1.0d3
+
 'Stat14_3d'
-  '14th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 14: Gra_PhL_MZL'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat14)'
   'r3dvar'
-  1.0d0    
-  
-  
+  1.0d3
+
 'Stat15_3d'
-  '15th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 15: Ege_MZL_Det'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat15)'
   'r3dvar'
-  1.0d0    
-  
-   
+  1.0d3
+
 'Stat16_3d'
-  '16th 3D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '3D stationary variable 16: Gra_PhS_Cop'
+  'mg C m^-2 d^-1'
   'StatVar scalar series'
   'bio_time'
   'idTSvar(i3Stat16)'
   'r3dvar'
-  1.0d0         
+  1.0d3
+
+'Stat17_3d'
+  '3D stationary variable 17: Gra_PhL_Cop'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat17)'
+  'r3dvar'
+  1.0d3
+
+'Stat18_3d'
+  '3D stationary variable 18: Gra_MZL_Cop'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat18)'
+  'r3dvar'
+  1.0d3
+
+'Stat19_3d'
+  '3D stationary variable 19: Gra_IPhL_Cop'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat19)'
+  'r3dvar'
+  1.0d3
+
+'Stat20_3d'
+  '3D stationary variable 20: Ege_Cop_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat20)'
+  'r3dvar'
+  1.0d3
+
+'Stat21_3d'
+  '3D stationary variable 21: Gra_PhS_NCaS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat21)'
+  'r3dvar'
+  1.0d3
+
+'Stat22_3d'
+  '3D stationary variable 22: Gra_PhL_NCaS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat22)'
+  'r3dvar'
+  1.0d3
+
+'Stat23_3d'
+  '3D stationary variable 23: Gra_MZL_NCaS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat23)'
+  'r3dvar'
+  1.0d3
+
+'Stat24_3d'
+  '3D stationary variable 24: Gra_IPhL_NCaS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat24)'
+  'r3dvar'
+  1.0d3
+
+'Stat25_3d'
+  '3D stationary variable 25: Ege_NCaS_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat25)'
+  'r3dvar'
+  1.0d3
+
+'Stat26_3d'
+  '3D stationary variable 26: Gra_PhS_NCaO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat26)'
+  'r3dvar'
+  1.0d3
+
+'Stat27_3d'
+  '3D stationary variable 27: Gra_PhL_NCaO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat27)'
+  'r3dvar'
+  1.0d3
+
+'Stat28_3d'
+  '3D stationary variable 28: Gra_MZL_NCaO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat28)'
+  'r3dvar'
+  1.0d3
+
+'Stat29_3d'
+  '3D stationary variable 29: Gra_IPhL_NCaO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat29)'
+  'r3dvar'
+  1.0d3
+
+'Stat30_3d'
+  '3D stationary variable 30: Ege_NCaO_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat30)'
+  'r3dvar'
+  1.0d3
+
+'Stat31_3d'
+  '3D stationary variable 31: Gra_PhS_EupS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat31)'
+  'r3dvar'
+  1.0d3
+
+'Stat32_3d'
+  '3D stationary variable 32: Gra_PhL_EupS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat32)'
+  'r3dvar'
+  1.0d3
+
+'Stat33_3d'
+  '3D stationary variable 33: Gra_MZL_EupS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat33)'
+  'r3dvar'
+  1.0d3
+
+'Stat34_3d'
+  '3D stationary variable 34: Gra_Cop_EupS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat34)'
+  'r3dvar'
+  1.0d3
+
+'Stat35_3d'
+  '3D stationary variable 35: Gra_IPhL_EupS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat35)'
+  'r3dvar'
+  1.0d3
+
+'Stat36_3d'
+  '3D stationary variable 36: Gra_Det_EupS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat36)'
+  'r3dvar'
+  1.0d3
+
+'Stat37_3d'
+  '3D stationary variable 37: Gra_DetF_EupS'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat37)'
+  'r3dvar'
+  1.0d3
+
+'Stat38_3d'
+  '3D stationary variable 38: Ege_EupS_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat38)'
+  'r3dvar'
+  1.0d3
+
+'Stat39_3d'
+  '3D stationary variable 39: Gra_PhS_EupO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat39)'
+  'r3dvar'
+  1.0d3
+
+'Stat40_3d'
+  '3D stationary variable 40: Gra_PhL_EupO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat40)'
+  'r3dvar'
+  1.0d3
+
+'Stat41_3d'
+  '3D stationary variable 41: Gra_MZL_EupO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat41)'
+  'r3dvar'
+  1.0d3
+
+'Stat42_3d'
+  '3D stationary variable 42: Gra_Cop_EupO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat42)'
+  'r3dvar'
+  1.0d3
+
+'Stat43_3d'
+  '3D stationary variable 43: Gra_IPhL_EupO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat43)'
+  'r3dvar'
+  1.0d3
+
+'Stat44_3d'
+  '3D stationary variable 44: Gra_Det_EupO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat44)'
+  'r3dvar'
+  1.0d3
+
+'Stat45_3d'
+  '3D stationary variable 45: Gra_DetF_EupO'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat45)'
+  'r3dvar'
+  1.0d3
+
+'Stat46_3d'
+  '3D stationary variable 46: Ege_EupO_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat46)'
+  'r3dvar'
+  1.0d3
+
+'Stat47_3d'
+  '3D stationary variable 47: Gra_Cop_Jel'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat47)'
+  'r3dvar'
+  1.0d3
+
+'Stat48_3d'
+  '3D stationary variable 48: Gra_EupS_Jel'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat48)'
+  'r3dvar'
+  1.0d3
+
+'Stat49_3d'
+  '3D stationary variable 49: Gra_EupO_Jel'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat49)'
+  'r3dvar'
+  1.0d3
+
+'Stat50_3d'
+  '3D stationary variable 50: Gra_NCaS_Jel'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat50)'
+  'r3dvar'
+  1.0d3
+
+'Stat51_3d'
+  '3D stationary variable 51: Gra_NCaO_Jel'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat51)'
+  'r3dvar'
+  1.0d3
+
+'Stat52_3d'
+  '3D stationary variable 52: Ege_Jel_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat52)'
+  'r3dvar'
+  1.0d3
+
+'Stat53_3d'
+  '3D stationary variable 53: Mor_PhS_Det'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat53)'
+  'r3dvar'
+  1.0d3
+
+'Stat54_3d'
+  '3D stationary variable 54: Mor_PhL_Det'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat54)'
+  'r3dvar'
+  1.0d3
+
+'Stat55_3d'
+  '3D stationary variable 55: Mor_MZL_Det'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat55)'
+  'r3dvar'
+  1.0d3
+
+'Stat56_3d'
+  '3D stationary variable 56: Mor_Cop_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat56)'
+  'r3dvar'
+  1.0d3
+
+'Stat57_3d'
+  '3D stationary variable 57: Mor_NCaS_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat57)'
+  'r3dvar'
+  1.0d3
+
+'Stat58_3d'
+  '3D stationary variable 58: Mor_EupS_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat58)'
+  'r3dvar'
+  1.0d3
+
+'Stat59_3d'
+  '3D stationary variable 59: Mor_NCaO_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat59)'
+  'r3dvar'
+  1.0d3
+
+'Stat60_3d'
+  '3D stationary variable 60: Mor_EupO_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat60)'
+  'r3dvar'
+  1.0d3
+
+'Stat61_3d'
+  '3D stationary variable 61: Mor_Jel_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat61)'
+  'r3dvar'
+  1.0d3
+
+'Stat62_3d'
+  '3D stationary variable 62: Res_PhS_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat62)'
+  'r3dvar'
+  1.0d3
+
+'Stat63_3d'
+  '3D stationary variable 63: Res_PhL_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat63)'
+  'r3dvar'
+  1.0d3
+
+'Stat64_3d'
+  '3D stationary variable 64: Res_MZL_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat64)'
+  'r3dvar'
+  1.0d3
+
+'Stat65_3d'
+  '3D stationary variable 65: Res_Cop_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat65)'
+  'r3dvar'
+  1.0d3
+
+'Stat66_3d'
+  '3D stationary variable 66: Res_NCaS_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat66)'
+  'r3dvar'
+  1.0d3
+
+'Stat67_3d'
+  '3D stationary variable 67: Res_NCaO_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat67)'
+  'r3dvar'
+  1.0d3
+
+'Stat68_3d'
+  '3D stationary variable 68: Res_EupS_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat68)'
+  'r3dvar'
+  1.0d3
+
+'Stat69_3d'
+  '3D stationary variable 69: Res_EupO_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat69)'
+  'r3dvar'
+  1.0d3
+
+'Stat70_3d'
+  '3D stationary variable 70: Res_Jel_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat70)'
+  'r3dvar'
+  1.0d3
+
+'Stat71_3d'
+  '3D stationary variable 71: Rem_Det_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat71)'
+  'r3dvar'
+  1.0d3
+
+'Stat72_3d'
+  '3D stationary variable 72: Rem_DetF_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat72)'
+  'r3dvar'
+  1.0d3
+
+'Stat73_3d'
+  '3D stationary variable 73: Nit_NH4_NO3'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat73)'
+  'r3dvar'
+  1.0d3
+
+'Stat74_3d'
+  '3D stationary variable 74: Gra_Det_Ben'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat74)'
+  'r3dvar'
+  1.0d3
+
+'Stat75_3d'
+  '3D stationary variable 75: Gra_DetF_Ben'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat75)'
+  'r3dvar'
+  1.0d3
+
+'Stat76_3d'
+  '3D stationary variable 76: Gra_PhS_Ben'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat76)'
+  'r3dvar'
+  1.0d3
+
+'Stat77_3d'
+  '3D stationary variable 77: Gra_PhL_Ben'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat77)'
+  'r3dvar'
+  1.0d3
+
+'Stat78_3d'
+  '3D stationary variable 78: Gra_BenDet_Ben'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat78)'
+  'r3dvar'
+  1.0d3
+
+'Stat79_3d'
+  '3D stationary variable 79: Exc_Ben_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat79)'
+  'r3dvar'
+  1.0d3
+
+'Stat80_3d'
+  '3D stationary variable 80: Exc_Ben_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat80)'
+  'r3dvar'
+  1.0d3
+
+'Stat81_3d'
+  '3D stationary variable 81: Res_Ben_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat81)'
+  'r3dvar'
+  1.0d3
+
+'Stat82_3d'
+  '3D stationary variable 82: Mor_Ben_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat82)'
+  'r3dvar'
+  1.0d3
+
+'Stat83_3d'
+  '3D stationary variable 83: Rem_BenDet_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat83)'
+  'r3dvar'
+  1.0d3
+
+'Stat84_3d'
+  '3D stationary variable 84: Gpp_INO3_IPhL'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat84)'
+  'r3dvar'
+  1.0d3
+
+'Stat85_3d'
+  '3D stationary variable 85: Gpp_INH4_IPhL'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat85)'
+  'r3dvar'
+  1.0d3
+
+'Stat86_3d'
+  '3D stationary variable 86: Res_IPhL_INH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat86)'
+  'r3dvar'
+  1.0d3
+
+'Stat87_3d'
+  '3D stationary variable 87: Mor_IPhL_INH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat87)'
+  'r3dvar'
+  1.0d3
+
+'Stat88_3d'
+  '3D stationary variable 88: Nit_INH4_INO3'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat88)'
+  'r3dvar'
+  1.0d3
+
+'Stat89_3d'
+  '3D stationary variable 89: Twi_IPhL_PhL'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat89)'
+  'r3dvar'
+  1.0d3
+
+'Stat90_3d'
+  '3D stationary variable 90: Twi_INO3_NO3'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat90)'
+  'r3dvar'
+  1.0d3
+
+'Stat91_3d'
+  '3D stationary variable 91: Twi_INH4_NH4'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat91)'
+  'r3dvar'
+  1.0d3
+
+'Stat92_3d'
+  '3D stationary variable 92: Ver_PhS_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat92)'
+  'r3dvar'
+  1.0d3
+
+'Stat93_3d'
+  '3D stationary variable 93: Ver_PhS_Out'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat93)'
+  'r3dvar'
+  1.0d3
+
+'Stat94_3d'
+  '3D stationary variable 94: Ver_PhL_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat94)'
+  'r3dvar'
+  1.0d3
+
+'Stat95_3d'
+  '3D stationary variable 95: Ver_PhL_Out'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat95)'
+  'r3dvar'
+  1.0d3
+
+'Stat96_3d'
+  '3D stationary variable 96: Ver_Det_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat96)'
+  'r3dvar'
+  1.0d3
+
+'Stat97_3d'
+  '3D stationary variable 97: Ver_Det_Out'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat97)'
+  'r3dvar'
+  1.0d3
+
+'Stat98_3d'
+  '3D stationary variable 98: Ver_DetF_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat98)'
+  'r3dvar'
+  1.0d3
+
+'Stat99_3d'
+  '3D stationary variable 99: Ver_DetF_Out'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat99)'
+  'r3dvar'
+  1.0d3
+
+'Stat100_3d'
+  '3D stationary variable 100: Ver_NCaO_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat100)'
+  'r3dvar'
+  1.0d3
+
+'Stat101_3d'
+  '3D stationary variable 101: Ver_NCaS_DetF'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat101)'
+  'r3dvar'
+  1.0d3
+
+'Stat102_3d'
+  '3D stationary variable 102: Ver_NCaS_BenDet'
+  'mg C m^-2 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat102)'
+  'r3dvar'
+  1.0d3
+
+'Stat103_3d'
+  '3D stationary variable 103: feastpred_Cop'
+  'mg C m^-3 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat103)'
+  'r3dvar'
+  1.0d3
+
+'Stat104_3d'
+  '3D stationary variable 104: feastpred_NCaS'
+  'mg C m^-3 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat104)'
+  'r3dvar'
+  1.0d3
+
+'Stat105_3d'
+  '3D stationary variable 105: feastpred_NCaO'
+  'mg C m^-3 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat105)'
+  'r3dvar'
+  1.0d3
+
+'Stat106_3d'
+  '3D stationary variable 106: feastpred_EupS'
+  'mg C m^-3 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat106)'
+  'r3dvar'
+  1.0d3
+
+'Stat107_3d'
+  '3D stationary variable 107: feastpred_EupO'
+  'mg C m^-3 d^-1'
+  'StatVar scalar series'
+  'bio_time'
+  'idTSvar(i3Stat107)'
+  'r3dvar'
+  1.0d3
+  
 !-----------------------------
 !PROD3 
 !---------------------------

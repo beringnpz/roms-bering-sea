@@ -711,10 +711,10 @@
         END DO
 
 # ifdef BEST_NPZ
-#ifdef STATIONARY
-!-------------------------
-!3D Stationary Variable Array
-!--------------------------
+#  ifdef STATIONARY
+!
+! 3D Stationary Variable Array
+!
         DO itrc=1,NBTS
           IF (Hout(idTSvar(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idTSvar(itrc))
@@ -729,11 +729,11 @@
      &                     NF_FOUT,nvd4,t3dgrd,Aval,Vinfo,ncname)
           END IF
         END DO
-#endif
-#ifdef STATIONARY2
-!-------------------------
-!2D Stationary Array
-!--------------------------
+#  endif
+#  ifdef STATIONARY2
+!
+! 2D Stationary Variable Array
+!
         DO itrc=1,NBTS2
           IF (Hout(idTS2var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idTS2var(itrc))
@@ -748,113 +748,51 @@
      &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
           END IF
         END DO
-#endif
-#ifdef BIOFLUX
-!-------------------------
-!bioflux Array
-!--------------------------
-!        DO itrc=1,NT(ng)
-!	 DO itrc2=1,NT(ng)
-          IF (Hout(idTBFvar(iBF),ng)) THEN
-            Vinfo( 1)=Vname(1,idTBFvar(iBF))
-            WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
-     &                                   TRIM(Vname(2,idTBFvar(iBF)))
-            Vinfo( 3)=Vname(3,idTBFvar(iBF))
-            Vinfo(14)=Vname(4,idTBFvar(iBF))
-            Vinfo(16)=Vname(1,idtime)
-            Vinfo(22)='coordinates'
-            Aval(5)=REAL(r2dvar,r8)
-            status=def_var(ng, model,ncAVGid(ng),avgTBFid(iBF,ng),     &
-     &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
-          END IF
-!        END DO
-!	END DO
-#endif
-#ifdef PROD3
-!-------------------------------
-!3D Production variables
-!-------------------------------
-        DO itrc=1,NPT3(ng)
-          IF (Hout(idPT3var(itrc),ng)) THEN
-            Vinfo( 1)=Vname(1,idPT3var(itrc))
-            WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
-     &                                   TRIM(Vname(2,idPT3var(itrc)))
-            Vinfo( 3)=Vname(3,idPT3var(itrc))
-            Vinfo(14)=Vname(4,idPT3var(itrc))
-            Vinfo(16)=Vname(1,idtime)
-            Vinfo(22)='coordinates'
-            Aval(5)=REAL(r3dvar,r8)
-            status=def_var(ng, model,ncAVGid(ng),avgPT3id(itrc,ng),     &
-     &                    NF_FOUT,nvd4,t3dgrd,Aval,Vinfo,ncname)
-          END IF
-        END DO
-#endif
-#ifdef PROD2
-!-------------------------------
-!2D Production variables
-!-------------------------------
-        DO itrc=1,NPT2(ng)
-          IF (Hout(idPT2var(itrc),ng)) THEN
-            Vinfo( 1)=Vname(1,idPT2var(itrc))
-            WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
-     &                                   TRIM(Vname(2,idPT2var(itrc)))
-            Vinfo( 3)=Vname(3,idPT2var(itrc))
-            Vinfo(14)=Vname(4,idPT2var(itrc))
-            Vinfo(16)=Vname(1,idtime)
-            Vinfo(22)='coordinates'
-            Aval(5)=REAL(r3dvar,r8)
-            status=def_var(ng, model,ncAVGid(ng),avgPT2id(itrc,ng),     &
-     &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
-          END IF
-        END DO
-#endif
-!------------------
-!benthic bio variables
-!-------------------
+#  endif
+!
+! Benthic bio variables
+!
 #  if defined BENTHIC
         DO itrc=1,NBeT(ng)
-         IF (Hout(idBvar(itrc),ng)) THEN
-             Vinfo( 1)=Vname(1,idBvar(itrc))
+          IF (Hout(idBvar(itrc),ng)) THEN
+            Vinfo( 1)=Vname(1,idBvar(itrc))
             WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
      &                                   TRIM(Vname(2,idBvar(itrc)))
-
-         Vinfo( 1)=Vname(1,idBvar(itrc))
-         Vinfo( 2)=Vname(2,idBvar(itrc))
-         Vinfo(3)=Vname(3,idBvar(itrc))
-         Vinfo(14)=Vname(4,idBvar(itrc))
-#  if defined WRITE_WATER && defined MASKING
-          Vinfo(20)='mask_rho'
-#  endif   
-          Vinfo(22)='coordinates'
-	  
-         Vinfo(16)=Vname(1,idtime)
-	 Aval(5)=REAL(r2dvar,r8)
-         status=def_var(ng, model,ncavgid(ng),avgBid(itrc,ng),NF_FOUT,  &
-     &                     nvd3,t2dgrd,Aval,Vinfo,ncname)
-              END IF
-           END DO
+            Vinfo( 1)=Vname(1,idBvar(itrc))
+            Vinfo( 2)=Vname(2,idBvar(itrc))
+            Vinfo(3)=Vname(3,idBvar(itrc))
+            Vinfo(14)=Vname(4,idBvar(itrc))
+#   if defined WRITE_WATER && defined MASKING
+            Vinfo(20)='mask_rho'
+#   endif   
+            Vinfo(22)='coordinates'
+            Vinfo(16)=Vname(1,idtime)
+	          Aval(5)=REAL(r2dvar,r8)
+            status=def_var(ng, model,ncavgid(ng),avgBid(itrc,ng),       &
+     &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
+          END IF
+        END DO
 #  endif
-!------------------
-!ice bio variables
-!-------------------
-#if defined ICE_BIO
+!
+! Ice bio variables
+!
+#  if defined ICE_BIO
 #   ifdef CLIM_ICE_1D
-           DO itrc=1,NIceT(ng)
-             IF (Hout(idIceBvar(itrc),ng)) THEN
-             Vinfo( 1)=Vname(1,idIceBvar(itrc))
-             WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
+        DO itrc=1,NIceT(ng)
+          IF (Hout(idIceBvar(itrc),ng)) THEN
+            Vinfo( 1)=Vname(1,idIceBvar(itrc))
+            WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
      &                                   TRIM(Vname(2,idIceBvar(itrc)))
-             Vinfo( 2)=Vname(2,idIceBvar(itrc))
-             Vinfo(3)=Vname(3,idIceBvar(itrc))
-             Vinfo(14)=Vname(4,idIceBvar(itrc))
-             Vinfo(16)=Vname(1,idtime)
-	     Aval(5)=REAL(r2dvar,r8)
-              status=def_var(ng, model,ncavgid(ng),avgIceBid(itrc,ng),   &
-      &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
-                 END IF
-             END DO
-	     
-#elif defined BERING_10K 	     
+            Vinfo( 2)=Vname(2,idIceBvar(itrc))
+            Vinfo(3)=Vname(3,idIceBvar(itrc))
+            Vinfo(14)=Vname(4,idIceBvar(itrc))
+            Vinfo(16)=Vname(1,idtime)
+	          Aval(5)=REAL(r2dvar,r8)
+            status=def_var(ng, model,ncavgid(ng),avgIceBid(itrc,ng),    &
+     &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
+          END IF
+        END DO  
+#   elif defined BERING_10K 	     
 !       
 !  Define ice algae.
 !  
@@ -864,19 +802,16 @@
           Vinfo( 3)=Vname(3,idIcePhL)
           Vinfo(14)=Vname(4,idIcePhL)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif   
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIcePhL,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
-     &                   avgVid(idIcePhL,ng), NF_FOUT,                    &
+     &                   avgVid(idIcePhL,ng), NF_FOUT,                  &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
         END IF         
-		 
-		 
-       
 !  Define ice nitrate.
 !  
         IF (Hout(idIceNO3,ng)) THEN
@@ -885,20 +820,16 @@
           Vinfo( 3)=Vname(3,idIceNO3)
           Vinfo(14)=Vname(4,idIceNO3)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif   
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIceNO3,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
-     &                   avgVid(idIceNO3,ng), NF_FOUT,                    &
+     &                   avgVid(idIceNO3,ng), NF_FOUT,                  &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
         END IF  
-	
-	
-	
-       
 !  Define ice ammonium.
 !  
         IF (Hout(idIceNH4,ng)) THEN
@@ -907,20 +838,17 @@
           Vinfo( 3)=Vname(3,idIceNH4)
           Vinfo(14)=Vname(4,idIceNH4)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif   
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIceNH4,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
-     &                   avgVid(idIceNH4,ng), NF_FOUT,                    &
+     &                   avgVid(idIceNH4,ng), NF_FOUT,                  &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
         END IF  			 
-		
-		
-		
-		       
+!
 !  Define ice log.
 !  
         IF (Hout(idIceLog,ng)) THEN
@@ -929,20 +857,18 @@
           Vinfo( 3)=Vname(3,idIceLog)
           Vinfo(14)=Vname(4,idIceLog)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif   
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIceLog,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
-     &                   avgVid(idIceLog,ng), NF_FOUT,                    &
+     &                   avgVid(idIceLog,ng), NF_FOUT,                  &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF   
-		     
-#endif 	     
-#endif     
-                
+        END IF        
+#   endif 	     
+#  endif            
 # endif
 # ifdef BIO_GOANPZ
         DO itrc=1,NTS(ng)

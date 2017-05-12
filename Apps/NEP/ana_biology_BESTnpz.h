@@ -399,32 +399,12 @@
       do i=IstrR,IendR
         do j=JstrR,JendR
           do k=1,N(ng)
-            st(i,j,k,1,1) = 0.0_r8
-            st(i,j,k,1,2) = 0.0_r8
-            st(i,j,k,1,3) = 0.0_r8
-            st(i,j,k,1,4) = 0.0_r8
-            st(i,j,k,1,5) = 0.0_r8
-            st(i,j,k,1,6) = 0.0_r8
-            st(i,j,k,1,7) = 0.0_r8
-            st(i,j,k,1,8) = 0.0_r8
-            st(i,j,k,2,1) = 0.0_r8
-            st(i,j,k,2,2) = 0.0_r8
-            st(i,j,k,2,3) = 0.0_r8
-            st(i,j,k,2,4) = 0.0_r8
-            st(i,j,k,2,5) = 0.0_r8
-            st(i,j,k,2,6) = 0.0_r8
-            st(i,j,k,2,7) = 0.0_r8
-            st(i,j,k,2,8) = 0.0_r8
-
-
-            st(i,j,k,3,1) = 0.0_r8
-            st(i,j,k,3,2) = 0.0_r8
-            st(i,j,k,3,3) = 0.0_r8
-            st(i,j,k,3,4) = 0.0_r8
-            st(i,j,k,3,5) = 0.0_r8
-            st(i,j,k,3,6) = 0.0_r8
-            st(i,j,k,3,7) = 0.0_r8
-            st(i,j,k,3,8) = 0.0_r8
+            
+            do is=1,NBTS
+              st(i,j,k,1,is) = 0.0_r8
+              st(i,j,k,2,is) = 0.0_r8
+              st(i,j,k,3,is) = 0.0_r8
+            end do
           enddo
         enddo
       enddo

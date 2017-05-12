@@ -277,7 +277,7 @@
       END DO
       
       
-#ifdef STATIONARY
+#  ifdef STATIONARY
 !
 !  Write out stationary 3D variables.
 !
@@ -301,116 +301,29 @@
           IF (exit_flag.ne.NoError) RETURN
         END IF
       END DO
-#endif   
-
-
-!  Write out 3D production type variables.
-
-# ifdef PROD3
-       
-      DO i=1,NPT3(ng)
-        ifield=idPT3var(i)
-        IF (Sout(ifield,ng)) THEN
-          scale=1.0_r8
-	
-
-	
-	 
-          CALL extract_sta3d (ng, iNLM, Cgrid, ifield, r3dvar,          &
-     &                        LBi, UBi, LBj, UBj, 1, N(ng),             &
-     &                        scale, OCEAN(ng)%pt3(:,:,:,NOUT,i),       &
-     &                        NposR, XposR, YposR, ZposR, rsta)
-     
-     
-          CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                  &
-     &                          TRIM(Vname(1,idPT3var(i))), rsta,       &
-     &                          (/1,1,tSTAindx(ng)/),                   &
-     &                          (/N(ng),Nstation(ng),1/),               &
-     &                          ncid = ncSTAid(ng),                     &
-     &                          varid = staPT3id(i,ng))
-          IF (exit_flag.ne.NoError) RETURN
-	  !---------------------
-          !Zero the output array
-	  !---------------------
-
-!          OCEAN(ng) % pt3(:,:,:,NOUT,i) = 0.0_r8
-
-      
-        END IF
-      END DO
-#endif      
-      
-     
+#  endif   
 !
-!  Write out 2D production type variables.
+!  Write out benthic variables
 !
-# ifdef PROD2
-            
-      DO i=1,NPT2(ng)
-        ifield=idPT2var(i)
-        IF (Sout(ifield,ng)) THEN
-          scale=1.0_r8
-	 
-	
-          CALL extract_sta2d (ng, iNLM, Cgrid, ifield, r2dvar,          &
-     &                        LBi, UBi, LBj, UBj,                       &
-     &                        scale, OCEAN(ng) % pt2(:,:,KOUT,i),     &
-     &                        Nstation(ng), Xpos, Ypos, psta)
-     
-     
-      
-     
-         CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                  &
-     &                          TRIM(Vname(1,idPT2var(i))), psta,       &
-     &                        (/1,tSTAindx(ng)/), (/Nstation(ng),1/),   &
-     &                          ncid = ncSTAid(ng),                     &
-     &                          varid = staPT2id(i,ng))
-          IF (exit_flag.ne.NoError) RETURN
-	  
-
-
-        END IF
-      END DO
-#endif      
-      
-          
-      
-
-!------------------------------
-!Write out benthic variables
-!-----------------------------
-
-# if defined BENTHIC
-                      
-              DO i=1,NBeT(ng)
+#  if defined BENTHIC            
+      DO i=1,NBeT(ng)
 	      ifield=idBvar(i)
-             IF (Sout(ifield,ng)) THEN
-                 scale=1.0_r8
-       CALL extract_sta2d (ng, iNLM, Cgrid, ifield, r2dvar,            &
+        IF (Sout(ifield,ng)) THEN
+          scale=1.0_r8
+          CALL extract_sta2d (ng, iNLM, Cgrid, ifield, r2dvar,          &
      &                      LBi, UBi, LBj, UBj,                         &
-     &                      scale, OCEAN(ng) % bt(:,:,1,NOUT,i),       &
+     &                      scale, OCEAN(ng) % bt(:,:,1,NOUT,i),        &
      &                      Nstation(ng), Xpos, Ypos, psta)
      
-        CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                    &
+          CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                  &
      &                        TRIM(Vname(1,idBvar(i))), psta,           &
      &                        (/1,tSTAindx(ng)/), (/Nstation(ng),1/),   &
      &                        ncid = ncSTAid(ng),                       &
-     &                        varid = staBid(i,ng))
-		
-     
-                           
-           IF (status.ne.nf90_noerr) RETURN
-          
-          END IF
-        
+     &                        varid = staBid(i,ng))                           
+          IF (status.ne.nf90_noerr) RETURN
+        END IF  
       END DO
-# endif
-
-      
-      
-      
-      
-      
+#  endif
 !
 !  Write out density anomaly.
 !

@@ -442,17 +442,65 @@
 !
 #  if defined JELLY
 #    if defined IRON_LIMIT
-        integer, parameter :: NBT = 15
+        integer, parameter :: NBT = 15    ! Water column tracers
 #    else
         integer, parameter :: NBT = 14
 #    endif
 #  else
-
 #    if defined IRON_LIMIT
         integer, parameter :: NBT = 14
 #    else
         integer, parameter :: NBT = 13
 #    endif
+#  endif
+#  if defined BENTHIC
+        integer,parameter :: NBEN = 2     ! Benthic tracers
+        integer :: MBT
+        integer, dimension(Ngrids) :: NBeT
+#  endif
+#  if defined ICE_BIO
+        integer,parameter :: NIB = 4      ! Ice tracers
+        integer, dimension(Ngrids) :: NIceT
+        integer, dimension(Ngrids) :: NIceLog
+#  endif
+#  ifdef STATIONARY
+        integer, dimension(Ngrids) :: NTS 
+#   ifdef FEAST
+        integer, parameter :: NBTS = 107  ! Stationary diagnostics (3D)
+#   else
+        integer, parameter :: NBTS = 102
+#   endif
+#  endif
+#  ifdef STATIONARY2
+        integer, dimension(Ngrids) :: NTS2
+        integer, parameter :: NBTS2 = 1   ! Stationary diagnostics (2D)
+#  endif
+#  ifdef FEAST
+!
+!  Number of... everything... for the FEAST model
+!
+        real(r8), parameter :: F_EPSILON            = 1e-36
+        integer, parameter :: LAYERS                =  3 ! Number of vert layers for fish
+        integer, parameter :: NUM_PLANKTON          =  6 ! COP, NCAS, NCA0, EUPS, EUPO, BEN
+        integer, parameter :: MAX_LCLASS            = 60 ! Maximum length classes
+        integer, parameter :: NUM_AGES              = 11 ! nac
+        integer, parameter :: NUM_AGED_LENGTHS      = 14 ! nlc
+        integer, parameter :: NUM_NOAGE_LENGTHS     = 20 ! nlct
+        integer, parameter :: NUM_AGED_SPECIES      = 3  ! POL, COD, ATF
+        integer, parameter :: NUM_LENGTHED_SPECIES  = 7  ! HER, CAP, EUL, SAN, MYC, SAL1, SAL2 
+        integer, parameter :: NUM_SIMPLE_SPECIES    = 5  ! SHR, SQU, EPI, CRA, OTH 
+        integer, parameter :: NUM_GEARS             = 16 ! COD_CVPOT, COD_CVLGL, COD_CVTWL, COD_CPPOT, COD_CPLGL, COD_CPTWL, POL_CVTWL, POL_CPTWL
+        integer, parameter :: NFISHFORCE            = 5  ! pred,prey,happy,extra,extra
+        integer, parameter :: NZOOPFORCE            = 5  ! pred,prey,happy,extra,extra
+		 
+        integer, parameter :: nfvaral = 3          ! Numbers, CF, Cal
+        integer, parameter :: nfvarl  = 3          ! Numbers, CF, Cal
+        integer, parameter :: nfvar   = 2          ! Biomass, Cal
+        integer, parameter :: nrates  = 7          ! Catch,happiness,dN,dCF,dCAL
+        
+        integer, parameter :: TOT_LENGTHED = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES
+        integer, parameter :: TOT_FEAST    = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES + NUM_SIMPLE_SPECIES
+        integer, parameter :: TOT_LINKS = NUM_AGED_SPECIES * NUM_AGES * NUM_AGED_LENGTHS + NUM_NOAGE_LENGTHS * NUM_LENGTHED_SPECIES + 1
 
 #  endif
 # elif defined BIO_GOANPZ
@@ -470,103 +518,6 @@
         integer, parameter :: NBT = 0
 #endif
 
-
-
-#if defined BEST_NPZ    
-# if defined BENTHIC
-        integer,parameter :: NBEN=2
-        integer :: MBT
-        integer, dimension(Ngrids) :: NBeT
-# endif
-# if defined ICE_BIO
-        integer,parameter :: NIB=4
-        integer, dimension(Ngrids) :: NIceT
-
-        integer, dimension(Ngrids) :: NIceLog
-# endif
-
-# ifdef STATIONARY
-      !------------------------------------
-      !3D stationary tracers
-      !------------------------------------
-
-        integer, dimension(Ngrids) :: NTS
-
-        integer, parameter :: NBTS = 16
-
-# endif
-
-# ifdef STATIONARY2
-      !------------------------------------
-      !2D stationary tracers
-      !------------------------------------
-
-        integer, dimension(Ngrids) :: NTS2
-        integer, parameter :: NBTS2 = 8
-# endif
-# ifdef PROD2
-      !------------------------------------
-      !2D producrion tracers (stationary)
-      !------------------------------------
-
-        integer, dimension(Ngrids) :: NPT2
-        integer, parameter :: NBPT2 = 3
-# endif
-# ifdef PROD3
-      !------------------------------------
-      !3D producrion tracers (stationary)
-      !------------------------------------
-
-        integer, dimension(Ngrids) :: NPT3
-
-
-# if defined FEAST
-        integer, parameter :: NBPT3 = 26
-# else
-#   if defined JELLY
-        integer, parameter :: NBPT3 = 8
-#   else
-        integer, parameter :: NBPT3 = 7
-#   endif
-# endif
-
-#endif
-
-
-#endif
-
-#ifdef FEAST
-   ! Local set constant parameters (e.g. #defines in C)
-     real(r8),    parameter :: F_EPSILON      = 1e-36
-     !integer, parameter :: ROMS_LAYERS    = 60  ! MUST MATCH UBk
-     integer, parameter :: LAYERS         =  3  !// Number of vert layers for fish
-     !integer, parameter :: FEAST_PASSIVES = 21  ! FEAST passive tracers
-
- !integer, parameter :: NUM_ROMS_DEPTHS       = 60
- !integer, parameter :: NUM_PLANKTON          =  4 ! COP, NCA, EUP, BEN
- integer, parameter :: NUM_PLANKTON          =  6 ! COP, NCAS, NCA0, EUPS, EUPO, BEN
- integer, parameter :: MAX_LCLASS            = 60 !// Maximum length classes
- integer, parameter :: NUM_AGES              = 11 ! nac
- integer, parameter :: NUM_AGED_LENGTHS      = 14 ! nlc
- integer, parameter :: NUM_NOAGE_LENGTHS     = 20 !nlct
- integer, parameter :: NUM_AGED_SPECIES      = 3 ! POL, COD, ATF
- integer, parameter :: NUM_LENGTHED_SPECIES  = 7 ! HER, CAP, EUL, SAN, MYC, SAL1, SAL2 
- integer, parameter :: NUM_SIMPLE_SPECIES    = 5 ! SHR, SQU, EPI, CRA, OTH 
- integer, parameter :: NUM_GEARS             = 16 ! COD_CVPOT, COD_CVLGL, COD_CVTWL, COD_CPPOT, COD_CPLGL, COD_CPTWL, POL_CVTWL, POL_CPTWL
- !integer, parameter :: NUM_TVAR              = 20
- integer, parameter :: NFISHFORCE = 5 !pred,prey,happy,extra,extra
- integer, parameter :: NZOOPFORCE = 5 !pred,prey,happy,extra,extra
-		 
- integer, parameter :: nfvaral = 3          !Numbers, CF, Cal
- integer, parameter :: nfvarl  = 3          !Numbers, CF, Cal
- integer, parameter :: nfvar   = 2          !Biomass, Cal
- integer, parameter :: nrates  = 7          !Catch,happiness,dN,dCF,dCAL
-
- integer, parameter :: TOT_LENGTHED = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES
- integer, parameter :: TOT_FEAST    = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES + NUM_SIMPLE_SPECIES
- integer, parameter :: TOT_LINKS = NUM_AGED_SPECIES * NUM_AGES * NUM_AGED_LENGTHS + NUM_NOAGE_LENGTHS * NUM_LENGTHED_SPECIES + 1
-
-#endif
 
 #if defined FLOATS
 !
@@ -871,7 +822,6 @@
 !Adding stationary and production tracers to model
 !---------------------------------------------
 # ifdef STATIONARY
-
         DO ng=1,Ngrids
           NTS(ng) = NBTS
         END DO
@@ -882,17 +832,6 @@
           NTS2(ng) = NBTS2
         END DO
 # endif
-# ifdef PROD2
-        DO ng=1,Ngrids
-          NPT2(ng) = NBPT2
-        END DO
-# endif
-# ifdef PROD3
-         DO ng=1,Ngrids
-          NPT3(ng) = NBPT3
-        END DO
-# endif
-
 # ifdef BENTHIC
       DO ng=1,Ngrids
            NBeT(ng) =NBEN

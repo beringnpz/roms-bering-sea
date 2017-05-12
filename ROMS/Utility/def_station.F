@@ -356,7 +356,7 @@
 !
 !  Define stationary 3D variables.
 !
-#ifdef STATIONARY
+#  ifdef STATIONARY
         DO itrc=1,NTS(ng)
           IF (Sout(idTSvar(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idTSvar(itrc))
@@ -371,51 +371,9 @@
             IF (exit_flag.ne.NoError) RETURN
           END IF
         END DO
-#endif
-
-!
-!  Define 3D production type variables.
-!
-# ifdef PROD3
-        DO itrc=1,NPT3(ng)
-          IF (Sout(idPT3var(itrc),ng)) THEN
-            Vinfo( 1)=Vname(1,idPT3var(itrc))
-            Vinfo( 2)=Vname(2,idPT3var(itrc))
-            Vinfo( 3)=Vname(3,idPT3var(itrc))
-            Vinfo(14)=Vname(4,idPT3var(itrc))
-            Vinfo(16)=Vname(1,idtime)
-
-            status=def_var(ng, iNLM, ncSTAid(ng), staPT3id(itrc,ng),    &
-    &                     NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,       &
-    &                     SetParAccess = .FALSE.)
-            IF (exit_flag.ne.NoError) RETURN
-          END IF
-       END DO
-	
-#endif
-
-
-#ifdef PROD2
-!  Define 2D production type variables.
-
-        DO itrc=1,NPT2(ng)
-          IF (Sout(idPT2var(itrc),ng)) THEN
-            Vinfo( 1)=Vname(1,idPT2var(itrc))
-            Vinfo( 2)=Vname(2,idPT2var(itrc))
-            Vinfo( 3)=Vname(3,idPT2var(itrc))
-            Vinfo(14)=Vname(4,idPT2var(itrc))
-            Vinfo(16)=Vname(1,idtime)
-
-            status=def_var(ng, iNLM, ncSTAid(ng), staPT2id(itrc,ng),    &
-     &                     NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,       &
-     &                     SetParAccess = .FALSE.)
-            IF (exit_flag.ne.NoError) RETURN
-          END IF
-        END DO
-#endif	
-	
-#if defined BEST_NPZ
-#  if defined BENTHIC
+#  endif
+#  if defined BEST_NPZ
+#   if defined BENTHIC
 !------------------------------------------
 !  Define benthic tracer type variables.
 !------------------------------------------   
@@ -434,18 +392,11 @@
           status=def_var(ng,iNLM,ncSTAid(ng),staBid(itrc,ng),NF_FOUT,    &
      &                     2,pgrd,Aval,Vinfo,ncname)
 
-
-     
           IF (exit_flag.ne.NoError) RETURN
                END IF
             END DO
+#   endif
 #  endif
-
-
-#endif
-
-	
-	
 !
 !  Define density anomaly.
 !
@@ -1585,39 +1536,22 @@
               staTid(itrc,ng)=var_id(i)
             END IF
           END DO
-	  
-#ifdef PROD3	  
-	   DO itrc=1,NPT3(ng)
-            IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idPT3var(itrc)))) THEN
-              got_var(idPT3var(itrc))=.TRUE.
-              staPT3id(itrc,ng)=var_id(i)
-            END IF
-          END DO
-#endif	 
-
-#ifdef STATIONARY	  
+#  ifdef STATIONARY	  
 	   DO itrc=1,NTS(ng)
             IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idTSvar(itrc)))) THEN
               got_var(idTSvar(itrc))=.TRUE.
               staTSid(itrc,ng)=var_id(i)
             END IF
           END DO
-#endif	  
-
-
-
-#ifdef BENTHIC	  
+#  endif	  
+#  ifdef BENTHIC	  
 	   DO itrc=1,NBeT(ng)
             IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idBvar(itrc)))) THEN
               got_var(idBvar(itrc))=.TRUE.
               staBid(itrc,ng)=var_id(i)
             END IF
           END DO
-#endif	  
-	
-	
-		  
-	  
+#  endif	  
 #  ifdef SEDIMENT
           DO itrc=1,NST
             IF (TRIM(var_name(i)).eq.TRIM(Vname(1,idfrac(itrc)))) THEN

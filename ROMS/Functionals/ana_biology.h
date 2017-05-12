@@ -76,17 +76,6 @@
      &                       OCEAN(ng) % st2,                           &
      &                       NTS2(ng),                                  &
 # endif
-# ifdef PROD3R
-     &                       OCEAN(ng) % pt3,                           &
-     &                       NPT3(ng),                                  &
-# endif
-# ifdef PROD2R
-     &                       OCEAN(ng) % pt2,                           &
-     &                       NPT2(ng),                                  &
-# endif
-# ifdef BIOFLUX
-     &                       OCEAN(ng) % bflx,                          &
-# endif
 #endif
 
      &                       OCEAN(ng) % t)
@@ -137,17 +126,6 @@
      &                             st2,                                 &
      &                             UBst2 ,                              &
 # endif
-# ifdef PROD3R
-     &                             pt3,                                 &
-     &                             UBpt3 ,                              &
-# endif
-# ifdef PROD2R
-     &                             pt2,                                 &
-     &                             UBpt2,                               &
-# endif
-# ifdef BIOFLUX
-     &                             bflx,                                &
-# endif
 #endif
 
      &                             t)
@@ -184,18 +162,6 @@
       real(r8), intent(inout) :: st2(LBi:,LBj:,:,:)
       integer, intent(in) :: UBst2
 #  endif
-#  ifdef PROD3R
-      real(r8), intent(inout) :: pt3(LBi:,LBj:,:,:,:)
-      integer, intent(in) :: UBpt3
-#  endif
-#  ifdef PROD2R
-      real(r8), intent(inout) :: pt2(LBi:,LBj:,:,:)
-      integer, intent(in) :: UBpt2
-#  endif
-
-#  ifdef BIOFLUX
-      real(r8), intent(inout) :: bflx(:,:)
-#  endif
 
 #  ifdef ICE_BIO
       
@@ -227,50 +193,31 @@
 # if defined BEST_NPZ
       real(r8), intent(in) :: z_r(LBi:UBi,LBj:UBj,N(ng))
       real(r8), intent(in) :: h(LBi:UBi,LBj:UBj)
-#   ifdef BENTHIC
+#  ifdef BENTHIC
       real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
-#   endif
+#  endif
 #  ifdef STATIONARY
       real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,UBst)
       integer, intent(in) :: UBst
 #  endif
-#   ifdef STATIONARY2
+#  ifdef STATIONARY2
       real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,UBst2)
       integer, intent(in) :: UBst2
-#   endif
-#   ifdef PROD3R
-      real(r8), intent(inout) :: pt3(LBi:UBi,LBj:UBj,UBk,3,UBpt3)
-      integer, intent(in) :: UBpt3
-#   endif
-#   ifdef PROD2R
-      real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,UBpt2)
-      integer, intent(in) :: UBpt2
-#   endif
-
-#   ifdef BIOFLUX
-      real(r8), intent(inout) :: bflx(NT(ng),NT(ng))
-#   endif
-
+#  endif
 #  ifdef ICE_BIO
       real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
        real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,NIceLog(ng))
-#    ifdef CLIM_ICE_1D
-     
+#   ifdef CLIM_ICE_1D  
       real(r8), intent(inout) ::tclm(LBi:UBi,LBj:UBj,UBk,UBt+1)
-
-#elif defined BERING_10K
+#   elif defined BERING_10K
       real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
       integer, intent(inout) :: IceLog(LBi:,LBj:,:)
-      
-
-
 !      real(r8), intent(in) :: ti(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: hi(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: ai(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: ageice(LBi:UBi,LBj:UBj,2)
-      
 #   endif
 #  endif
 # endif

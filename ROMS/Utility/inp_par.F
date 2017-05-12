@@ -4409,9 +4409,6 @@
 
       logical, dimension(Ngrids) :: Lbio
       logical, dimension(NBT,Ngrids) :: Ltrc
-#ifdef PROD3
-      logical, dimension(NBPT3,Ngrids) :: Ltrc3
-#endif
 #ifdef STATIONARY      
       logical, dimension(NBTS,Ngrids) :: LtrcS
 #endif
@@ -7109,19 +7106,7 @@
                 Hout(i,ng)=LtrcS(itrc,ng)
               END DO
             END DO
-         
-#  endif          
-#  ifdef BIOFLUX            
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idTBFvar)') THEN
-            Npts=load_l(Nval, Cval, NT*Ngrids, Ltrc)
-            DO ng=1,Ngrids
-!             DO itrc=1, NT(ng)   
-                i=idTBFvar(iBF)
-                Hout(i,ng)=Ltrc(iBF,ng)
-!             END DO
-            END DO
-         
-#  endif          
+#  endif                   
 #  ifdef STATIONARY2        
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTS2var)') THEN
             Npts=load_l(Nval, Cval, NTS2*Ngrids, Ltrc)
@@ -7132,29 +7117,7 @@
               END DO
             END DO
          
-#  endif          
-#  ifdef PROD3      
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idPT3var)') THEN
-            Npts=load_l(Nval, Cval, NBPT3*Ngrids, Ltrc3)
-            DO ng=1,Ngrids
-              DO itrc=1,NBPT3   
-                i=idPT3var(itrc)
-                Hout(i,ng)=Ltrc3(itrc,ng)
-              END DO
-            END DO
-          
-#  endif        
-#  ifdef PROD2      
-          ELSE IF (TRIM(KeyWord).eq.'Hout(idPT2var)') THEN
-            Npts=load_l(Nval, Cval, NPT2*Ngrids, Ltrc)
-            DO ng=1,Ngrids
-              DO itrc=1, NBPT2   
-                i=idPT2var(itrc)
-                Hout(i,ng)=Ltrc(itrc,ng)
-              END DO
-            END DO
-          
-#  endif   
+#  endif           
 #  ifdef ICE_BIO     
 #   ifdef CLIM_ICE_1D
           ELSE IF (TRIM(KeyWord).eq.'Hout(idIceBvar)') THEN
@@ -7184,8 +7147,8 @@
               Hout(idIceLog,ng)=LtrcI(4,ng)
             END DO        
 #   endif  
-# endif
-# ifdef BENTHIC
+#  endif
+#  ifdef BENTHIC
           ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
             Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
             DO ng=1,Ngrids
@@ -7194,8 +7157,7 @@
                 Hout(i,ng)=Ltrc(itrc,ng)
               END DO
             END DO
-# endif
-
+#  endif
 #  ifdef FEAST
           ELSE IF (TRIM(KeyWord).eq.'feast_test') THEN 
             Npts=load_r(Nval, Rval, 1, FeastVal)
@@ -7484,9 +7446,7 @@
             END DO
 !         ELSE
 !           write (out,30) line
-
 #  endif      
-         
           END IF 
          
           
@@ -7505,7 +7465,7 @@
   20  CLOSE (inp)
 !
 #  ifdef FEAST 
-   call initialize_feast
+      call initialize_feast
 #  endif
 !-----------------------------------------------------------------------
 !  Report input parameters.
@@ -11290,9 +11250,6 @@
       logical, dimension(MBOTP,Ngrids) :: Lbottom
 # endif
       logical, dimension(MT,Ngrids) :: Lsta
-#ifdef PROD3
-      logical, dimension(NBPT3,Ngrids) :: Ltrc3
-#endif
       integer, dimension(Ngrids) :: is
 
       real(r8), dimension(100) :: Rval
@@ -11335,34 +11292,16 @@
               DO itrc=1,NT(ng)
                 Sout(idTvar(itrc),ng)=Lsta(itrc,ng)
               END DO
-            END DO
-#if defined PROD3
-           ELSE IF (TRIM(KeyWord).eq.'Sout(idPT3var)') THEN
-            Npts=load_l(Nval, Cval,NBPT3*Ngrids, Ltrc3)
-            DO ng=1,Ngrids
-              DO itrc=1,NBPT3
-                Sout(idPT3var(itrc),ng)=Ltrc3(itrc,ng)
-              END DO
-            END DO  
-#endif      
+            END DO    
 #if defined STATIONARY
-           ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN
             Npts=load_l(Nval, Cval,NTS*Ngrids, Lsta)
             DO ng=1,Ngrids
               DO itrc=1,NTS(ng)
                 Sout(idTSvar(itrc),ng)=Lsta(itrc,ng)
               END DO
             END DO 
-#endif 
-#if defined PROD2           
-          ELSE IF (TRIM(KeyWord).eq.'Sout(idPT2var)') THEN
-            Npts=load_l(Nval, Cval,NBPT2*Ngrids, Lsta)
-            DO ng=1,Ngrids
-              DO itrc=1,NPT2(ng)
-                Sout(idPT2var(itrc),ng)=Lsta(itrc,ng)
-              END DO
-            END DO 
-#endif         
+#endif        
 #if defined BENTHIC
           ELSE IF (TRIM(KeyWord).eq.'Sout(idBvar)') THEN
             Npts=load_l(Nval, Cval,NBeT*Ngrids, Lsta)
