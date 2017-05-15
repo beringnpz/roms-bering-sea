@@ -185,7 +185,7 @@
 
 # if defined ICE_BIO
 #  ifdef BERING_10K
-#   ifndef BESTNPZ_INTERMEDIATES
+#   ifndef MATLABCOMPILE
       USE mod_ice
       USE IcePhLbc_mod, ONLY : IcePhLbc_tile
       USE IceNO3bc_mod, ONLY : IceNO3bc_tile
@@ -217,6 +217,12 @@
       integer, intent(in)     :: IminS, ImaxS, JminS, JmaxS
       integer, intent(in)     :: UBk, UBt
       integer, intent(in)     :: nnew, nstp
+#ifdef STATIONARY
+      integer, intent(in)     :: UBst
+#endif
+#if defined STATIONARY2
+      integer, intent(in)     :: UBst2
+#endif
 
 #ifdef ASSUMED_SHAPE
 # ifdef MASKING
@@ -263,9 +269,6 @@
 # endif
 
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
-# ifdef BESTNPZ_INTERMEDIATES
-      real(r8), intent(out) :: Flx(LBi:,LBj:,:,:)
-# endif
 
 #else
 
@@ -280,10 +283,10 @@
       real(r8), intent(in)    :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
 # ifdef STATIONARY
-      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,NTS(ng))
+      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,UBst)
 # endif
 # ifdef STATIONARY2
-      real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,NTS2(ng))
+      real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,UBst2)
 # endif
 # if defined BENTHIC
       real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
@@ -312,17 +315,6 @@
 #  endif
 # endif
       real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
-# ifdef BESTNPZ_INTERMEDIATES
-      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,94)
-# endif
-#endif
-
-
-#ifdef STATIONARY
-      integer, intent(in)     :: UBst
-#endif
-#if defined STATIONARY2
-      integer, intent(in)     :: UBst2
 #endif
 
 
@@ -479,6 +471,69 @@
       real(r8), parameter :: minv = 0.0E-20_r8
 
 #include "set_bounds.h"
+
+#ifdef MATLABCOMPILE
+!       ! Check inputs (prints values of scalars, shapes of arrays)
+!       print *, "ng     = ", ng
+!       print *, "tile   = ", tile
+!       print *, "LBi    = ", LBi
+!       print *, "UBi    = ", UBi
+!       print *, "LBj    = ", LBj
+!       print *, "UBj    = ", UBj
+!       print *, "IminS  = ", IminS
+!       print *, "ImaxS  = ", ImaxS
+!       print *, "JminS  = ", JminS
+!       print *, "JmaxS  = ", JmaxS
+!       print *, "UBk    = ", UBk
+!       print *, "UBt    = ", UBt
+!       print *, "nnew   = ", nnew
+!       print *, "nstp   = ", nstp
+! # ifdef MASKING
+!       print *, "rmask  shape = ", shape(rmask )
+! # endif
+!       print *, "Hz     shape = ", shape(Hz    )
+!       print *, "z_r    shape = ", shape(z_r   )
+!       print *, "z_w    shape = ", shape(z_w   )
+!       print *, "h      shape = ", shape(h     )
+!       print *, "lat    shape = ", shape(lat   )
+!       print *, "srflx  shape = ", shape(srflx )
+!       print *, "t      shape = ", shape(t     )
+! # if defined BENTHIC
+!       print *, "bt     shape = ", shape(bt    )
+! # endif
+! # if defined FEAST
+!       print *, "u      shape = ", shape(u     )
+!       print *, "v      shape = ", shape(v     )
+!       print *, "GF     shape = ", shape(GF    )
+! # endif
+! # if defined ICE_BIO
+! #  ifdef CLIM_ICE_1D
+!       print *, "it     shape = ", shape(it    )
+!       print *, "itL    shape = ", shape(itL   )
+!       print *, "tclm   shape = ", shape(tclm  )
+! #  elif defined BERING_10K
+!       print *, "IcePhL shape = ", shape(IcePhL)
+!       print *, "IceNO3 shape = ", shape(IceNO3)
+!       print *, "IceNH4 shape = ", shape(IceNH4)
+!       print *, "IceLog shape = ", shape(IceLog)
+!       print *, "ti     shape = ", shape(ti    )
+!       print *, "hi     shape = ", shape(hi    )
+!       print *, "ai     shape = ", shape(ai    )
+!       print *, "ageice shape = ", shape(ageice)
+!       print *, "ui     shape = ", shape(ui    )
+!       print *, "vi     shape = ", shape(vi    )
+! #  endif
+! # endif
+! # ifdef STATIONARY
+!       print *, "st     shape = ", shape(st    )
+!       print *, "UBst   = ", UBst
+! # endif
+! # ifdef STATIONARY2
+!       print *, "st2    shape = ", shape(st2   )
+!       print *, "UBst2  = ", UBst2
+! # endif
+!       print *, "Akt    shape = ", shape(Akt   )
+#endif
 
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
@@ -963,8 +1018,6 @@
 
           endif
         END DO
-
-
 #endif
 
         ! Calculate inverse layer thickness
@@ -2676,7 +2729,7 @@
 
 # if defined ICE_BIO
 #  ifdef BERING_10K
-#   ifndef BESTNPZ_INTERMEDIATES
+#   ifndef MATLABCOMPILE
 
       CALL IcePhLbc_tile (ng, tile,                                     &
      &                LBi, UBi, LBj, UBj,                               &
