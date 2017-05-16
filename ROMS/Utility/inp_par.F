@@ -7557,7 +7557,7 @@
             END DO
 #  ifdef STATIONARY
             DO itrc=1,NBTS
-              i=idbio(itrc)
+              i=itrc
               IF (Hout(idTSvar(i),ng)) WRITE (out,60)                   &
      &            Hout(idTSvar(i),ng), 'Hout(idTSvar)',                 &
      &            'Write out tracer ', i, TRIM(Vname(1,idTSvar(i)))
