@@ -319,7 +319,7 @@
 # define TCLM_NUDGING      /* Nudging of tracer climatology for iron */
 # define ANA_TCLIMA        /* analytical tracers climatology for iron */
 # define TCLIMATOLOGY      /* Processing of tracer climatology for iron */
-# undef STATIONARY
+# define STATIONARY
 # undef STATIONARY2
 # undef PROD3 
 # undef PROD2
