@@ -7104,7 +7104,7 @@
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTSvar)') THEN
             Npts=load_l(Nval, Cval, NTS*Ngrids, LtrcS)
             DO ng=1,Ngrids
-              DO itrc=1, NBTS   
+              DO itrc=1,NBTS   
                 i=idTSvar(itrc)
                 Hout(i,ng)=LtrcS(itrc,ng)
               END DO
@@ -7126,7 +7126,7 @@
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTS2var)') THEN
             Npts=load_l(Nval, Cval, NTS2*Ngrids, Ltrc)
             DO ng=1,Ngrids
-              DO itrc=1, NBTS2   
+              DO itrc=1,NBTS2   
                 i=idTS2var(itrc)
                 Hout(i,ng)=Ltrc(itrc,ng)
               END DO
@@ -7490,14 +7490,14 @@
           END IF 
          
           
-          IF ( Lwrite .and.                                             &
-     &         TRIM(KeyWord).ne.'TNU2' .and.                            &
-     &         TRIM(KeyWord).ne.'TNU4' .and.                            &
-     &         TRIM(KeyWord).ne.'AKT_BAK' .and.                         &
-     &         TRIM(KeyWord).ne.'TNUDG' .and.                           &
-     &         TRIM(KeyWord).ne.'Hout(idTvar)' ) THEN
-            write(6,'(a15,i3,20e12.5)') TRIM(KeyWord),Nval,Rval(1:Nval)
-          END IF
+!           IF ( Lwrite .and.                                             &
+!      &         TRIM(KeyWord).ne.'TNU2' .and.                            &
+!      &         TRIM(KeyWord).ne.'TNU4' .and.                            &
+!      &         TRIM(KeyWord).ne.'AKT_BAK' .and.                         &
+!      &         TRIM(KeyWord).ne.'TNUDG' .and.                           &
+!      &         TRIM(KeyWord).ne.'Hout(idTvar)' ) THEN
+!             write(6,'(a15,i3,20e12.5)') TRIM(KeyWord),Nval,Rval(1:Nval)
+!           END IF
         END IF
       END DO
   10  WRITE (out,30) line
@@ -7505,11 +7505,11 @@
   20  CLOSE (inp)
 !
 #  ifdef FEAST 
-   call initialize_feast
+      call initialize_feast
 #  endif
-!-----------------------------------------------------------------------
-!  Report input parameters.
-!-----------------------------------------------------------------------
+      !-------------------------------
+      !  Report input parameters.
+      !-------------------------------
 !
 #  ifdef FEAST
 !     NOGRID START
@@ -7555,6 +7555,15 @@
      &            Hout(idTvar(i),ng), 'Hout(idTvar)',                   &
      &            'Write out tracer ', i, TRIM(Vname(1,idTvar(i)))
             END DO
+#  ifdef STATIONARY
+            DO itrc=1,NBTS
+              i=idbio(itrc)
+              IF (Hout(idTSvar(i),ng)) WRITE (out,60)                   &
+     &            Hout(idTSvar(i),ng), 'Hout(idTSvar)',                 &
+     &            'Write out tracer ', i, TRIM(Vname(1,idTSvar(i)))
+            END DO
+#  endif
+            
           END IF
         END DO
         
@@ -8288,7 +8297,7 @@
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTSvar)') THEN
             Npts=load_l(Nval, Cval, NTS*Ngrids, Ltrc)
             DO ng=1,Ngrids
-              DO itrc=1, NBTS   !all stationary tracer variable
+              DO itrc=1,NBTS   !all stationary tracer variable
                 i=idTSvar(itrc)
                 Hout(i,ng)=Ltrc(itrc,ng)
               END DO
