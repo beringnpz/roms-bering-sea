@@ -110,22 +110,22 @@ else
 	echo "  Success: $npzfile created"
 fi
 
-# # Combile debugging-version of bestnpz
-#
-# export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4_npzdb
-# export      USE_DEBUG=on
-#
-# make clean &>/dev/null
-# echo "Compiling bestnpz (debugging) variant"
-# make -j &> buildouterr.txt
-# if [ $? -ne 0 ]; then
-# 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-#     echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
-# else
-# 	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-#     mv oceanG $npzdbfile
-# 	echo "  Success: $npzdbfile created"
-# fi
+# Combile debugging-version of bestnpz
+
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4_npzdb
+export      USE_DEBUG=on
+
+make clean &>/dev/null
+echo "Compiling bestnpz (debugging) variant"
+make -j &> buildouterr.txt
+if [ $? -ne 0 ]; then
+  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+else
+  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanG $npzdbfile
+  echo "  Success: $npzdbfile created"
+fi
 #
 # # Compile Feast
 #
