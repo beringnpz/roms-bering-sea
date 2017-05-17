@@ -1580,6 +1580,65 @@
 
 !
 !------------------------------------------------------------------------------
+!  FEAST catch forcing variables.
+!------------------------------------------------------------------------------
+!
+ 
+'cv_twl_'                      ! Input
+  'FEAST cv trawl catch'
+  'g meter-2 day-1'                                       
+  'catch, scalar, series'
+  'catch_time_'
+  'idFeastCatch'
+  'r2dvar'
+  1.0d0
+
+'cp_twl_'                      ! Input
+  'FEAST cp trawl catch'
+  'g meter-2 day-1'                                       
+  'catch, scalar, series'
+  'catch_time_'
+  'idFeastCatch'
+  'r2dvar'
+  1.0d0
+
+'cv_lgl_'                      ! Input
+  'FEAST cv longline catch'
+  'g meter-2 day-1'                                       
+  'catch, scalar, series'
+  'catch_time_'
+  'idFeastCatch'
+  'r2dvar'
+  1.0d0
+
+'cp_lgl_'                      ! Input
+  'FEAST cp longline catch'
+  'g meter-2 day-1'                                       
+  'catch, scalar, series'
+  'catch_time_'
+  'idFeastCatch'
+  'r2dvar'
+  1.0d0
+  
+'cv_pot_'                      ! Input
+  'FEAST cv pot catch'
+  'g meter-2 day-1'                                       
+  'catch, scalar, series'
+  'catch_time_'
+  'idFeastCatch'
+  'r2dvar'
+  1.0d0
+
+'cp_pot_'                      ! Input
+  'FEAST cp pot catch'
+  'g meter-2 day-1'                                       
+  'catch, scalar, series'
+  'catch_time_'
+  'idFeastCatch'
+  'r2dvar'
+  1.0d0  
+!
+!------------------------------------------------------------------------------
 !  Atmospheric forcing variables.
 !------------------------------------------------------------------------------
 !
@@ -2678,16 +2737,16 @@
   'dye concentration western boundary condition'
   'kilogram meter-3'                               ! [kg/m3]
   'dye_west_, scalar, series'
-  'dye_time'
+  'ocean_time'
   'idTbry(iwest,inert(i))'
   'nulvar'
   1.0d0
-
-'dye_east_'                                        ! Input
+    
+'dye_west_'                                        ! Input
   'dye concentration eastern boundary condition'
   'kilogram meter-3'                               ! [kg/m3]
   'dye_east_, scalar, series'
-  'dye_time'
+  'ocean_time'
   'idTbry(ieast,inert(i))'
   'nulvar'
   1.0d0
@@ -2696,16 +2755,16 @@
   'dye concentration southern boundary condition'
   'kilogram meter-3'                               ! [kg/m3]
   'dye_south_, scalar, series'
-  'dye_time'
+  'ocean_time'
   'idTbry(isouth,inert(i))'
   'nulvar'
   1.0d0
 
-'dye_north_'                                       ! Input
+'dye_south_'                                       ! Input
   'dye concentration northern boundary condition'
   'kilogram meter-3'                               ! [kg/m3]
   'dye_north_, scalar, series'
-  'dye_time'
+  'ocean_time'
   'idTbry(inorth,inert(i))'
   'nulvar'
   1.0d0
@@ -6407,7 +6466,7 @@
 !-------  
 'IcePhL'
   'Ice algae concentration'
-  'mgC/m2'
+  'mgC/m3'
   'ice algae conc, scalar, series'
   'ocean_time'
   'idIcePhL'
@@ -6416,8 +6475,8 @@
   
 'Ice Algae_west'
   'Ice algae concentration western boundary condition'
-  'meter'
-  'snow_thick_west, scalar, series'
+  'mgC/m3'
+  'Ice Algae_west, scalar, series'
   'bry_time'
   'idIcePhLbc(iwest)'
   'nulvar'
@@ -6425,8 +6484,8 @@
 
 'Ice Algae_east'
   'Ice algae concentration eastern boundary condition'
-  'meter'
-  'snow_thick_east, scalar, series'
+  'mgC/m3'
+  'Ice Algae_east, scalar, series'
   'bry_time'
   'idIcePhLbc(ieast)'
   'nulvar'
@@ -6434,8 +6493,8 @@
 
 'Ice Algae_north'
   'Ice algae concentration northern boundary condition'
-  'meter'
-  'snow_thick_north, scalar, series'
+  'mgC/m3'
+  'Ice Algae_north, scalar, series'
   'bry_time'
   'idIcePhLbc(inorth)'
   'nulvar'
@@ -6443,8 +6502,8 @@
 
 'Ice Algae_south'
   'Ice algae concentration southern boundary condition'
-  'meter'
-  'snow_thick_south, scalar, series'
+  'mgC/m3'
+  'Ice Algae_south, scalar, series'
   'bry_time'
   'idIcePhLbc(isouth)'
   'nulvar'
@@ -6453,7 +6512,7 @@
 
 'IceNO3'
   'Ice nitrate concentration'
-  'mgC/m3'
+  'mmolN/m3'
   'ice nitrate conc, scalar, series'
   'ocean_time'
   'idIceNO3'
@@ -6462,7 +6521,7 @@
   
 'Ice_Nitrate_west'
   'Ice nitrate concentration western boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_nitrate_conc_west, scalar, series'
   'bry_time'
   'idIceNO3bc(iwest)'
@@ -6471,7 +6530,7 @@
 
 'Ice_Nitrate_east'
   'Ice nitrate concentration eastern boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_nitrate_conc_east, scalar, series'
   'bry_time'
   'idIceNO3bc(ieast)'
@@ -6480,7 +6539,7 @@
 
 'Ice_Nitrate_north'
   'Ice nitrate concentration northern boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_nitrate_conc_north, scalar, series'
   'bry_time'
   'idIceNO3bc(inorth)'
@@ -6489,7 +6548,7 @@
 
 'Ice_Nitrate_south'
   'Ice nitrate concentration southern boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_nitrate_conc_south, scalar, series'
   'bry_time'
   'idIceNO3bc(isouth)'
@@ -6500,7 +6559,7 @@
 
 'IceNH4'
   'Ice Ammonium concentration'
-  'mgC/m3'
+  'mmolN/m3'
   'ice Ammonium conc, scalar, series'
   'ocean_time'
   'idIceNH4'
@@ -6509,7 +6568,7 @@
   
 'Ice_Ammonium_west'
   'Ice Ammonium concentration western boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_Ammonium_conc_west, scalar, series'
   'bry_time'
   'idIceNH4bc(iwest)'
@@ -6518,7 +6577,7 @@
 
 'Ice_Ammonium_east'
   'Ice Ammonium concentration eastern boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_Ammonium_conc_east, scalar, series'
   'bry_time'
   'idIceNH4bc(ieast)'
@@ -6527,7 +6586,7 @@
 
 'Ice_Ammonium_north'
   'Ice Ammonium concentration northern boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_Ammonium_conc_north, scalar, series'
   'bry_time'
   'idIceNH4bc(inorth)'
@@ -6536,7 +6595,7 @@
 
 'Ice_Ammonium_south'
   'Ice Ammonium concentration southern boundary condition'
-  'meter'
+  'mmolN/m3'
   'ice_Ammonium_conc_south, scalar, series'
   'bry_time'
   'idIceNH4bc(isouth)'
@@ -6570,8 +6629,269 @@
   'idIceLogvar(iIceLog)'
   'r2dvar'                              
   1.0d0
+       
+!---------------------------
+!PROD3 
+!---------------------------
+'prod_PhS'
+  'primary production small phytoplankton'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iPhSprd)'
+  'r3dvar'
+  1.0d0
+
+'prod_PhL'
+  'primary production large phytoplankton'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iPhLprd)'
+  'r3dvar'
+  1.0d0
+
+'prod_MZS'
+  'secondary production small microzooplankton'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iMZSprd)'
+  'r3dvar'
+  1.0d0
+
+'prod_MZL'
+  'secondary production large microzooplankton'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iMZLprd)'
+  'r3dvar'
+  1.0d0
+
+'prod_Cop'
+  'secondary production copepods'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iCopPrd)'
+  'r3dvar'
+  1.0d0
+
+'prod_NCa'
+  'secondary production Neocalanus'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iNCaPrd)'
+  'r3dvar'
+  1.0d0
+
+'prod_Eup'
+  'secondary production Euphausiids'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iEupPrd)'
+  'r3dvar'
+  1.0d0
+  
+'prod_Jel'
+  'secondary production Jellyfish'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iJelPrd)'
+  'r3dvar'
+  1.0d0
+
+'fmort_Cop'
+  'fish mortality Cop'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFCopMort)'
+  'r3dvar'
+  1.0d0
+  
+'fmort_NCa'
+  'fish mortality NCA'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFNCaMort)'
+  'r3dvar'
+  1.0d0
+  
+'fmort_Eup'
+  'fish mortality Euphausiids'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFEupMort)'
+  'r3dvar'
+  1.0d0
+
+'qmort_Cop'
+  'quad mortality Cop'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iQCopMort)'
+  'r3dvar'
+  1.0d0
+  
+'qmort_NCaS'
+  'quad mortality NCAS'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iQNCaSMort)'
+  'r3dvar'
+  1.0d0
+  
+'qmort_EupS'
+  'quad mortality EuphausiidsS'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iQEupSMort)'
+  'r3dvar'
+  1.0d0
+
+'qmort_NCaO'
+  'quad mortality NCAO'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iQNCaOMort)'
+  'r3dvar'
+  1.0d0
+  
+'qmort_EupO'
+  'quad mortality EuphausiidsO'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iQEupOMort)'
+  'r3dvar'
+  1.0d0
+
+'fish_one'
+  'fish_one'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishOne)'
+  'r3dvar'
+  1.0d0
+
+'fish_two'
+  'fish_two'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishTwo)'
+  'r3dvar'
+  1.0d0
+
+'fish_three'
+  'fish_three'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishThree)'
+  'r3dvar'
+  1.0d0
+  
+'fish_four'
+  'fish_four'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishFour)'
+  'r3dvar'
+  1.0d0
+  
+'fish_five'
+  'fish_five'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishFive)'
+  'r3dvar'
+  1.0d0
+	
+'fish_six'
+  'fish_six'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishSix)'
+  'r3dvar'
+  1.0d0
+	
+'fish_seven'
+  'fish_seven'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishSeven)'
+  'r3dvar'
+  1.0d0
+
+'fish_eight'
+  'fish_eight'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT3var(iFishEight)'
+  'r3dvar'
+  1.0d0			  
+!----------------------------
+! PROD2
+!----------------------------
+  'prod_Ben'
+  'secondary production Benthos'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT2var(iBenPrd)'
+  'r2dvar'
+  1.0d0
+  
+  'prod_IcePhL'
+  'primary production ice algae'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT2var(iIAPrd)'
+  'r2dvar'
+  1.0d0
+
+
+  'prod_X'
+  'temporary production array'
+  'milligram carbon meter-3 d-1'
+  'PrimProd scalar series'
+  'bio_time'
+  'idPT2var(iXPrd)'
+  'r2dvar'
+  1.0d0
+
+!----------------------------
+! BIOFLUX
+!----------------------------
+'bioflux'
+  '2d bioflux variable'
+  'flux mmol'
+  'BioFlx scalar series'
+  'bio_time'
+  'idTBFvar(iBF)'
+  'r2dvar'
+  1.0d0
     
-!------------------------------------------------------------
+!-----------------------
 !STATIONARY
 !-----------------------
 'Stat1_3d'
@@ -7537,196 +7857,13 @@
   'r3dvar'
   1.0d3
   
-!-----------------------------
-!PROD3 
-!---------------------------
-'prod_PhS'
-  'primary production small phytoplankton'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iPhSprd)'
-  'r3dvar'
-  1.0d0
+! STATIONARY2
 
-'prod_PhL'
-  'primary production large phytoplankton'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iPhLprd)'
-  'r3dvar'
-  1.0d0
-
-'prod_MZS'
-  'secondary production small microzooplankton'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iMZSprd)'
-  'r3dvar'
-  1.0d0
-
-'prod_MZL'
-  'secondary production large microzooplankton'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iMZLprd)'
-  'r3dvar'
-  1.0d0
-
-'prod_Cop'
-  'secondary production copepods'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iCopPrd)'
-  'r3dvar'
-  1.0d0
-
-'prod_NCa'
-  'secondary production Neocalanus'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iNCaPrd)'
-  'r3dvar'
-  1.0d0
-
-'prod_Eup'
-  'secondary production Euphausiids'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iEupPrd)'
-  'r3dvar'
-  1.0d0
-  
-'prod_Jel'
-  'secondary production Jellyfish'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT3var(iJelPrd)'
-  'r3dvar'
-  1.0d0
-
-!----------------------------
-! PROD2
-!----------------------------
-  'prod_Ben'
-  'secondary production Benthos'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT2var(iBenPrd)'
-  'r2dvar'
-  1.0d0
-  
-  'prod_IcePhL'
-  'primary production ice algae'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT2var(iIAPrd)'
-  'r2dvar'
-  1.0d0
-
-
-  'prod_X'
-  'temporary production array'
-  'milligram carbon meter-3 d-1'
-  'PrimProd scalar series'
-  'bio_time'
-  'idPT2var(iXPrd)'
-  'r2dvar'
-  1.0d0
-
-!----------------------------
-! BIOFLUX
-!----------------------------
-'bioflux'
-  '2d bioflux variable'
-  'flux mmol'
-  'BioFlx scalar series'
-  'bio_time'
-  'idTBFvar(iBF)'
-  'r2dvar'
-  1.0d0
-    
-!------------------------------------------------------------
-!STATIONARY2
-!-----------------------
 'Stat1_2d'
-  '1st 2D stationary variable'
-  'milligram carbon meter-3 d-1'
+  '2D stationary variable 1: placeholder'
+  'unitless'
   'StatVar scalar series'
   'bio_time'
   'idTS2var(i2Stat1)'
   'r2dvar'
-  1.0d0
-
-'Stat2_2d'
-  '2nd 2D stationary variable'
-  'milligram carbon meter-3 d-1'
-  'StatVar scalar series'
-  'bio_time'
-  'idTS2var(i2Stat2)'
-  'r2dvar'
-  1.0d0
-
-'Stat3_2d'
-  '3rd 2D stationary variable'
-  'milligram carbon meter-3 d-1'
-  'StatVar scalar series'
-  'bio_time'
-  'idTS2var(i2Stat3)'
-  'r2dvar'
-  1.0d0
-  
-  'Stat4_2d'
-  '4th 2D stationary variable'
-  'milligram carbon meter-3 d-1'
-  'StatVar scalar series'
-  'bio_time'
-  'idTS2var(i2Stat4)'
-  'r2dvar'
-  1.0d0
-  
-  'Stat5_2d'
-  '5th 2D stationary variable'
-  'milligram carbon meter-3 d-1'
-  'StatVar scalar series'
-  'bio_time'
-  'idTS2var(i2Stat5)'
-  'r2dvar'
-  1.0d0
-  
-  'Stat6_2d'
-  '6th 2D stationary variable'
-  'milligram carbon meter-3 d-1'
-  'StatVar scalar series'
-  'bio_time'
-  'idTS2var(i2Stat6)'
-  'r2dvar'
-  1.0d0
-
-'Stat7_2d'
-  '7th 2D stationary variable'
-  'milligram carbon meter-3 d-1'
-  'StatVar scalar series'
-  'bio_time'
-  'idTS2var(i2Stat7)'
-  'r2dvar'
-  1.0d0
-  
-  'Stat8_2d'
-  '8th 2D stationary variable'
-  'milligram carbon meter-3 d-1'
-  'StatVar scalar series'
-  'bio_time'
-  'idTS2var(i2Stat8)'
-  'r2dvar'
-  1.0d0
-  
+  1.0d3
