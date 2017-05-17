@@ -210,14 +210,14 @@
         integer :: iEupS               ! Euphausiids
         integer :: iNCaO               ! Neocalanus
         integer :: iEupO               ! Euphausiids
-#  ifdef JELLY
+# ifdef JELLY
         integer :: iJel               ! Jellfish
-#  endif
+# endif
         integer :: iDet               ! Detritus
         integer :: iDetF              ! Fast Sinking Detritus
-#  ifdef BIOFLUX
+# ifdef BIOFLUX
         integer :: iBF
-#  endif
+# endif
 # ifdef CLIM_ICE_1D
        integer :: i1CI
 # endif
@@ -235,17 +235,15 @@
 # endif
 # ifdef ICE_BIO
          integer, pointer :: idice(:)  ! Ice tracers
-#   ifdef CLIM_ICE_1D
+#  ifdef CLIM_ICE_1D
          integer, pointer :: idiceLog(:)  ! Ice tracers
-#   endif
+#  endif
          integer :: iIcePhL
          integer :: iIceNO3
          integer :: iIceNH4
          integer :: iIceZ
          integer :: iIceLog
 # endif
-
-
 # ifdef STATIONARY
         integer, pointer :: idbio3(:)
         integer :: i3Stat1
@@ -264,20 +262,104 @@
         integer :: i3Stat14
         integer :: i3Stat15
         integer :: i3Stat16
+        integer :: i3Stat17
+        integer :: i3Stat18
+        integer :: i3Stat19
+        integer :: i3Stat20
+        integer :: i3Stat21
+        integer :: i3Stat22
+        integer :: i3Stat23
+        integer :: i3Stat24
+        integer :: i3Stat25
+        integer :: i3Stat26
+        integer :: i3Stat27
+        integer :: i3Stat28
+        integer :: i3Stat29
+        integer :: i3Stat30
+        integer :: i3Stat31
+        integer :: i3Stat32
+        integer :: i3Stat33
+        integer :: i3Stat34
+        integer :: i3Stat35
+        integer :: i3Stat36
+        integer :: i3Stat37
+        integer :: i3Stat38
+        integer :: i3Stat39
+        integer :: i3Stat40
+        integer :: i3Stat41
+        integer :: i3Stat42
+        integer :: i3Stat43
+        integer :: i3Stat44
+        integer :: i3Stat45
+        integer :: i3Stat46
+        integer :: i3Stat47
+        integer :: i3Stat48
+        integer :: i3Stat49
+        integer :: i3Stat50
+        integer :: i3Stat51
+        integer :: i3Stat52
+        integer :: i3Stat53
+        integer :: i3Stat54
+        integer :: i3Stat55
+        integer :: i3Stat56
+        integer :: i3Stat57
+        integer :: i3Stat58
+        integer :: i3Stat59
+        integer :: i3Stat60
+        integer :: i3Stat61
+        integer :: i3Stat62
+        integer :: i3Stat63
+        integer :: i3Stat64
+        integer :: i3Stat65
+        integer :: i3Stat66
+        integer :: i3Stat67
+        integer :: i3Stat68
+        integer :: i3Stat69
+        integer :: i3Stat70
+        integer :: i3Stat71
+        integer :: i3Stat72
+        integer :: i3Stat73
+        integer :: i3Stat74
+        integer :: i3Stat75
+        integer :: i3Stat76
+        integer :: i3Stat77
+        integer :: i3Stat78
+        integer :: i3Stat79
+        integer :: i3Stat80
+        integer :: i3Stat81
+        integer :: i3Stat82
+        integer :: i3Stat83
+        integer :: i3Stat84
+        integer :: i3Stat85
+        integer :: i3Stat86
+        integer :: i3Stat87
+        integer :: i3Stat88
+        integer :: i3Stat89
+        integer :: i3Stat90
+        integer :: i3Stat91
+        integer :: i3Stat92
+        integer :: i3Stat93
+        integer :: i3Stat94
+        integer :: i3Stat95
+        integer :: i3Stat96
+        integer :: i3Stat97
+        integer :: i3Stat98
+        integer :: i3Stat99
+        integer :: i3Stat100
+        integer :: i3Stat101
+        integer :: i3Stat102
+#  ifdef FEAST
+        integer :: i3Stat103
+        integer :: i3Stat104
+        integer :: i3Stat105
+        integer :: i3Stat106
+        integer :: i3Stat107
+#  endif
 # endif
 
 # ifdef STATIONARY2
         integer, pointer :: idbio2(:)
         integer :: i2Stat1
-        integer :: i2Stat2
-        integer :: i2Stat3
-        integer :: i2Stat4
-        integer :: i2Stat5
-        integer :: i2Stat6
-        integer :: i2Stat7
-        integer :: i2Stat8
-
-
 # endif
 # ifdef PROD2
         integer, pointer :: idbioP2(:)
@@ -298,7 +380,7 @@
 #  ifdef JELLY
         integer :: iJelPrd            ! Jellyfish  production
 #  endif
-# ifdef FEAST
+#  ifdef FEAST
         integer :: iFCopMort
         integer :: iFNCaSMort
         integer :: iFEupSMort
@@ -317,7 +399,7 @@
         integer :: iFishSix
         integer :: iFishSeven
         integer :: iFishEight
-# endif
+#  endif
 # endif
 #endif
 
@@ -2356,7 +2438,6 @@
       DO i=1,NBTS
         idbio3(i)=i
       END DO
-
       i3Stat1 = 1
       i3Stat2 = 2
       i3Stat3 = 3
@@ -2373,6 +2454,99 @@
       i3Stat14 = 14
       i3Stat15 = 15
       i3Stat16 = 16
+      i3Stat17 = 17
+      i3Stat18 = 18
+      i3Stat19 = 19
+      i3Stat20 = 20
+      i3Stat21 = 21
+      i3Stat22 = 22
+      i3Stat23 = 23
+      i3Stat24 = 24
+      i3Stat25 = 25
+      i3Stat26 = 26
+      i3Stat27 = 27
+      i3Stat28 = 28
+      i3Stat29 = 29
+      i3Stat30 = 30
+      i3Stat31 = 31
+      i3Stat32 = 32
+      i3Stat33 = 33
+      i3Stat34 = 34
+      i3Stat35 = 35
+      i3Stat36 = 36
+      i3Stat37 = 37
+      i3Stat38 = 38
+      i3Stat39 = 39
+      i3Stat40 = 40
+      i3Stat41 = 41
+      i3Stat42 = 42
+      i3Stat43 = 43
+      i3Stat44 = 44
+      i3Stat45 = 45
+      i3Stat46 = 46
+      i3Stat47 = 47
+      i3Stat48 = 48
+      i3Stat49 = 49
+      i3Stat50 = 50
+      i3Stat51 = 51
+      i3Stat52 = 52
+      i3Stat53 = 53
+      i3Stat54 = 54
+      i3Stat55 = 55
+      i3Stat56 = 56
+      i3Stat57 = 57
+      i3Stat58 = 58
+      i3Stat59 = 59
+      i3Stat60 = 60
+      i3Stat61 = 61
+      i3Stat62 = 62
+      i3Stat63 = 63
+      i3Stat64 = 64
+      i3Stat65 = 65
+      i3Stat66 = 66
+      i3Stat67 = 67
+      i3Stat68 = 68
+      i3Stat69 = 69
+      i3Stat70 = 70
+      i3Stat71 = 71
+      i3Stat72 = 72
+      i3Stat73 = 73
+      i3Stat74 = 74
+      i3Stat75 = 75
+      i3Stat76 = 76
+      i3Stat77 = 77
+      i3Stat78 = 78
+      i3Stat79 = 79
+      i3Stat80 = 80
+      i3Stat81 = 81
+      i3Stat82 = 82
+      i3Stat83 = 83
+      i3Stat84 = 84
+      i3Stat85 = 85
+      i3Stat86 = 86
+      i3Stat87 = 87
+      i3Stat88 = 88
+      i3Stat89 = 89
+      i3Stat90 = 90
+      i3Stat91 = 91
+      i3Stat92 = 92
+      i3Stat93 = 93
+      i3Stat94 = 94
+      i3Stat95 = 95
+      i3Stat96 = 96
+      i3Stat97 = 97
+      i3Stat98 = 98
+      i3Stat99 = 99
+      i3Stat100 = 100
+      i3Stat101 = 101
+      i3Stat102 = 102
+#  ifdef FEAST
+      i3Stat103 = 103
+      i3Stat104 = 104
+      i3Stat105 = 105
+      i3Stat106 = 106
+      i3Stat107 = 107
+#  endif
 # endif
 # ifdef STATIONARY2
       DO i=1,NBTS2
