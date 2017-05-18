@@ -7102,7 +7102,7 @@
             END DO
 #  ifdef STATIONARY         
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTSvar)') THEN
-            Npts=load_l(Nval, Cval, NTS*Ngrids, LtrcS)
+            Npts=load_l(Nval, Cval, NBTS*Ngrids, LtrcS)
             DO ng=1,Ngrids
               DO itrc=1,NBTS   
                 i=idTSvar(itrc)
@@ -11337,9 +11337,12 @@
       logical, dimension(MBOTP,Ngrids) :: Lbottom
 # endif
       logical, dimension(MT,Ngrids) :: Lsta
-#ifdef PROD3
+# ifdef PROD3
       logical, dimension(NBPT3,Ngrids) :: Ltrc3
-#endif
+# endif
+# ifdef STATIONARY
+      logical, dimension(NBTS,Ngrids) :: Lstat
+# endif
       integer, dimension(Ngrids) :: is
 
       real(r8), dimension(100) :: Rval
@@ -11384,7 +11387,7 @@
               END DO
             END DO
 #if defined PROD3
-           ELSE IF (TRIM(KeyWord).eq.'Sout(idPT3var)') THEN
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idPT3var)') THEN
             Npts=load_l(Nval, Cval,NBPT3*Ngrids, Ltrc3)
             DO ng=1,Ngrids
               DO itrc=1,NBPT3
@@ -11393,17 +11396,17 @@
             END DO  
 #endif      
 #if defined STATIONARY
-           ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN
-            Npts=load_l(Nval, Cval,NTS*Ngrids, Lsta)
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN 
+            Npts=load_l(Nval, Cval,NBTS*Ngrids, Lstat)
             DO ng=1,Ngrids
               DO itrc=1,NTS(ng)
-                Sout(idTSvar(itrc),ng)=Lsta(itrc,ng)
+                Sout(idTSvar(itrc),ng)=Lstat(itrc,ng)
               END DO
             END DO 
 #endif 
 #if defined PROD2           
           ELSE IF (TRIM(KeyWord).eq.'Sout(idPT2var)') THEN
-            Npts=load_l(Nval, Cval,NBPT2*Ngrids, Lsta)
+            Npts=load_l(Nval, Cval,NBPT2*Ngrids, Lsta) ! TODO use of Lsta dangerous here... will crash if # prod tracers > MT (# water column tracers)
             DO ng=1,Ngrids
               DO itrc=1,NPT2(ng)
                 Sout(idPT2var(itrc),ng)=Lsta(itrc,ng)
@@ -11412,7 +11415,7 @@
 #endif         
 #if defined BENTHIC
           ELSE IF (TRIM(KeyWord).eq.'Sout(idBvar)') THEN
-            Npts=load_l(Nval, Cval,NBeT*Ngrids, Lsta)
+            Npts=load_l(Nval, Cval,NBeT*Ngrids, Lsta) ! TODO use of Lsta dangerous here... will crash if # benthic tracers > MT (# water column tracers)
             DO ng=1,Ngrids
               DO itrc=1,NBeT(ng)
                 Sout(idBvar(itrc),ng)=Lsta(itrc,ng)
