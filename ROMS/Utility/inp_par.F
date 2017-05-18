@@ -4415,6 +4415,9 @@
 #ifdef STATIONARY      
       logical, dimension(NBTS,Ngrids) :: LtrcS
 #endif
+#ifdef BENTHIC
+      logical, dimension(NBEN,Ngrids) :: LtrcB
+#endif
 #ifdef ICE_BIO      
       logical, dimension(NIB,Ngrids) :: LtrcI
 #endif      
@@ -7186,11 +7189,11 @@
 # endif
 # ifdef BENTHIC
           ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
-            Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
+            Npts=load_l(Nval, Cval,NBEN*Ngrids, LtrcB)
             DO ng=1,Ngrids
               DO itrc=1,NBEN
                 i=idBvar(idben(itrc))
-                Hout(i,ng)=Ltrc(itrc,ng)
+                Hout(i,ng)=LtrcB(itrc,ng)
               END DO
             END DO
 # endif
@@ -11415,10 +11418,10 @@
 #endif         
 #if defined BENTHIC
           ELSE IF (TRIM(KeyWord).eq.'Sout(idBvar)') THEN
-            Npts=load_l(Nval, Cval,NBeT*Ngrids, Lsta) ! TODO use of Lsta dangerous here... will crash if # benthic tracers > MT (# water column tracers)
+            Npts=load_l(Nval, Cval,NBeT*Ngrids, LtrcB) 
             DO ng=1,Ngrids
               DO itrc=1,NBeT(ng)
-                Sout(idBvar(itrc),ng)=Lsta(itrc,ng)
+                Sout(idBvar(itrc),ng)=LtrcB(itrc,ng)
               END DO
             END DO
 #endif
