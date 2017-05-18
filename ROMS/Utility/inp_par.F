@@ -11346,6 +11346,9 @@
 # ifdef STATIONARY
       logical, dimension(NBTS,Ngrids) :: Lstat
 # endif
+#ifdef BENTHIC
+      logical, dimension(NBEN,Ngrids) :: LtrcB
+#endif
       integer, dimension(Ngrids) :: is
 
       real(r8), dimension(100) :: Rval
