@@ -3,31 +3,43 @@
 # on either cluster1 or beast.  It compiles 3 separate variants: 
 # physics-only, bestnpz, and feast.  
 #
-# Syntax: 
-#   buildbering10k
-#   buildbering10k [-s suffix -p -P -n -N -f -F]
-#
-#		-s suffix:  add suffix string to the end of the ocean[M/G] 
-#               executables. Useful if compiling a version based on a 
-#               branch without wanting to overwrite the master-compiled 
-#               version.  If not included, the default names (oceanM_phys, 
-#               oceanM_npz, and oceanM_feast) will be used.
-#
-#   -e epath:   path to folder where compiled executables should be 
-#               placed.  Default is "../romsexecs/"
-#
-#   -p:         compile physics-only version
-#
-#   -P:         compile physics-only version in debug mode
-#
-#   -n:         compile BEST_NPZ version
-#
-#   -N:         compile BEST_NPZ version in debig mode
-#
-#   -f:         compile FEAST version
-#
-#   -F:         compile FEAST version in debug mode
+# See useage statement for syntax.
 
+
+USEAGE="Usage: buildbering10k [-s <suffix>] [-e <epath>] [-pPnNfF] [-h]
+
+where:
+
+  -s suffix:  add suffix string to the end of the ocean[M/G] 
+              executables. Useful if compiling a version based on a 
+              branch without wanting to overwrite the master-compiled 
+              version.  If not included, the default names (oceanM_phys, 
+              oceanM_npz, and oceanM_feast) will be used.
+
+  -e epath:   path to folder where compiled executables should be 
+              placed.  Default is ../romsexecs/
+
+  -p:         compile physics-only version
+
+  -P:         compile physics-only version in debug mode
+
+  -n:         compile BEST_NPZ version
+
+  -N:         compile BEST_NPZ version in debug mode
+
+  -f:         compile FEAST version
+
+  -F:         compile FEAST version in debug mode
+  
+  -h:         show this help text
+"
+
+if [[ $# -eq 0 ]] ; then
+    echo "This script now requires arguments:
+
+$USEAGE"
+    exit 0
+fi
 
 pfile="oceanM_phys"
 nfile="oceanM_npz"
@@ -45,14 +57,14 @@ Pflag=false
 Nflag=false
 Fflag=false
 
-while getopts ":s:e:pPnNfF" opt; do
+while getopts ":s:e:pPnNfFh" opt; do
   case $opt in
     s) pfile="oceanM_phys_${OPTARG}"
        nfile="oceanM_npz_${OPTARG}"
        ffile="oceanM_feast_${OPTARG}"
        Pfile="oceanG_phys_${OPTARG}"
        Nfile="oceanG_npz_${OPTARG}"
-       Ffile="oceanG_feast_${OPTARG}"  
+       Ffile="oceanG_feast_${OPTARG}"
       ;;
     e) epath=$OPTARG;;
     p) pflag=true;;
@@ -61,8 +73,17 @@ while getopts ":s:e:pPnNfF" opt; do
     N) Nflag=true;;
     f) fflag=true;;
     F) Fflag=true;;
+    h) echo "$USEAGE"
+       exit
+       ;;
+    :) printf "missing argument for -%s\n" "$OPTARG" >&2
+       echo "$USEAGE" >&2
+       exit 1
+       ;;
     \?)
       echo "Invalid option: -$OPTARG" >&2
+      echo "$USEAGE" >&2
+      exit 1
       ;;
   esac
 done
