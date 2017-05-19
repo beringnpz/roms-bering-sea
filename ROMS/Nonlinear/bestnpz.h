@@ -1576,8 +1576,11 @@
               ! Microzooplankton (quadratic mortality, with hard-coded
               ! option for linear)
 
-!             Mor_MZL_Det(i,k) = mMZL*Bio3d(i,k,iiMZL)          ! linear
+#ifdef MZLM0LIN
+              Mor_MZL_Det(i,k) = mMZL*Bio3d(i,k,iiMZL)          ! linear
+#else
               Mor_MZL_Det(i,k) = mpredMZL*Bio3d(i,k,iiMZL)**2   ! quadratic
+#endif
 
 #ifdef fixedPRED
               ! TODO: original DBio(i,k,iXXX) = DBio(i,k,iXXX) - 0.5*Hz(i,j,k)/dtdays
