@@ -1,3 +1,5 @@
+'$URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $'
+
 'ocean_time'
   'time since initialization'
   'second'
