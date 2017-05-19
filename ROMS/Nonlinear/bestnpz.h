@@ -326,7 +326,7 @@
       real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
 # endif
 # if defined BENTHIC
-      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,1,3,2) ! TODO: why UBk? Shouldn't it be NBL?  Also, no room for 2 tracers in last dim?
+      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
 # endif
 # if defined FEAST
       real(r8), intent(in)    :: u(LBi:UBi,LBj:UBj,UBk,3),v(LBi:UBi,LBj:UBj,UBk,3)
@@ -341,14 +341,14 @@
 #  elif defined BERING_10K
       real(r8), intent(in)    :: ti(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in)    :: hi(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in)    :: ai(LBi:UBi,LBj:UBj,2) ! TODO: never used?
+      real(r8), intent(in)    :: ai(LBi:UBi,LBj:UBj,2)     ! TODO: never used?
       real(r8), intent(in)    :: ageice(LBi:UBi,LBj:UBj,2) ! TODO: never used?
       real(r8), intent(inout) :: IcePhL(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNO3(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNH4(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceLog(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in)    :: ui(LBi:UBi,LBj:UBj,2) ! TODO: never used?
-      real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2) ! TODO: never used?
+      real(r8), intent(in)    :: ui(LBi:UBi,LBj:UBj,2)     ! TODO: never used?
+      real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2)     ! TODO: never used?
 #  endif
 # endif
 # ifdef BIOFLUX
@@ -1495,7 +1495,7 @@
 
               ! Note: mentioned in docs that gammaJel can be >1 to allow
               ! for an outside food source.  However, GG's code doesn't
-              ! spefify how the flux to detritus might change in that
+              ! specify how the flux to detritus might change in that
               ! case (as written currently, that extra would come out of
               ! the DetF biomass via a negative egestion flux) TODO: Do 
               ! we want to allow gammaJel>1, and if so, how should we 
@@ -1793,6 +1793,12 @@
             cff0 = q10r**((Temp(i,1)-T0benr)/10.0_r8)
 
             ! Total uptake of each food category
+            ! TODO: Unit mismatch in the part... cff1 is mC/m^2 and 
+            ! (cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP)) is mgC/m^2/d
+            ! Is this supposed to be a zero-trap?  Should be cff1/dtdays 
+            ! (i.e. highest rate that would keep losses positive?)  Of 
+            ! course, that assumes no fluxes into the layer to possibly 
+            ! balance out a seemingly too-high loss rate.
 
             cff7  = min(cff1,(cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! D
             cff8  = min(cff2,(cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! DF
@@ -2557,7 +2563,9 @@
         ! have been negative when passed to this function, and this 
         ! conserves that biomass.
         
-        ! TODO: Georgina's code has a max(t,0) applied to all tracers... maybe add?  Or is it okay for things to go slightly negative
+        ! TODO: Georgina's code has a max(t,0) applied to all tracers... 
+        ! maybe add?  Or is it okay for things to go slightly negative, 
+        ! assuming they'll self-correct?
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
@@ -2636,7 +2644,7 @@
           IceNH4(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
           IcePhL(i,j,nnew) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
 
-          IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: Current step value now in both positions... real update in ice model, I assume?
+          IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: Current step value now in both positions... doublecheck that this is correct (real update in =happens in ice_limit.F))
 
 #  ifdef MASKING
           IcePhL(i,j,nnew) = IcePhL(i,j,nnew)*rmask(i,j)
