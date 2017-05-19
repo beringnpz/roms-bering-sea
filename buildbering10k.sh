@@ -5,28 +5,67 @@
 #
 # Syntax: 
 #   buildbering10k
-#   buildbering10k [suffix]
+#   buildbering10k [-s suffix -p -P -n -N -f -F]
 #
-#		suffix: string to add on to the end of the oceanM executables.  
-#           Useful if compiling a version based on a branch without 
-#           wanting to overwrite the master-compiled version.  If not 
-#           included, the default names (oceanM_phys, oceanM_npz, and 
-#           oceanM_feast) will be used.
+#		-s suffix:  add suffix string to the end of the ocean[M/G] 
+#               executables. Useful if compiling a version based on a 
+#               branch without wanting to overwrite the master-compiled 
+#               version.  If not included, the default names (oceanM_phys, 
+#               oceanM_npz, and oceanM_feast) will be used.
+#
+#   -e epath:   path to folder where compiled executables should be 
+#               placed.  Default is "../romsexecs/"
+#
+#   -p:         compile physics-only version
+#
+#   -P:         compile physics-only version in debug mode
+#
+#   -n:         compile BEST_NPZ version
+#
+#   -N:         compile BEST_NPZ version in debig mode
+#
+#   -f:         compile FEAST version
+#
+#   -F:         compile FEAST version in debug mode
 
 
-if [ "$#" -ne 1 ]; then
-	physfile="oceanM_phys"
-	npzfile="oceanM_npz"
-	feastfile="oceanM_feast"
-	npzdbfile="oceanG_npz"
-	feastdbfile="oceanG_feast"
-else
-	physfile="oceanM_phys_$1"
-	npzfile="oceanM_npz_$1"
-	feastfile="oceanM_feast_$1"
-	npzdbfile="oceanG_npz_$1"
-	feastdbfile="oceanG_feast_$1"
-fi
+pfile="oceanM_phys"
+nfile="oceanM_npz"
+ffile="oceanM_feast"
+Pfile="oceanG_phys"
+Nfile="oceanG_npz"
+Ffile="oceanG_feast"
+
+epath="../romsexecs/"
+
+pflag=false
+nflag=false
+fflag=false
+Pflag=false
+Nflag=false
+Fflag=false
+
+while getopts ":s:e:pPnNfF" opt; do
+  case $opt in
+    s) pfile="oceanM_phys_${OPTARG}"
+       nfile="oceanM_npz_${OPTARG}"
+       ffile="oceanM_feast_${OPTARG}"
+       Pfile="oceanG_phys_${OPTARG}"
+       Nfile="oceanG_npz_${OPTARG}"
+       Ffile="oceanG_feast_${OPTARG}"  
+      ;;
+    e) epath=$OPTARG;;
+    p) pflag=true;;
+    P) Pflag=true;;
+    n) nflag=true;;
+    N) Nflag=true;;
+    f) fflag=true;;
+    F) Fflag=true;;
+    \?)
+      echo "Invalid option: -$OPTARG" >&2
+      ;;
+  esac
+done
 
 #--------------
 # Setup
@@ -34,7 +73,7 @@ fi
 
 # Things that are the same on all computers
 
-export   ROMS_APPLICATION=NEP5 
+export   ROMS_APPLICATION=NEP5
 export        NestedGrids=1
 export        MY_ROOT_DIR=${PWD}                  # Location of roms-bering-sea clone
 export     MY_PROJECT_DIR=${MY_ROOT_DIR}/Apps/NEP # Location of analyticals, headers, etc
@@ -53,13 +92,13 @@ case $HOSTNAME in
     export            PATH=/usr/mpi/intel/openmpi-1.4.1/bin:$PATH  # mpif90 location
     export   NETCDF_INCDIR=/home/aydink/includeM                   # netcdf include
     export   NETCDF_LIBDIR=/home/aydink/libM                       # netcdf lib
-	;; 
+  ;;
   afsc-s29.afsc.noaa.gov) # cluster1
     export            PATH=/opt/intel/openmpi/163/bin:$PATH
     export   NETCDF_INCDIR=/home/aydink/include                    # netcdf include
     export   NETCDF_LIBDIR=/home/aydink/lib                        # netcdf lib
     ;;
-  *)   
+  *)
     echo "Not set up to compile on this computer"
     exit 1
     ;;
@@ -79,90 +118,119 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 
 # Compile physics
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build1_phys
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_phys
+export      USE_DEBUG=
 
-make clean &>/dev/null
-echo "Compiling physics-only variant"
-make -j &> buildouterr.txt
-if [ $? -ne 0 ]; then
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+if [ "$pflag" = true ]; then
+  make clean &>/dev/null
+  echo "Compiling physics-only variant"
+  make -j &> buildouterr.txt
+  if [ $? -ne 0 ]; then
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
-else
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM $physfile
-  echo "  Success: $physfile created"
+  else
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanM ${epath%%/}/${pfile}
+    echo "  Success: $pfile created"
+  fi
+fi
+
+# Compile physics (debugging)
+
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_physdb
+export      USE_DEBUG=on
+
+if [ "$Pflag" = true ]; then
+  make clean &>/dev/null
+  echo "Compiling physics-only (debugging) variant"
+  make -j &> buildouterr.txt
+  if [ $? -ne 0 ]; then
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+  else
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanG ${epath%%/}/${Pfile}
+    echo "  Success: $Pfile created"
+  fi
 fi
 
 # Compile bestnpz
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build2_npz
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_npz
+export      USE_DEBUG=
 export      MY_CPP_FLAGS="-DBEST_NPZ"
 
-make clean &>/dev/null
-echo "Compiling bestnpz variant"
-make -j &> buildouterr.txt
-if [ $? -ne 0 ]; then
-	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
-else
-	mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM $npzfile
-	echo "  Success: $npzfile created"
+if [ "$nflag" = true ]; then
+  make clean &>/dev/null
+  echo "Compiling bestnpz variant"
+  make -j &> buildouterr.txt
+  if [ $? -ne 0 ]; then
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+      echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+  else
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+      mv oceanM ${epath%%/}/${nfile}
+    echo "  Success: $nfile created"
+  fi
 fi
 
-# Combile debugging-version of bestnpz
+# Compile bestnpz (debugging)
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build4_npzdb
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_npzdb
 export      USE_DEBUG=on
 
-make clean &>/dev/null
-echo "Compiling bestnpz (debugging) variant"
-make -j &> buildouterr.txt
-if [ $? -ne 0 ]; then
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
-else
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanG $npzdbfile
-  echo "  Success: $npzdbfile created"
+if [ "$Nflag" = true ]; then
+  make clean &>/dev/null
+  echo "Compiling bestnpz (debugging) variant"
+  make -j &> buildouterr.txt
+  if [ $? -ne 0 ]; then
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+      echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+  else
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanG ${epath%%/}/${Nfile}
+    echo "  Success: $Nfile created"
+  fi
 fi
 
 # Compile Feast
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build3_feast
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_feast
 export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
 export      USE_DEBUG=
 
-make clean &>/dev/null
-echo "Compiling feast variant"
-make -j &> buildouterr.txt
-if [ $? -ne 0 ]; then
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
-else
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanM $feastfile
-  echo "  Success: $feastfile created"
+if [ "$fflag" = true ]; then
+  make clean &>/dev/null
+  echo "Compiling feast variant"
+  make -j &> buildouterr.txt
+  if [ $? -ne 0 ]; then
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+      echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+  else
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+      mv oceanM ${epath%%/}/${ffile}
+    echo "  Success: $ffile created"
+  fi
 fi
 
-# Compile Feast, debug mode
+# Compile Feast (debugging)
 
-export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build5_feastdb
-export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DFEAST"
+export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_feastdb
 export      USE_DEBUG=on
 
-make clean &>/dev/null
-echo "Compiling feast (debugging) variant"
-make -j &> buildouterr.txt
-if [ $? -ne 0 ]; then
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
-else
-  mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
-    mv oceanG $feastdbfile
-  echo "  Success: $feastdbfile created"
+if [ "$Fflag" = true ]; then
+  make clean &>/dev/null
+  echo "Compiling feast (debugging) variant"
+  make -j &> buildouterr.txt
+  if [ $? -ne 0 ]; then
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+      echo "  Compilation failed: see ${SCRATCH_DIR}/buildouterr.txt for details"
+  else
+    mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
+    mv oceanG ${epath%%/}/${Ffile}
+    echo "  Success: $Ffile created"
+  fi
 fi
-
 
 
 

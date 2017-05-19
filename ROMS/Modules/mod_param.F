@@ -492,17 +492,19 @@
 
         integer, dimension(Ngrids) :: NTS
 
-        integer, parameter :: NBTS = 16
-
+#  ifdef FEAST
+        integer, parameter :: NBTS = 107
+#  else
+        integer, parameter :: NBTS = 102
+#  endif
 # endif
-
 # ifdef STATIONARY2
       !------------------------------------
       !2D stationary tracers
       !------------------------------------
 
         integer, dimension(Ngrids) :: NTS2
-        integer, parameter :: NBTS2 = 8
+        integer, parameter :: NBTS2 = 1
 # endif
 # ifdef PROD2
       !------------------------------------

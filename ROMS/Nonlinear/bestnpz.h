@@ -105,17 +105,6 @@
      &                   ,OCEAN(ng) % st2                               &
      &                   ,NTS2(ng)                                      &
 #endif
-#ifdef PROD3
-     &                   ,OCEAN(ng) % pt3                               &
-     &                   ,NPT3(ng)                                      &
-#endif
-#ifdef PROD2
-     &                   ,OCEAN(ng) % pt2                               &
-     &                   ,NPT2(ng)                                      &
-#endif
-#ifdef BIOFLUX
-     &                  ,OCEAN(ng) % bflx                               &
-#endif
      &                  ,MIXING(ng) % Akt                               &
      &                              )
 
@@ -175,21 +164,7 @@
      &                         ,st2                                     &
      &                         ,UBst2                                   &
 #endif
-#ifdef PROD3
-     &                         ,pt3                                     &
-     &                         ,UBpt3                                   &
-#endif
-#ifdef PROD2
-     &                         ,pt2                                     &
-     &                         ,UBpt2                                   &
-#endif
-#ifdef BIOFLUX
-     &                         ,bflx                                    &
-#endif
      &                         ,Akt                                     &
-#ifdef BESTNPZ_INTERMEDIATES
-                               ,Flx                                     &
-#endif
      &                          )
 
      !==================================================================
@@ -210,7 +185,7 @@
 
 # if defined ICE_BIO
 #  ifdef BERING_10K
-#   ifndef BESTNPZ_INTERMEDIATES
+#   ifndef MATLABCOMPILE
       USE mod_ice
       USE IcePhLbc_mod, ONLY : IcePhLbc_tile
       USE IceNO3bc_mod, ONLY : IceNO3bc_tile
@@ -242,6 +217,12 @@
       integer, intent(in)     :: IminS, ImaxS, JminS, JmaxS
       integer, intent(in)     :: UBk, UBt
       integer, intent(in)     :: nnew, nstp
+#ifdef STATIONARY
+      integer, intent(in)     :: UBst
+#endif
+#if defined STATIONARY2
+      integer, intent(in)     :: UBst2
+#endif
 
 #ifdef ASSUMED_SHAPE
 # ifdef MASKING
@@ -260,12 +241,6 @@
 # endif
 # ifdef STATIONARY2
       real(r8), intent(inout) :: st2(LBi:,LBj:,:,:)
-# endif
-# ifdef PROD3
-      real(r8), intent(inout) :: pt3(LBi:,LBj:,:,:,:)
-# endif
-# ifdef PROD2
-      real(r8), intent(inout) :: pt2(LBi:,LBj:,:,:)
 # endif
 # if defined BENTHIC
       real(r8), intent(inout) :: bt(LBi:,LBj:,:,:,:)
@@ -293,13 +268,7 @@
 #  endif
 # endif
 
-# ifdef BIOFLUX
-      real(r8), intent(inout) :: bflx(:,:)
-# endif
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
-# ifdef BESTNPZ_INTERMEDIATES
-      real(r8), intent(out) :: Flx(LBi:,LBj:,:,:)
-# endif
 
 #else
 
@@ -314,16 +283,10 @@
       real(r8), intent(in)    :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
 # ifdef STATIONARY
-      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,NTS(ng))
+      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,UBst)
 # endif
 # ifdef STATIONARY2
-      real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,NTS2(ng))
-# endif
-# ifdef PROD3
-      real(r8), intent(inout) :: pt3(LBi:UBi,LBj:UBj,UBk,3,NPT3(ng))
-# endif
-# ifdef PROD2
-      real(r8), intent(inout) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
+      real(r8), intent(inout) :: st2(LBi:UBi,LBj:UBj,3,UBst2)
 # endif
 # if defined BENTHIC
       real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
@@ -347,32 +310,13 @@
       real(r8), intent(inout) :: IceNO3(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceNH4(LBi:UBi,LBj:UBj,2)
       real(r8), intent(inout) :: IceLog(LBi:UBi,LBj:UBj,2)
-      real(r8), intent(in)    :: ui(LBi:UBi,LBj:UBj,2)     ! TODO: never used?
-      real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2)     ! TODO: never used?
+      real(r8), intent(in)    :: ui(LBi:UBi,LBj:UBj,2)
+      real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2)
 #  endif
 # endif
-# ifdef BIOFLUX
-      real(r8), intent(inout) :: bflx(LBi:UBi,LBj:UBj)
-# endif
       real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
-# ifdef BESTNPZ_INTERMEDIATES
-      real(r8), intent(out) :: Flx(LBi:UBi,LBj:UBj,UBk,94)
-# endif
 #endif
 
-
-#ifdef STATIONARY
-      integer, intent(in)     :: UBst
-#endif
-#if defined STATIONARY2
-      integer, intent(in)     :: UBst2
-#endif
-#if defined PROD3
-      integer, intent(in)     :: UBpt3
-#endif
-#if defined PROD2
-      integer, intent(in)     :: UBpt2
-#endif
 
 
       ! Local variable declarations
@@ -441,24 +385,7 @@
       real(r8) :: Temp1
       real(r8) :: PON
       real(r8) :: NitrifMax, DLNitrif
-
-#if defined PROD3
-      real(r8), dimension(IminS:ImaxS,N(ng),NBPT3) :: Prod
-#endif
-#if defined PROD2
-      real(r8), dimension(IminS:ImaxS,NBPT2) :: Prod2
-#endif
-#if defined STATIONARY
-      real(r8), dimension(IminS:ImaxS,N(ng),NBTS) :: Stat3
-#endif
-#if defined STATIONARY2
-      real(r8), dimension(IminS:ImaxS,NBTS2) :: Stat2
-#endif
-
-
-#if defined BIOFLUX
-      real(r8), dimension(NT(ng),NT(ng)) :: BioFlx
-#endif
+      
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv2
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv3
@@ -544,6 +471,69 @@
       real(r8), parameter :: minv = 0.0E-20_r8
 
 #include "set_bounds.h"
+
+#ifdef MATLABCOMPILE
+!       ! Check inputs (prints values of scalars, shapes of arrays)
+!       print *, "ng     = ", ng
+!       print *, "tile   = ", tile
+!       print *, "LBi    = ", LBi
+!       print *, "UBi    = ", UBi
+!       print *, "LBj    = ", LBj
+!       print *, "UBj    = ", UBj
+!       print *, "IminS  = ", IminS
+!       print *, "ImaxS  = ", ImaxS
+!       print *, "JminS  = ", JminS
+!       print *, "JmaxS  = ", JmaxS
+!       print *, "UBk    = ", UBk
+!       print *, "UBt    = ", UBt
+!       print *, "nnew   = ", nnew
+!       print *, "nstp   = ", nstp
+! # ifdef MASKING
+!       print *, "rmask  shape = ", shape(rmask )
+! # endif
+!       print *, "Hz     shape = ", shape(Hz    )
+!       print *, "z_r    shape = ", shape(z_r   )
+!       print *, "z_w    shape = ", shape(z_w   )
+!       print *, "h      shape = ", shape(h     )
+!       print *, "lat    shape = ", shape(lat   )
+!       print *, "srflx  shape = ", shape(srflx )
+!       print *, "t      shape = ", shape(t     )
+! # if defined BENTHIC
+!       print *, "bt     shape = ", shape(bt    )
+! # endif
+! # if defined FEAST
+!       print *, "u      shape = ", shape(u     )
+!       print *, "v      shape = ", shape(v     )
+!       print *, "GF     shape = ", shape(GF    )
+! # endif
+! # if defined ICE_BIO
+! #  ifdef CLIM_ICE_1D
+!       print *, "it     shape = ", shape(it    )
+!       print *, "itL    shape = ", shape(itL   )
+!       print *, "tclm   shape = ", shape(tclm  )
+! #  elif defined BERING_10K
+!       print *, "IcePhL shape = ", shape(IcePhL)
+!       print *, "IceNO3 shape = ", shape(IceNO3)
+!       print *, "IceNH4 shape = ", shape(IceNH4)
+!       print *, "IceLog shape = ", shape(IceLog)
+!       print *, "ti     shape = ", shape(ti    )
+!       print *, "hi     shape = ", shape(hi    )
+!       print *, "ai     shape = ", shape(ai    )
+!       print *, "ageice shape = ", shape(ageice)
+!       print *, "ui     shape = ", shape(ui    )
+!       print *, "vi     shape = ", shape(vi    )
+! #  endif
+! # endif
+! # ifdef STATIONARY
+!       print *, "st     shape = ", shape(st    )
+!       print *, "UBst   = ", UBst
+! # endif
+! # ifdef STATIONARY2
+!       print *, "st2    shape = ", shape(st2   )
+!       print *, "UBst2  = ", UBst2
+! # endif
+!       print *, "Akt    shape = ", shape(Akt   )
+#endif
 
       !==================================================================
       !  SOME SETUP APPLICABLE TO ALL GRID CELLS
@@ -1028,8 +1018,6 @@
 
           endif
         END DO
-
-
 #endif
 
         ! Calculate inverse layer thickness
@@ -1319,7 +1307,20 @@
                 Gpp_NO3_PhL(i,k) = 0; ! mg C m^-2 d^-1
                 Gpp_NH4_PhL(i,k) = 0; ! mg C m^-2 d^-1
               endif
+              
+#ifdef STATIONARY
 
+              ! Save limitation terms for output
+              
+              st(i,j,k,nstp,1) = LightLimS
+              st(i,j,k,nstp,2) = LightLimL
+              st(i,j,k,nstp,3) = NOLimS
+              st(i,j,k,nstp,4) = NOLimL
+              st(i,j,k,nstp,5) = NHLimS
+              st(i,j,k,nstp,6) = NHLimL
+              st(i,j,k,nstp,7) = IronLimS
+              st(i,j,k,nstp,8) = IronLimL
+#endif
             END DO
           END DO
 
@@ -1591,7 +1592,13 @@
 #else
               TFEup = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 # ifdef FEAST
-              ! Mesozooplankton (based on predation by fish)
+              ! Mesozooplankton (quadratic predation closure).  FEAST
+              ! predation only affects zooplankton within a specific 
+              ! region (mostly EBS).  This term (modified spatially by 
+              ! forcing input variable zoop_force) tries to smooth out
+              ! some boundary issues that can come of that. Note that 
+              ! this term does *not* include predation by FEAST fish yet; 
+              ! that loss term will be added in feast_step.h.
 
               Mor_Cop_DetF(i,k)  = TFEup*(mpredCop + fpredCop  * GF%zoop_force(1,1,i,j,1))*Bio3d(i,k,iiCop)**2
               Mor_NCaS_DetF(i,k) = TFEup*(mpredNca + fpredNcaS * GF%zoop_force(1,2,i,j,1))*Bio3d(i,k,iiNCaS)**2
@@ -2446,106 +2453,106 @@
           END DO
           
           
-#ifdef BESTNPZ_INTERMEDIATES
-          ! Save intermediate fluxes for output
+#ifdef STATIONARY
+
+          ! Save all intermediate fluxes for output
           
           DO i = Istr,Iend
             DO k = 1,N(ng)
-              Flx(i,j,k, 1) = Gpp_NO3_PhS(i,k)
-              Flx(i,j,k, 2) = Gpp_NO3_PhL(i,k)
-              Flx(i,j,k, 3) = Gpp_NH4_PhS(i,k)
-              Flx(i,j,k, 4) = Gpp_NH4_PhL(i,k)
-              Flx(i,j,k, 5) = Gra_PhS_MZL(i,k)
-              Flx(i,j,k, 6) = Gra_PhL_MZL(i,k)
-              Flx(i,j,k, 7) = Ege_MZL_Det(i,k)
-              Flx(i,j,k, 8) = Gra_PhS_Cop(i,k)
-              Flx(i,j,k, 9) = Gra_PhL_Cop(i,k)
-              Flx(i,j,k,10) = Gra_MZL_Cop(i,k)
-              Flx(i,j,k,11) = Gra_IPhL_Cop(i,k)
-              Flx(i,j,k,12) = Ege_Cop_DetF(i,k)
-              Flx(i,j,k,13) = Gra_PhS_NCaS(i,k)
-              Flx(i,j,k,14) = Gra_PhL_NCaS(i,k)
-              Flx(i,j,k,15) = Gra_MZL_NCaS(i,k)
-              Flx(i,j,k,16) = Gra_IPhL_NCaS(i,k)
-              Flx(i,j,k,17) = Ege_NCaS_DetF(i,k)
-              Flx(i,j,k,18) = Gra_PhS_NCaO(i,k)
-              Flx(i,j,k,19) = Gra_PhL_NCaO(i,k)
-              Flx(i,j,k,20) = Gra_MZL_NCaO(i,k)
-              Flx(i,j,k,21) = Gra_IPhL_NCaO(i,k)
-              Flx(i,j,k,22) = Ege_NCaO_DetF(i,k)
-              Flx(i,j,k,23) = Gra_PhS_EupS(i,k)
-              Flx(i,j,k,24) = Gra_PhL_EupS(i,k)
-              Flx(i,j,k,25) = Gra_MZL_EupS(i,k)
-              Flx(i,j,k,26) = Gra_Cop_EupS(i,k)
-              Flx(i,j,k,27) = Gra_IPhL_EupS(i,k)
-              Flx(i,j,k,28) = Gra_Det_EupS(i,k)
-              Flx(i,j,k,29) = Gra_DetF_EupS(i,k)
-              Flx(i,j,k,30) = Ege_EupS_DetF(i,k)
-              Flx(i,j,k,31) = Gra_PhS_EupO(i,k)
-              Flx(i,j,k,32) = Gra_PhL_EupO(i,k)
-              Flx(i,j,k,33) = Gra_MZL_EupO(i,k)
-              Flx(i,j,k,34) = Gra_Cop_EupO(i,k)
-              Flx(i,j,k,35) = Gra_IPhL_EupO(i,k)
-              Flx(i,j,k,36) = Gra_Det_EupO(i,k)
-              Flx(i,j,k,37) = Gra_DetF_EupO(i,k)
-              Flx(i,j,k,38) = Ege_EupO_DetF(i,k)
-              Flx(i,j,k,39) = Gra_Cop_Jel(i,k)
-              Flx(i,j,k,40) = Gra_EupS_Jel(i,k)
-              Flx(i,j,k,41) = Gra_EupO_Jel(i,k)
-              Flx(i,j,k,42) = Gra_NCaS_Jel(i,k)
-              Flx(i,j,k,43) = Gra_NCaO_Jel(i,k)
-              Flx(i,j,k,44) = Ege_Jel_DetF(i,k)
-              Flx(i,j,k,45) = Mor_PhS_Det(i,k)
-              Flx(i,j,k,46) = Mor_PhL_Det(i,k)
-              Flx(i,j,k,47) = Mor_MZL_Det(i,k)
-              Flx(i,j,k,48) = Mor_Cop_DetF(i,k)
-              Flx(i,j,k,49) = Mor_NCaS_DetF(i,k)
-              Flx(i,j,k,50) = Mor_EupS_DetF(i,k)
-              Flx(i,j,k,51) = Mor_NCaO_DetF(i,k)
-              Flx(i,j,k,52) = Mor_EupO_DetF(i,k)
-              Flx(i,j,k,53) = Mor_Jel_DetF(i,k)
-              Flx(i,j,k,54) = Res_PhS_NH4(i,k)
-              Flx(i,j,k,55) = Res_PhL_NH4(i,k)
-              Flx(i,j,k,56) = Res_MZL_NH4(i,k)
-              Flx(i,j,k,57) = Res_Cop_NH4(i,k)
-              Flx(i,j,k,58) = Res_NCaS_NH4(i,k)
-              Flx(i,j,k,59) = Res_NCaO_NH4(i,k)
-              Flx(i,j,k,60) = Res_EupS_NH4(i,k)
-              Flx(i,j,k,61) = Res_EupO_NH4(i,k)
-              Flx(i,j,k,62) = Res_Jel_NH4(i,k)
-              Flx(i,j,k,63) = Rem_Det_NH4(i,k)
-              Flx(i,j,k,64) = Rem_DetF_NH4(i,k)
-              Flx(i,j,k,65) = Nit_NH4_NO3(i,k)
-              Flx(i,j,k,66) = Gra_Det_Ben(i,k)
-              Flx(i,j,k,67) = Gra_DetF_Ben(i,k)
-              Flx(i,j,k,68) = Gra_PhS_Ben(i,k)
-              Flx(i,j,k,69) = Gra_PhL_Ben(i,k)
-              Flx(i,j,k,70) = Gra_BenDet_Ben(i,k)
-              Flx(i,j,k,71) = Exc_Ben_NH4(i,k)
-              Flx(i,j,k,72) = Exc_Ben_BenDet(i,k)
-              Flx(i,j,k,73) = Res_Ben_NH4(i,k)
-              Flx(i,j,k,74) = Mor_Ben_BenDet(i,k)
-              Flx(i,j,k,75) = Rem_BenDet_NH4(i,k)
-              Flx(i,j,k,76) = Gpp_INO3_IPhL(i,k)
-              Flx(i,j,k,77) = Gpp_INH4_IPhL(i,k)
-              Flx(i,j,k,78) = Res_IPhL_INH4(i,k)
-              Flx(i,j,k,79) = Mor_IPhL_INH4(i,k)
-              Flx(i,j,k,80) = Nit_INH4_INO3(i,k)
-              Flx(i,j,k,81) = Twi_IPhL_PhL(i,k)
-              Flx(i,j,k,82) = Twi_INO3_NO3(i,k)
-              Flx(i,j,k,83) = Twi_INH4_NH4(i,k)
-              Flx(i,j,k,84) = Ver_PhS_BenDet(i,k)
-              Flx(i,j,k,85) = Ver_PhS_Out(i,k)
-              Flx(i,j,k,86) = Ver_PhL_BenDet(i,k)
-              Flx(i,j,k,87) = Ver_PhL_Out(i,k)
-              Flx(i,j,k,88) = Ver_Det_BenDet(i,k)
-              Flx(i,j,k,89) = Ver_Det_Out(i,k)
-              Flx(i,j,k,90) = Ver_DetF_BenDet(i,k)
-              Flx(i,j,k,91) = Ver_DetF_Out(i,k)
-              Flx(i,j,k,92) = Ver_NCaO_BenDet(i,k)
-              Flx(i,j,k,93) = Ver_NCaS_DetF(i,k)
-              Flx(i,j,k,94) = Ver_NCaS_BenDet(i,k)
-              
+              st(i,j,k,nstp,  9) = Gpp_NO3_PhS(i,k)
+              st(i,j,k,nstp, 10) = Gpp_NO3_PhL(i,k)
+              st(i,j,k,nstp, 11) = Gpp_NH4_PhS(i,k)
+              st(i,j,k,nstp, 12) = Gpp_NH4_PhL(i,k)
+              st(i,j,k,nstp, 13) = Gra_PhS_MZL(i,k)
+              st(i,j,k,nstp, 14) = Gra_PhL_MZL(i,k)
+              st(i,j,k,nstp, 15) = Ege_MZL_Det(i,k)
+              st(i,j,k,nstp, 16) = Gra_PhS_Cop(i,k)
+              st(i,j,k,nstp, 17) = Gra_PhL_Cop(i,k)
+              st(i,j,k,nstp, 18) = Gra_MZL_Cop(i,k)
+              st(i,j,k,nstp, 19) = Gra_IPhL_Cop(i,k)
+              st(i,j,k,nstp, 20) = Ege_Cop_DetF(i,k)
+              st(i,j,k,nstp, 21) = Gra_PhS_NCaS(i,k)
+              st(i,j,k,nstp, 22) = Gra_PhL_NCaS(i,k)
+              st(i,j,k,nstp, 23) = Gra_MZL_NCaS(i,k)
+              st(i,j,k,nstp, 24) = Gra_IPhL_NCaS(i,k)
+              st(i,j,k,nstp, 25) = Ege_NCaS_DetF(i,k)
+              st(i,j,k,nstp, 26) = Gra_PhS_NCaO(i,k)
+              st(i,j,k,nstp, 27) = Gra_PhL_NCaO(i,k)
+              st(i,j,k,nstp, 28) = Gra_MZL_NCaO(i,k)
+              st(i,j,k,nstp, 29) = Gra_IPhL_NCaO(i,k)
+              st(i,j,k,nstp, 30) = Ege_NCaO_DetF(i,k)
+              st(i,j,k,nstp, 31) = Gra_PhS_EupS(i,k)
+              st(i,j,k,nstp, 32) = Gra_PhL_EupS(i,k)
+              st(i,j,k,nstp, 33) = Gra_MZL_EupS(i,k)
+              st(i,j,k,nstp, 34) = Gra_Cop_EupS(i,k)
+              st(i,j,k,nstp, 35) = Gra_IPhL_EupS(i,k)
+              st(i,j,k,nstp, 36) = Gra_Det_EupS(i,k)
+              st(i,j,k,nstp, 37) = Gra_DetF_EupS(i,k)
+              st(i,j,k,nstp, 38) = Ege_EupS_DetF(i,k)
+              st(i,j,k,nstp, 39) = Gra_PhS_EupO(i,k)
+              st(i,j,k,nstp, 40) = Gra_PhL_EupO(i,k)
+              st(i,j,k,nstp, 41) = Gra_MZL_EupO(i,k)
+              st(i,j,k,nstp, 42) = Gra_Cop_EupO(i,k)
+              st(i,j,k,nstp, 43) = Gra_IPhL_EupO(i,k)
+              st(i,j,k,nstp, 44) = Gra_Det_EupO(i,k)
+              st(i,j,k,nstp, 45) = Gra_DetF_EupO(i,k)
+              st(i,j,k,nstp, 46) = Ege_EupO_DetF(i,k)
+              st(i,j,k,nstp, 47) = Gra_Cop_Jel(i,k)
+              st(i,j,k,nstp, 48) = Gra_EupS_Jel(i,k)
+              st(i,j,k,nstp, 49) = Gra_EupO_Jel(i,k)
+              st(i,j,k,nstp, 50) = Gra_NCaS_Jel(i,k)
+              st(i,j,k,nstp, 51) = Gra_NCaO_Jel(i,k)
+              st(i,j,k,nstp, 52) = Ege_Jel_DetF(i,k)
+              st(i,j,k,nstp, 53) = Mor_PhS_Det(i,k)
+              st(i,j,k,nstp, 54) = Mor_PhL_Det(i,k)
+              st(i,j,k,nstp, 55) = Mor_MZL_Det(i,k)
+              st(i,j,k,nstp, 56) = Mor_Cop_DetF(i,k)
+              st(i,j,k,nstp, 57) = Mor_NCaS_DetF(i,k)
+              st(i,j,k,nstp, 58) = Mor_EupS_DetF(i,k)
+              st(i,j,k,nstp, 59) = Mor_NCaO_DetF(i,k)
+              st(i,j,k,nstp, 60) = Mor_EupO_DetF(i,k)
+              st(i,j,k,nstp, 61) = Mor_Jel_DetF(i,k)
+              st(i,j,k,nstp, 62) = Res_PhS_NH4(i,k)
+              st(i,j,k,nstp, 63) = Res_PhL_NH4(i,k)
+              st(i,j,k,nstp, 64) = Res_MZL_NH4(i,k)
+              st(i,j,k,nstp, 65) = Res_Cop_NH4(i,k)
+              st(i,j,k,nstp, 66) = Res_NCaS_NH4(i,k)
+              st(i,j,k,nstp, 67) = Res_NCaO_NH4(i,k)
+              st(i,j,k,nstp, 68) = Res_EupS_NH4(i,k)
+              st(i,j,k,nstp, 69) = Res_EupO_NH4(i,k)
+              st(i,j,k,nstp, 70) = Res_Jel_NH4(i,k)
+              st(i,j,k,nstp, 71) = Rem_Det_NH4(i,k)
+              st(i,j,k,nstp, 72) = Rem_DetF_NH4(i,k)
+              st(i,j,k,nstp, 73) = Nit_NH4_NO3(i,k)
+              st(i,j,k,nstp, 74) = Gra_Det_Ben(i,k)
+              st(i,j,k,nstp, 75) = Gra_DetF_Ben(i,k)
+              st(i,j,k,nstp, 76) = Gra_PhS_Ben(i,k)
+              st(i,j,k,nstp, 77) = Gra_PhL_Ben(i,k)
+              st(i,j,k,nstp, 78) = Gra_BenDet_Ben(i,k)
+              st(i,j,k,nstp, 79) = Exc_Ben_NH4(i,k)
+              st(i,j,k,nstp, 80) = Exc_Ben_BenDet(i,k)
+              st(i,j,k,nstp, 81) = Res_Ben_NH4(i,k)
+              st(i,j,k,nstp, 82) = Mor_Ben_BenDet(i,k)
+              st(i,j,k,nstp, 83) = Rem_BenDet_NH4(i,k)
+              st(i,j,k,nstp, 84) = Gpp_INO3_IPhL(i,k)
+              st(i,j,k,nstp, 85) = Gpp_INH4_IPhL(i,k)
+              st(i,j,k,nstp, 86) = Res_IPhL_INH4(i,k)
+              st(i,j,k,nstp, 87) = Mor_IPhL_INH4(i,k)
+              st(i,j,k,nstp, 88) = Nit_INH4_INO3(i,k)
+              st(i,j,k,nstp, 89) = Twi_IPhL_PhL(i,k)
+              st(i,j,k,nstp, 90) = Twi_INO3_NO3(i,k)
+              st(i,j,k,nstp, 91) = Twi_INH4_NH4(i,k)
+              st(i,j,k,nstp, 92) = Ver_PhS_BenDet(i,k)
+              st(i,j,k,nstp, 93) = Ver_PhS_Out(i,k)
+              st(i,j,k,nstp, 94) = Ver_PhL_BenDet(i,k)
+              st(i,j,k,nstp, 95) = Ver_PhL_Out(i,k)
+              st(i,j,k,nstp, 96) = Ver_Det_BenDet(i,k)
+              st(i,j,k,nstp, 97) = Ver_Det_Out(i,k)
+              st(i,j,k,nstp, 98) = Ver_DetF_BenDet(i,k)
+              st(i,j,k,nstp, 99) = Ver_DetF_Out(i,k)
+              st(i,j,k,nstp,100) = Ver_NCaO_BenDet(i,k)
+              st(i,j,k,nstp,101) = Ver_NCaS_DetF(i,k)
+              st(i,j,k,nstp,102) = Ver_NCaS_BenDet(i,k) 
             END DO
           END DO
 #endif
@@ -2656,118 +2663,6 @@
 # endif
 #endif
 
-#ifdef STATIONARY
-        DO k=1,N(ng)
-
-          DO i=Istr,Iend
-
-             st(i,j,k,nstp,1)  =    Stat3(i,k,1)
-             st(i,j,k,nstp,2)  =    Stat3(i,k,2)
-             st(i,j,k,nstp,3)  =    Stat3(i,k,3)
-             st(i,j,k,nstp,4)  =    Stat3(i,k,4)
-             st(i,j,k,nstp,5)  =    Stat3(i,k,5)
-             st(i,j,k,nstp,6)  =    Stat3(i,k,6)
-             st(i,j,k,nstp,7)  =    Stat3(i,k,7)
-             st(i,j,k,nstp,8)  =    Stat3(i,k,8)
-             st(i,j,k,nstp,9)  =    Stat3(i,k,9)
-             st(i,j,k,nstp,10) =    Stat3(i,k,10)
-             st(i,j,k,nstp,11) =    Stat3(i,k,11)
-             st(i,j,k,nstp,12) =    Stat3(i,k,12)
-             st(i,j,k,nstp,13) =    Stat3(i,k,13)
-             st(i,j,k,nstp,14) =    Stat3(i,k,14)
-             st(i,j,k,nstp,15) =    Stat3(i,k,15)
-             st(i,j,k,nstp,16) =    Stat3(i,k,16)
-
-
-          END DO
-        END DO
-#endif
-#ifdef STATIONARY2
-
-        DO i=Istr,Iend
-          st2(i,j,nstp,1) =   Stat2(i,1)
-          st2(i,j,nstp,2) =   Stat2(i,2)
-          st2(i,j,nstp,3) =   Stat2(i,3)
-          st2(i,j,nstp,4) =   Stat2(i,4)
-          st2(i,j,nstp,5) =   Stat2(i,5)
-          st2(i,j,nstp,6) =   Stat2(i,6)
-          st2(i,j,nstp,7) =   Stat2(i,7)
-          st2(i,j,nstp,8) =   Stat2(i,8)
-# ifdef MASKING
-          st2(i,j,nstp,1) =  st2(i,j,nstp,1)*rmask(i,j)
-          st2(i,j,nstp,2) =  st2(i,j,nstp,2)*rmask(i,j)
-          st2(i,j,nstp,3) =  st2(i,j,nstp,3)*rmask(i,j)
-          st2(i,j,nstp,4) =  st2(i,j,nstp,4)*rmask(i,j)
-          st2(i,j,nstp,5) =  st2(i,j,nstp,5)*rmask(i,j)
-          st2(i,j,nstp,6) =  st2(i,j,nstp,6)*rmask(i,j)
-          st2(i,j,nstp,7) =  st2(i,j,nstp,7)*rmask(i,j)
-          st2(i,j,nstp,8) =  st2(i,j,nstp,8)*rmask(i,j)
-
-# endif
-        END DO
-#endif
-#ifdef PROD3
-        DO k=1,N(ng)
-          DO i=Istr,Iend
-            pt3(i,j,k,nnew,iPhSprd) = pt3(i,j,k,nstp,iPhSprd) +         &
-     &                             Prod(i,k,iPhSPrd)
-
-            pt3(i,j,k,nnew,iPhLprd) = pt3(i,j,k,nstp,iPhLprd) +         &
-     &                             Prod(i,k,iPhLPrd)
-            pt3(i,j,k,nnew,iMZSprd) = pt3(i,j,k,nstp,iMZSprd) +         &
-     &                             Prod(i,k,iMZSPrd)
-            pt3(i,j,k,nnew,iMZLprd) = pt3(i,j,k,nstp,iMZLprd) +         &
-     &                             Prod(i,k,iMZLPrd)
-            pt3(i,j,k,nnew,iCopPrd) = pt3(i,j,k,nstp,iCopPrd) +         &
-     &                             Prod(i,k,iCopPrd)
-            pt3(i,j,k,nnew,iNCaPrd) = pt3(i,j,k,nstp,iNCaPrd) +         &
-     &                             Prod(i,k,iNCaPrd)
-            pt3(i,j,k,nnew,iEupPrd) = pt3(i,j,k,nstp,iEupPrd) +         &
-     &                             Prod(i,k,iEupPrd)
-# ifdef JELLY
-
-            pt3(i,j,k,nnew,iJelPrd) = pt3(i,j,k,nstp,iJelPrd) +         &
-     &                             Prod(i,k,iJelPrd)
-# endif
-# ifdef FEAST
-
-            ! Note that fish zoopmort are lagged by one timestep due to state update
-
-!           pt3(i,j,k,nnew,iFCopMort)   = ZoopFishDeath(i,j,k,1)
-!           pt3(i,j,k,nnew,iFNCaSMort)  = ZoopFishDeath(i,j,k,2)
-!           pt3(i,j,k,nnew,iFNCaOMort)  = ZoopFishDeath(i,j,k,3)
-!           pt3(i,j,k,nnew,iFEupSMort)  = ZoopFishDeath(i,j,k,4)
-!           pt3(i,j,k,nnew,iFEupOMort)  = ZoopFishDeath(i,j,k,5)
-            pt3(i,j,k,nnew,iFishOne)   = GF%ofdat(i,j,k,1)
-            pt3(i,j,k,nnew,iFishTwo)   = GF%ofdat(i,j,k,2)
-            pt3(i,j,k,nnew,iFishThree) = GF%ofdat(i,j,k,3)
-            pt3(i,j,k,nnew,iFishFour)  = GF%ofdat(i,j,k,4)
-            pt3(i,j,k,nnew,iFishFive)  = GF%ofdat(i,j,k,5)
-            pt3(i,j,k,nnew,iFishSix)   = GF%ofdat(i,j,k,6)
-            pt3(i,j,k,nnew,iFishSeven) = GF%ofdat(i,j,k,7)
-            pt3(i,j,k,nnew,iFishEight) = GF%ofdat(i,j,k,8)
-# endif
-          END DO
-        END DO
-#endif
-
-
-#ifdef PROD2
-
-        DO i=Istr,Iend
-# ifdef BENTHIC
-
-          pt2(i,j,nnew,iBenPrd) = pt2(i,j,nstp,iBenPrd)                 &
-     &                           +Prod2(i,iBenPrd)
-# endif
-
-# ifdef ICE_BIO
-          pt2(i,j,nnew,iIAPrd) = pt2(i,j,nstp,iIAPrd)+Prod2(i,iIAPrd)
-
-# endif
-          pt2(i,j,nnew,iXPrd) = pt2(i,j,nstp,iXPrd)+Prod2(i,iXPrd)
-        END DO
-#endif
       END DO J_LOOP
 
       !=============================================
@@ -2834,7 +2729,7 @@
 
 # if defined ICE_BIO
 #  ifdef BERING_10K
-#   ifndef BESTNPZ_INTERMEDIATES
+#   ifndef MATLABCOMPILE
 
       CALL IcePhLbc_tile (ng, tile,                                     &
      &                LBi, UBi, LBj, UBj,                               &

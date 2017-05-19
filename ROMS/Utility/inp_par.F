@@ -4415,6 +4415,9 @@
 #ifdef STATIONARY      
       logical, dimension(NBTS,Ngrids) :: LtrcS
 #endif
+#ifdef BENTHIC
+      logical, dimension(NBEN,Ngrids) :: LtrcB
+#endif
 #ifdef ICE_BIO      
       logical, dimension(NIB,Ngrids) :: LtrcI
 #endif      
@@ -7102,14 +7105,13 @@
             END DO
 #  ifdef STATIONARY         
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTSvar)') THEN
-            Npts=load_l(Nval, Cval, NTS*Ngrids, LtrcS)
+            Npts=load_l(Nval, Cval, NBTS*Ngrids, LtrcS)
             DO ng=1,Ngrids
-              DO itrc=1, NBTS   
+              DO itrc=1,NBTS   
                 i=idTSvar(itrc)
                 Hout(i,ng)=LtrcS(itrc,ng)
               END DO
             END DO
-         
 #  endif          
 #  ifdef BIOFLUX            
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTBFvar)') THEN
@@ -7126,7 +7128,7 @@
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTS2var)') THEN
             Npts=load_l(Nval, Cval, NTS2*Ngrids, Ltrc)
             DO ng=1,Ngrids
-              DO itrc=1, NBTS2   
+              DO itrc=1,NBTS2   
                 i=idTS2var(itrc)
                 Hout(i,ng)=Ltrc(itrc,ng)
               END DO
@@ -7187,11 +7189,11 @@
 # endif
 # ifdef BENTHIC
           ELSE IF (TRIM(KeyWord).eq.'Hout(idBvar)') THEN
-            Npts=load_l(Nval, Cval,NBEN*Ngrids, Ltrc)
+            Npts=load_l(Nval, Cval,NBEN*Ngrids, LtrcB)
             DO ng=1,Ngrids
               DO itrc=1,NBEN
                 i=idBvar(idben(itrc))
-                Hout(i,ng)=Ltrc(itrc,ng)
+                Hout(i,ng)=LtrcB(itrc,ng)
               END DO
             END DO
 # endif
@@ -7490,14 +7492,14 @@
           END IF 
          
           
-          IF ( Lwrite .and.                                             &
-     &         TRIM(KeyWord).ne.'TNU2' .and.                            &
-     &         TRIM(KeyWord).ne.'TNU4' .and.                            &
-     &         TRIM(KeyWord).ne.'AKT_BAK' .and.                         &
-     &         TRIM(KeyWord).ne.'TNUDG' .and.                           &
-     &         TRIM(KeyWord).ne.'Hout(idTvar)' ) THEN
-            write(6,'(a15,i3,20e12.5)') TRIM(KeyWord),Nval,Rval(1:Nval)
-          END IF
+!           IF ( Lwrite .and.                                             &
+!      &         TRIM(KeyWord).ne.'TNU2' .and.                            &
+!      &         TRIM(KeyWord).ne.'TNU4' .and.                            &
+!      &         TRIM(KeyWord).ne.'AKT_BAK' .and.                         &
+!      &         TRIM(KeyWord).ne.'TNUDG' .and.                           &
+!      &         TRIM(KeyWord).ne.'Hout(idTvar)' ) THEN
+!             write(6,'(a15,i3,20e12.5)') TRIM(KeyWord),Nval,Rval(1:Nval)
+!           END IF
         END IF
       END DO
   10  WRITE (out,30) line
@@ -7505,11 +7507,11 @@
   20  CLOSE (inp)
 !
 #  ifdef FEAST 
-   call initialize_feast
+      call initialize_feast
 #  endif
-!-----------------------------------------------------------------------
-!  Report input parameters.
-!-----------------------------------------------------------------------
+      !-------------------------------
+      !  Report input parameters.
+      !-------------------------------
 !
 #  ifdef FEAST
 !     NOGRID START
@@ -7549,12 +7551,60 @@
      &              'Nudging/relaxation time scale (days)',             &
      &              'for tracer ', i, TRIM(Vname(1,idTvar(i)))
             END DO
+            
+            ! Hout flags
+            
             DO itrc=1,NBT
               i=idbio(itrc)
               IF (Hout(idTvar(i),ng)) WRITE (out,60)                    &
      &            Hout(idTvar(i),ng), 'Hout(idTvar)',                   &
      &            'Write out tracer ', i, TRIM(Vname(1,idTvar(i)))
             END DO
+#  ifdef BENTHIC
+            DO itrc=1,NBEN
+              i=idben(itrc)
+              IF (Hout(idBvar(i),ng)) WRITE (out,60)                    &
+     &            Hout(idBvar(i),ng), 'Hout(idBvar)',                   &
+     &            'Write out benthic tracer ', i, TRIM(Vname(1,idBvar(i)))
+            END DO
+#  endif
+#  ifdef ICE_BIO
+#   ifdef CLIM_ICE_1D
+            DO itrc=1,NIB
+              i=idice(itrc)
+              IF (Hout(idIceBvar(i),ng)) WRITE (out,60)                 &
+     &            Hout(idIceBvar(i),ng), 'Hout(idIceBvar)',             &
+     &            'Write out ice tracer ', i, TRIM(Vname(1,idIceBvar(i)))
+            END DO
+#   elif defined BERING_10K
+            IF (Hout(idIcePhL,ng)) WRITE (out,60)                       &
+     &            Hout(idIcePhL,ng), 'Hout(idIcePhL)',                  &
+     &            'Write out ice tracer ', 1, TRIM(Vname(1,idIcePhL))
+            IF (Hout(idIceNO3,ng)) WRITE (out,60)                       &
+     &            Hout(idIceNO3,ng), 'Hout(idIceNO3)',                  &
+     &            'Write out ice tracer ', 2, TRIM(Vname(1,idIceNO3))
+            IF (Hout(idIceNH4,ng)) WRITE (out,60)                       &
+     &            Hout(idIceNH4,ng), 'Hout(idIceNH4)',                  &
+     &            'Write out ice tracer ', 3, TRIM(Vname(1,idIceNH4))
+#   endif
+#  endif
+#  ifdef STATIONARY
+            DO itrc=1,NBTS
+              i=itrc
+              IF (Hout(idTSvar(i),ng)) WRITE (out,60)                   &
+     &            Hout(idTSvar(i),ng), 'Hout(idTSvar)',                 &
+     &            'Write out 3D diagnostic ', i, TRIM(Vname(1,idTSvar(i)))
+            END DO
+#  endif
+#  ifdef STATIONARY2
+            DO itrc=1,NBTS2
+              i=itrc
+              IF (Hout(idTS2var(i),ng)) WRITE (out,60)                  &
+     &            Hout(idTS2var(i),ng), 'Hout(idTSvar)',                &
+     &            'Write out 2D diagnostic ', i, TRIM(Vname(1,idTS2var(i)))
+            END DO
+#  endif
+            
           END IF
         END DO
         
@@ -8288,7 +8338,7 @@
           ELSE IF (TRIM(KeyWord).eq.'Hout(idTSvar)') THEN
             Npts=load_l(Nval, Cval, NTS*Ngrids, Ltrc)
             DO ng=1,Ngrids
-              DO itrc=1, NBTS   !all stationary tracer variable
+              DO itrc=1,NBTS   !all stationary tracer variable
                 i=idTSvar(itrc)
                 Hout(i,ng)=Ltrc(itrc,ng)
               END DO
@@ -11290,8 +11340,14 @@
       logical, dimension(MBOTP,Ngrids) :: Lbottom
 # endif
       logical, dimension(MT,Ngrids) :: Lsta
-#ifdef PROD3
+# ifdef PROD3
       logical, dimension(NBPT3,Ngrids) :: Ltrc3
+# endif
+# ifdef STATIONARY
+      logical, dimension(NBTS,Ngrids) :: Lstat
+# endif
+#ifdef BENTHIC
+      logical, dimension(NBEN,Ngrids) :: LtrcB
 #endif
       integer, dimension(Ngrids) :: is
 
@@ -11337,7 +11393,7 @@
               END DO
             END DO
 #if defined PROD3
-           ELSE IF (TRIM(KeyWord).eq.'Sout(idPT3var)') THEN
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idPT3var)') THEN
             Npts=load_l(Nval, Cval,NBPT3*Ngrids, Ltrc3)
             DO ng=1,Ngrids
               DO itrc=1,NBPT3
@@ -11346,17 +11402,17 @@
             END DO  
 #endif      
 #if defined STATIONARY
-           ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN
-            Npts=load_l(Nval, Cval,NTS*Ngrids, Lsta)
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idTSvar)') THEN 
+            Npts=load_l(Nval, Cval,NBTS*Ngrids, Lstat)
             DO ng=1,Ngrids
               DO itrc=1,NTS(ng)
-                Sout(idTSvar(itrc),ng)=Lsta(itrc,ng)
+                Sout(idTSvar(itrc),ng)=Lstat(itrc,ng)
               END DO
             END DO 
 #endif 
 #if defined PROD2           
           ELSE IF (TRIM(KeyWord).eq.'Sout(idPT2var)') THEN
-            Npts=load_l(Nval, Cval,NBPT2*Ngrids, Lsta)
+            Npts=load_l(Nval, Cval,NBPT2*Ngrids, Lsta) ! TODO use of Lsta dangerous here... will crash if # prod tracers > MT (# water column tracers)
             DO ng=1,Ngrids
               DO itrc=1,NPT2(ng)
                 Sout(idPT2var(itrc),ng)=Lsta(itrc,ng)
@@ -11365,10 +11421,10 @@
 #endif         
 #if defined BENTHIC
           ELSE IF (TRIM(KeyWord).eq.'Sout(idBvar)') THEN
-            Npts=load_l(Nval, Cval,NBeT*Ngrids, Lsta)
+            Npts=load_l(Nval, Cval,NBeT*Ngrids, LtrcB) 
             DO ng=1,Ngrids
               DO itrc=1,NBeT(ng)
-                Sout(idBvar(itrc),ng)=Lsta(itrc,ng)
+                Sout(idBvar(itrc),ng)=LtrcB(itrc,ng)
               END DO
             END DO
 #endif
@@ -11537,14 +11593,24 @@
             Npts=load_l(Nval, Cval, Ngrids, Sout(idWio,1))
           ELSE IF (TRIM(KeyWord).eq.'Sout(idWro)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idWro,1))
-#ifdef ICE_BIO    
+#  ifdef ICE_BIO 
+#   ifdef CLIM_ICE_1D
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idIceBvar)') THEN
+            Npts=load_l(Nval, Cval,NIB*Ngrids, Lsta)
+            DO ng=1,Ngrids
+              DO itrc=1,NIB
+                Sout(idIceBvar(itrc),ng)=Lsta(itrc,ng)
+              END DO
+            END DO
+#   else  
           ELSE IF (TRIM(KeyWord).eq.'Sout(idIcePhL)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idIcePhL,1))
-            ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNO3)') THEN
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNO3)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idIceNO3,1))
-            ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNH4)') THEN
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNH4)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idIceNH4,1))  
-#endif  
+#   endif
+#  endif  
 # endif
           ELSE IF (TRIM(KeyWord).eq.'NSTATION') THEN
             Npts=load_i(Nval, Rval, Ngrids, Nstation)
@@ -11620,6 +11686,46 @@
      &            Sout(idTvar(itrc),ng), 'Sout(idTvar)',                &
      &            'Write out tracer ', itrc, TRIM(Vname(1,idTvar(itrc)))
             END DO
+#  ifdef BENTHIC
+            DO itrc=1,NBEN
+              IF (Sout(idBvar(itrc),ng)) WRITE (out,90)                 &
+     &            Sout(idBvar(itrc),ng), 'Sout(idBvar)',                &
+     &            'Write out benthic tracer ', itrc, TRIM(Vname(1,idBvar(itrc)))
+            END DO
+#  endif
+#  ifdef ICE_BIO
+#   ifdef CLIM_ICE_1D
+            DO itrc=1,NIB
+              IF (Sout(idIceBvar(itrc),ng)) WRITE (out,90)                 &
+     &            Sout(idIceBvar(itrc),ng), 'Sout(idIceBvar)',                &
+     &            'Write out ice tracer ', itrc, TRIM(Vname(1,idIceBvar(itrc)))
+            END DO
+#   elif defined BERING_10K  
+            IF (Sout(idIcePhL,ng)) WRITE (out,90)                       &
+     &            Sout(idIcePhL,ng), 'Sout(idIcePhL)',                  &
+     &            'Write out ice tracer ', 1, TRIM(Vname(1,idIcePhL))
+            IF (Sout(idIceNO3,ng)) WRITE (out,90)                       &
+     &            Sout(idIceNO3,ng), 'Sout(idIceNO3)',                  &
+     &            'Write out ice tracer ', 2, TRIM(Vname(1,idIceNO3))
+            IF (Sout(idIceNH4,ng)) WRITE (out,90)                       &
+     &            Sout(idIceNH4,ng), 'Sout(idIceNH4)',                  &
+     &            'Write out ice tracer ', 3, TRIM(Vname(1,idIceNH4))
+#   endif 
+#  endif  
+#  ifdef STATIONARY
+            DO itrc=1,NBTS
+              IF (Sout(idTSvar(itrc),ng)) WRITE (out,90)                 &
+     &            Sout(idTSvar(itrc),ng), 'Sout(idTSvar)',                &
+     &            'Write out 3D diagnostic ', itrc, TRIM(Vname(1,idTSvar(itrc)))
+            END DO
+#  endif
+#  ifdef STATIONARY2
+            DO itrc=1,NBTS2
+              IF (Sout(idTS2var(itrc),ng)) WRITE (out,90)                 &
+     &            Sout(idTS2var(itrc),ng), 'Sout(idTS2var)',                &
+     &            'Write out 2D diagnostic ', itrc, TRIM(Vname(1,idTS2var(itrc)))
+            END DO
+#  endif    
 # endif
             IF (Sout(idUair,ng)) WRITE (out,80) Sout(idUair,ng),        &
      &          'Sout(idUair)',                                         &
@@ -11817,16 +11923,7 @@
      &       'Write out average ice thickness.'
           IF (Sout(idHsno,ng)) WRITE (out,80) Sout(idHsno,ng),          &
      &       'Sout(idHsno)',                                            &
-     &       'Write out snow thickness.'                            
-# ifdef ICE_BIO
-# if defined BERING_10K     
-            
-         IF (Sout(idIcePhL,ng)) WRITE (out,80) Sout(idIcePhL,ng),      &
-     &       'Sout(idIcePhL)',                                          &
-     &        'Write out average ice algae.'                             
-# endif 
-# endif                                                 
-  
+     &       'Write out snow thickness.'                                                                           
           IF (Sout(idTice,ng)) WRITE (out,80) Sout(idTice,ng),          &
      &       'Sout(idTice)',                                            &
      &       'Write out ice/snow surface temperature.'
