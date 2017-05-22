@@ -385,7 +385,7 @@
       real(r8) :: Temp1
       real(r8) :: PON
       real(r8) :: NitrifMax, DLNitrif
-      
+
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv2
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Hz_inv3
@@ -436,6 +436,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Rem_BenDet_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_INO3_IPhL, Gpp_INH4_IPhL, Res_IPhL_INH4, Mor_IPhL_INH4, Nit_INH4_INO3, Twi_IPhL_PhL, Twi_INO3_NO3, Twi_INH4_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_BenDet, Ver_PhS_Out, Ver_PhL_BenDet, Ver_PhL_Out, Ver_Det_BenDet, Ver_Det_Out, Ver_DetF_BenDet, Ver_DetF_Out, Ver_NCaO_BenDet, Ver_NCaS_DetF, Ver_NCaS_BenDet
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: prod_PhS, prod_PhL, prod_MZL, prod_Cop, prod_NCaS, prod_EupS, prod_NCaO, prod_EupO, prod_Jel, prod_Ben, prod_IcePhL
 
       ! Biological source/sinks
 
@@ -775,16 +776,16 @@
           end if
 
           ! Ice status
-          ! (Note: Most arrays have data arranged such that time 
-          ! dimensions = [1 2 3] 
-          !            = [nstp nnew 3] 
+          ! (Note: Most arrays have data arranged such that time
+          ! dimensions = [1 2 3]
+          !            = [nstp nnew 3]
           !            = [current predictor intermediate]
-          ! Ice needs to hold on to the previous step, so those arrays 
-          ! are [1 2] = [nprev nstp] = [previous current].  The flipflop 
-          ! of values below is simply done so we can keep all the nstp 
-          ! values at the same index location (1) and therefore access 
-          ! them with the nstp shorthand.  Side effect is the confusing 
-          ! shorthand that for ice, nnew refers to the previous step 
+          ! Ice needs to hold on to the previous step, so those arrays
+          ! are [1 2] = [nprev nstp] = [previous current].  The flipflop
+          ! of values below is simply done so we can keep all the nstp
+          ! values at the same index location (1) and therefore access
+          ! them with the nstp shorthand.  Side effect is the confusing
+          ! shorthand that for ice, nnew refers to the previous step
           ! when reading, and the predictor step later when writing.
 
           cff1=IceLog(i,j,nnew)
@@ -857,10 +858,10 @@
         ! Save a copy of the original biomass
 
         Bio_bak = Bio2d
-        
-        ! If any biomass is negtive, replace with 0 for all source/sink 
+
+        ! If any biomass is negtive, replace with 0 for all source/sink
         ! calculations
-        
+
         Bio2d = max(0.0_r8, Bio2d)
         Bio3d = max(0.0_r8, Bio3d)
 
@@ -971,7 +972,7 @@
 
           ! Calculate PAR at the surface
           ! Eyeball fit of data from Hinckley''s ezeroday.dat (E d-1 m-2)
-          ! TODO: this option is definitely deprecated, and doesn't 
+          ! TODO: this option is definitely deprecated, and doesn't
           ! actually calculate PAR.  Should be removed soon.
 
           cff2 = 41.0_r8 - 35.0_r8                                      &
@@ -985,8 +986,8 @@
           ! (E/m^2/day)
           !
           ! Eq = I * lambda/(h*c*A) * s2d
-          !   where 
-          !   
+          !   where
+          !
           !   Eq = photon flux (E/m^2/d)
           !   lambda = wavelength (m)
           !   I = irradiance (W/m^2)
@@ -1073,17 +1074,17 @@
         !================================================================
 
         ITER_LOOP: DO Iter=1,BioIter(ng)
-        
+
           ! Initialize the rate of change, dB/dt, to 0 for all elements.
-          ! Same for all intermediate flux arrays.  Note that these 
-          ! fluxes will hold the 2D equivalent of all the fluxes (i.e. 
-          ! per area, rather than per volume); this makes it easier to 
-          ! keep track of things that are moving between different-sized 
-          ! layers (e.g. ice to surface layer, or benthos to water 
+          ! Same for all intermediate flux arrays.  Note that these
+          ! fluxes will hold the 2D equivalent of all the fluxes (i.e.
+          ! per area, rather than per volume); this makes it easier to
+          ! keep track of things that are moving between different-sized
+          ! layers (e.g. ice to surface layer, or benthos to water
           ! column)
-          
+
           DBio = 0 ! Initializes entire array to 0
-          
+
           Gpp_NO3_PhS    = 0
           Gpp_NO3_PhL    = 0
           Gpp_NH4_PhS    = 0
@@ -1246,7 +1247,7 @@
 
 #ifdef DENMAN
               LightLimS = TANH(alphaPhSv * PAR(i,k) / PmaxsS)
-              LightLimL = TANH(alphaPhLv * PAR(i,k) / PmaxsL) 
+              LightLimL = TANH(alphaPhLv * PAR(i,k) / PmaxsL)
 #else
               OffSet = 0.0_r8
               LightLimS = TANH(alphaPhSv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsS)
@@ -1308,11 +1309,11 @@
                 Gpp_NO3_PhL(i,k) = 0; ! mg C m^-2 d^-1
                 Gpp_NH4_PhL(i,k) = 0; ! mg C m^-2 d^-1
               endif
-              
+
 #ifdef STATIONARY
 
               ! Save limitation terms for output
-              
+
               st(i,j,k,nstp,1) = LightLimS
               st(i,j,k,nstp,2) = LightLimL
               st(i,j,k,nstp,3) = NOLimS
@@ -1465,7 +1466,7 @@
 #else
               cff4 = 1.0_r8
 #endif
-              
+
               Gra_PhS_EupO(i,k)  = fpPhSEup * Bio3d(i,k,iiPhS)**2  * cff2 * cff3 * cff4
               Gra_PhL_EupO(i,k)  = fpPhLEup * Bio3d(i,k,iiPhL)**2  * cff2 * cff3 * cff4
               Gra_MZL_EupO(i,k)  = fpMZLEup * Bio3d(i,k,iiMZL)**2  * cff2 * cff3 * cff4
@@ -1499,8 +1500,8 @@
               ! for an outside food source.  However, GG's code doesn't
               ! specify how the flux to detritus might change in that
               ! case (as written currently, that extra would come out of
-              ! the DetF biomass via a negative egestion flux) TODO: Do 
-              ! we want to allow gammaJel>1, and if so, how should we 
+              ! the DetF biomass via a negative egestion flux) TODO: Do
+              ! we want to allow gammaJel>1, and if so, how should we
               ! handle egestion?
 
               Ege_Jel_DetF(i,k) = (1.0_r8 - gammaJel) * cff1 * cff2 * cff3
@@ -1586,7 +1587,7 @@
               ! TODO: original DBio(i,k,iXXX) = DBio(i,k,iXXX) - 0.5*Hz(i,j,k)/dtdays
               ! Implies coefficient units of mg C * day * m^-4???  Typo?
               ! Supposed to be constant rate, or maybe constant fraction
-              ! of biomass?  Assuming the former for now.  This option 
+              ! of biomass?  Assuming the former for now.  This option
               ! seems deprecated and should probably be removed.
               Mor_Cop_DetF(i,k)  = 0.5
               Mor_NCaS_DetF(i,k) = 0.5
@@ -1597,11 +1598,11 @@
               TFEup = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 # ifdef FEAST
               ! Mesozooplankton (quadratic predation closure).  FEAST
-              ! predation only affects zooplankton within a specific 
-              ! region (mostly EBS).  This term (modified spatially by 
+              ! predation only affects zooplankton within a specific
+              ! region (mostly EBS).  This term (modified spatially by
               ! forcing input variable zoop_force) tries to smooth out
-              ! some boundary issues that can come of that. Note that 
-              ! this term does *not* include predation by FEAST fish yet; 
+              ! some boundary issues that can come of that. Note that
+              ! this term does *not* include predation by FEAST fish yet;
               ! that loss term will be added in feast_step.h.
 
               Mor_Cop_DetF(i,k)  = TFEup*(mpredCop + fpredCop  * GF%zoop_force(1,1,i,j,1))*Bio3d(i,k,iiCop)**2
@@ -1686,7 +1687,7 @@
           END DO
 
           !------------------------------
-          ! Nitrification and 
+          ! Nitrification and
           ! remineralization
           !------------------------------
 
@@ -1703,13 +1704,13 @@
 
               ! Nitrification
 
-              
+
               NitrifMax = Nitr0 * exp(-ktntr*(Temp(i,k) - ToptNtr)**2)     ! Arhonditsis 2005 temperature dependence
-              
-              ParW = PAR(i,k)/0.394848_r8 ! convert to W 
+
+              ParW = PAR(i,k)/0.394848_r8 ! convert to W
               DLNitrif = (1 - MAX(0.0_r8, (ParW - tI0)/(KI + ParW - tI0))) ! Fennel light dependence
               DLNitrif = 1.0_r8  ! No light/depth dependence (overrides previous line)
-                                                        
+
               cff1 = Bio3d(i,k,iiNH4)/(KNH4Nit +Bio3d(i,k,iiNH4))          ! Arhonditsis saturation
 
               Nit_NH4_NO3(i,k) = NitrifMax * Bio3d(i,k,iiNH4) * DLNitrif * cff1 !  mmol N m^-3 d^-1
@@ -1804,11 +1805,11 @@
             cff0 = q10r**((Temp(i,1)-T0benr)/10.0_r8)
 
             ! Total uptake of each food category
-            ! TODO: Unit mismatch in the part... cff1 is mC/m^2 and 
+            ! TODO: Unit mismatch in the part... cff1 is mC/m^2 and
             ! (cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP)) is mgC/m^2/d
-            ! Is this supposed to be a zero-trap?  Should be cff1/dtdays 
-            ! (i.e. highest rate that would keep losses positive?)  Of 
-            ! course, that assumes no fluxes into the layer to possibly 
+            ! Is this supposed to be a zero-trap?  Should be cff1/dtdays
+            ! (i.e. highest rate that would keep losses positive?)  Of
+            ! course, that assumes no fluxes into the layer to possibly
             ! balance out a seemingly too-high loss rate.
 
             cff7  = min(cff1,(cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! D
@@ -2189,7 +2190,84 @@
      &                        -  Twi_INH4_NH4)*xi*dtdays ! IceNH4: mmol N m^-2
 
 
-          ! TODO: Collect net production, bflux values
+          ! Net production rates (for diagnostics)
+
+          prod_PhS           = Gpp_NO3_PhS                              &
+     &                       + Gpp_NH4_PhS                              &
+     &                       - Res_PhS_NH4     ! PhS: mg C m^-2 d^-1
+
+          prod_PhL           = Gpp_NO3_PhL                              &
+     &                       + Gpp_NH4_PhL                              &
+     &                       - Res_PhL_NH4     ! PhL: mg C m^-2 d^-1
+
+          prod_MZL           = Gra_PhS_MZL                              &
+     &                       + Gra_PhL_MZL                              &
+     &                       - Ege_MZL_Det                              &
+     &                       - Res_MZL_NH4     ! MZL: mg C m^-2 d^-1
+
+          prod_Cop           = Gra_PhS_Cop                              &
+     &                       + Gra_PhL_Cop                              &
+     &                       + Gra_MZL_Cop                              &
+     &                       + Gra_IPhL_Cop                             &
+     &                       - Ege_Cop_DetF                             &
+     &                       - Res_Cop_NH4     ! Cop: mg C m^-2 d^-1
+
+          prod_NCaS          = Gra_PhS_NCaS                             &
+     &                       + Gra_PhL_NCaS                             &
+     &                       + Gra_MZL_NCaS                             &
+     &                       + Gra_IPhL_NCaS                            &
+     &                       - Ege_NCaS_DetF                            &
+     &                       - Res_NCaS_NH4    ! NCaS: mg C m^-2 d^-1
+
+          prod_EupS          = Gra_PhS_EupS                             &
+     &                       + Gra_PhL_EupS                             &
+     &                       + Gra_MZL_EupS                             &
+     &                       + Gra_Cop_EupS                             &
+     &                       + Gra_IPhL_EupS                            &
+     &                       + Gra_Det_EupS                             &
+     &                       + Gra_DetF_EupS                            &
+     &                       - Ege_EupS_DetF                            &
+     &                       - Res_EupS_NH4    ! EupS: mg C m^-2 d^-1
+
+          prod_NCaO          = Gra_PhS_NCaO                             &
+     &                       + Gra_PhL_NCaO                             &
+     &                       + Gra_MZL_NCaO                             &
+     &                       + Gra_IPhL_NCaO                            &
+     &                       - Ege_NCaO_DetF                            &
+     &                       - Res_NCaO_NH4    ! NCaO: mg C m^-2 d^-1
+
+          prod_EupO          = Gra_PhS_EupO                             &
+     &                       + Gra_PhL_EupO                             &
+     &                       + Gra_MZL_EupO                             &
+     &                       + Gra_Cop_EupO                             &
+     &                       + Gra_IPhL_EupO                            &
+     &                       + Gra_Det_EupO                             &
+     &                       + Gra_DetF_EupO                            &
+     &                       - Ege_EupO_DetF                            &
+     &                       - Res_EupO_NH4    ! EupO: mg C m^-2 d^-1
+
+          prod_Jel            = Gra_Cop_Jel                             &
+     &                        + Gra_EupS_Jel                            &
+     &                        + Gra_EupO_Jel                            &
+     &                        + Gra_NCaS_Jel                            &
+     &                        + Gra_NCaO_Jel                            &
+     &                        - Ege_Jel_DetF                            &
+     &                        - Mor_Jel_DetF                            &
+     &                        - Res_Jel_NH4    ! Jel: mg C m^-2 d^-1
+
+          prod_Ben            = Gra_Det_Ben                             &
+     &                        + Gra_DetF_Ben                            &
+     &                        + Gra_PhS_Ben                             &
+     &                        + Gra_PhL_Ben                             &
+     &                        + Gra_BenDet_Ben                          &
+     &                        - Exc_Ben_NH4                             &
+     &                        - Exc_Ben_BenDet                          &
+     &                        - Res_Ben_NH4                             &
+     &                        - Mor_Ben_BenDet ! Ben: mg C m^-2 d^-1
+
+          prod_IcePhL         = Gpp_INO3_IPhL                           &
+     &                        + Gpp_INH4_IPhL                           &
+     &                        - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
 
           ! Add DBio terms to existing biomass
 
@@ -2227,11 +2305,11 @@
 
           ! This section includes all vertical movement of state
           ! variables, including sinking of phytoplankton and particulate
-          ! detritus, large copepod seasonal diapause, and euphausiid 
+          ! detritus, large copepod seasonal diapause, and euphausiid
           ! diel vertical migration.
 
-          ! Fraction used: 20% of what hits the bottom becomes 
-          ! biologically unavailable, and 1% is lost to denitrification.  
+          ! Fraction used: 20% of what hits the bottom becomes
+          ! biologically unavailable, and 1% is lost to denitrification.
           ! These fractions apply to PhS, PhL, Det, and DetF.
 
           fracUsed = 0.79_r8
@@ -2284,7 +2362,7 @@
             Bio3d(i,1:N(ng),iiDet) = Bio3d(i,1:N(ng),iiDet) + dBtmp(1,1:N(ng))
             Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
 
-            Ver_Det_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1 
+            Ver_Det_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
             Ver_Det_Out(i,1)    = flxtmp*(1_r8-fracUsed)/dtdays ! mg C m^-2 d^-1
 
           END DO
@@ -2318,16 +2396,16 @@
 
 # ifdef DEPTHLIMITER
               if (z_w(i,j,1) < -200.0_r8) then
-                
+
                 ! If water is deeper than 200m, no flux boundary imposed.
-                ! Die and go to DetF when cross 200m (this assumes there 
-                ! was nothing deeper than 200m to begin with... if there 
+                ! Die and go to DetF when cross 200m (this assumes there
+                ! was nothing deeper than 200m to begin with... if there
                 ! was, that also gets killed off)
-                
+
                 call BioVert(N(ng), -wNCsink, Bio3d(i,:,iiNCaS), dBtmp, &
      &                       Hz(i,j,:), dtdays, z_w(i,j,:),             &
      &                       z_w(i,j,N(ng))+10, flxtmp)
-     
+
                 Bio3d(i,1:N(ng),iiNCaS) = Bio3d(i,1:N(ng),iiNCaS) + dBtmp(1,1:N(ng))
                 do k = 1,N(ng)
                   if (z_w(i,j,k) < -200.0_r8) then
@@ -2336,28 +2414,28 @@
                     Bio3d(i,k,iiNCaS) = 0;
                   endif
                 enddo
-                
-                ! If water depth is just over the 200m limit, 
-                ! there might be some flux across the bottom boundary.  
+
+                ! If water depth is just over the 200m limit,
+                ! there might be some flux across the bottom boundary.
                 ! Send this to BenDet.
-                
+
                 Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp
-                
+
                 Ver_NCaS_BenDet(i,1) = flxtmp/dtdays ! TODO: should this be subject to the 21% loss too?
               else
-                
+
                 ! In shallow water, flux boundary at bottom.
-                
+
                 call BioVert(N(ng), -wNCsink, Bio3d(i,:,iiNCaS), dBtmp, &
      &                       Hz(i,j,:), dtdays, z_w(i,j,:),             &
      &                       max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), &
      &                       flxtmp)
                 Bio3d(i,1:N(ng),iiNCaS) = Bio3d(i,1:N(ng),iiNCaS) + dBtmp(1,1:N(ng))
-                
+
               endif
-          
+
 # else
-              
+
               call BioVert(N(ng), -wNCsink, Bio3d(i,:,iiNCaS), dBtmp,   &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     max((z_w(i,j,0)+z_w(i,j,1))/2, -200.0_r8), flxtmp)
@@ -2408,36 +2486,36 @@
 
 #ifdef EUPDIEL
 
-          ! Euphausiid migration controlled by light level.  To achieve 
-          ! the effect of swimming towards a target depth, I run two 
+          ! Euphausiid migration controlled by light level.  To achieve
+          ! the effect of swimming towards a target depth, I run two
           ! passes, first with sinking and then with rising.
-            
+
           DO i=Istr,Iend
-            
-            ! Still testing... if entire water column is bright or dark, 
-            ! no migration movement.  If not, target depth is midpoint of 
+
+            ! Still testing... if entire water column is bright or dark,
+            ! no migration movement.  If not, target depth is midpoint of
             ! highest layer where PAR < 0.5 E/m^2/d
-            
+
             if (      (ANY(PAR(i,:) < 0.5_r8)) .and.                    &
      &          (.not. ALL(PAR(i,:) < 0.5_r8))) then
-              
+
               do k = 1,N(ng)
                 if (PAR(i,k) < 0.5_r8) then
                   targetdepth = (z_w(i,j,k-1) + z_w(i,j,k))/2
                 endif
               end do
-              
+
               call BioVert(N(ng), -100.0_r8, Bio3d(i,:,iiEupS), dBtmp,  &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     targetdepth, flxtmp)
-     
+
               Bio3d(i,1:N(ng),iiEupS) = Bio3d(i,1:N(ng),iiEupS) + dBtmp(1,1:N(ng))
 
               call BioVert(N(ng), 100.0_r8, Bio3d(i,:,iiEupS), dBtmp,   &
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     targetdepth, flxtmp)
 
-              Bio3d(i,1:N(ng),iiEupS) = Bio3d(i,1:N(ng),iiEupS) + dBtmp(1,1:N(ng))     
+              Bio3d(i,1:N(ng),iiEupS) = Bio3d(i,1:N(ng),iiEupS) + dBtmp(1,1:N(ng))
             endif
           END DO
 #endif
@@ -2454,15 +2532,15 @@
             ! Sync benthic (2D modified in sinking portion of code)
             Bio3d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet)/Hz(i,j,1)
           END DO
-          
-          
+
+
 #ifdef STATIONARY
-          
+
           DO i = Istr,Iend
             DO k = 1,N(ng)
-              
+
               ! Intermediate fluxes
-              
+
               st(i,j,k,nstp,  9) = Gpp_NO3_PhS(i,k)
               st(i,j,k,nstp, 10) = Gpp_NO3_PhL(i,k)
               st(i,j,k,nstp, 11) = Gpp_NH4_PhS(i,k)
@@ -2556,87 +2634,22 @@
               st(i,j,k,nstp, 99) = Ver_DetF_Out(i,k)
               st(i,j,k,nstp,100) = Ver_NCaO_BenDet(i,k)
               st(i,j,k,nstp,101) = Ver_NCaS_DetF(i,k)
-              st(i,j,k,nstp,102) = Ver_NCaS_BenDet(i,k) 
-              
+              st(i,j,k,nstp,102) = Ver_NCaS_BenDet(i,k)
+
               ! Net production
-              
-              st(i,j,k,nstp,103) = Gpp_NO3_PhS                          &  
-     &                           + Gpp_NH4_PhS                          &  
-     &                           - Res_PhS_NH4     ! PhS: mg C m^-2 d^-1
-     
-              st(i,j,k,nstp,104) = Gpp_NO3_PhL                          & 
-     &                           + Gpp_NH4_PhL                          & 
-     &                           - Res_PhL_NH4     ! PhL: mg C m^-2 d^-1
-     
-              st(i,j,k,nstp,105) = Gra_PhS_MZL                          &
-     &                           + Gra_PhL_MZL                          &
-     &                           - Ege_MZL_Det                          &
-     &                           - Res_MZL_NH4     ! MZL: mg C m^-2 d^-1
 
-              st(i,j,k,nstp,106) = Gra_PhS_Cop                          &
-     &                           + Gra_PhL_Cop                          &
-     &                           + Gra_MZL_Cop                          &
-     &                           + Gra_IPhL_Cop                         &
-     &                           - Ege_Cop_DetF                         &
-     &                           - Res_Cop_NH4     ! Cop: mg C m^-2 d^-1
+              st(i,j,k,nstp,103) = prod_PhS(i,k)
+              st(i,j,k,nstp,104) = prod_PhL(i,k)
+              st(i,j,k,nstp,105) = prod_MZL(i,k)
+              st(i,j,k,nstp,106) = prod_Cop(i,k)
+              st(i,j,k,nstp,107) = prod_NCaS(i,k)
+              st(i,j,k,nstp,108) = prod_EupS(i,k)
+              st(i,j,k,nstp,109) = prod_NCaO(i,k)
+              st(i,j,k,nstp,110) = prod_EupO(i,k)
+              st(i,j,k,nstp,111) = prod_Jel(i,k)
+              st(i,j,k,nstp,112) = prod_Ben(i,k)
+              st(i,j,k,nstp,113) = prod_IcePhL(i,k)
 
-              st(i,j,k,nstp,107) = Gra_PhS_NCaS                         &
-     &                           + Gra_PhL_NCaS                         &
-     &                           + Gra_MZL_NCaS                         &
-     &                           + Gra_IPhL_NCaS                        &
-     &                           - Ege_NCaS_DetF                        &
-     &                           - Res_NCaS_NH4    ! NCaS: mg C m^-2 d^-1
-
-              st(i,j,k,nstp,108) = Gra_PhS_EupS                         &
-     &                           + Gra_PhL_EupS                         &
-     &                           + Gra_MZL_EupS                         &
-     &                           + Gra_Cop_EupS                         &
-     &                           + Gra_IPhL_EupS                        &
-     &                           + Gra_Det_EupS                         &
-     &                           + Gra_DetF_EupS                        &
-     &                           - Ege_EupS_DetF                        &
-     &                           - Res_EupS_NH4    ! EupS: mg C m^-2 d^-1
-
-              st(i,j,k,nstp,109) = Gra_PhS_NCaO                         &
-     &                           + Gra_PhL_NCaO                         &
-     &                           + Gra_MZL_NCaO                         &
-     &                           + Gra_IPhL_NCaO                        &
-     &                           - Ege_NCaO_DetF                        &
-     &                           - Res_NCaO_NH4    ! NCaO: mg C m^-2 d^-1
-
-              st(i,j,k,nstp,110) = Gra_PhS_EupO                         &
-     &                           + Gra_PhL_EupO                         &
-     &                           + Gra_MZL_EupO                         &
-     &                           + Gra_Cop_EupO                         &
-     &                           + Gra_IPhL_EupO                        &
-     &                           + Gra_Det_EupO                         &
-     &                           + Gra_DetF_EupO                        &
-     &                           - Ege_EupO_DetF                        &
-     &                           - Res_EupO_NH4    ! EupO: mg C m^-2 d^-1
-
-              st(i,j,k,nstp,111)  = Gra_Cop_Jel                         &
-     &                            + Gra_EupS_Jel                        &
-     &                            + Gra_EupO_Jel                        &
-     &                            + Gra_NCaS_Jel                        &
-     &                            + Gra_NCaO_Jel                        &
-     &                            - Ege_Jel_DetF                        &
-     &                            - Mor_Jel_DetF                        &
-     &                            - Res_Jel_NH4    ! Jel: mg C m^-2 d^-1
-
-              st(i,j,k,nstp,112)  = Gra_Det_Ben                         &
-     &                            + Gra_DetF_Ben                        &
-     &                            + Gra_PhS_Ben                         &
-     &                            + Gra_PhL_Ben                         &
-     &                            + Gra_BenDet_Ben                      &
-     &                            - Exc_Ben_NH4                         &
-     &                            - Exc_Ben_BenDet                      &
-     &                            - Res_Ben_NH4                         &
-     &                            - Mor_Ben_BenDet ! Ben: mg C m^-2 d^-1
-
-              st(i,j,k,nstp,113)  = Gpp_INO3_IPhL                       &
-     &                            + Gpp_INH4_IPhL                       &
-     &                            - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
-              
             END DO
           END DO
 #endif
@@ -2650,17 +2663,17 @@
         ! Place the appropriate biomass values into main tracer arrays
         ! (recall that everything in the t(nnew) step is in m*Tunits)
         !
-        ! The Bio_bak step accounts for the fact that tracer values may 
-        ! have been negative when passed to this function, and this 
+        ! The Bio_bak step accounts for the fact that tracer values may
+        ! have been negative when passed to this function, and this
         ! conserves that biomass.
-        
-        ! TODO: Georgina's code has a max(t,0) applied to all tracers... 
-        ! maybe add?  Or is it okay for things to go slightly negative, 
+
+        ! TODO: Georgina's code has a max(t,0) applied to all tracers...
+        ! maybe add?  Or is it okay for things to go slightly negative,
         ! assuming they'll self-correct?
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            t(i,j,k,nnew,iNO3 ) = Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )) 
+            t(i,j,k,nnew,iNO3 ) = Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 ))
             t(i,j,k,nnew,iNH4 ) = Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 ))
             t(i,j,k,nnew,iPhS ) = Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS ))
             t(i,j,k,nnew,iPhL ) = Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL ))
@@ -3004,7 +3017,7 @@
       real(r8), dimension(1,nn) :: qc
 
 !  Compute inverse thickness to avoid repeated divisions.
-!     
+!
 
       DO k=1,nn
        DO i=1,1
