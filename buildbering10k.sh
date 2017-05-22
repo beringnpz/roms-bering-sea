@@ -179,7 +179,7 @@ fi
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_npz
 export      USE_DEBUG=
-export      MY_CPP_FLAGS="-DBEST_NPZ"
+export      MY_CPP_FLAGS="${MY_CPP_FLAGS} -DBEST_NPZ"
 
 if [ "$nflag" = true ]; then
   make clean &>/dev/null
