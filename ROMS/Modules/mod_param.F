@@ -491,12 +491,7 @@
       !------------------------------------
 
         integer, dimension(Ngrids) :: NTS
-
-#  ifdef FEAST
-        integer, parameter :: NBTS = 107
-#  else
-        integer, parameter :: NBTS = 102
-#  endif
+#  include <bestnpz_mod_param_NBTS.h>
 # endif
 # ifdef STATIONARY2
       !------------------------------------
