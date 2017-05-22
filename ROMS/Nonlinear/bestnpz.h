@@ -2568,7 +2568,7 @@
      &                           + Gpp_NH4_PhL                          & 
      &                           - Res_PhL_NH4     ! PhL: mg C m^-2 d^-1
      
-              st(i,j,k,nstp,105) = Gra_PhS_MZL 
+              st(i,j,k,nstp,105) = Gra_PhS_MZL                          &
      &                           + Gra_PhL_MZL                          &
      &                           - Ege_MZL_Det                          &
      &                           - Res_MZL_NH4     ! MZL: mg C m^-2 d^-1
