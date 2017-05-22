@@ -7109,6 +7109,11 @@
             DO ng=1,Ngrids
               DO itrc=1,NBTS   
                 i=idTSvar(itrc)
+                if (i == 0) then
+                  if (Lwrite) print *, "idTSvar values not all assigned"
+                  if (Lwrite) print *, "(and ROMS will now seg fault)"
+                  if (Lwrite) print *, "Check that your varinfo.dat file includes all potential stationary diagnostics"
+                endif
                 Hout(i,ng)=LtrcS(itrc,ng)
               END DO
             END DO
