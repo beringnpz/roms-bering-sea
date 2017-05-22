@@ -3248,7 +3248,7 @@
 #  endif
 # endif
 # ifdef STATIONARY
-#  include bestnpz_mod_ncparam_i3stat.h
+#  include <bestnpz_mod_ncparam_i3stat.h>
 # endif
 # ifdef STATIONARY2
              !-----------------------------

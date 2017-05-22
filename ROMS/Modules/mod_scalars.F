@@ -246,7 +246,7 @@
 # endif
 # ifdef STATIONARY
         integer, pointer :: idbio3(:)
-#  include bestnpz_mod_scalars_i3stat1.h
+#  include <bestnpz_mod_scalars_i3stat1.h>
 # endif
 # ifdef STATIONARY2
         integer, pointer :: idbio2(:)
@@ -2329,7 +2329,7 @@
       DO i=1,NBTS
         idbio3(i)=i
       END DO
-#  include bestnpz_mod_scalars_i3stat2.h
+#  include <bestnpz_mod_scalars_i3stat2.h>
 # endif
 # ifdef STATIONARY2
       DO i=1,NBTS2
