@@ -1561,11 +1561,6 @@
           ! Mortality and senescence
           !------------------------------
 
-          ! TODO: change so exponent is set by user?  Would simplify the
-          ! mXXX (linear) vs mpredXXX (quadratic) coefficient choice, but
-          ! then the user would need to be careful that they changed the
-          ! parameter and exponent in tandem
-
           DO k=1,N(ng)
             DO i=Istr,Iend
 
@@ -1812,11 +1807,17 @@
             ! course, that assumes no fluxes into the layer to possibly
             ! balance out a seemingly too-high loss rate.
 
-            cff7  = min(cff1,(cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! D
-            cff8  = min(cff2,(cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! DF
-            cff9  = min(cff3,(cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PS
-            cff10 = min(cff4,(cff0*cff4*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PL
-            cff11 = min(cff5,(cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD))) ! BenDet
+!             cff7  = min(cff1,(cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! D
+!             cff8  = min(cff2,(cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! DF
+!             cff9  = min(cff3,(cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PS
+!             cff10 = min(cff4,(cff0*cff4*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PL
+!             cff11 = min(cff5,(cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD))) ! BenDet
+            
+            cff7  = cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP)) ! D
+            cff8  = cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP)) ! DF
+            cff9  = cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP)) ! PS
+            cff10 = cff0*cff4*Bio2d(i,1,iiBen)*Rup/(cff6+KupP)) ! PL
+            cff11 = cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD)) ! BenDet
 
             ! Distribute pelagic feeding losses to appropriate water
             ! column layers
