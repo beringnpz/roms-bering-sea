@@ -2457,11 +2457,12 @@
           
           
 #ifdef STATIONARY
-
-          ! Save all intermediate fluxes for output
           
           DO i = Istr,Iend
             DO k = 1,N(ng)
+              
+              ! Intermediate fluxes
+              
               st(i,j,k,nstp,  9) = Gpp_NO3_PhS(i,k)
               st(i,j,k,nstp, 10) = Gpp_NO3_PhL(i,k)
               st(i,j,k,nstp, 11) = Gpp_NH4_PhS(i,k)
@@ -2556,6 +2557,86 @@
               st(i,j,k,nstp,100) = Ver_NCaO_BenDet(i,k)
               st(i,j,k,nstp,101) = Ver_NCaS_DetF(i,k)
               st(i,j,k,nstp,102) = Ver_NCaS_BenDet(i,k) 
+              
+              ! Net production
+              
+              st(i,j,k,nstp,103) = Gpp_NO3_PhS                          &  
+     &                           + Gpp_NH4_PhS                          &  
+     &                           - Res_PhS_NH4     ! PhS: mg C m^-2 d^-1
+     
+              st(i,j,k,nstp,104) = Gpp_NO3_PhL                          & 
+     &                           + Gpp_NH4_PhL                          & 
+     &                           - Res_PhL_NH4     ! PhL: mg C m^-2 d^-1
+     
+              st(i,j,k,nstp,105) = Gra_PhS_MZL 
+     &                           + Gra_PhL_MZL                          &
+     &                           - Ege_MZL_Det                          &
+     &                           - Res_MZL_NH4     ! MZL: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,106) = Gra_PhS_Cop                          &
+     &                           + Gra_PhL_Cop                          &
+     &                           + Gra_MZL_Cop                          &
+     &                           + Gra_IPhL_Cop                         &
+     &                           - Ege_Cop_DetF                         &
+     &                           - Res_Cop_NH4     ! Cop: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,107) = Gra_PhS_NCaS                         &
+     &                           + Gra_PhL_NCaS                         &
+     &                           + Gra_MZL_NCaS                         &
+     &                           + Gra_IPhL_NCaS                        &
+     &                           - Ege_NCaS_DetF                        &
+     &                           - Res_NCaS_NH4    ! NCaS: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,108) = Gra_PhS_EupS                         &
+     &                           + Gra_PhL_EupS                         &
+     &                           + Gra_MZL_EupS                         &
+     &                           + Gra_Cop_EupS                         &
+     &                           + Gra_IPhL_EupS                        &
+     &                           + Gra_Det_EupS                         &
+     &                           + Gra_DetF_EupS                        &
+     &                           - Ege_EupS_DetF                        &
+     &                           - Res_EupS_NH4    ! EupS: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,109) = Gra_PhS_NCaO                         &
+     &                           + Gra_PhL_NCaO                         &
+     &                           + Gra_MZL_NCaO                         &
+     &                           + Gra_IPhL_NCaO                        &
+     &                           - Ege_NCaO_DetF                        &
+     &                           - Res_NCaO_NH4    ! NCaO: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,110) = Gra_PhS_EupO                         &
+     &                           + Gra_PhL_EupO                         &
+     &                           + Gra_MZL_EupO                         &
+     &                           + Gra_Cop_EupO                         &
+     &                           + Gra_IPhL_EupO                        &
+     &                           + Gra_Det_EupO                         &
+     &                           + Gra_DetF_EupO                        &
+     &                           - Ege_EupO_DetF                        &
+     &                           - Res_EupO_NH4    ! EupO: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,111)  = Gra_Cop_Jel                         &
+     &                            + Gra_EupS_Jel                        &
+     &                            + Gra_EupO_Jel                        &
+     &                            + Gra_NCaS_Jel                        &
+     &                            + Gra_NCaO_Jel                        &
+     &                            - Ege_Jel_DetF                        &
+     &                            - Mor_Jel_DetF                        &
+     &                            - Res_Jel_NH4    ! Jel: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,112)  = Gra_Det_Ben                         &
+     &                            + Gra_DetF_Ben                        &
+     &                            + Gra_PhS_Ben                         &
+     &                            + Gra_PhL_Ben                         &
+     &                            + Gra_BenDet_Ben                      &
+     &                            - Exc_Ben_NH4                         &
+     &                            - Exc_Ben_BenDet                      &
+     &                            - Res_Ben_NH4                         &
+     &                            - Mor_Ben_BenDet ! Ben: mg C m^-2 d^-1
+
+              st(i,j,k,nstp,113)  = Gpp_INO3_IPhL                       &
+     &                            + Gpp_INH4_IPhL                       &
+     &                            - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
+              
             END DO
           END DO
 #endif

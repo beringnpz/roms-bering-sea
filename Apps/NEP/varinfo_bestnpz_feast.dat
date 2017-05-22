@@ -7587,12 +7587,111 @@
   'r3dvar'
   1.0d0
 
+'prod_PhS'
+  'PhS net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat103)'
+  'r3dvar'
+  1.0d0
+
+'prod_PhL'
+  'PhL net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat104)'
+  'r3dvar'
+  1.0d0
+
+'prod_MZL'
+  'MZL net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat105)'
+  'r3dvar'
+  1.0d0
+
+'prod_Cop'
+  'Cop net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat106)'
+  'r3dvar'
+  1.0d0
+
+'prod_NCaS'
+  'NCaS net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat107)'
+  'r3dvar'
+  1.0d0
+
+'prod_EupS'
+  'EupS net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat108)'
+  'r3dvar'
+  1.0d0
+
+'prod_NCaO'
+  'NCaO net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat109)'
+  'r3dvar'
+  1.0d0
+
+'prod_EupO'
+  'EupO net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat110)'
+  'r3dvar'
+  1.0d0
+
+'prod_Jel'
+  'Jel net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat111)'
+  'r3dvar'
+  1.0d0
+
+'prod_Ben'
+  'Ben net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat112)'
+  'r3dvar'
+  1.0d0
+
+'prod_IcePhL'
+  'IcePhL net production rate'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat113)'
+  'r3dvar'
+  1.0d0
+
 'feastpred_Cop'
   'Cop cumulative daily predation loss to fish'
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat103)'
+  'idTSvar(i3Stat114)'
   'r3dvar'
   1.0d0
 
@@ -7601,7 +7700,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat104)'
+  'idTSvar(i3Stat115)'
   'r3dvar'
   1.0d0
 
@@ -7610,7 +7709,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat105)'
+  'idTSvar(i3Stat116)'
   'r3dvar'
   1.0d0
 
@@ -7619,7 +7718,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat106)'
+  'idTSvar(i3Stat117)'
   'r3dvar'
   1.0d0
 
@@ -7628,7 +7727,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat107)'
+  'idTSvar(i3Stat118)'
   'r3dvar'
   1.0d0
 

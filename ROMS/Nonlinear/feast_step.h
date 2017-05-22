@@ -314,11 +314,11 @@
             GF%zoop_death(i,j,k,5) = GF%zoop_death(i,j,k,5) + t(i,j,k,nnew,iEupO ) * (1.0-GF%ozm(i,j,k,5))
             if (k==1) GF%zoop_death(i,j,k,6) = GF%zoop_death(i,j,k,6) + t(i,j,k,nnew,iBen ) * (1.0-GF%ozm(i,j,k,6))
 #ifdef STATIONARY
-            st(i,j,k,nnew,103) = (1.0-GF%ozm(i,j,k,1))!GF%zoop_death(i,j,k,1)
-            st(i,j,k,nnew,104) = (1.0-GF%ozm(i,j,k,2))!GF%zoop_death(i,j,k,2) 
-            st(i,j,k,nnew,105) = (1.0-GF%ozm(i,j,k,3))!GF%zoop_death(i,j,k,3)
-            st(i,j,k,nnew,106) = (1.0-GF%ozm(i,j,k,4))!GF%zoop_death(i,j,k,4)
-            st(i,j,k,nnew,107) = (1.0-GF%ozm(i,j,k,5))!GF%zoop_death(i,j,k,5)
+            st(i,j,k,nnew,114) = (1.0-GF%ozm(i,j,k,1))!GF%zoop_death(i,j,k,1)
+            st(i,j,k,nnew,115) = (1.0-GF%ozm(i,j,k,2))!GF%zoop_death(i,j,k,2) 
+            st(i,j,k,nnew,116) = (1.0-GF%ozm(i,j,k,3))!GF%zoop_death(i,j,k,3)
+            st(i,j,k,nnew,117) = (1.0-GF%ozm(i,j,k,4))!GF%zoop_death(i,j,k,4)
+            st(i,j,k,nnew,118) = (1.0-GF%ozm(i,j,k,5))!GF%zoop_death(i,j,k,5)
 
 !             pt3(i,j,k,nnew,iFCopMort)  = (1.0-GF%ozm(i,j,k,1))!GF%zoop_death(i,j,k,1)
 !             pt3(i,j,k,nnew,iFNCaSMort) = (1.0-GF%ozm(i,j,k,2))!GF%zoop_death(i,j,k,2)
