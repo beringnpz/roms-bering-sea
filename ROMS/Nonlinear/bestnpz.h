@@ -2689,6 +2689,20 @@
             t(i,j,k,nnew,iJel ) = Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel ))
             t(i,j,k,nnew,iFe  ) = Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  ))
             t(i,j,k,nnew,iMZS ) = 0
+            
+            ! Check for negatives and NaNs (for debugging)
+            
+!             do itrc = 1,size(t,5)
+!               if (t(i,j,k,nnew,itrc) < 0) then
+!                 write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+!               end if
+!
+!               if (t(i,j,k,nnew,itrc) /= t(i,j,k,nnew,itrc)) then
+!                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+!               end if
+!             end do
+            
+            
 
 #ifdef TS_MPDATA
             t(i,j,k,3,iNO3 ) = t(i,j,k,nnew,iNO3 ) * Hz_inv(i,k)
