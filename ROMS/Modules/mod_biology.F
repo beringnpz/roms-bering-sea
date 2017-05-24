@@ -1515,9 +1515,121 @@
 # endif
         integer :: dummy_bio
 
-# ifdef FEAST
+# ifdef BESTNPZ
       CONTAINS
-!!-----------------------------------------------------------------------------
+!========================================================================
+!  bestnpz_swfrac_tile: light attenuation with phytoplankton
+!
+!  This function provides an alternative light attenuation curve
+!  calculation; it allows for attenuation due to chlorphyll (in 
+!  addition to that due to water and organic material).  This function
+!  is called both in the biological calculations (bestnpz.h) and when
+!  determining light penetration for the physical model (pre_step3d.F).
+!
+! Input (and *output) variables:
+!
+!   ng, ntile, LBi, UBi, LBj, UBj, IminS, ImaxS, JminS, JmaxS: 
+!
+!   h:      i x j, bathymetry in tile (m)
+!
+!   z_w:    i x j x k+1, layer depth edges in tile (m)
+!
+!   PhS:    i x j x k, small phytoplankton concentration (mg C m^-3)
+!
+!   PhL:    i x j x k, large phytoplankton concentration (mg C m^-3)
+!
+!   *swdk:  i x j x k, fractional decay of shortwave radiation (at 
+!           mid-point of layers), based on Jerlov water type parameters
+!
+!   *Ifrac: i x j x k, fractional decay of surface radiation (at 
+!           mid-point of layers), w/o water type modification
+!
+!
+!========================================================================
+      SUBROUTINE bestnpz_swfrac_tile (ng, tile,                         &
+   &                            LBi, UBi, LBj, UBj,                     &
+   &                            IminS, ImaxS, JminS, JmaxS,             &
+   &                            h, z_w, PhS, PhL, swdk, Ifrac)
+
+      USE mod_param
+      USE mod_scalars
+
+      implicit none
+
+      ! Imported
+
+      integer, intent(in) :: ng, tile
+      integer, intent(in) :: LBi, UBi, LBj, UBj
+      integer, intent(in) :: IminS, ImaxS, JminS, JmaxS
+      real(r8), intent(in) :: h(IminS:ImaxS,JminS:JmaxS)
+      real(r8), intent(in) :: z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng))
+      real(r8), intent(in) :: PhS(IminS:ImaxS,JminS:JmaxS)
+      real(r8), intent(in) :: PhL(IminS:ImaxS,JminS:JmaxS)
+
+      real(r8), intent(out) :: swdk(IminS:ImaxS,JminS:JmaxS,N(ng))
+      real(r8), intent(out) :: Ifrac(IminS:ImaxS,JminS:JmaxS,N(ng))
+
+      ! Local
+
+      real(r8), dimension(1:N(ng)) :: chl, zmid, k_tot
+      real(r8) :: k_tot, cff1
+      integer :: i, j, k
+
+# include "set_bounds.h"
+
+!-----------------------------------------------------------------------
+! Calculate light attenuation
+!-----------------------------------------------------------------------
+
+      DO j=Jstr,Jend
+        DO i=Istr,Iend
+
+          do k = N(ng),1,-1
+            chl(k) = PhS(i,j,k)/ccr + PhL(i,j,k)/ccrPhL ! chlorophyll (mg chl/m^3)
+            zmid(k) = z_w(i,j,N(ng)) - (z_w(i,j,k-1) + z_w(i,j,k))/2 ! layer midpoint measured from surface (m)
+          end do
+  
+#ifdef NEWSHADE
+
+          ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
+
+          k_w = k_ext + 2.00_r8*exp(-h(i,j)*.05)
+
+          kpsum = 0.0_r8
+          do k = N(ng),1,-1
+            dz = z_w(i,j,k) - z_w(i,j,k-1)
+            cff1 = k_chl * chl(k)**(0.428_r8)
+            k_tot = k_w + (cff1 * dz/2 + kpsum)/zmid(k)
+            kpsum = kpsum + (cff1*dz)
+    
+            Ifrac(i,j,k) = exp(-k_tot*zmid(k))
+            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) + a_frac*exp(-zmid(k)/a_mu1)
+    
+          end do
+
+#elif defined COKELET
+
+          ! Version from Ned Cokelet
+  
+          k_w = k_ext
+  
+          kpsum = 0.0_r8
+          do k = N(ng),1,-1
+            dz = z_w(i,j,k) - z_w(i,j,k-1)
+            cff1 = k_chlA * chl(k)**(k_chlB)
+            k_tot = k_w + (cff1 * dz/2 + kpsum)/zmid(k) + k_chlC ! TODO: In old version, k_chlC is in pre_step3d.F but not bestnpz.h
+            kpsum = kpsum + (cff1*dz)
+    
+            Ifrac(i,j,k) = exp(-k_tot*zmid(k))
+            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) + a_frac*exp(-zmid(k)/a_mu1)
+    
+          end do
+#endif
+        END DO
+      END DO
+      END SUBROUTINE bestnpz_swfrac_tile
+#  ifdef FEAST
+!========================================================================
       subroutine QsortC(A, index)
 
       real, intent(in out), dimension(:) :: A
@@ -1540,8 +1652,8 @@
       end do
 
       end subroutine QsortC
-
-!!------------------------------------------------------------------------------
+      
+!========================================================================
       SUBROUTINE initialize_feast
 
       USE mod_param
@@ -2043,6 +2155,7 @@
       !END SUBROUTINE FISH_INDICES
 
       end SUBROUTINE initialize_feast
+#  endif
 # endif
 #endif
 
