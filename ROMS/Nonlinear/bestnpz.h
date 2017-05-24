@@ -1051,7 +1051,9 @@
           END DO
         END DO
 #else
-        ! Version from Sarah Hinckley old C code
+        ! Version from Sarah Hinckley old C code 
+        ! (KAK: probably wrong... do not use)
+        
         DO k=N(ng),1,-1
           DO i=Istr,Iend
             cff3 = z_r(i,j,k)+2.5_r8
