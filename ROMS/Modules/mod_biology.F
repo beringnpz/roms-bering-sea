@@ -1515,7 +1515,7 @@
 # endif
         integer :: dummy_bio
 
-# ifdef BESTNPZ
+# ifdef BEST_NPZ
       CONTAINS
 !========================================================================
 !  bestnpz_swfrac_tile: light attenuation with phytoplankton
@@ -1563,16 +1563,16 @@
       integer, intent(in) :: IminS, ImaxS, JminS, JmaxS
       real(r8), intent(in) :: h(IminS:ImaxS,JminS:JmaxS)
       real(r8), intent(in) :: z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng))
-      real(r8), intent(in) :: PhS(IminS:ImaxS,JminS:JmaxS)
-      real(r8), intent(in) :: PhL(IminS:ImaxS,JminS:JmaxS)
+      real(r8), intent(in) :: PhS(IminS:ImaxS,JminS:JmaxS,N(ng))
+      real(r8), intent(in) :: PhL(IminS:ImaxS,JminS:JmaxS,N(ng))
 
       real(r8), intent(out) :: swdk(IminS:ImaxS,JminS:JmaxS,N(ng))
       real(r8), intent(out) :: Ifrac(IminS:ImaxS,JminS:JmaxS,N(ng))
 
       ! Local
 
-      real(r8), dimension(1:N(ng)) :: chl, zmid, k_tot
-      real(r8) :: k_tot, cff1
+      real(r8), dimension(1:N(ng)) :: chl, zmid
+      real(r8) :: k_tot, cff1, k_w, kpsum, dz
       integer :: i, j, k
 
 # include "set_bounds.h"
