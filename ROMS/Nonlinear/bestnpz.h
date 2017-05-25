@@ -447,7 +447,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
       real(r8) :: ParW, OffSet
       real(r8) :: fracUsed
-
+    
       ! Parameter default values
 
 #ifdef DISTRIBUTE
@@ -2306,7 +2306,11 @@
           ! result in numerical issues.  Brute force zero traps will
           ! eliminate conservation of mass, so I'd prefer to look into
           ! increasing BioIter if this is a problem
-
+          
+          WHERE (Bio2d < 0) Bio2d = 0
+            
+          ! TODO: Save this "input flux" as diagnostic
+            
           ! Sync volumetric version to the updated per-area values
 
           DO i=Istr,Iend
@@ -2694,33 +2698,39 @@
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            t(i,j,k,nnew,iNO3 ) = Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 ))
-            t(i,j,k,nnew,iNH4 ) = Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 ))
-            t(i,j,k,nnew,iPhS ) = Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS ))
-            t(i,j,k,nnew,iPhL ) = Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL ))
-            t(i,j,k,nnew,iMZL ) = Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL ))
-            t(i,j,k,nnew,iCop ) = Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop ))
-            t(i,j,k,nnew,iNCaS) = Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS))
-            t(i,j,k,nnew,iEupS) = Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS))
-            t(i,j,k,nnew,iNCaO) = Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO))
-            t(i,j,k,nnew,iEupO) = Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO))
-            t(i,j,k,nnew,iDet ) = Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet ))
-            t(i,j,k,nnew,iDetF) = Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF))
-            t(i,j,k,nnew,iJel ) = Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel ))
-            t(i,j,k,nnew,iFe  ) = Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  ))
+            t(i,j,k,nnew,iNO3 ) = max(0, Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )))
+            t(i,j,k,nnew,iNH4 ) = max(0, Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 )))
+            t(i,j,k,nnew,iPhS ) = max(0, Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS )))
+            t(i,j,k,nnew,iPhL ) = max(0, Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL )))
+            t(i,j,k,nnew,iMZL ) = max(0, Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL )))
+            t(i,j,k,nnew,iCop ) = max(0, Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop )))
+            t(i,j,k,nnew,iNCaS) = max(0, Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS)))
+            t(i,j,k,nnew,iEupS) = max(0, Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS)))
+            t(i,j,k,nnew,iNCaO) = max(0, Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO)))
+            t(i,j,k,nnew,iEupO) = max(0, Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO)))
+            t(i,j,k,nnew,iDet ) = max(0, Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet )))
+            t(i,j,k,nnew,iDetF) = max(0, Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF)))
+            t(i,j,k,nnew,iJel ) = max(0, Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel )))
+            t(i,j,k,nnew,iFe  ) = max(0, Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  )))
             t(i,j,k,nnew,iMZS ) = 0
             
             ! Check for negatives and NaNs (for debugging)
             
-!             do itrc = 1,size(t,5)
+!             do itrc = iNO3,size(t,5)
 !               if (t(i,j,k,nnew,itrc) < 0) then
 !                 write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+!                 exit_flag = 1
 !               end if
 !
 !               if (t(i,j,k,nnew,itrc) /= t(i,j,k,nnew,itrc)) then
 !                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+!                 exit_flag = 1
 !               end if
 !             end do
+!             if (exit_flag>0) then
+! !               CALL ROMS_finalize
+! !               CALL abort(my_exit_flag)
+!             endif
             
             
 
