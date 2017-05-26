@@ -1585,8 +1585,8 @@
         DO i=Istr,Iend
 
           do k = N(ng),1,-1
-            chl(k) = PhS(i,j,k)/ccr + PhL(i,j,k)/ccrPhL ! chlorophyll (mg chl/m^3)
-            zmid(k) = z_w(i,j,N(ng)) - (z_w(i,j,k-1) + z_w(i,j,k))/2 ! layer midpoint measured from surface (m)
+            chl(k) = PhS(i,j,k)/ccr + PhL(i,j,k)/ccrPhL ! chlorophyll in layer (mg chl/m^3)
+            zmid(k) = z_w(i,j,N(ng)) - (z_w(i,j,k-1) + z_w(i,j,k))/2 ! layer midpoint measured from surface (m, positive)
           end do
   
 #ifdef NEWSHADE
