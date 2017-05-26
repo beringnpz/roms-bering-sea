@@ -634,13 +634,13 @@
       ! Light attenuation fraction
       
       CALL bestnpz_swfrac_tile(ng, tile,                                &
-   &                     LBi, UBi, LBj, UBj,                            &
-   &                     IminS, ImaxS, JminS, JmaxS,                    &
-   &                     h(IminS:ImaxS,JminS:JmaxS),                    &
-   &                     z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng)),          &
-   &                     t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhS),  &
-   &                     t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhL),  &
-   &                     cffsw, Ifrac)
+   &        LBi, UBi, LBj, UBj,                                         &
+   &        IminS, ImaxS, JminS, JmaxS,                                 &
+   &        h(IminS:ImaxS,JminS:JmaxS),                                 &
+   &        z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng)),                       &
+   &        max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhS)),  &
+   &        max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhL)),  &
+   &        cffsw, Ifrac)
 
 #endif
 
@@ -1011,7 +1011,7 @@
           ! wavelegth of ~547 nm... prob derives from a average across 
           ! chl range (~400-700nm)
 
-          PARs(i) =PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
+          PARs(i) = PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
 #endif
         END DO
 
@@ -2698,21 +2698,21 @@
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            t(i,j,k,nnew,iNO3 ) = max(0, Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )))
-            t(i,j,k,nnew,iNH4 ) = max(0, Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 )))
-            t(i,j,k,nnew,iPhS ) = max(0, Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS )))
-            t(i,j,k,nnew,iPhL ) = max(0, Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL )))
-            t(i,j,k,nnew,iMZL ) = max(0, Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL )))
-            t(i,j,k,nnew,iCop ) = max(0, Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop )))
-            t(i,j,k,nnew,iNCaS) = max(0, Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS)))
-            t(i,j,k,nnew,iEupS) = max(0, Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS)))
-            t(i,j,k,nnew,iNCaO) = max(0, Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO)))
-            t(i,j,k,nnew,iEupO) = max(0, Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO)))
-            t(i,j,k,nnew,iDet ) = max(0, Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet )))
-            t(i,j,k,nnew,iDetF) = max(0, Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF)))
-            t(i,j,k,nnew,iJel ) = max(0, Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel )))
-            t(i,j,k,nnew,iFe  ) = max(0, Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  )))
-            t(i,j,k,nnew,iMZS ) = 0
+            t(i,j,k,nnew,iNO3 ) = max(0.0_r8, Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )))
+            t(i,j,k,nnew,iNH4 ) = max(0.0_r8, Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 )))
+            t(i,j,k,nnew,iPhS ) = max(0.0_r8, Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS )))
+            t(i,j,k,nnew,iPhL ) = max(0.0_r8, Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL )))
+            t(i,j,k,nnew,iMZL ) = max(0.0_r8, Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL )))
+            t(i,j,k,nnew,iCop ) = max(0.0_r8, Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop )))
+            t(i,j,k,nnew,iNCaS) = max(0.0_r8, Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS)))
+            t(i,j,k,nnew,iEupS) = max(0.0_r8, Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS)))
+            t(i,j,k,nnew,iNCaO) = max(0.0_r8, Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO)))
+            t(i,j,k,nnew,iEupO) = max(0.0_r8, Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO)))
+            t(i,j,k,nnew,iDet ) = max(0.0_r8, Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet )))
+            t(i,j,k,nnew,iDetF) = max(0.0_r8, Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF)))
+            t(i,j,k,nnew,iJel ) = max(0.0_r8, Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel )))
+            t(i,j,k,nnew,iFe  ) = max(0.0_r8, Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  )))
+            t(i,j,k,nnew,iMZS ) = 0.0_r8
             
             ! Check for negatives and NaNs (for debugging)
             

@@ -382,14 +382,15 @@
       
 #   ifdef BEST_NPZ
 
-      CALL bestnpz_swfrac_tile(ng, tile,                                &
-   &                     LBi, UBi, LBj, UBj,                            &
-   &                     IminS, ImaxS, JminS, JmaxS,                    &
-   &                     z_w(IminS:ImaxS,JminS:JmaxS,0),                &
-   &                     z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng)),          &
-   &                     t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhS),  &
-   &                     t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhL),  &
-   &                     swdk, Ifrac)
+      CALL bestnpz_swfrac_tile(                                         &
+   &        ng, tile,                                                   &
+   &        LBi, UBi, LBj, UBj,                                         &
+   &        IminS, ImaxS, JminS, JmaxS,                                 &
+   &        z_w(IminS:ImaxS,JminS:JmaxS,0),                             &
+   &        z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng)),                       &
+   &        max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhS)),  &
+   &        max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhL)),  &
+   &        swdk, Ifrac)
 
 #   endif
      
