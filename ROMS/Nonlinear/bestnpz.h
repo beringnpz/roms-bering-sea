@@ -1912,6 +1912,9 @@
               cff2 = Bio3d(i,N(ng),iiIceNH4)/(ksnut2 + Bio3d(i,N(ng),iiIceNH4)) ! NH4 limitation
               aiceNfrac = cff1*exp(-inhib*Bio3d(i,N(ng),iiIceNH4)) + cff2       ! N limitation
               fNO3      = cff1*exp(-inhib*Bio3d(i,N(ng),iiIceNH4))/aiceNfrac    ! f-ratio
+              if (fNO3 /= fNO3) then ! catch NaN if aiceNfrac=0
+                fNO3 = 0
+              end if
 
 # ifdef BERING_10K
               ! Ice algae growth is also limited by suboptimal brine
