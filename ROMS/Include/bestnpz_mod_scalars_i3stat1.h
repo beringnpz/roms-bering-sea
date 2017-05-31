@@ -111,10 +111,13 @@
        integer :: i3Stat111
        integer :: i3Stat112
        integer :: i3Stat113
-#  ifdef FEAST
        integer :: i3Stat114
        integer :: i3Stat115
        integer :: i3Stat116
+#  ifdef FEAST
        integer :: i3Stat117
        integer :: i3Stat118
+       integer :: i3Stat119
+       integer :: i3Stat120
+       integer :: i3Stat121
 #  endif

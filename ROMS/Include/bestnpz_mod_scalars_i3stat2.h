@@ -111,10 +111,13 @@
       i3Stat111 = 111
       i3Stat112 = 112
       i3Stat113 = 113
-#  ifdef FEAST
       i3Stat114 = 114
       i3Stat115 = 115
       i3Stat116 = 116
+#  ifdef FEAST
       i3Stat117 = 117
       i3Stat118 = 118
+      i3Stat119 = 119
+      i3Stat120 = 120
+      i3Stat121 = 121
 #  endif

@@ -436,6 +436,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Rem_BenDet_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_INO3_IPhL, Gpp_INH4_IPhL, Res_IPhL_INH4, Mor_IPhL_INH4, Nit_INH4_INO3, Twi_IPhL_PhL, Twi_INO3_NO3, Twi_INH4_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_BenDet, Ver_PhS_Out, Ver_PhL_BenDet, Ver_PhL_Out, Ver_Det_BenDet, Ver_Det_Out, Ver_DetF_BenDet, Ver_DetF_Out, Ver_NCaO_BenDet, Ver_NCaS_DetF, Ver_NCaS_BenDet
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Frz_PhL_IPhL, Frz_NO3_INO3, Frz_NH4_INH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: prod_PhS, prod_PhL, prod_MZL, prod_Cop, prod_NCaS, prod_EupS, prod_NCaO, prod_EupO, prod_Jel, prod_Ben, prod_IcePhL
 
       ! Biological source/sinks
@@ -829,14 +830,12 @@
         ! factor assumes a different layer thickness than the top water
         ! layer.
 
-        ! If there ice is present in both this step and the last, start
-        ! by extracting ice biomass from the main ice bio tracer array.
-        ! Otherwise, no biomass to start (we'll deal with changing ice in
-        ! a moment).
+        ! Start by extracting ice biomass from the main ice bio tracer 
+        ! arrays (we'll deal with changes due to appearing or 
+        ! disappearing ice in a moment)
 
 #ifdef ICE_BIO
         DO i=Istr,Iend
-          if (ice_status(i,j) .eq. 2.0) then
 
 # ifdef CLIM_ICE_1D
             Bio3d(i,N(ng),iiIcePhL) = it(i,j,nstp,idice(1))
@@ -847,7 +846,6 @@
             Bio3d(i,N(ng),iiIceNO3) = IceNO3(i,j,nstp)
             Bio3d(i,N(ng),iiIceNH4) = IceNH4(i,j,nstp)
 # endif
-          endif
 
           Bio2d(i,N(ng),iiIcePhL) = Bio3d(i,N(ng),iiIcePhL)*aidz
           Bio2d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiIceNO3)*aidz
@@ -895,6 +893,10 @@
             Bio3d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiNO3)
             Bio3d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiNH4)
 
+            Frz_PhL_IPhL(i,N(ng)) = (Bio3d(i,N(ng),iiIcePhl) * aidz -  Bio2d(i,N(ng),iiIcePhL))/dtdays
+            Frz_NO3_INO3(i,N(ng)) = (Bio3d(i,N(ng),iiIceNO3) * aidz -  Bio2d(i,N(ng),iiIceNO3))/dtdays
+            Frz_NH4_INH4(i,N(ng)) = (Bio3d(i,N(ng),iiIceNH4) * aidz -  Bio2d(i,N(ng),iiIceNH4))/dtdays
+
             Bio2d(i,N(ng),iiPhL)    = Bio3d(i,N(ng),iiPhl) * Hz(i,j,N(ng))
             Bio2d(i,N(ng),iiNO3)    = Bio3d(i,N(ng),iiNO3) * Hz(i,j,N(ng))
             Bio2d(i,N(ng),iiNH4)    = Bio3d(i,N(ng),iiNH4) * Hz(i,j,N(ng))
@@ -907,6 +909,10 @@
 
             ! If ice disappeared, biomass that was in the ice gets dumped
             ! into the water surface layer
+
+            Frz_PhL_IPhL(i,N(ng)) = -Bio2d(i,N(ng),iiIcePhL)/dtdays
+            Frz_NO3_INO3(i,N(ng)) = -Bio2d(i,N(ng),iiIceNO3)/dtdays
+            Frz_NH4_INH4(i,N(ng)) = -Bio2d(i,N(ng),iiIceNH4)/dtdays
 
             Bio2d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL) + Bio2d(i,N(ng),iiIcePhL)
             Bio2d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3) + Bio2d(i,N(ng),iiIceNO3)
@@ -2660,20 +2666,30 @@
               st(i,j,k,nstp,100) = Ver_NCaO_BenDet(i,k)
               st(i,j,k,nstp,101) = Ver_NCaS_DetF(i,k)
               st(i,j,k,nstp,102) = Ver_NCaS_BenDet(i,k)
+              st(i,j,k,nstp,103) = Frz_PhL_IPhL(i,k)
+              st(i,j,k,nstp,104) = Frz_NO3_INO3(i,k)
+              st(i,j,k,nstp,105) = Frz_NH4_INH4(i,k)
+
+              DO itrc=9,105
+                if (st(i,j,k,nstp,itrc) /= st(i,j,k,nstp,itrc)) then
+                  write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in flux array: st(", i, ",", j, ",", k, ",", nstp, ",", itrc, ")"
+                  exit_flag = 1
+                end if
+              END DO
 
               ! Net production
-
-              st(i,j,k,nstp,103) = prod_PhS(i,k)
-              st(i,j,k,nstp,104) = prod_PhL(i,k)
-              st(i,j,k,nstp,105) = prod_MZL(i,k)
-              st(i,j,k,nstp,106) = prod_Cop(i,k)
-              st(i,j,k,nstp,107) = prod_NCaS(i,k)
-              st(i,j,k,nstp,108) = prod_EupS(i,k)
-              st(i,j,k,nstp,109) = prod_NCaO(i,k)
-              st(i,j,k,nstp,110) = prod_EupO(i,k)
-              st(i,j,k,nstp,111) = prod_Jel(i,k)
-              st(i,j,k,nstp,112) = prod_Ben(i,k)
-              st(i,j,k,nstp,113) = prod_IcePhL(i,k)
+              
+              st(i,j,k,nstp,106) = prod_PhS(i,k)
+              st(i,j,k,nstp,107) = prod_PhL(i,k)
+              st(i,j,k,nstp,108) = prod_MZL(i,k)
+              st(i,j,k,nstp,109) = prod_Cop(i,k)
+              st(i,j,k,nstp,110) = prod_NCaS(i,k)
+              st(i,j,k,nstp,111) = prod_EupS(i,k)
+              st(i,j,k,nstp,112) = prod_NCaO(i,k)
+              st(i,j,k,nstp,113) = prod_EupO(i,k)
+              st(i,j,k,nstp,114) = prod_Jel(i,k)
+              st(i,j,k,nstp,115) = prod_Ben(i,k)
+              st(i,j,k,nstp,116) = prod_IcePhL(i,k)
 
             END DO
           END DO
@@ -2716,17 +2732,17 @@
             
             ! Check for negatives and NaNs (for debugging)
             
-!             do itrc = iNO3,size(t,5)
-!               if (t(i,j,k,nnew,itrc) < 0) then
-!                 write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
-!                 exit_flag = 1
-!               end if
-!
-!               if (t(i,j,k,nnew,itrc) /= t(i,j,k,nnew,itrc)) then
-!                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
-!                 exit_flag = 1
-!               end if
-!             end do
+            do itrc = iNO3,size(t,5)
+              if (t(i,j,k,nnew,itrc) < 0) then
+                write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+                exit_flag = 1
+              end if
+
+              if (t(i,j,k,nnew,itrc) /= t(i,j,k,nnew,itrc)) then
+                write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+                exit_flag = 1
+              end if
+            end do
 !             if (exit_flag>0) then
 ! !               CALL ROMS_finalize
 ! !               CALL abort(my_exit_flag)

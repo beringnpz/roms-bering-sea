@@ -7587,12 +7587,39 @@
   'r3dvar'
   1.0d0
 
+'Frz_PhL_IPhL'
+  'freezing(+)/melting(-) flux from PhL to IPhL'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat103)'
+  'r3dvar'
+  1.0d0
+
+'Frz_NO3_INO3'
+  'freezing(+)/melting(-) flux from NO3 to INO3'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat104)'
+  'r3dvar'
+  1.0d0
+
+'Frz_NH4_INH4'
+  'freezing(+)/melting(-) flux from NH4 to INH4'
+  'mg C m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat105)'
+  'r3dvar'
+  1.0d0
+
 'prod_PhS'
   'PhS net production rate'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat103)'
+  'idTSvar(i3Stat106)'
   'r3dvar'
   1.0d0
 
@@ -7601,7 +7628,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat104)'
+  'idTSvar(i3Stat107)'
   'r3dvar'
   1.0d0
 
@@ -7610,7 +7637,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat105)'
+  'idTSvar(i3Stat108)'
   'r3dvar'
   1.0d0
 
@@ -7619,7 +7646,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat106)'
+  'idTSvar(i3Stat109)'
   'r3dvar'
   1.0d0
 
@@ -7628,7 +7655,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat107)'
+  'idTSvar(i3Stat110)'
   'r3dvar'
   1.0d0
 
@@ -7637,7 +7664,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat108)'
+  'idTSvar(i3Stat111)'
   'r3dvar'
   1.0d0
 
@@ -7646,7 +7673,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat109)'
+  'idTSvar(i3Stat112)'
   'r3dvar'
   1.0d0
 
@@ -7655,7 +7682,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat110)'
+  'idTSvar(i3Stat113)'
   'r3dvar'
   1.0d0
 
@@ -7664,7 +7691,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat111)'
+  'idTSvar(i3Stat114)'
   'r3dvar'
   1.0d0
 
@@ -7673,7 +7700,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat112)'
+  'idTSvar(i3Stat115)'
   'r3dvar'
   1.0d0
 
@@ -7682,7 +7709,7 @@
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat113)'
+  'idTSvar(i3Stat116)'
   'r3dvar'
   1.0d0
 
@@ -7691,7 +7718,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat114)'
+  'idTSvar(i3Stat117)'
   'r3dvar'
   1.0d0
 
@@ -7700,7 +7727,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat115)'
+  'idTSvar(i3Stat118)'
   'r3dvar'
   1.0d0
 
@@ -7709,7 +7736,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat116)'
+  'idTSvar(i3Stat119)'
   'r3dvar'
   1.0d0
 
@@ -7718,7 +7745,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat117)'
+  'idTSvar(i3Stat120)'
   'r3dvar'
   1.0d0
 
@@ -7727,7 +7754,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat118)'
+  'idTSvar(i3Stat121)'
   'r3dvar'
   1.0d0
 
