@@ -6832,7 +6832,7 @@
   1.0d0
 
 'Gra_IPhL_Cop'
-  'grazing/predation flux from IPhL to Cop'
+  'grazing/predation flux from IcePhL to Cop'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -6877,7 +6877,7 @@
   1.0d0
 
 'Gra_IPhL_NCaS'
-  'grazing/predation flux from IPhL to NCaS'
+  'grazing/predation flux from IcePhL to NCaS'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -6922,7 +6922,7 @@
   1.0d0
 
 'Gra_IPhL_NCaO'
-  'grazing/predation flux from IPhL to NCaO'
+  'grazing/predation flux from IcePhL to NCaO'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -6976,7 +6976,7 @@
   1.0d0
 
 'Gra_IPhL_EupS'
-  'grazing/predation flux from IPhL to EupS'
+  'grazing/predation flux from IcePhL to EupS'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7048,7 +7048,7 @@
   1.0d0
 
 'Gra_IPhL_EupO'
-  'grazing/predation flux from IPhL to EupO'
+  'grazing/predation flux from IcePhL to EupO'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7417,7 +7417,7 @@
   1.0d0
 
 'Gpp_INO3_IPhL'
-  'gross primary production flux from INO3 to IPhL'
+  'gross primary production flux from IceNO3 to IcePhL'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7426,7 +7426,7 @@
   1.0d0
 
 'Gpp_INH4_IPhL'
-  'gross primary production flux from INH4 to IPhL'
+  'gross primary production flux from IceNH4 to IcePhL'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7435,7 +7435,7 @@
   1.0d0
 
 'Res_IPhL_INH4'
-  'respiration flux from IPhL to INH4'
+  'respiration flux from IcePhL to IceNH4'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7444,7 +7444,7 @@
   1.0d0
 
 'Mor_IPhL_INH4'
-  'other mortality flux from IPhL to INH4'
+  'other mortality flux from IcePhL to IceNH4'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7453,7 +7453,7 @@
   1.0d0
 
 'Nit_INH4_INO3'
-  'nitrification flux from INH4 to INO3'
+  'nitrification flux from IceNH4 to IceNO3'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7462,7 +7462,7 @@
   1.0d0
 
 'Twi_IPhL_PhL'
-  'ice/water exchange flux from IPhL to PhL'
+  'ice/water exchange flux from IcePhL to PhL'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7471,7 +7471,7 @@
   1.0d0
 
 'Twi_INO3_NO3'
-  'ice/water exchange flux from INO3 to NO3'
+  'ice/water exchange flux from IceNO3 to NO3'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7480,7 +7480,7 @@
   1.0d0
 
 'Twi_INH4_NH4'
-  'ice/water exchange flux from INH4 to NH4'
+  'ice/water exchange flux from IceNH4 to NH4'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7588,7 +7588,7 @@
   1.0d0
 
 'Frz_PhL_IPhL'
-  'freezing(+)/melting(-) flux from PhL to IPhL'
+  'freezing(+)/melting(-) flux from PhL to IcePhL'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7597,7 +7597,7 @@
   1.0d0
 
 'Frz_NO3_INO3'
-  'freezing(+)/melting(-) flux from NO3 to INO3'
+  'freezing(+)/melting(-) flux from NO3 to IceNO3'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7606,7 +7606,7 @@
   1.0d0
 
 'Frz_NH4_INH4'
-  'freezing(+)/melting(-) flux from NH4 to INH4'
+  'freezing(+)/melting(-) flux from NH4 to IceNH4'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
