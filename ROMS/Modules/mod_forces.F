@@ -500,6 +500,10 @@
 #  endif
 # endif
 #endif
+#ifdef CARBON
+          real(r8), pointer :: pCO2air(:,:)
+          real(r8), pointer :: pCO2airG(:,:,:)
+#endif
 #ifdef CARBON_FLUX
           real(r8), pointer :: TAFlux(:,:)
           real(r8), pointer :: TAFluxG(:,:,:)
@@ -875,6 +879,10 @@
 # endif
 #endif
 
+#ifdef CARBON
+      allocate ( FORCES(ng) % pCO2air(LBi:UBi,LBj:UBj) )
+      allocate ( FORCES(ng) % pCO2airG(LBi:UBi,LBj:UBj,2) )
+#endif
 #ifdef CARBON_FLUX
       allocate ( FORCES(ng) % TAFlux(LBi:UBi,LBj:UBj) )
       allocate ( FORCES(ng) % TAFluxG(LBi:UBi,LBj:UBj,2) )
@@ -1054,6 +1062,11 @@
             FORCES(ng) % tau_aiy_n(i,j) = IniVal
             FORCES(ng) % sustr_aw(i,j) = IniVal
             FORCES(ng) % svstr_aw(i,j) = IniVal
+#ifdef CARBON
+            FORCES(ng) % pCO2air(i,j) = IniVal
+            FORCES(ng) % pCO2airG(i,j,1) = IniVal
+            FORCES(ng) % pCO2airG(i,j,2) = IniVal
+#endif
 #ifdef CARBON_FLUX
             FORCES(ng) % TAFlux(i,j) = IniVal
             FORCES(ng) % TAFluxG(i,j,1) = IniVal
@@ -1293,6 +1306,11 @@
               FORCES(ng) % SpecIr(i,j,itrc) = IniVal
               FORCES(ng) % avcos(i,j,itrc) = IniVal
             END DO
+# endif
+#ifdef CARBON
+            FORCES(ng) % pCO2air(i,j) = IniVal
+            FORCES(ng) % pCO2airG(i,j,1) = IniVal
+            FORCES(ng) % pCO2airG(i,j,2) = IniVal 
 # endif
 #ifdef CARBON_FLUX
             FORCES(ng) % TAFlux(i,j) = IniVal

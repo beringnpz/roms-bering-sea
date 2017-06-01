@@ -82,6 +82,7 @@
 # endif
 # ifdef CARBON 
      &                   OCEAN(ng) % pH,                                &
+     &                   FORCES(ng) % pCO2air,                          &
 #ifdef DIAGNOSTICS_BIO
      &                   DIAGS(ng) % DiaBio2d,                          &
      &                   DIAGS(ng) % DiaBio3d                           &
@@ -157,7 +158,9 @@
 # else
      &                         sustr, svstr,                            &
 #endif
-     &                         pH,                                      &
+#endif
+#ifdef CARBON
+     &                         pH, pCO2air,                             &
 #ifdef DIAGNOSTICS_BIO
      &                         DiaBio2d, DiaBio3d                       &
 #endif
@@ -288,6 +291,7 @@
 #endif
 #endif
 # ifdef CARBON
+      real(r8), intent(in) :: pCO2air(LBi:,LBj:)	
       real(r8), intent(inout) :: pH(LBi:,LBj:)
 # ifdef DIAGNOSTICS_BIO
       real(r8), intent(inout) :: DiaBio2d(LBi:,LBj:,:)
@@ -364,6 +368,7 @@
       real(r8), intent(in) :: srfPar(LBi:UBi,LBj:UBj)
 # endif
 # ifdef CARBON
+      real(r8), intent(in) :: pCO2air(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: pH(LBi:UBi,LBj:UBj)
 # ifdef DIAGNOSTICS_BIO
       real(r8), intent(inout) :: DiaBio2d(LBi:UBi,LBj:UBj,NDbio2d)
@@ -618,7 +623,7 @@
 !      real(r8) :: year, yday, month, iday, hour
 
       real(r8), parameter :: pi2 = 6.2831853071796_r8
-      real(r8), parameter :: pCO2air = 400.0_r8
+!      real(r8), parameter :: pCO2air = 400.0_r8
       real(r8), parameter :: D0 = 282.6_r8          ! coefficients
       real(r8), parameter :: D1 = 0.125_r8          ! to calculate
       real(r8), parameter :: D2 =-7.18_r8           ! secular trend in
@@ -4906,7 +4911,7 @@
 !!   &                         D6*SIN(pi2*pmonth+D7)
 !!          CO2_Flux=cff3*CO2_sol*(pCO2air_secular-pCO2(i))
              if(pCO2(i).gt.0.0_r8)then
-                  CO2_Flux=cff3*CO2_sol*(pCO2air-pCO2(i))*              &
+                  CO2_Flux=cff3*CO2_sol*(pCO2air(i,j)-pCO2(i))*         &
      &            (1.0_r8-ai(i,j,nstp))
 !	     	if(ai(i,j,nstp).gt.0.8_r8)then 
 !		  print *, 'ai', ai(i,j,nstp)

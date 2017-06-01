@@ -346,6 +346,17 @@
 
 # endif
 
+# ifdef CARBON       
+!--------------------------------------- 
+! Set the atmospheric pCO2 
+!---------------------------------------
+      CALL set_2dfld_tile (ng, tile, iNLM, idpCO2air,                   &
+     &                     LBi, UBi, LBj, UBj,                          &
+     &                     FORCES(ng)%pCO2airG,                         &
+     &                     FORCES(ng)%pCO2air,                          &
+     &                     update)
+
+# endif
 #  ifdef SHORTWAVE
 !
 !-----------------------------------------------------------------------

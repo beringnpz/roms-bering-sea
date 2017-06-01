@@ -332,6 +332,9 @@
         integer  :: idZtlf        ! Free-surface impulse forcing
 
         integer  :: idRunoff       ! Surface freshwater runoff rate
+# ifdef CARBON
+        integer  :: idpCO2air     ! Atmospheric pCO2
+# endif
 # ifdef CARBON_FLUX
         integer  :: idTAFlux       ! ALK input with runoff
         integer  :: idDICFlux       ! DIC input with runoff
@@ -3198,6 +3201,8 @@
 !                idRtrc(iTIC_)=varid
 !              CASE ('idRtrc(iTAlk)')
 !                idRtrc(iTAlk)=varid
+              CASE ('idpCO2air')
+                idpCO2air = varid
               CASE ('idTvar(iTIC_)')
                 idTvar(iTIC_)=varid
               CASE ('idTvar(iTAlk)')

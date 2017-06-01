@@ -734,6 +734,18 @@ end do
 
 #endif
 !-----------------------------------------------------------------------
+! Get the Atmospheric pCO2 data
+!-----------------------------------------------------------------------
+#ifdef CARBON
+      CALL get_2dfld (ng, iNLM, idpCO2air, ncfrcid(idpCO2air,ng),       &
+     &                nFfiles(ng), frcname(1,ng),                       &
+     &                update(1), LBi, UBi, LBj, UBj, 2, 1,              &
+# ifdef MASKING
+     &                GRID(ng) % rmask(LBi,LBj),                        &
+# endif
+     &                FORCES(ng) % pCO2airG(LBi,LBj,1))
+# endif
+!-----------------------------------------------------------------------
 # if defined SEDIMENT || defined BIOLOGY
 #  ifndef ANA_SPFLUX
 !
