@@ -876,7 +876,14 @@
 
 #ifdef ICE_BIO
         ! Move tracers between surface water layer and ice skeletal layer
-        ! if ice appeared or disappeared
+        ! if ice appeared or disappeared.  Note that the freezing rate 
+        ! diagnostics Frz_X_IX assume this process takes place over a 
+        ! full time step, rather than instantaneously, just to maintain 
+        ! some comparability to the other fluxes
+
+        Frz_PhL_IPhL = 0.0_r8
+        Frz_NO3_INO3 = 0.0_r8
+        Frz_NH4_INH4 = 0.0_r8
 
         DO i=Istr,Iend
           if (ice_status(i,j) .eq. 1.0) then
@@ -893,9 +900,9 @@
             Bio3d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiNO3)
             Bio3d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiNH4)
 
-            Frz_PhL_IPhL(i,N(ng)) = (Bio3d(i,N(ng),iiIcePhl) * aidz -  Bio2d(i,N(ng),iiIcePhL))/dtdays
-            Frz_NO3_INO3(i,N(ng)) = (Bio3d(i,N(ng),iiIceNO3) * aidz -  Bio2d(i,N(ng),iiIceNO3))/dtdays
-            Frz_NH4_INH4(i,N(ng)) = (Bio3d(i,N(ng),iiIceNH4) * aidz -  Bio2d(i,N(ng),iiIceNH4))/dtdays
+            Frz_PhL_IPhL(i,N(ng)) = (Bio3d(i,N(ng),iiIcePhl) * aidz -  Bio2d(i,N(ng),iiIcePhL))/(dt(ng)*sec2day)
+            Frz_NO3_INO3(i,N(ng)) = (Bio3d(i,N(ng),iiIceNO3) * aidz -  Bio2d(i,N(ng),iiIceNO3))/(dt(ng)*sec2day)
+            Frz_NH4_INH4(i,N(ng)) = (Bio3d(i,N(ng),iiIceNH4) * aidz -  Bio2d(i,N(ng),iiIceNH4))/(dt(ng)*sec2day)
 
             Bio2d(i,N(ng),iiPhL)    = Bio3d(i,N(ng),iiPhl) * Hz(i,j,N(ng))
             Bio2d(i,N(ng),iiNO3)    = Bio3d(i,N(ng),iiNO3) * Hz(i,j,N(ng))
@@ -910,9 +917,9 @@
             ! If ice disappeared, biomass that was in the ice gets dumped
             ! into the water surface layer
 
-            Frz_PhL_IPhL(i,N(ng)) = -Bio2d(i,N(ng),iiIcePhL)/dtdays
-            Frz_NO3_INO3(i,N(ng)) = -Bio2d(i,N(ng),iiIceNO3)/dtdays
-            Frz_NH4_INH4(i,N(ng)) = -Bio2d(i,N(ng),iiIceNH4)/dtdays
+            Frz_PhL_IPhL(i,N(ng)) = -Bio2d(i,N(ng),iiIcePhL)/(dt(ng)*sec2day)
+            Frz_NO3_INO3(i,N(ng)) = -Bio2d(i,N(ng),iiIceNO3)/(dt(ng)*sec2day)
+            Frz_NH4_INH4(i,N(ng)) = -Bio2d(i,N(ng),iiIceNH4)/(dt(ng)*sec2day)
 
             Bio2d(i,N(ng),iiPhL) = Bio2d(i,N(ng),iiPhL) + Bio2d(i,N(ng),iiIcePhL)
             Bio2d(i,N(ng),iiNO3) = Bio2d(i,N(ng),iiNO3) + Bio2d(i,N(ng),iiIceNO3)
@@ -1025,73 +1032,73 @@
         ! Calculate light decay in the water column
         !------------------------------------------
 
+!         DO i=Istr,Iend
+!           DO k=1,N(ng)
+!             PAR(i,k) = Ifrac(i,j,k) * PARs(i)
+!           END DO
+!         END DO
+
+#ifdef NEWSHADE
+        ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
+
         DO i=Istr,Iend
-          DO k=1,N(ng)
-            PAR(i,k) = Ifrac(i,j,k) * PARs(i)
+
+          cff10=h(i,j)
+          k_extV= k_ext+2.00_r8*exp(-cff10*.05)
+
+          cff0=PARs(i)
+
+          DO k=N(ng),1,-1
+
+            dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+            cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
+            cff2 = (k_chl*(cff5)**(0.428_r8))
+            !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
+            PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+            cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
+
           END DO
         END DO
 
-! #ifdef NEWSHADE
-!         ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
-!
-!         DO i=Istr,Iend
-!
-!           cff10=h(i,j)
-!           k_extV= k_ext+2.00_r8*exp(-cff10*.05)
-!
-!           cff0=PARs(i)
-!
-!           DO k=N(ng),1,-1
-!
-!             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
-!             cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
-!             cff2 = (k_chl*(cff5)**(0.428_r8))
-!             !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
-!             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
-!             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
-!
-!           END DO
-!         END DO
-!
-! #elif defined COKELET
-!         ! Version from Ned Cokelet
-!
-!         DO i=Istr,Iend
-!
-!           cff10=h(i,j)
-!           !  k_extV= k_ext+k_extZ*exp(-cff10*.05)
-!           k_extV= k_ext
-!           cff0=PARs(i)
-!
-!           DO k=N(ng),1,-1
-!
-!             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
-!             cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
-!             cff2 = (k_chlA*(cff5)**(k_chlB))
-!
-!             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
-!             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
-!
-!           END DO
-!         END DO
-! #else
-!         ! Version from Sarah Hinckley old C code
-!         ! (KAK: probably wrong... do not use)
-!
-!         DO k=N(ng),1,-1
-!           DO i=Istr,Iend
-!             cff3 = z_r(i,j,k)+2.5_r8
-!             IF ( cff3 .gt. -71.0_r8 ) THEN
-!               cff1 = k_ext + k_chl *                                 &
-!      &                  ( Bio3d(i,k,iiPhS) + Bio3d(i,k,iiPhL) ) / ccr
-!             ELSE
-!                 cff1 = 0.077_r8
-!             END IF
-!             PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
-!
-!           END DO
-!         END DO
-! #endif
+#elif defined COKELET
+        ! Version from Ned Cokelet
+
+        DO i=Istr,Iend
+
+          cff10=h(i,j)
+          !  k_extV= k_ext+k_extZ*exp(-cff10*.05)
+          k_extV= k_ext
+          cff0=PARs(i)
+
+          DO k=N(ng),1,-1
+
+            dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+            cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
+            cff2 = (k_chlA*(cff5)**(k_chlB))
+
+            PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+            cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
+
+          END DO
+        END DO
+#else
+        ! Version from Sarah Hinckley old C code
+        ! (KAK: probably wrong... do not use)
+
+        DO k=N(ng),1,-1
+          DO i=Istr,Iend
+            cff3 = z_r(i,j,k)+2.5_r8
+            IF ( cff3 .gt. -71.0_r8 ) THEN
+              cff1 = k_ext + k_chl *                                 &
+     &                  ( Bio3d(i,k,iiPhS) + Bio3d(i,k,iiPhL) ) / ccr
+            ELSE
+                cff1 = 0.077_r8
+            END IF
+            PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
+
+          END DO
+        END DO
+#endif
 
 
         !================================================================
@@ -1109,102 +1116,104 @@
           ! layers (e.g. ice to surface layer, or benthos to water
           ! column)
 
-          DBio = 0 ! Initializes entire array to 0
+          DBio = 0.0_r8 ! Initializes entire array to 0
 
-          Gpp_NO3_PhS    = 0
-          Gpp_NO3_PhL    = 0
-          Gpp_NH4_PhS    = 0
-          Gpp_NH4_PhL    = 0
-          Gra_PhS_MZL    = 0
-          Gra_PhL_MZL    = 0
-          Ege_MZL_Det    = 0
-          Gra_PhS_Cop    = 0
-          Gra_PhL_Cop    = 0
-          Gra_MZL_Cop    = 0
-          Gra_IPhL_Cop   = 0
-          Ege_Cop_DetF   = 0
-          Gra_PhS_NCaS   = 0
-          Gra_PhL_NCaS   = 0
-          Gra_MZL_NCaS   = 0
-          Gra_IPhL_NCaS  = 0
-          Ege_NCaS_DetF  = 0
-          Gra_PhS_NCaO   = 0
-          Gra_PhL_NCaO   = 0
-          Gra_MZL_NCaO   = 0
-          Gra_IPhL_NCaO  = 0
-          Ege_NCaO_DetF  = 0
-          Gra_PhS_EupS   = 0
-          Gra_PhL_EupS   = 0
-          Gra_MZL_EupS   = 0
-          Gra_Cop_EupS   = 0
-          Gra_IPhL_EupS  = 0
-          Gra_Det_EupS   = 0
-          Gra_DetF_EupS  = 0
-          Ege_EupS_DetF  = 0
-          Gra_PhS_EupO   = 0
-          Gra_PhL_EupO   = 0
-          Gra_MZL_EupO   = 0
-          Gra_Cop_EupO   = 0
-          Gra_IPhL_EupO  = 0
-          Gra_Det_EupO   = 0
-          Gra_DetF_EupO  = 0
-          Ege_EupO_DetF  = 0
-          Gra_Cop_Jel    = 0
-          Gra_EupS_Jel   = 0
-          Gra_EupO_Jel   = 0
-          Gra_NCaS_Jel   = 0
-          Gra_NCaO_Jel   = 0
-          Ege_Jel_DetF   = 0
-          Mor_PhS_Det    = 0
-          Mor_PhL_Det    = 0
-          Mor_MZL_Det    = 0
-          Mor_Cop_DetF   = 0
-          Mor_NCaS_DetF  = 0
-          Mor_EupS_DetF  = 0
-          Mor_NCaO_DetF  = 0
-          Mor_EupO_DetF  = 0
-          Mor_Jel_DetF   = 0
-          Res_PhS_NH4    = 0
-          Res_PhL_NH4    = 0
-          Res_MZL_NH4    = 0
-          Res_Cop_NH4    = 0
-          Res_NCaS_NH4   = 0
-          Res_NCaO_NH4   = 0
-          Res_EupS_NH4   = 0
-          Res_EupO_NH4   = 0
-          Res_Jel_NH4    = 0
-          Rem_Det_NH4    = 0
-          Rem_DetF_NH4   = 0
-          Nit_NH4_NO3    = 0
-          Gra_Det_Ben    = 0
-          Gra_DetF_Ben   = 0
-          Gra_PhS_Ben    = 0
-          Gra_PhL_Ben    = 0
-          Gra_BenDet_Ben = 0
-          Exc_Ben_NH4    = 0
-          Exc_Ben_BenDet = 0
-          Res_Ben_NH4    = 0
-          Mor_Ben_BenDet = 0
-          Rem_BenDet_NH4 = 0
-          Gpp_INO3_IPhL  = 0
-          Gpp_INH4_IPhL  = 0
-          Res_IPhL_INH4  = 0
-          Mor_IPhL_INH4  = 0
-          Nit_INH4_INO3  = 0
-          Twi_IPhL_PhL   = 0
-          Twi_INO3_NO3   = 0
-          Twi_INH4_NH4   = 0
-          Ver_PhS_BenDet = 0
-          Ver_PhS_Out    = 0
-          Ver_PhL_BenDet = 0
-          Ver_PhL_Out    = 0
-          Ver_Det_BenDet = 0
-          Ver_Det_Out    = 0
-          Ver_DetF_BenDet= 0
-          Ver_DetF_Out   = 0
-          Ver_NCaO_BenDet= 0
-          Ver_NCaS_DetF  = 0
-          Ver_NCaS_BenDet = 0
+          Gpp_NO3_PhS    = 0.0_r8
+          Gpp_NO3_PhL    = 0.0_r8
+          Gpp_NH4_PhS    = 0.0_r8
+          Gpp_NH4_PhL    = 0.0_r8
+          Gra_PhS_MZL    = 0.0_r8
+          Gra_PhL_MZL    = 0.0_r8
+          Ege_MZL_Det    = 0.0_r8
+          Gra_PhS_Cop    = 0.0_r8
+          Gra_PhL_Cop    = 0.0_r8
+          Gra_MZL_Cop    = 0.0_r8
+          Gra_IPhL_Cop   = 0.0_r8
+          Ege_Cop_DetF   = 0.0_r8
+          Gra_PhS_NCaS   = 0.0_r8
+          Gra_PhL_NCaS   = 0.0_r8
+          Gra_MZL_NCaS   = 0.0_r8
+          Gra_IPhL_NCaS  = 0.0_r8
+          Ege_NCaS_DetF  = 0.0_r8
+          Gra_PhS_NCaO   = 0.0_r8
+          Gra_PhL_NCaO   = 0.0_r8
+          Gra_MZL_NCaO   = 0.0_r8
+          Gra_IPhL_NCaO  = 0.0_r8
+          Ege_NCaO_DetF  = 0.0_r8
+          Gra_PhS_EupS   = 0.0_r8
+          Gra_PhL_EupS   = 0.0_r8
+          Gra_MZL_EupS   = 0.0_r8
+          Gra_Cop_EupS   = 0.0_r8
+          Gra_IPhL_EupS  = 0.0_r8
+          Gra_Det_EupS   = 0.0_r8
+          Gra_DetF_EupS  = 0.0_r8
+          Ege_EupS_DetF  = 0.0_r8
+          Gra_PhS_EupO   = 0.0_r8
+          Gra_PhL_EupO   = 0.0_r8
+          Gra_MZL_EupO   = 0.0_r8
+          Gra_Cop_EupO   = 0.0_r8
+          Gra_IPhL_EupO  = 0.0_r8
+          Gra_Det_EupO   = 0.0_r8
+          Gra_DetF_EupO  = 0.0_r8
+          Ege_EupO_DetF  = 0.0_r8
+          Gra_Cop_Jel    = 0.0_r8
+          Gra_EupS_Jel   = 0.0_r8
+          Gra_EupO_Jel   = 0.0_r8
+          Gra_NCaS_Jel   = 0.0_r8
+          Gra_NCaO_Jel   = 0.0_r8
+          Ege_Jel_DetF   = 0.0_r8
+          Mor_PhS_Det    = 0.0_r8
+          Mor_PhL_Det    = 0.0_r8
+          Mor_MZL_Det    = 0.0_r8
+          Mor_Cop_DetF   = 0.0_r8
+          Mor_NCaS_DetF  = 0.0_r8
+          Mor_EupS_DetF  = 0.0_r8
+          Mor_NCaO_DetF  = 0.0_r8
+          Mor_EupO_DetF  = 0.0_r8
+          Mor_Jel_DetF   = 0.0_r8
+          Res_PhS_NH4    = 0.0_r8
+          Res_PhL_NH4    = 0.0_r8
+          Res_MZL_NH4    = 0.0_r8
+          Res_Cop_NH4    = 0.0_r8
+          Res_NCaS_NH4   = 0.0_r8
+          Res_NCaO_NH4   = 0.0_r8
+          Res_EupS_NH4   = 0.0_r8
+          Res_EupO_NH4   = 0.0_r8
+          Res_Jel_NH4    = 0.0_r8
+          Rem_Det_NH4    = 0.0_r8
+          Rem_DetF_NH4   = 0.0_r8
+          Nit_NH4_NO3    = 0.0_r8
+          Gra_Det_Ben    = 0.0_r8
+          Gra_DetF_Ben   = 0.0_r8
+          Gra_PhS_Ben    = 0.0_r8
+          Gra_PhL_Ben    = 0.0_r8
+          Gra_BenDet_Ben = 0.0_r8
+          Exc_Ben_NH4    = 0.0_r8
+          Exc_Ben_BenDet = 0.0_r8
+          Res_Ben_NH4    = 0.0_r8
+          Mor_Ben_BenDet = 0.0_r8
+          Rem_BenDet_NH4 = 0.0_r8
+          Gpp_INO3_IPhL  = 0.0_r8
+          Gpp_INH4_IPhL  = 0.0_r8
+          Res_IPhL_INH4  = 0.0_r8
+          Mor_IPhL_INH4  = 0.0_r8
+          Nit_INH4_INO3  = 0.0_r8
+          Twi_IPhL_PhL   = 0.0_r8
+          Twi_INO3_NO3   = 0.0_r8
+          Twi_INH4_NH4   = 0.0_r8
+          Ver_PhS_BenDet = 0.0_r8
+          Ver_PhS_Out    = 0.0_r8
+          Ver_PhL_BenDet = 0.0_r8
+          Ver_PhL_Out    = 0.0_r8
+          Ver_Det_BenDet = 0.0_r8
+          Ver_Det_Out    = 0.0_r8
+          Ver_DetF_BenDet= 0.0_r8
+          Ver_DetF_Out   = 0.0_r8
+          Ver_NCaO_BenDet= 0.0_r8
+          Ver_NCaS_DetF  = 0.0_r8
+          Ver_NCaS_BenDet = 0.0_r8
+          Ver_NCaS_BenDet = 0.0_r8
+          
 
           !==============================================================
           !  Biological Source/Sink terms.
