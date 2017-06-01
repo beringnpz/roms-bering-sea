@@ -2747,12 +2747,10 @@
             do itrc = iNO3,size(t,5)
               if (t(i,j,k,nnew,itrc) < 0) then
                 write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
-                exit_flag = 1
               end if
 
               if (t(i,j,k,nnew,itrc) /= t(i,j,k,nnew,itrc)) then
                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
-                exit_flag = 1
               end if
             end do
 !             if (exit_flag>0) then
