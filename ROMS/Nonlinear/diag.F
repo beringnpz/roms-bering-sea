@@ -247,7 +247,6 @@
               END DO
             END DO
           END DO
-#  endif
 # endif
 #else
           cff=0.5_r8*g
