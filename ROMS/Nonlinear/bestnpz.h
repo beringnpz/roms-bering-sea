@@ -417,6 +417,7 @@
       integer  :: iiJel,    iiFe,     iiBen,  iiBenDet
       integer  :: iiIcePhL, iiIceNO3, iiIceNH4
       real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, Bio_bak, DBio
+      real(r8), dimension(IminS:ImaxS,N(ng),20) :: extrabio
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Temp, Salt
 
       ! Intermediate fluxes
@@ -705,8 +706,8 @@
         ! mass m^-3 (Bio3d) and mass m^-2 (Bio2d).  This redundancy
         ! makes for clearer (for human readers) code,
 
-        Bio3d = 0 ! Initialize to 0
-        Bio2d = 0
+        Bio3d = 0.0_r8 ! Initialize to 0
+        Bio2d = 0.0_r8
 
         ! Pelagic variables: These are originally stored in per-volume
         ! concentrations in each water column layer. NO3 and NH4 are in
@@ -867,12 +868,14 @@
         ! Save a copy of the original biomass
 
         Bio_bak = Bio2d
-
+        
         ! If any biomass is negtive, replace with 0 for all source/sink
         ! calculations
 
         Bio2d = max(0.0_r8, Bio2d)
         Bio3d = max(0.0_r8, Bio3d)
+        
+        extrabio = Bio2d - Bio_bak ! biomass added to make non-negative
 
 #ifdef ICE_BIO
         ! Move tracers between surface water layer and ice skeletal layer
@@ -1007,7 +1010,7 @@
           ! Shortwave radiation input (in deg C m/s) is converted to
           ! W/m^2 (assuming standard density rho0=1025 kg/m^3 and heat
           ! capacity Cp=3985 J/kg/degC of seawater), then to photon flux
-          ! (E/m^2/day)
+          ! (E/m^2/day) via
           !
           ! Eq = I * lambda/(h*c*A) * s2d
           !   where
@@ -1021,8 +1024,8 @@
           !   s2d = 86400 s/d
           !
           ! The constant used here (copied from GOANPZ) implies an
-          ! wavelegth of ~547 nm... prob derives from a average across 
-          ! chl range (~400-700nm)
+          ! wavelength of ~547 nm... prob derives from a average across 
+          ! chl range (~400-700nm).
 
           PARs(i) = PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
 #endif
@@ -1604,8 +1607,8 @@
               Mor_PhS_Det(i,k) = mPhS * Bio3d(i,k,iiPhS)
               Mor_PhL_Det(i,k) = mPhL * Bio3d(i,k,iiPhL)
 
-              ! Microzooplankton (quadratic mortality, with hard-coded
-              ! option for linear)
+              ! Microzooplankton (quadratic mortality, with option for 
+              ! linear)
 
 #ifdef MZLM0LIN
               Mor_MZL_Det(i,k) = mMZL*Bio3d(i,k,iiMZL)          ! linear
@@ -1621,9 +1624,9 @@
               ! seems deprecated and should probably be removed.
               Mor_Cop_DetF(i,k)  = 0.5
               Mor_NCaS_DetF(i,k) = 0.5
-              Mor_EupS_DetF(i,k) = 1
+              Mor_EupS_DetF(i,k) = 1.0
               Mor_NCaO_DetF(i,k) = 0.5
-              Mor_EupO_DetF(i,k) = 1
+              Mor_EupO_DetF(i,k) = 1.0
 #else
               TFEup = Q10Eup ** ((Temp(i,k)-Q10EupT) / 10.0_r8)
 # ifdef FEAST
@@ -1734,22 +1737,21 @@
 
               ! Nitrification
 
-
               NitrifMax = Nitr0 * exp(-ktntr*(Temp(i,k) - ToptNtr)**2)     ! Arhonditsis 2005 temperature dependence
 
               ParW = PAR(i,k)/0.394848_r8 ! convert to W
               DLNitrif = (1 - MAX(0.0_r8, (ParW - tI0)/(KI + ParW - tI0))) ! Fennel light dependence
               DLNitrif = 1.0_r8  ! No light/depth dependence (overrides previous line)
 
-              cff1 = Bio3d(i,k,iiNH4)/(KNH4Nit +Bio3d(i,k,iiNH4))          ! Arhonditsis saturation
+              cff1 = Bio3d(i,k,iiNH4)/(KNH4Nit + Bio3d(i,k,iiNH4))         ! Arhonditsis saturation
 
               Nit_NH4_NO3(i,k) = NitrifMax * Bio3d(i,k,iiNH4) * DLNitrif * cff1 !  mmol N m^-3 d^-1
 
             END DO
           END DO
 
-          ! Convert decomp fluxes from volumetric to integrated over
-          ! layer, and from N to C for consistency with other fluxes
+          ! Convert fluxes from volumetric to integrated over layer, and 
+          ! from N to C for consistency with other fluxes
 
           DO k=1,N(ng)
             DO i=Istr,Iend
@@ -1956,11 +1958,12 @@
               ! by a polynomial fit to brine salinty (Arrigo 1993
               ! Appendix B)
 
-              gesi = max(0.0_r8, (1.1e-2+3.012e-2*sb                    &
-     &             +1.0342e-3*sb**2                                     &
-     &             -4.6033e-5*sb**3                                     &
-     &             +4.926e-7*sb**4                                      &
-     &             -1.659e-9*sb**5              ))
+              gesi = max(0.0_r8, (1.1e-2                                &
+     &                          + 3.012e-2*sb                           &
+     &                          + 1.0342e-3*sb**2                       &
+     &                          - 4.6033e-5*sb**3                       &
+     &                          + 4.926e-7*sb**4                        &
+     &                          - 1.659e-9*sb**5              ))
 
 # else
               ! When running without an accompanying ice model, assume no
@@ -2317,7 +2320,7 @@
           ! the initial setup of the Bio2d and Bio3d arrays.
 
           Bio2d(:,1,iiBen) = sum(Bio2d(:,:,iiBen), DIM=2)
-          Bio2d(:,2:N(ng),iiBen) = 0
+          Bio2d(:,2:N(ng),iiBen) = 0.0_r8
 
           ! TODO: Eliminate negatives?  Hopefully processes are
           ! formulated to prevent any, but very fast overturning might
@@ -2325,7 +2328,7 @@
           ! eliminate conservation of mass, so I'd prefer to look into
           ! increasing BioIter if this is a problem
           
-          WHERE (Bio2d < 0) Bio2d = 0
+          Bio2d = max(Bio2d, 0.0_r8)
             
           ! TODO: Save this "input flux" as diagnostic
             
@@ -2359,8 +2362,8 @@
 
           ! Initialize temporary arrays to 0
 
-          dBtmp = 0
-          flxtmp = 0
+          dBtmp = 0.0_r8
+          flxtmp = 0.0_r8
 
           ! Small phytoplankton: sinks, and 79% of what sinks out of the
           ! bottom goes to benthic detritus
@@ -2726,21 +2729,36 @@
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            t(i,j,k,nnew,iNO3 ) = max(0.0_r8, Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )))
-            t(i,j,k,nnew,iNH4 ) = max(0.0_r8, Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 )))
-            t(i,j,k,nnew,iPhS ) = max(0.0_r8, Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS )))
-            t(i,j,k,nnew,iPhL ) = max(0.0_r8, Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL )))
-            t(i,j,k,nnew,iMZL ) = max(0.0_r8, Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL )))
-            t(i,j,k,nnew,iCop ) = max(0.0_r8, Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop )))
-            t(i,j,k,nnew,iNCaS) = max(0.0_r8, Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS)))
-            t(i,j,k,nnew,iEupS) = max(0.0_r8, Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS)))
-            t(i,j,k,nnew,iNCaO) = max(0.0_r8, Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO)))
-            t(i,j,k,nnew,iEupO) = max(0.0_r8, Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO)))
-            t(i,j,k,nnew,iDet ) = max(0.0_r8, Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet )))
-            t(i,j,k,nnew,iDetF) = max(0.0_r8, Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF)))
-            t(i,j,k,nnew,iJel ) = max(0.0_r8, Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel )))
-            t(i,j,k,nnew,iFe  ) = max(0.0_r8, Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  )))
+            t(i,j,k,nnew,iNO3 ) = max(0.0_r8, Bio2d(i,k,iiNO3 ))
+            t(i,j,k,nnew,iNH4 ) = max(0.0_r8, Bio2d(i,k,iiNH4 ))
+            t(i,j,k,nnew,iPhS ) = max(0.0_r8, Bio2d(i,k,iiPhS ))
+            t(i,j,k,nnew,iPhL ) = max(0.0_r8, Bio2d(i,k,iiPhL ))
+            t(i,j,k,nnew,iMZL ) = max(0.0_r8, Bio2d(i,k,iiMZL ))
+            t(i,j,k,nnew,iCop ) = max(0.0_r8, Bio2d(i,k,iiCop ))
+            t(i,j,k,nnew,iNCaS) = max(0.0_r8, Bio2d(i,k,iiNCaS))
+            t(i,j,k,nnew,iEupS) = max(0.0_r8, Bio2d(i,k,iiEupS))
+            t(i,j,k,nnew,iNCaO) = max(0.0_r8, Bio2d(i,k,iiNCaO))
+            t(i,j,k,nnew,iEupO) = max(0.0_r8, Bio2d(i,k,iiEupO))
+            t(i,j,k,nnew,iDet ) = max(0.0_r8, Bio2d(i,k,iiDet ))
+            t(i,j,k,nnew,iDetF) = max(0.0_r8, Bio2d(i,k,iiDetF))
+            t(i,j,k,nnew,iJel ) = max(0.0_r8, Bio2d(i,k,iiJel ))
+            t(i,j,k,nnew,iFe  ) = max(0.0_r8, Bio2d(i,k,iiFe  ))
             t(i,j,k,nnew,iMZS ) = 0.0_r8
+!             t(i,j,k,nnew,iNO3 ) = max(0.0_r8, Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )))
+!             t(i,j,k,nnew,iNH4 ) = max(0.0_r8, Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 )))
+!             t(i,j,k,nnew,iPhS ) = max(0.0_r8, Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS )))
+!             t(i,j,k,nnew,iPhL ) = max(0.0_r8, Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL )))
+!             t(i,j,k,nnew,iMZL ) = max(0.0_r8, Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL )))
+!             t(i,j,k,nnew,iCop ) = max(0.0_r8, Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop )))
+!             t(i,j,k,nnew,iNCaS) = max(0.0_r8, Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS)))
+!             t(i,j,k,nnew,iEupS) = max(0.0_r8, Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS)))
+!             t(i,j,k,nnew,iNCaO) = max(0.0_r8, Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO)))
+!             t(i,j,k,nnew,iEupO) = max(0.0_r8, Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO)))
+!             t(i,j,k,nnew,iDet ) = max(0.0_r8, Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet )))
+!             t(i,j,k,nnew,iDetF) = max(0.0_r8, Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF)))
+!             t(i,j,k,nnew,iJel ) = max(0.0_r8, Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel )))
+!             t(i,j,k,nnew,iFe  ) = max(0.0_r8, Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  )))
+!             t(i,j,k,nnew,iMZS ) = 0.0_r8
             
             ! Check for negatives and NaNs (for debugging)
             
@@ -2783,8 +2801,10 @@
 #ifdef BENTHIC
 
         DO i=Istr,Iend
-          bt(i,j,1,nnew,iBen   ) = Bio_bak(i,1,iiBen   ) + (Bio2d(i,1,iiBen   ) - Bio_bak(i,1,iiBen   ))
-          bt(i,j,1,nnew,iBenDet) = Bio_bak(i,1,iiBenDet) + (Bio2d(i,1,iiBenDet) - Bio_bak(i,1,iiBenDet))
+          bt(i,j,1,nnew,iBen   ) = Bio2d(i,1,iiBen   )
+          bt(i,j,1,nnew,iBenDet) = Bio2d(i,1,iiBenDet)
+!           bt(i,j,1,nnew,iBen   ) = Bio_bak(i,1,iiBen   ) + (Bio2d(i,1,iiBen   ) - Bio_bak(i,1,iiBen   ))
+!           bt(i,j,1,nnew,iBenDet) = Bio_bak(i,1,iiBenDet) + (Bio2d(i,1,iiBenDet) - Bio_bak(i,1,iiBenDet))
 
 # ifdef MASKING
           bt(i,j,1,nnew,iBen)    = bt(i,j,1,nnew,iBen   )*rmask(i,j)
@@ -2800,10 +2820,13 @@
 # if defined CLIM_ICE_1D
 
         DO i=Istr,Iend
-          it(i,j,nnew,iIceNO3) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
-          it(i,j,nnew,iIceNH4) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
-          it(i,j,nnew,iIcePhL) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
-
+!           it(i,j,nnew,iIceNO3) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
+!           it(i,j,nnew,iIceNH4) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
+!           it(i,j,nnew,iIcePhL) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
+          it(i,j,nnew,iIceNO3) = Bio2d(i,N(ng),iiIceNO3)/aidz
+          it(i,j,nnew,iIceNH4) = Bio2d(i,N(ng),iiIceNH4)/aidz
+          it(i,j,nnew,iIcePhL) = Bio2d(i,N(ng),iiIcePhL)/aidz
+          
           itL(i,j,nnew,iIceLog) = itL(i,j,nstp,iIceLog)
 
 #  ifdef MASKING
@@ -2815,10 +2838,14 @@
         END DO
 # else
         DO i=Istr,Iend
-          IceNO3(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
-          IceNH4(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
-          IcePhL(i,j,nnew) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
+!           IceNO3(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
+!           IceNH4(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
+!           IcePhL(i,j,nnew) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
 
+          IceNO3(i,j,nnew) = Bio2d(i,N(ng),iiIceNO3)/aidz
+          IceNH4(i,j,nnew) = Bio2d(i,N(ng),iiIceNH4)/aidz
+          IcePhL(i,j,nnew) = Bio2d(i,N(ng),iiIcePhL)/aidz
+          
           IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: Current step value now in both positions... doublecheck that this is correct (real update in =happens in ice_limit.F))
 
 #  ifdef MASKING
