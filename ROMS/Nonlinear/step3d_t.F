@@ -115,26 +115,26 @@
      &                    DIAGS(ng) % DiaTwrk,                          &
 # endif
      &                    OCEAN(ng) % t                                 &
-#if defined BEST_NPZ
-# ifdef BENTHIC     
+# if defined BEST_NPZ
+#  ifdef BENTHIC
      &                    ,OCEAN(ng) % bt                               &
-# endif
-# ifdef ICE_BIO 
-# ifdef CLIM_ICE_1D 
+#  endif
+#  ifdef ICE_BIO
+#   ifdef CLIM_ICE_1D
      &                    ,OCEAN(ng) % itL                              &
      &                    ,OCEAN(ng) % it                               &
 !# elif defined BERING_10K
 !     &                   ,ICE(ng) % IcePhL                              &
 !     &                   ,ICE(ng) % IceNO3                              &
-!     &                   ,ICE(ng) % IceNH4                              & 
- 
- 
-# endif  
-# endif   
-# ifdef STATIONARY
+!     &                   ,ICE(ng) % IceNH4                              &
+
+
+#   endif
+#  endif
+#  ifdef STATIONARY
       &                   ,OCEAN(ng) %st                                &
+#  endif
 # endif
-#endif     
      &                               )
 # ifdef PROFILE
       CALL wclock_off (ng, iNLM, 35)
@@ -186,24 +186,24 @@
      &                          DiaTwrk,                                &
 # endif
      &                          t                                       &
-#if defined BEST_NPZ
-#  ifdef  BENTHIC     
+# if defined BEST_NPZ
+#  ifdef  BENTHIC
      &                          ,bt                                     &
-#  endif     
-#  ifdef ICE_BIO 
-#ifdef CLIM_ICE_1D
+#  endif
+#  ifdef ICE_BIO
+#   ifdef CLIM_ICE_1D
      &                          ,itL                                     &
      &                          ,it                                     &
 !#  elif defined BERING_10K
 !     &                           ,IcePhL                              &
 !     &                           ,IceNO3                              &
 !     &                           ,IceNH4                              &
-#  endif       
-#  endif        
+#   endif
+#  endif
 #  ifdef STATIONARY
                                 ,st                                     &
-#  endif  
-#endif   
+#  endif
+# endif
      &                           )
 !***********************************************************************
 !
@@ -299,29 +299,29 @@
       real(r8), intent(out) :: dAktdz(LBi:,LBj:,:)
 #  endif
 
-#if defined BEST_NPZ
-# ifdef ICE_BIO    
-#if defined CLIM_ICE_1D 
+#  if defined BEST_NPZ
+#   ifdef ICE_BIO
+#    if defined CLIM_ICE_1D
        real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
        real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
 
 
-!#elif defined BERING_10K
+!#    elif defined BERING_10K
 !          real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
 !      real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
 !      real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
 !      integer, intent(inout) :: IceLog(LBi:,LBj:,:)
-      
-      
-# endif        
-# endif    
-# ifdef STATIONARY
+
+
+#    endif
+#   endif
+#   ifdef STATIONARY
      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
-# endif
-# ifdef BENTHIC 
+#   endif
+#   ifdef BENTHIC
      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
-# endif 
-#endif
+#   endif
+#  endif
 
 # else
 
@@ -363,14 +363,14 @@
 #  if defined TCLM_NUDGING && defined TCLIMATOLOGY
       real(r8), intent(in) :: Tnudgcof(LBi:UBi,LBj:UBj,NT(ng))
 
-      
-     
-# if defined  CLIM_ICE_1D && defined ICE_BIO      
+
+
+#   if defined  CLIM_ICE_1D && defined ICE_BIO
       real(r8), intent(in) :: tclm(LBi:UBi,LBj:UBj,N(ng),iCI) !was iFe
-# else      
+#   else
       real(r8), intent(in) :: tclm(LBi:UBi,LBj:UBj,N(ng),NT(ng)
-# endif       
-      
+#   endif
+
 
 #  endif
 
@@ -394,29 +394,29 @@
      &                                   NDT)
 #  endif
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,N(ng),3,NT(ng))
-#if defined BEST_NPZ
-#ifdef STATIONARY
+#  if defined BEST_NPZ
+#   ifdef STATIONARY
      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
-#endif
+#   endif
 
-#ifdef BENTHIC
+#   ifdef BENTHIC
      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
-#endif
-# ifdef ICE_BIO  
-# ifdef CLIM_ICE_1D   
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
        real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
        real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
-       
+
 !#elif defined BERING_10K
 !          real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
 !      real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
 !      real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
 !      integer, intent(inout) :: IceLog(LBi:,LBj:,:)
-      
-# endif            
-# endif
- 
-#endif
+
+#    endif
+#   endif
+
+#  endif
 
 #  if defined FLOATS && defined FLOAT_VWALK
       real(r8), intent(out) :: dAktdz(LBi:UBi,LBj:UBj,N(ng))
@@ -510,15 +510,15 @@
 !  (horizontal diffusion, biology, or sediment) are accounted.
 !
 #  if defined EW_PERIODIC || defined NS_PERIODIC
-#ifdef OFFLINE_BIOLOGY
+#   ifdef OFFLINE_BIOLOGY
       DO ibt=1,NBT
         itrc=idbio(ibt)
-#else
-      DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
-#endif
-#endif
+#   else
+      DO itrc=1,NT(ng)
+#    if defined FEAST
+        IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#    endif
+#   endif
         CALL exchange_r3d_tile (ng, tile,                               &
      &                          LBi, UBi, LBj, UBj, 1, N(ng),           &
      &                          t(:,:,:,3,itrc))
@@ -532,15 +532,15 @@
 #  endif
 # endif
 
-#ifdef OFFLINE_BIOLOGY
+# ifdef OFFLINE_BIOLOGY
       T_LOOP : DO ibt=1,NBT
         itrc=idbio(ibt)
-#else
-      T_LOOP : DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
-#endif
-#endif
+# else
+      T_LOOP : DO itrc=1,NT(ng)
+#  if defined FEAST
+        IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#  endif
+# endif
         K_LOOP : DO k=1,N(ng)
 
 # if defined TS_C2HADVECTION
@@ -615,7 +615,7 @@
 #  else
 !  Fourth-order, centered differences horizontal advective fluxes.
 #  endif
-!  
+!
 #  ifdef EW_PERIODIC
 #   define I_RANGE Istr-1,Iend+2
 #  else
@@ -804,7 +804,7 @@
 !  Time-step horizontal advection term.
 !
 !       print*,'before horz advect','t=',t(1,1,19,2,1)
-       
+
 # ifdef TS_MPDATA
 #   ifdef EW_PERIODIC
 #    define I_RANGE Istr-2,Iend+2
@@ -822,72 +822,71 @@
 # endif
           DO j=J_RANGE
             DO i=I_RANGE
-   
-	    
+
+
               cff=dt(ng)*pm(i,j)*pn(i,j)
-	      
-	
+
+
               cff1=cff*(FX(i+1,j)-FX(i,j)+                              &
      &                  FE(i,j+1)-FE(i,j))
-        
-!g	   IF ( itrc.gt.2 ) THEN
-!g               
-!g		cff1=0.0_r8
-!g		
+
+!g     IF ( itrc.gt.2 ) THEN
+!g
+!g    cff1=0.0_r8
+!g
 !g           END IF
-     
-#  ifdef TS_MPDATA
+
+# ifdef TS_MPDATA
               cff2=Hz(i,j,k)+                                           &
      &             cff*(Huon(i+1,j,k)-Huon(i,j,k)+                      &
      &                  Hvom(i,j+1,k)-Hvom(i,j,k)+                      &
      &                  (W(i,j,k)-W(i,j,k-1)))                 ! Hz_old
               Ta(i,j,k,itrc)=t(i,j,k,3,itrc)*cff2-cff1
-#  else
-            
-	
-	   t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
-	   
-	   
-!!	   if(itrc.gt.2)THEN
-!!	    t(i,j,k,nnew,itrc)=max(0,t(i,j,k,nnew,itrc))
-!!	   endif
-	    
-!Constraining nutrients in inlets that are only 1 grid cell wide 	   
-!Cook Inlet	   
+# else
 
-!	 if(i.ge.171.and.i.le.179.and.j.ge.18.and.j.le.27)THEN
-!	  
-!	  if(itrc.eq.iFe)THEN
-!	   t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
-!	   else if(itrc.eq.iNH4)THEN
-!	   t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
-!	    else if(itrc.eq.iNO3)THEN
-!	   t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
-!	  endif
-!	 endif 
-	  
-!Hagemeister Strait   
-!	  if(i.ge.121.and.i.le.124.and.j.ge.56.and.j.le.59)THEN
-!	  if(itrc.eq.iFe)THEN
-!	   t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
-!	   else if(itrc.eq.iNH4)THEN
-!	   t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
-!	    else if(itrc.eq.iNO3)THEN
-!	   t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
-!	  endif
-!	 endif 
-	   
-	
-	  	      
-#  endif
-#  ifdef DIAGNOSTICS_TS
+              t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
+
+
+!!     if(itrc.gt.2)THEN
+!!      t(i,j,k,nnew,itrc)=max(0,t(i,j,k,nnew,itrc))
+!!     endif
+
+!Constraining nutrients in inlets that are only 1 grid cell wide
+!Cook Inlet
+
+!  if(i.ge.171.and.i.le.179.and.j.ge.18.and.j.le.27)THEN
+!
+!   if(itrc.eq.iFe)THEN
+!    t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
+!    else if(itrc.eq.iNH4)THEN
+!    t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
+!     else if(itrc.eq.iNO3)THEN
+!    t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
+!   endif
+!  endif
+
+!Hagemeister Strait
+!   if(i.ge.121.and.i.le.124.and.j.ge.56.and.j.le.59)THEN
+!   if(itrc.eq.iFe)THEN
+!    t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
+!    else if(itrc.eq.iNH4)THEN
+!    t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
+!     else if(itrc.eq.iNO3)THEN
+!    t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
+!   endif
+!  endif
+
+
+
+# endif
+# ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iThadv)=-cff1
-#  endif
-#   if defined RUNOFF && defined BARENTS_0_2
+# endif
+# if defined RUNOFF && defined BARENTS_0_2
               IF(itrc.eq.isalt) THEN
                 t(i,j,k,nnew,isalt)=MAX(0.001_r8,t(i,j,k,nnew,isalt))
               ENDIF
-#   endif
+# endif
 !            endif
             END DO
           END DO
@@ -899,17 +898,17 @@
 !-----------------------------------------------------------------------
 !
 !      print*,'before vert advect','t=',t(1,1,19,2,1)
- 
+
       DO j=J_RANGE
-#ifdef OFFLINE_BIOLOGY
+# ifdef OFFLINE_BIOLOGY
         DO ibt=1,NBT
           itrc=idbio(ibt)
-#else
-        DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
-#endif
-#endif
+# else
+        DO itrc=1,NT(ng)
+#  if defined FEAST
+          IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#  endif
+# endif
 
 # if defined TS_SVADVECTION
 !
@@ -1099,15 +1098,15 @@
           DO k=1,N(ng)
             DO i=I_RANGE
               cff1=CF(i,0)*(FC(i,k)-FC(i,k-1))
-	      
-	      
-	      
-!g	   IF ( itrc.gt.2 ) THEN
-!g                
-!g		cff1=0.0_r8
-!g		
+
+
+
+!g     IF ( itrc.gt.2 ) THEN
+!g
+!g    cff1=0.0_r8
+!g
 !g           END IF
-	   
+
 # ifdef TS_MPDATA
               Ta(i,j,k,itrc)=(Ta(i,j,k,itrc)-cff1)*oHz(i,j,k)
 #  ifdef DIAGNOSTICS_TS
@@ -1145,15 +1144,15 @@
 !  using MPDATA recursive method.  Notice that pipelined J-loop ended.
 !-----------------------------------------------------------------------
 !
-#ifdef OFFLINE_BIOLOGY
+#  ifdef OFFLINE_BIOLOGY
       DO ibt=1,NBT
         itrc=idbio(ibt)
-#else
-      DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
-#endif
-#endif
+#  else
+      DO itrc=1,NT(ng)
+#   if defined FEAST
+        IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#   endif
+#  endif
         CALL mpdata_adiff_tile (ng, tile,                               &
      &                          LBi, UBi, LBj, UBj,                     &
      &                          IminS, ImaxS, JminS, JmaxS,             &
@@ -1199,14 +1198,14 @@
               cff1=dt(ng)*pm(i,j)*pn(i,j)*                              &
      &             (FX(i+1,j)-FX(i,j)+                                  &
      &              FE(i,j+1)-FE(i,j))
-     
-     
-!g	   IF ( itrc.gt.2 ) THEN
-!g              
-!g		cff1=0.0_r8
-!g		
+
+
+!g     IF ( itrc.gt.2 ) THEN
+!g
+!g    cff1=0.0_r8
+!g
 !g           END IF
-	   
+
               t(i,j,k,nnew,itrc)=Ta(i,j,k,itrc)*Hz(i,j,k)-cff1
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iThadv)=DiaTwrk(i,j,k,itrc,iThadv)-    &
@@ -1243,14 +1242,14 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
               cff1=CF(i,0)*(FC(i,k)-FC(i,k-1))
-	      
-	      
-!g	   IF ( itrc.gt.2 ) THEN
-!g                
-!g		cff1=0.0_r8
-!g		
+
+
+!g     IF ( itrc.gt.2 ) THEN
+!g
+!g    cff1=0.0_r8
+!g
 !g           END IF
-	   
+
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iTvadv)=DiaTwrk(i,j,k,itrc,iTvadv)-    &
@@ -1282,19 +1281,19 @@
 !  Time-step vertical diffusion term.
 !-----------------------------------------------------------------------
 !
-#ifdef OFFLINE_BIOLOGY
+# ifdef OFFLINE_BIOLOGY
         DO ibt=1,NBT
           itrc=idbio(ibt)
-#else
-        DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
-#endif
-#endif
+# else
+        DO itrc=1,NT(ng)
+#  if defined FEAST
+          IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#  endif
+# endif
           ltrc=MIN(NAT,itrc)
-#ifdef LIMIT_BIO_AKT
+# ifdef LIMIT_BIO_AKT
           IF (itrc == 2) ltrc = 1
-#endif
+# endif
 
 # if defined SPLINES && !defined TS_MPDATA
 !
@@ -1352,16 +1351,16 @@
 !   Neocalanus and Euphuasiids don't experience vertical advection because
 !   they are big enough to swim.
 
-#  ifdef JELLY
-              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.&
-     &      itrc.eq.iEupO.or.itrc.eq.iJel ) THEN
-#  else       
-              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or. itrc.eq.iEupS.or. &
-     &        itrc.eq.iEupO) THEN
-#  endif
+#   ifdef JELLY
+              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.   &
+     &            itrc.eq.iEupO.or.itrc.eq.iJel ) THEN
+#   else
+              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or. itrc.eq.iEupS.or.  &
+     &            itrc.eq.iEupO) THEN
+#   endif
 
-              cff1=0.0_r8
-               END IF
+                cff1=0.0_r8
+              END IF
 ! -Remove effects of mixing on biology - usefull for model testing
 
 !g            IF ( itrc.gt.2)    THEN
@@ -1440,24 +1439,24 @@
      &                   (BC(i,N(ng))-FC(i,N(ng)-1)*CF(i,N(ng)-1))
 
 #  ifdef BEST_NPZ
-            
-#  ifdef JELLY     
+
+#   ifdef JELLY
 !g      IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
 !g     &        itrc.eq.iEupO.or.itrc.eq.iJel) THEN
-#  else
+#   else
 !g       IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.&
 !g     &        itrc.er.iEupO) THEN
-#  endif
+#   endif
 #  endif
 
 #  ifdef BIO_GOANPZ
              IF ( itrc.ne.iNCa .and. itrc.ne.iEup ) THEN
 #  endif
-!g      t(i,j,N(ng),nnew,itrc)=t(i,j,N(ng),nnew,itrc)      
-!g      else    
-      t(i,j,N(ng),nnew,itrc)=DC(i,N(ng))
+!g      t(i,j,N(ng),nnew,itrc)=t(i,j,N(ng),nnew,itrc)
+!g      else
+        t(i,j,N(ng),nnew,itrc)=DC(i,N(ng))
 #  if defined BIO_GOANPZ || defined BEST_NPZ
-           
+
 !g             END IF
 #  endif
 #  ifdef DIAGNOSTICS_TS
@@ -1473,17 +1472,17 @@
 #  endif
               DC(i,k)=DC(i,k)-CF(i,k)*DC(i,k+1)
 #  ifdef BEST_NPZ
-# ifdef JELLY
+#   ifdef JELLY
 !g        IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
 !g     &   itrc.eq.iEupO.or.itrc.eq.iJel) THEN
-#else
+#   else
 !g         IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
 !g     &        itrc.eq.iEupO) THEN
-#endif
+#   endif
 #  endif
 
 
-#  if defined BIO_GOANPZ 
+#  if defined BIO_GOANPZ
               IF ( itrc.ne.iNCa .and. itrc.ne.iEup ) THEN
 #  endif
 !g              t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)
@@ -1491,7 +1490,7 @@
               t(i,j,k,nnew,itrc)=DC(i,k)
 #  if defined BIO_GOANPZ || defined BEST_NPZ
 !g              END IF
-#  endif	      
+#  endif
 
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iTvdif)=DiaTwrk(i,j,k,itrc,iTvdif)+    &
@@ -1508,15 +1507,15 @@
 !  to tracer data and apply Land/Sea mask.
 !-----------------------------------------------------------------------
 !
-#ifdef OFFLINE_BIOLOGY
+# ifdef OFFLINE_BIOLOGY
       DO ibt=1,NBT
         itrc=idbio(ibt)
-#else
-      DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
-#endif
-#endif
+# else
+      DO itrc=1,NT(ng)
+#  if defined FEAST
+        IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#  endif
+# endif
 !
 !  Set lateral boundary conditions.
 !
@@ -1527,7 +1526,7 @@
      &                   t)
 
 
-# if defined TCLM_NUDGING && defined TCLIMATOLOGY 
+# if defined TCLM_NUDGING && defined TCLIMATOLOGY
 
 
 !
@@ -1551,61 +1550,58 @@
                  cff = Tnudgcof(i,j,itrc)
               ENDIF
 #    else
-              IF(itrc.eq.isalt.and.k.eq.N(ng).and.                      &
-     & Tnudgcof(i,j,itrc).le.1.0_r8/(60.0_r8*86400.0_r8)) THEN
-                 cff = 1.0_r8/(60.0_r8*86400.0_r8)
+              IF (itrc.eq.isalt.and.k.eq.N(ng).and.                     &
+     &            Tnudgcof(i,j,itrc).le.1.0_r8/(60.0_r8*86400.0_r8)) THEN
+                cff = 1.0_r8/(60.0_r8*86400.0_r8)
               ELSEIF(itrc.eq.itemp.and.k.eq.N(ng).and.                  &
-     & Tnudgcof(i,j,itrc).le.1.0_r8/(60.0_r8*86400.0_r8)) THEN
-                 IF (tclm(i,j,k,itrc).lt.1.0_r8) THEN
-                     cff = 0._r8
-                 ELSEIF (tclm(i,j,k,itrc).ge.2.0_r8) THEN
-                     cff = 1.0_r8/(60.0_r8*86400.0_r8)
-                 ELSE
-                     cff = 1.0_r8/(60.0_r8*86400.0_r8)*                 &
+     &            Tnudgcof(i,j,itrc).le.1.0_r8/(60.0_r8*86400.0_r8)) THEN
+                IF (tclm(i,j,k,itrc).lt.1.0_r8) THEN
+                  cff = 0._r8
+                ELSEIF (tclm(i,j,k,itrc).ge.2.0_r8) THEN
+                  cff = 1.0_r8/(60.0_r8*86400.0_r8)
+                ELSE
+                  cff = 1.0_r8/(60.0_r8*86400.0_r8)*                 &
      &                            (tclm(i,j,k,itrc)-1._r8)
-                 ENDIF
+                ENDIF
               ELSE
-                 cff = Tnudgcof(i,j,itrc)
+                cff = Tnudgcof(i,j,itrc)
               ENDIF
 
 #    endif
-              t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+                    &
-     &                           dt(ng)*cff*                            &
-     &         (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
-#  endif      
+              t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) +                 &
+     &                             dt(ng)*cff*                          &
+     &                             (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
+#  endif
 #  if defined BIO_NUDGE_ONLY
-!ajh only nudge for iron or nitrate or ammonium
+              ! ajh only nudge for iron or nitrate or ammonium
 !              t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+                    &
-              if(itrc.eq.iFe.or.itrc.eq.iNO3.or.itrc.eq.iNH4)            &   
+              if (itrc.eq.iFe.or.itrc.eq.iNO3.or.itrc.eq.iNH4)          &
      &               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+             &
      &                           dt(ng)*Tnudgcof(i,j,itrc)*             &
      &                           (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
 !ajh trap wild values of temp or salt
-!if (itrc.eq.itemp) then 
+!if (itrc.eq.itemp) then
 !if (t(i,j,k,nnew,itrc).gt.40.d0.or.t(i,j,k,nnew,itrc).lt.-3.d0) then
-!print*,'reset wild value temp,i,j,k ',t(i,j,k,nnew,itrc),i,j,k 
+!print*,'reset wild value temp,i,j,k ',t(i,j,k,nnew,itrc),i,j,k
 !t(i,j,k,nnew,itrc)=min(t(i,j,k,nnew,itrc),40.d0)
 !t(i,j,k,nnew,itrc)=max(t(i,j,k,nnew,itrc),-3.d0)
 !endif
 !endif
-!if (itrc.eq.isalt) then 
+!if (itrc.eq.isalt) then
 !if (t(i,j,k,nnew,itrc).gt.50.d0.or.t(i,j,k,nnew,itrc).lt.0) then
-!print*,'reset wild value salt,i,j,k ',t(i,j,k,nnew,itrc),i,j,k 
+!print*,'reset wild value salt,i,j,k ',t(i,j,k,nnew,itrc),i,j,k
 !t(i,j,k,nnew,itrc)=min(t(i,j,k,nnew,itrc),50.d0)
 !t(i,j,k,nnew,itrc)=max(t(i,j,k,nnew,itrc),0.d0)
 !endif
 !endif
 
 #  endif
-!              
+!
             END DO
           END DO
         END DO
 
 # endif
-                
-
-
 
 
 # if defined NUDGING_SST || defined NUDGING_T
@@ -1675,30 +1671,24 @@
 !ajh
 !added block on this for passives when feast is present
 !NOTE will need to exchange when passives/fish are changed elsewhere
-#ifdef FEAST_NOEXCHANGE
-       CALL mp_exchange4d (ng, tile, iNLM, 1,                           &
+#  ifdef FEAST_NOEXCHANGE
+      CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NAT,         &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
 
-       CALL mp_exchange4d (ng, tile, iNLM, 1,                           &
+      CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng),                 &
      &                    NAT+NPT+1, NT(ng),                    &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
 
-#else
-       CALL mp_exchange4d (ng, tile, iNLM, 1,                           &
+#  else
+      CALL mp_exchange4d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj, 1, N(ng), 1, NT(ng),      &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    t(:,:,:,nnew,:))
-# endif
-
-
-
-
-
-
+#  endif
 # endif
 # if defined FLOATS && defined FLOAT_VWALK
 !
@@ -1716,93 +1706,82 @@
       END DO
 # endif
 
-#ifdef BEST_NPZ
+# ifdef BEST_NPZ
 
 !# if !defined ANA_BIOLOGY
 #  ifdef BENTHIC
-        do i=IstrR,IendR
+      do i=IstrR,IendR
         do j=JstrR,JendR
-            do k=1,NBL(ng)
-                  bt(i,j,k,nstp,1) = bt(i,j,k,nnew,1)
-                  bt(i,j,k,nstp,2) = bt(i,j,k,nnew,2)
-#  ifdef MASKING
-         bt(i,j,k,nstp,1)= bt(i,j,k,nstp,1)*rmask(i,j)
-	 bt(i,j,k,nstp,2)= bt(i,j,k,nstp,2)*rmask(i,j)
-# endif
+          do k=1,NBL(ng)
+            bt(i,j,k,nstp,1) = bt(i,j,k,nnew,1)
+            bt(i,j,k,nstp,2) = bt(i,j,k,nnew,2)
+#   ifdef MASKING
+            bt(i,j,k,nstp,1)= bt(i,j,k,nstp,1)*rmask(i,j)
+            bt(i,j,k,nstp,2)= bt(i,j,k,nstp,2)*rmask(i,j)
+#   endif
 
 !          if(i.eq.144.and.j.eq.144) THEN
-!	  print*,'Step3d'
-!	  print*,'nstp=',nstp,'nnew=',nnew
+!   print*,'Step3d'
+!   print*,'nstp=',nstp,'nnew=',nnew
 !          print*,'bt(i,j,k,nstp,1)=', bt(i,j,k,nstp,1)
-!         
+!
 !          print*,'bt(i,j,k,nnew,1)=', bt(i,j,k,nnew,1)
 !          print*,''
 !          end if
-            enddo
-         enddo
+          enddo
+        enddo
       enddo
-#    endif
+#  endif
 !# endif
-# if defined ICE_BIO
-# if defined CLIM_ICE_1D 
-        DO j=Jstr,Jend
-          DO itrc=1,NIB
-             DO i=Istr,Iend
-              it(i,j,nstp,itrc)=it(i,j,nnew,itrc)
-!	   	print*,'test=', it(i,j,nnew,iIcePhL) 
-#  ifdef MASKING
-       it(i,j,nstp,itrc)=  it(i,j,nstp,itrc)*rmask(i,j)
-     
-#  endif
-	
-	      
-             END DO
+#  if defined ICE_BIO
+#   if defined CLIM_ICE_1D
+      DO j=Jstr,Jend
+        DO itrc=1,NIB
+          DO i=Istr,Iend
+            it(i,j,nstp,itrc)=it(i,j,nnew,itrc)
+!           print*,'test=', it(i,j,nnew,iIcePhL)
+#    ifdef MASKING
+            it(i,j,nstp,itrc)=  it(i,j,nstp,itrc)*rmask(i,j)
+#    endif
           END DO
         END DO
-	
-	 DO j=Jstr,Jend
-          
-             DO i=Istr,Iend
-              
-	      itL(i,j,nstp,1)=itL(i,j,nnew,1)
-#  ifdef MASKING
-     
-              itL(i,j,nstp,1)=  itL(i,j,nstp,1)*rmask(i,j)
-#  endif
-	
-	      
-             END DO
-         
-        END DO
-# endif
-# endif
+      END DO
 
-# if defined STATIONARY
-       DO j=LBj ,UBj
-           DO k=1,N(ng)
-             DO itrc=1,8
-              DO i=LBi ,UBi
+      DO j=Jstr,Jend
+        DO i=Istr,Iend
+          itL(i,j,nstp,1)=itL(i,j,nnew,1)
+#    ifdef MASKING
+          itL(i,j,nstp,1)=  itL(i,j,nstp,1)*rmask(i,j)
+#    endif
+        END DO
+      END DO
+#   endif
+#  endif
+
+#  if defined STATIONARY
+      DO j=LBj,UBj
+        DO k=1,N(ng)
+          DO itrc=1,8
+            DO i=LBi ,UBi
               st(i,j,k,nnew,itrc)= 0_r8
-                 END DO
             END DO
           END DO
-       END DO
+        END DO
+      END DO
 
-
-       DO j=Jstr,Jend
-           DO k=1,N(ng)
-             DO itrc=1,8
-              DO i=Istr,Iend
+      DO j=Jstr,Jend
+        DO k=1,N(ng)
+          DO itrc=1,8
+            DO i=Istr,Iend
               st(i,j,k,nnew,itrc)= st(i,j,k,nstp,itrc)
-                 END DO
             END DO
           END DO
-       END DO
+        END DO
+      END DO
+#  endif
 # endif
-#endif
- 
 
-      
+
       RETURN
       END SUBROUTINE step3d_t_tile
 #endif
