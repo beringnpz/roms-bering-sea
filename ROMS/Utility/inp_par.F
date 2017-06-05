@@ -7928,7 +7928,7 @@
           WRITE (out,70) eexD, 'eexD',                                  &
      &          'Ben fraction of detrital food excreted'
           WRITE (out,70) prefD, 'prefD',                                &
-     &          'BenDet->Ben feeding preference'
+     &          'DetBen->Ben feeding preference'
           WRITE (out,70) prefPL, 'prefPL',                              &
      &          'PhL->Ben feeding preference'
           WRITE (out,70) prefPS, 'prefPS',                              &

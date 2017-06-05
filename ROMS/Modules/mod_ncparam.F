@@ -3189,8 +3189,8 @@
 # ifdef BENTHIC
               CASE ('idBvar(iBen)')
                idBvar(iBen)=varid
-              CASE ('idBvar(iBenDet)')
-                idBvar(iBenDet)=varid
+              CASE ('idBvar(iDetBen)')
+                idBvar(iDetBen)=varid
 # endif
 # ifdef ICE_BIO
 #  ifdef CLIM_ICE_1D

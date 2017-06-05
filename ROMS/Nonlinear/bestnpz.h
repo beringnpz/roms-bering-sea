@@ -414,7 +414,7 @@
 
       integer  :: iiNO3,    iiNH4,    iiPhS,  iiPhL,  iiMZS, iiMZL, iiCop
       integer  :: iiNCaS,   iiNCaO,   iiEupS, iiEupO, iiDet, iiDetF
-      integer  :: iiJel,    iiFe,     iiBen,  iiBenDet
+      integer  :: iiJel,    iiFe,     iiBen,  iiDetBen
       integer  :: iiIcePhL, iiIceNO3, iiIceNH4
       real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, Bio_bak, DBio
       real(r8), dimension(IminS:ImaxS,N(ng),20) :: extrabio
@@ -434,9 +434,9 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Mor_PhS_Det, Mor_PhL_Det, Mor_MZL_Det, Mor_Cop_DetF, Mor_NCaS_DetF, Mor_EupS_DetF, Mor_NCaO_DetF, Mor_EupO_DetF, Mor_Jel_DetF
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Res_PhS_NH4, Res_PhL_NH4,Res_MZL_NH4, Res_Cop_NH4, Res_NCaS_NH4, Res_NCaO_NH4, Res_EupS_NH4, Res_EupO_NH4, Res_Jel_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Rem_Det_NH4, Rem_DetF_NH4, Nit_NH4_NO3
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_BenDet_Ben, Exc_Ben_NH4, Exc_Ben_BenDet, Res_Ben_NH4, Mor_Ben_BenDet, Pre_Ben_BenDet, Rem_BenDet_NH4
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Gra_Det_Ben,Gra_DetF_Ben, Gra_PhS_Ben, Gra_PhL_Ben, Gra_DetBen_Ben, Exc_Ben_NH4, Exc_Ben_DetBen, Res_Ben_NH4, Mor_Ben_DetBen, Pre_Ben_DetBen, Rem_DetBen_NH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Gpp_INO3_IPhL, Gpp_INH4_IPhL, Res_IPhL_INH4, Mor_IPhL_INH4, Nit_INH4_INO3, Twi_IPhL_PhL, Twi_INO3_NO3, Twi_INH4_NH4
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_BenDet, Ver_PhS_Out, Ver_PhL_BenDet, Ver_PhL_Out, Ver_Det_BenDet, Ver_Det_Out, Ver_DetF_BenDet, Ver_DetF_Out, Ver_NCaO_BenDet, Ver_NCaS_DetF, Ver_NCaS_BenDet
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_DetBen, Ver_PhS_Out, Ver_PhL_DetBen, Ver_PhL_Out, Ver_Det_DetBen, Ver_Det_Out, Ver_DetF_DetBen, Ver_DetF_Out, Ver_NCaO_DetBen, Ver_NCaS_DetF, Ver_NCaS_DetBen
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Frz_PhL_IPhL, Frz_NO3_INO3, Frz_NH4_INH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: prod_PhS, prod_PhL, prod_MZL, prod_Cop, prod_NCaS, prod_EupS, prod_NCaO, prod_EupO, prod_Jel, prod_Ben, prod_IcePhL
 
@@ -697,7 +697,7 @@
         iiJel    = 14
         iiFe     = 15
         iiBen    = 16
-        iiBenDet = 17
+        iiDetBen = 17
         iiIcePhL = 18
         iiIceNO3 = 19
         iiIceNH4 = 20
@@ -1190,12 +1190,12 @@
           Gra_DetF_Ben   = 0.0_r8
           Gra_PhS_Ben    = 0.0_r8
           Gra_PhL_Ben    = 0.0_r8
-          Gra_BenDet_Ben = 0.0_r8
+          Gra_DetBen_Ben = 0.0_r8
           Exc_Ben_NH4    = 0.0_r8
-          Exc_Ben_BenDet = 0.0_r8
+          Exc_Ben_DetBen = 0.0_r8
           Res_Ben_NH4    = 0.0_r8
-          Mor_Ben_BenDet = 0.0_r8
-          Rem_BenDet_NH4 = 0.0_r8
+          Mor_Ben_DetBen = 0.0_r8
+          Rem_DetBen_NH4 = 0.0_r8
           Gpp_INO3_IPhL  = 0.0_r8
           Gpp_INH4_IPhL  = 0.0_r8
           Res_IPhL_INH4  = 0.0_r8
@@ -1204,18 +1204,18 @@
           Twi_IPhL_PhL   = 0.0_r8
           Twi_INO3_NO3   = 0.0_r8
           Twi_INH4_NH4   = 0.0_r8
-          Ver_PhS_BenDet = 0.0_r8
+          Ver_PhS_DetBen = 0.0_r8
           Ver_PhS_Out    = 0.0_r8
-          Ver_PhL_BenDet = 0.0_r8
+          Ver_PhL_DetBen = 0.0_r8
           Ver_PhL_Out    = 0.0_r8
-          Ver_Det_BenDet = 0.0_r8
+          Ver_Det_DetBen = 0.0_r8
           Ver_Det_Out    = 0.0_r8
-          Ver_DetF_BenDet= 0.0_r8
+          Ver_DetF_DetBen= 0.0_r8
           Ver_DetF_Out   = 0.0_r8
-          Ver_NCaO_BenDet= 0.0_r8
+          Ver_NCaO_DetBen= 0.0_r8
           Ver_NCaS_DetF  = 0.0_r8
-          Ver_NCaS_BenDet = 0.0_r8
-          Ver_NCaS_BenDet = 0.0_r8
+          Ver_NCaS_DetBen = 0.0_r8
+          Ver_NCaS_DetBen = 0.0_r8
           
 
           !==============================================================
@@ -1829,7 +1829,7 @@
 
             ! Potential food available from  sea floor
 
-            totBD = Bio2d(i,1,iiBenDet)
+            totBD = Bio2d(i,1,iiDetBen)
             cff5 = (prefD *totBD/((prefD *totBD)+LupD))*prefD *totBD
 
             ! Temperature mediation (for feeding and mortality)
@@ -1848,13 +1848,13 @@
 !             cff8  = min(cff2,(cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! DF
 !             cff9  = min(cff3,(cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PS
 !             cff10 = min(cff4,(cff0*cff4*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PL
-!             cff11 = min(cff5,(cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD))) ! BenDet
+!             cff11 = min(cff5,(cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD))) ! DetBen
             
             cff7  = cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP) ! D
             cff8  = cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP) ! DF
             cff9  = cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP) ! PS
             cff10 = cff0*cff4*Bio2d(i,1,iiBen)*Rup/(cff6+KupP) ! PL
-            cff11 = cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD) ! BenDet
+            cff11 = cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD) ! DetBen
 
             ! Distribute pelagic feeding losses to appropriate water
             ! column layers
@@ -1871,14 +1871,14 @@
             ! Benthic feeding takes place in bottom layer for bookkeeping
             ! purposes
 
-            Gra_BenDet_Ben(i,1) = cff11 ! mg C m^-2 d^-1
+            Gra_DetBen_Ben(i,1) = cff11 ! mg C m^-2 d^-1
 
             ! Assume all excretion occurs in the bottom layer too.  Half
-            ! goes to NH4 and half to BenDet
+            ! goes to NH4 and half to DetBen
 
-            Exc_Ben_BenDet(i,1) = (eexD * (cff7 + cff8 + cff11) +       &
+            Exc_Ben_DetBen(i,1) = (eexD * (cff7 + cff8 + cff11) +       &
      &                             eex  * (cff9 + cff10)) * 0.5_r8
-            Exc_Ben_NH4(i,1) = Exc_Ben_BenDet(i,1)
+            Exc_Ben_NH4(i,1) = Exc_Ben_DetBen(i,1)
 
             ! Respiration (also takes place in bottom layer)
 
@@ -1890,16 +1890,16 @@
 
             ! Mortality (linear senescence and quadratic predation closure)
 
-            Mor_Ben_BenDet(i,1) = cff0*rmort  *Bio2d(i,1,iiBen) +         &
+            Mor_Ben_DetBen(i,1) = cff0*rmort  *Bio2d(i,1,iiBen) +         &
      &                            cff0*BenPred*Bio2d(i,1,iiBen)**2  ! mg C m^-2 d^-1
 
             ! Benthic remineralization: assumes only the top 25% is
             ! available to remineralize to NH4 (in bottom layer)
 
-            PON = Bio3d(i,k,iiBenDet)*0.25*xi  ! Benthic Particulate organic nitrogen
+            PON = Bio3d(i,k,iiDetBen)*0.25*xi  ! Benthic Particulate organic nitrogen
             cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
 
-            Rem_BenDet_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac, but inconsistent
+            Rem_DetBen_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac, but inconsistent
 
           END DO
 #endif
@@ -2061,7 +2061,7 @@
      &                       +  Rem_DetF_NH4                            &
      &                       +  Exc_Ben_NH4                             &
      &                       +  Res_Ben_NH4                             &
-     &                       +  Rem_BenDet_NH4                          &
+     &                       +  Rem_DetBen_NH4                          &
      &                       +  Twi_INH4_NH4                            &
      &                       -  Gpp_NH4_PhS                             &
      &                       -  Gpp_NH4_PhL                             &
@@ -2199,16 +2199,16 @@
      &                        +  Gra_DetF_Ben                           &
      &                        +  Gra_PhS_Ben                            &
      &                        +  Gra_PhL_Ben                            &
-     &                        +  Gra_BenDet_Ben                         &
+     &                        +  Gra_DetBen_Ben                         &
      &                        -  Exc_Ben_NH4                            &
-     &                        -  Exc_Ben_BenDet                         &
+     &                        -  Exc_Ben_DetBen                         &
      &                        -  Res_Ben_NH4                            &
-     &                        -  Mor_Ben_BenDet)*dtdays ! Ben: mg C m^-2
+     &                        -  Mor_Ben_DetBen)*dtdays ! Ben: mg C m^-2
 
-          DBio(:,:,iiBenDet)  = (Exc_Ben_BenDet                         &
-     &                        +  Mor_Ben_BenDet                         &
-     &                        -  Gra_BenDet_Ben                         &
-     &                        -  Rem_BenDet_NH4)*dtdays ! BenDet: mg C m^-2
+          DBio(:,:,iiDetBen)  = (Exc_Ben_DetBen                         &
+     &                        +  Mor_Ben_DetBen                         &
+     &                        -  Gra_DetBen_Ben                         &
+     &                        -  Rem_DetBen_NH4)*dtdays ! DetBen: mg C m^-2
 
           DBio(:,:,iiIcePhL)  = (Gpp_INO3_IPhL                          &
      &                        +  Gpp_INH4_IPhL                          &
@@ -2301,11 +2301,11 @@
      &                        + Gra_DetF_Ben                            &
      &                        + Gra_PhS_Ben                             &
      &                        + Gra_PhL_Ben                             &
-     &                        + Gra_BenDet_Ben                          &
+     &                        + Gra_DetBen_Ben                          &
      &                        - Exc_Ben_NH4                             &
-     &                        - Exc_Ben_BenDet                          &
+     &                        - Exc_Ben_DetBen                          &
      &                        - Res_Ben_NH4                             &
-     &                        - Mor_Ben_BenDet ! Ben: mg C m^-2 d^-1
+     &                        - Mor_Ben_DetBen ! Ben: mg C m^-2 d^-1
 
           prod_IcePhL         = Gpp_INO3_IPhL                           &
      &                        + Gpp_INH4_IPhL                           &
@@ -2374,9 +2374,9 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiPhS) = Bio3d(i,1:N(ng),iiPhS) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
+            Bio2d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen) + flxtmp*fracUsed
 
-            Ver_PhS_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
+            Ver_PhS_DetBen(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
             Ver_PhS_Out(i,1)    = flxtmp*(1_r8-fracUsed)/dtdays ! mg C m^-2 d^-1
           END DO
 
@@ -2390,9 +2390,9 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiPhL) = Bio3d(i,1:N(ng),iiPhL) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
+            Bio2d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen) + flxtmp*fracUsed
 
-            Ver_PhL_BenDet(i,1) = (flxtmp*fracUsed)/dtdays ! mg C m^-2 d^-1
+            Ver_PhL_DetBen(i,1) = (flxtmp*fracUsed)/dtdays ! mg C m^-2 d^-1
             Ver_PhL_Out(i,1)    = (flxtmp*(1_r8-fracUsed))/dtdays ! mg C m^-2 d^-1
 
           END DO
@@ -2406,9 +2406,9 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiDet) = Bio3d(i,1:N(ng),iiDet) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
+            Bio2d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen) + flxtmp*fracUsed
 
-            Ver_Det_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
+            Ver_Det_DetBen(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
             Ver_Det_Out(i,1)    = flxtmp*(1_r8-fracUsed)/dtdays ! mg C m^-2 d^-1
 
           END DO
@@ -2422,9 +2422,9 @@
      &                   Hz(i,j,:), dtdays, z_w(i,j,:),                 &
      &                   z_w(i,j,N(ng))+10, flxtmp)
             Bio3d(i,1:N(ng),iiDetF) = Bio3d(i,1:N(ng),iiDetF) + dBtmp(1,1:N(ng))
-            Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp*fracUsed
+            Bio2d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen) + flxtmp*fracUsed
 
-            Ver_DetF_BenDet(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
+            Ver_DetF_DetBen(i,1) = flxtmp*fracUsed/dtdays ! mg C m^-2 d^-1
             Ver_DetF_Out(i,1)    = flxtmp*(1_r8-fracUsed)/dtdays ! mg C m^-2 d^-1
 
           END DO
@@ -2463,11 +2463,11 @@
 
                 ! If water depth is just over the 200m limit,
                 ! there might be some flux across the bottom boundary.
-                ! Send this to BenDet.
+                ! Send this to DetBen.
 
-                Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp
+                Bio2d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen) + flxtmp
 
-                Ver_NCaS_BenDet(i,1) = flxtmp/dtdays ! TODO: should this be subject to the 21% loss too?
+                Ver_NCaS_DetBen(i,1) = flxtmp/dtdays ! TODO: should this be subject to the 21% loss too?
               else
 
                 ! In shallow water, flux boundary at bottom.
@@ -2514,9 +2514,9 @@
      &                     Hz(i,j,:), dtdays, z_w(i,j,:),               &
      &                     -400.0_r8, flxtmp)
               Bio3d(i,1:N(ng),iiNCaO) = Bio3d(i,1:N(ng),iiNCaO) + dBtmp(1,1:N(ng))
-              Bio2d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet) + flxtmp
+              Bio2d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen) + flxtmp
 
-              Ver_NCaO_BenDet(i,1) = flxtmp/dtdays ! TODO: should this be subject to the 21% loss too?
+              Ver_NCaO_DetBen(i,1) = flxtmp/dtdays ! TODO: should this be subject to the 21% loss too?
 
             else if (upwardNC) then
 
@@ -2576,7 +2576,7 @@
               END DO
             END DO
             ! Sync benthic (2D modified in sinking portion of code)
-            Bio3d(i,1,iiBenDet) = Bio2d(i,1,iiBenDet)/Hz(i,j,1)
+            Bio3d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen)/Hz(i,j,1)
           END DO
 
 
@@ -2656,12 +2656,12 @@
               st(i,j,k,nstp, 75) = Gra_DetF_Ben(i,k)
               st(i,j,k,nstp, 76) = Gra_PhS_Ben(i,k)
               st(i,j,k,nstp, 77) = Gra_PhL_Ben(i,k)
-              st(i,j,k,nstp, 78) = Gra_BenDet_Ben(i,k)
+              st(i,j,k,nstp, 78) = Gra_DetBen_Ben(i,k)
               st(i,j,k,nstp, 79) = Exc_Ben_NH4(i,k)
-              st(i,j,k,nstp, 80) = Exc_Ben_BenDet(i,k)
+              st(i,j,k,nstp, 80) = Exc_Ben_DetBen(i,k)
               st(i,j,k,nstp, 81) = Res_Ben_NH4(i,k)
-              st(i,j,k,nstp, 82) = Mor_Ben_BenDet(i,k)
-              st(i,j,k,nstp, 83) = Rem_BenDet_NH4(i,k)
+              st(i,j,k,nstp, 82) = Mor_Ben_DetBen(i,k)
+              st(i,j,k,nstp, 83) = Rem_DetBen_NH4(i,k)
               st(i,j,k,nstp, 84) = Gpp_INO3_IPhL(i,k)
               st(i,j,k,nstp, 85) = Gpp_INH4_IPhL(i,k)
               st(i,j,k,nstp, 86) = Res_IPhL_INH4(i,k)
@@ -2670,17 +2670,17 @@
               st(i,j,k,nstp, 89) = Twi_IPhL_PhL(i,k)
               st(i,j,k,nstp, 90) = Twi_INO3_NO3(i,k)
               st(i,j,k,nstp, 91) = Twi_INH4_NH4(i,k)
-              st(i,j,k,nstp, 92) = Ver_PhS_BenDet(i,k)
+              st(i,j,k,nstp, 92) = Ver_PhS_DetBen(i,k)
               st(i,j,k,nstp, 93) = Ver_PhS_Out(i,k)
-              st(i,j,k,nstp, 94) = Ver_PhL_BenDet(i,k)
+              st(i,j,k,nstp, 94) = Ver_PhL_DetBen(i,k)
               st(i,j,k,nstp, 95) = Ver_PhL_Out(i,k)
-              st(i,j,k,nstp, 96) = Ver_Det_BenDet(i,k)
+              st(i,j,k,nstp, 96) = Ver_Det_DetBen(i,k)
               st(i,j,k,nstp, 97) = Ver_Det_Out(i,k)
-              st(i,j,k,nstp, 98) = Ver_DetF_BenDet(i,k)
+              st(i,j,k,nstp, 98) = Ver_DetF_DetBen(i,k)
               st(i,j,k,nstp, 99) = Ver_DetF_Out(i,k)
-              st(i,j,k,nstp,100) = Ver_NCaO_BenDet(i,k)
+              st(i,j,k,nstp,100) = Ver_NCaO_DetBen(i,k)
               st(i,j,k,nstp,101) = Ver_NCaS_DetF(i,k)
-              st(i,j,k,nstp,102) = Ver_NCaS_BenDet(i,k)
+              st(i,j,k,nstp,102) = Ver_NCaS_DetBen(i,k)
               st(i,j,k,nstp,103) = Frz_PhL_IPhL(i,k)
               st(i,j,k,nstp,104) = Frz_NO3_INO3(i,k)
               st(i,j,k,nstp,105) = Frz_NH4_INH4(i,k)
@@ -2802,13 +2802,13 @@
 
         DO i=Istr,Iend
           bt(i,j,1,nnew,iBen   ) = Bio2d(i,1,iiBen   )
-          bt(i,j,1,nnew,iBenDet) = Bio2d(i,1,iiBenDet)
+          bt(i,j,1,nnew,iDetBen) = Bio2d(i,1,iiDetBen)
 !           bt(i,j,1,nnew,iBen   ) = Bio_bak(i,1,iiBen   ) + (Bio2d(i,1,iiBen   ) - Bio_bak(i,1,iiBen   ))
-!           bt(i,j,1,nnew,iBenDet) = Bio_bak(i,1,iiBenDet) + (Bio2d(i,1,iiBenDet) - Bio_bak(i,1,iiBenDet))
+!           bt(i,j,1,nnew,iDetBen) = Bio_bak(i,1,iiDetBen) + (Bio2d(i,1,iiDetBen) - Bio_bak(i,1,iiDetBen))
 
 # ifdef MASKING
           bt(i,j,1,nnew,iBen)    = bt(i,j,1,nnew,iBen   )*rmask(i,j)
-          bt(i,j,1,nnew,iBenDet) = bt(i,j,1,nnew,iBenDet)*rmask(i,j)
+          bt(i,j,1,nnew,iDetBen) = bt(i,j,1,nnew,iDetBen)*rmask(i,j)
 # endif
         END DO
 #endif

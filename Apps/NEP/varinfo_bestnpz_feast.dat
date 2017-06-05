@@ -6638,7 +6638,7 @@
   'mg C m^-2'
   'benthic detritus, scalar, series'
   'bio_time'
-  'idBvar(iBenDet)'
+  'idBvar(iDetBen)'
   'r2dvar'
   1.0d0
 
@@ -7362,8 +7362,8 @@
   'r3dvar'
   1.0d0
 
-'Gra_BenDet_Ben'
-  'grazing/predation flux from BenDet to Ben'
+'Gra_DetBen_Ben'
+  'grazing/predation flux from DetBen to Ben'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7380,8 +7380,8 @@
   'r3dvar'
   1.0d0
 
-'Exc_Ben_BenDet'
-  'excretion flux from Ben to BenDet'
+'Exc_Ben_DetBen'
+  'excretion flux from Ben to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7398,8 +7398,8 @@
   'r3dvar'
   1.0d0
 
-'Mor_Ben_BenDet'
-  'other mortality flux from Ben to BenDet'
+'Mor_Ben_DetBen'
+  'other mortality flux from Ben to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7407,8 +7407,8 @@
   'r3dvar'
   1.0d0
 
-'Rem_BenDet_NH4'
-  'remineralization flux from BenDet to NH4'
+'Rem_DetBen_NH4'
+  'remineralization flux from DetBen to NH4'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7488,8 +7488,8 @@
   'r3dvar'
   1.0d0
 
-'Ver_PhS_BenDet'
-  'sinking-to-bottom flux from PhS to BenDet'
+'Ver_PhS_DetBen'
+  'sinking-to-bottom flux from PhS to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7506,8 +7506,8 @@
   'r3dvar'
   1.0d0
 
-'Ver_PhL_BenDet'
-  'sinking-to-bottom flux from PhL to BenDet'
+'Ver_PhL_DetBen'
+  'sinking-to-bottom flux from PhL to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7524,8 +7524,8 @@
   'r3dvar'
   1.0d0
 
-'Ver_Det_BenDet'
-  'sinking-to-bottom flux from Det to BenDet'
+'Ver_Det_DetBen'
+  'sinking-to-bottom flux from Det to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7542,8 +7542,8 @@
   'r3dvar'
   1.0d0
 
-'Ver_DetF_BenDet'
-  'sinking-to-bottom flux from DetF to BenDet'
+'Ver_DetF_DetBen'
+  'sinking-to-bottom flux from DetF to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7560,8 +7560,8 @@
   'r3dvar'
   1.0d0
 
-'Ver_NCaO_BenDet'
-  'sinking-to-bottom flux from NCaO to BenDet'
+'Ver_NCaO_DetBen'
+  'sinking-to-bottom flux from NCaO to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7578,8 +7578,8 @@
   'r3dvar'
   1.0d0
 
-'Ver_NCaS_BenDet'
-  'sinking-to-bottom flux from NCaS to BenDet'
+'Ver_NCaS_DetBen'
+  'sinking-to-bottom flux from NCaS to DetBen'
   'mg C m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'

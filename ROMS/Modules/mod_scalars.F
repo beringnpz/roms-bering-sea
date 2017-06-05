@@ -230,7 +230,7 @@
 # ifdef BENTHIC
          integer, pointer :: idben(:)  ! Benthic tracers
          integer :: iBen
-         integer :: iBenDet
+         integer :: iDetBen
 
 # endif
 # ifdef ICE_BIO
@@ -2395,7 +2395,7 @@
             idben(i)=i
           END DO
        iBen=1
-       iBenDet=2
+       iDetBen=2
 # endif
 # ifdef ICE_BIO
           DO i=1,NIB

@@ -375,9 +375,9 @@
         do j=JstrR,JendR
           do k=1,NBL(ng)
             bt(i,j,k,1,iBen) = 8000.0_r8    !was eps 
-		        bt(i,j,k,1,iBenDet) = 500.0_r8! 00.0_r8    !was eps  500
+		        bt(i,j,k,1,iDetBen) = 500.0_r8! 00.0_r8    !was eps  500
 		        bt(i,j,k,2,iBen) = bt(i,j,k,1,iBen)
-		        bt(i,j,k,2,iBenDet) = bt(i,j,k,1,iBenDet)
+		        bt(i,j,k,2,iDetBen) = bt(i,j,k,1,iDetBen)
 		      enddo
 		    enddo  
       enddo
@@ -387,9 +387,9 @@
 !g           do j=JstrR,JendR
 !g             do k=1,NBL(ng)
 !g                 bt(i,j,k,1,iBen) = MAX(bt(i,j,k,1,iBen),eps)
-!g		 bt(i,j,k,1,iBenDet) = MAX(bt(i,j,k,1,iBenDet),eps)
+!g		 bt(i,j,k,1,iDetBen) = MAX(bt(i,j,k,1,iDetBen),eps)
 !g		 bt(i,j,k,2,iBen) = bt(i,j,k,1,iBen)
-!g		 bt(i,j,k,2,iBenDet) = bt(i,j,k,1,iBenDet)
+!g		 bt(i,j,k,2,iDetBen) = bt(i,j,k,1,iDetBen)
 !g		  enddo
 !g		 enddo  
 !g            enddo
