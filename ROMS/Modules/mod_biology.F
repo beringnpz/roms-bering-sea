@@ -1547,9 +1547,9 @@
 !
 !========================================================================
       SUBROUTINE bestnpz_swfrac_tile (ng, tile,                         &
-   &                            LBi, UBi, LBj, UBj,                     &
-   &                            IminS, ImaxS, JminS, JmaxS,             &
-   &                            h, z_w, PhS, PhL, swdk, Ifrac)
+     &                                LBi, UBi, LBj, UBj,               &
+     &                                IminS, ImaxS, JminS, JmaxS,       &
+     &                                h, z_w, PhS, PhL, swdk, Ifrac)
 
       USE mod_param
       USE mod_scalars
@@ -1603,7 +1603,8 @@
             kpsum = kpsum + (cff1*dz)
     
             Ifrac(i,j,k) = exp(-k_tot*zmid(k))
-            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) + a_frac*exp(-zmid(k)/a_mu1)
+            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) +              &
+     &                    a_frac*exp(-zmid(k)/a_mu1)
     
           end do
 
@@ -1621,7 +1622,8 @@
             kpsum = kpsum + (cff1*dz)
     
             Ifrac(i,j,k) = exp(-k_tot*zmid(k))
-            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) + a_frac*exp(-zmid(k)/a_mu1)
+            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) +              &
+     &                    a_frac*exp(-zmid(k)/a_mu1)
     
           end do
 #endif
