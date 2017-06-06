@@ -4914,7 +4914,7 @@
                   CO2_Flux=cff3*CO2_sol*(pCO2air(i,j)-pCO2(i))*         &
      &            (1.0_r8-ai(i,j,nstp))
 !	     	if(ai(i,j,nstp).gt.0.8_r8)then 
-!		  print *, 'ai', ai(i,j,nstp)
+!		  print *, 'pCO2air', pCO2air(i,j)
 !	     	else
 !	     	endif 	
             else
