@@ -1896,10 +1896,10 @@
             ! Benthic remineralization: assumes only the top 25% is
             ! available to remineralize to NH4 (in bottom layer)
 
-            PON = Bio3d(i,k,iiDetBen)*0.25*xi  ! Benthic Particulate organic nitrogen
+            PON = Bio3d(i,1,iiDetBen)*0.25*xi  ! Benthic Particulate organic nitrogen
             cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
 
-            Rem_DetBen_NH4(i,1) = cff1*Hz(i,j,k)/xi ! mg C m^-2 d^-1 ! TODO underflow occasionally on my Mac, but inconsistent
+            Rem_DetBen_NH4(i,1) = cff1*Hz(i,j,1)/xi ! mg C m^-2 d^-1
 
           END DO
 #endif
