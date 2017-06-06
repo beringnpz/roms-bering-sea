@@ -1339,11 +1339,11 @@
               ! have to split up the large/small calcs; doing it this way
               ! for the sake of maintenance and debugging)
 
-              if (DiS.le.0_r8) THEN
+              if (DiS.le.0.0_r8) THEN
                 Gpp_NO3_PhS(i,k) = 0; ! mg C m^-2 d^-1
                 Gpp_NH4_PhS(i,k) = 0; ! mg C m^-2 d^-1
               endif
-              if (DiL.le.0_r8) THEN
+              if (DiL.le.0.0_r8) THEN
                 Gpp_NO3_PhL(i,k) = 0; ! mg C m^-2 d^-1
                 Gpp_NH4_PhL(i,k) = 0; ! mg C m^-2 d^-1
               endif
