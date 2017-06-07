@@ -406,9 +406,9 @@
           IF (Master) WRITE (stdout,20) iic(ng)-1, time_code(ng),       &
      &                                  avgke, avgpe, avgkp, volume
  20       FORMAT (i7,1x,a,4(1pe14.6))
-!#ifdef BIOLOGY
+! #ifdef BIOLOGY
 !          IF (Master) print *, 'BIO in diag ', maxbio(:,ng)
-!#endif
+! #endif
           IF (Master) CALL my_flush (stdout)
 !
 !  If blowing-up, set exit_flag to stop computations.
@@ -448,12 +448,12 @@
             IF (Master) print *, 'DIAG NaN in biology'
           END IF
 #  endif
-!          DO ibt=1,NBT
-!            IF (maxbio(ibt,ng).gt.max_bio(ibt)) THEN
-!              IF (Master) print *, 'BIO trouble in DIAG ', maxbio(:,ng)
-!              exit_flag=1
-!            END IF
-!          END DO
+          DO ibt=1,NBT
+            IF (maxbio(ibt,ng).gt.max_bio(ibt)) THEN
+              IF (Master) print *, 'BIO trouble in DIAG ', maxbio(:,ng)
+              exit_flag=1
+            END IF
+          END DO
 # endif
 #endif
 
