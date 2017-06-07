@@ -679,7 +679,8 @@
 
         ! First, set up the var indices, so I don't have to switch around
         ! between the 3 different sets used for pelagic, benthic, and ice
-        ! variables in the input arrays.
+        ! variables in the input arrays, or worry about which options 
+        ! (benthic, ice, jelly, etc) are turned on.
 
         iiNO3    = 1
         iiNH4    = 2
@@ -714,14 +715,33 @@
         ! mmol N m^-3, Fe is in umol Fe m^-3, and the rest are in mg C
         ! m^-3.
 
-        DO itrc=1,NBT  ! Pelagic variables
-          DO k=1,N(ng)
-            DO i=Istr,Iend
-              Bio3d(i,k,itrc) = t(i,j,k,nstp,idbio(itrc))
+        DO k=1,N(ng)
+          DO i=Istr,Iend
+            Bio3d(i,k,iiNO3 ) = t(i,j,k,nstp,iNO3)
+            Bio3d(i,k,iiNH4 ) = t(i,j,k,nstp,iNH4)
+            Bio3d(i,k,iiPhS ) = t(i,j,k,nstp,iPhS)
+            Bio3d(i,k,iiPhL ) = t(i,j,k,nstp,iPhL)
+            Bio3d(i,k,iiMZS ) = t(i,j,k,nstp,iMZS)
+            Bio3d(i,k,iiMZL ) = t(i,j,k,nstp,iMZL)
+            Bio3d(i,k,iiCop ) = t(i,j,k,nstp,iCop)
+            Bio3d(i,k,iiNCaS) = t(i,j,k,nstp,iNCaS)
+            Bio3d(i,k,iiEupS) = t(i,j,k,nstp,iEupS)
+            Bio3d(i,k,iiMCaO) = t(i,j,k,nstp,iNCaO)
+            Bio3d(i,k,iiEupO) = t(i,j,k,nstp,iEupO)
+            Bio3d(i,k,iiDet ) = t(i,j,k,nstp,iDet)
+            Bio3d(i,k,iiDetF) = t(i,j,k,nstp,iDetF)
+#ifdef JELLY
+            Bio3d(i,k,iiJel ) = t(i,j,k,nstp,iJel)
+#endif
+#ifdef IRON_LIMIT
+            Bio3d(i,k,iiFe  ) = t(i,j,k,nstp,iFe)
+#endif
+            DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
           END DO
         END DO
+
 
         ! Benthic variables: These are originally stored in per-area
         ! concentrations in each benthic layer, in mg C m^-2.  The
@@ -733,15 +753,18 @@
         ! we ever change the number of benthic layers, we may need to
         ! rethink this schema.
 
-        DO itrc=1,NBEN
-          ibioB=idben(itrc) ! Note: idben(i) = i
-          DO k=1,NBL(ng) ! Note: For BESTNPZ, NBL = 1 is hard-coded in mod_param.F
-            DO i=Istr,Iend
-              Bio2d(i,k,itrc+NBT) = bt(i,j,k,nstp,ibioB)
-              Bio3d(i,k,itrc+NBT) = Bio2d(i,k,itrc+NBT)/Hz(i,j,k)
+#ifdef BENTHIC
+        DO k=1,NBL(ng) ! Note: For BESTNPZ, NBL = 1 is hard-coded in mod_param.F
+          DO i=Istr,Iend
+            Bio2d(i,k,iiBen   ) = bt(i,j,k,nstp,iBen)
+            Bio2d(i,k,iiDetBen) = bt(i,j,k,nstp,iDetBen)
+          
+            DO itrc=iiBen,iiDetBen
+              Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/Hz(i,j,k)
             END DO
           END DO
         END DO
+#endif
 
 #ifdef ICE_BIO
         ! Before we get to the ice variables, we'll collect some info
