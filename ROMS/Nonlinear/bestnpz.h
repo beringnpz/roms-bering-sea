@@ -407,7 +407,7 @@
       real(r8) :: RSNC, RENC, SSNC, SENC, RSCM, RECM, SSCM, SECM
       real(r8) :: respNC, respCM, eCM, eNC
       real(r8) :: targetdepth
-      
+
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS,N(ng)) :: cffsw, Ifrac
 
       ! Bio tracer setup
@@ -449,7 +449,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
       real(r8) :: ParW, OffSet
       real(r8) :: fracUsed
-    
+
       ! Parameter default values
 
 #ifdef DISTRIBUTE
@@ -632,9 +632,9 @@
         respCM = respNCa
         eCM = eNCa
       end if
-      
+
       ! Light attenuation fraction
-      
+
       CALL bestnpz_swfrac_tile(ng, tile,                                &
    &        LBi, UBi, LBj, UBj,                                         &
    &        IminS, ImaxS, JminS, JmaxS,                                 &
@@ -679,7 +679,7 @@
 
         ! First, set up the var indices, so I don't have to switch around
         ! between the 3 different sets used for pelagic, benthic, and ice
-        ! variables in the input arrays, or worry about which options 
+        ! variables in the input arrays, or worry about which options
         ! (benthic, ice, jelly, etc) are turned on.
 
         iiNO3    = 1
@@ -726,7 +726,7 @@
             Bio3d(i,k,iiCop ) = t(i,j,k,nstp,iCop)
             Bio3d(i,k,iiNCaS) = t(i,j,k,nstp,iNCaS)
             Bio3d(i,k,iiEupS) = t(i,j,k,nstp,iEupS)
-            Bio3d(i,k,iiMCaO) = t(i,j,k,nstp,iNCaO)
+            Bio3d(i,k,iiNCaO) = t(i,j,k,nstp,iNCaO)
             Bio3d(i,k,iiEupO) = t(i,j,k,nstp,iEupO)
             Bio3d(i,k,iiDet ) = t(i,j,k,nstp,iDet)
             Bio3d(i,k,iiDetF) = t(i,j,k,nstp,iDetF)
@@ -758,7 +758,7 @@
           DO i=Istr,Iend
             Bio2d(i,k,iiBen   ) = bt(i,j,k,nstp,iBen)
             Bio2d(i,k,iiDetBen) = bt(i,j,k,nstp,iDetBen)
-          
+
             DO itrc=iiBen,iiDetBen
               Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/Hz(i,j,k)
             END DO
@@ -854,8 +854,8 @@
         ! factor assumes a different layer thickness than the top water
         ! layer.
 
-        ! Start by extracting ice biomass from the main ice bio tracer 
-        ! arrays (we'll deal with changes due to appearing or 
+        ! Start by extracting ice biomass from the main ice bio tracer
+        ! arrays (we'll deal with changes due to appearing or
         ! disappearing ice in a moment)
 
 #ifdef ICE_BIO
@@ -891,20 +891,20 @@
         ! Save a copy of the original biomass
 
         Bio_bak = Bio2d
-        
+
         ! If any biomass is negtive, replace with 0 for all source/sink
         ! calculations
 
         Bio2d = max(0.0_r8, Bio2d)
         Bio3d = max(0.0_r8, Bio3d)
-        
+
         extrabio = Bio2d - Bio_bak ! biomass added to make non-negative
 
 #ifdef ICE_BIO
         ! Move tracers between surface water layer and ice skeletal layer
-        ! if ice appeared or disappeared.  Note that the freezing rate 
-        ! diagnostics Frz_X_IX assume this process takes place over a 
-        ! full time step, rather than instantaneously, just to maintain 
+        ! if ice appeared or disappeared.  Note that the freezing rate
+        ! diagnostics Frz_X_IX assume this process takes place over a
+        ! full time step, rather than instantaneously, just to maintain
         ! some comparability to the other fluxes
 
         Frz_PhL_IPhL = 0.0_r8
@@ -1047,7 +1047,7 @@
           !   s2d = 86400 s/d
           !
           ! The constant used here (copied from GOANPZ) implies an
-          ! wavelength of ~547 nm... prob derives from a average across 
+          ! wavelength of ~547 nm... prob derives from a average across
           ! chl range (~400-700nm).
 
           PARs(i) = PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
@@ -1239,7 +1239,7 @@
           Ver_NCaS_DetF  = 0.0_r8
           Ver_NCaS_DetBen = 0.0_r8
           Ver_NCaS_DetBen = 0.0_r8
-          
+
 
           !==============================================================
           !  Biological Source/Sink terms.
@@ -1630,7 +1630,7 @@
               Mor_PhS_Det(i,k) = mPhS * Bio3d(i,k,iiPhS)
               Mor_PhL_Det(i,k) = mPhL * Bio3d(i,k,iiPhL)
 
-              ! Microzooplankton (quadratic mortality, with option for 
+              ! Microzooplankton (quadratic mortality, with option for
               ! linear)
 
 #ifdef MZLM0LIN
@@ -1773,7 +1773,7 @@
             END DO
           END DO
 
-          ! Convert fluxes from volumetric to integrated over layer, and 
+          ! Convert fluxes from volumetric to integrated over layer, and
           ! from N to C for consistency with other fluxes
 
           DO k=1,N(ng)
@@ -1872,7 +1872,7 @@
 !             cff9  = min(cff3,(cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PS
 !             cff10 = min(cff4,(cff0*cff4*Bio2d(i,1,iiBen)*Rup/(cff6+KupP))) ! PL
 !             cff11 = min(cff5,(cff0*cff5*Bio2d(i,1,iiBen)*Rup/(cff5+KupD))) ! DetBen
-            
+
             cff7  = cff0*cff1*Bio2d(i,1,iiBen)*Rup/(cff6+KupP) ! D
             cff8  = cff0*cff2*Bio2d(i,1,iiBen)*Rup/(cff6+KupP) ! DF
             cff9  = cff0*cff3*Bio2d(i,1,iiBen)*Rup/(cff6+KupP) ! PS
@@ -2350,11 +2350,11 @@
           ! result in numerical issues.  Brute force zero traps will
           ! eliminate conservation of mass, so I'd prefer to look into
           ! increasing BioIter if this is a problem
-          
+
           Bio2d = max(Bio2d, 0.0_r8)
-            
+
           ! TODO: Save this "input flux" as diagnostic
-            
+
           ! Sync volumetric version to the updated per-area values
 
           DO i=Istr,Iend
@@ -2716,7 +2716,7 @@
               END DO
 
               ! Net production
-              
+
               st(i,j,k,nstp,106) = prod_PhS(i,k)
               st(i,j,k,nstp,107) = prod_PhL(i,k)
               st(i,j,k,nstp,108) = prod_MZL(i,k)
@@ -2782,9 +2782,9 @@
 !             t(i,j,k,nnew,iJel ) = max(0.0_r8, Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel )))
 !             t(i,j,k,nnew,iFe  ) = max(0.0_r8, Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  )))
 !             t(i,j,k,nnew,iMZS ) = 0.0_r8
-            
+
             ! Check for negatives and NaNs (for debugging)
-            
+
             do itrc = iNO3,size(t,5)
               if (t(i,j,k,nnew,itrc) < 0) then
                 write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
@@ -2798,8 +2798,8 @@
 ! !               CALL ROMS_finalize
 ! !               CALL abort(my_exit_flag)
 !             endif
-            
-            
+
+
 
 #ifdef TS_MPDATA
             t(i,j,k,3,iNO3 ) = t(i,j,k,nnew,iNO3 ) * Hz_inv(i,k)
@@ -2849,7 +2849,7 @@
           it(i,j,nnew,iIceNO3) = Bio2d(i,N(ng),iiIceNO3)/aidz
           it(i,j,nnew,iIceNH4) = Bio2d(i,N(ng),iiIceNH4)/aidz
           it(i,j,nnew,iIcePhL) = Bio2d(i,N(ng),iiIcePhL)/aidz
-          
+
           itL(i,j,nnew,iIceLog) = itL(i,j,nstp,iIceLog)
 
 #  ifdef MASKING
@@ -2868,7 +2868,7 @@
           IceNO3(i,j,nnew) = Bio2d(i,N(ng),iiIceNO3)/aidz
           IceNH4(i,j,nnew) = Bio2d(i,N(ng),iiIceNH4)/aidz
           IcePhL(i,j,nnew) = Bio2d(i,N(ng),iiIcePhL)/aidz
-          
+
           IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: Current step value now in both positions... doublecheck that this is correct (real update in =happens in ice_limit.F))
 
 #  ifdef MASKING
