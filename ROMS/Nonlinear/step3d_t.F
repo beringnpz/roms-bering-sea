@@ -1761,7 +1761,7 @@
 #  if defined STATIONARY
       DO j=LBj,UBj
         DO k=1,N(ng)
-          DO itrc=1,8
+          DO itrc=1,NBTS
             DO i=LBi ,UBi
               st(i,j,k,nnew,itrc)= 0_r8
             END DO
@@ -1771,7 +1771,7 @@
 
       DO j=Jstr,Jend
         DO k=1,N(ng)
-          DO itrc=1,8
+          DO itrc=1,NBTS
             DO i=Istr,Iend
               st(i,j,k,nnew,itrc)= st(i,j,k,nstp,itrc)
             END DO
