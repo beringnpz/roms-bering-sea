@@ -114,10 +114,38 @@
        integer :: i3Stat114
        integer :: i3Stat115
        integer :: i3Stat116
-#  ifdef FEAST
        integer :: i3Stat117
        integer :: i3Stat118
        integer :: i3Stat119
        integer :: i3Stat120
        integer :: i3Stat121
+       integer :: i3Stat122
+       integer :: i3Stat123
+       integer :: i3Stat124
+       integer :: i3Stat125
+       integer :: i3Stat126
+       integer :: i3Stat127
+       integer :: i3Stat128
+       integer :: i3Stat129
+       integer :: i3Stat130
+       integer :: i3Stat131
+       integer :: i3Stat132
+       integer :: i3Stat133
+       integer :: i3Stat134
+       integer :: i3Stat135
+       integer :: i3Stat136
+       integer :: i3Stat137
+       integer :: i3Stat138
+       integer :: i3Stat139
+       integer :: i3Stat140
+       integer :: i3Stat141
+       integer :: i3Stat142
+       integer :: i3Stat143
+       integer :: i3Stat144
+#  ifdef FEAST
+       integer :: i3Stat145
+       integer :: i3Stat146
+       integer :: i3Stat147
+       integer :: i3Stat148
+       integer :: i3Stat149
 #  endif

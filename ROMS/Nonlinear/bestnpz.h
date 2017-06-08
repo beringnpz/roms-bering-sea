@@ -739,6 +739,27 @@
             DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
+#ifdef STATIONARY
+            ! Rate of change due to processes outside this subroutine
+            ! (Note: this calc depends on the step3d_t.F code where 
+            ! stationary diagnostic values are copied from nstp to nnew...
+            ! if that changes, this will break.)
+            
+            st(i,j,k,nstp,131) = (Bio2d(i,k,iiNO3 ) - st(i,j,k,nnew,117))/dtdays ! mmol N m^-2 d^-1
+            st(i,j,k,nstp,132) = (Bio2d(i,k,iiNH4 ) - st(i,j,k,nnew,118))/dtdays ! mmol N m^-2 d^-1
+            st(i,j,k,nstp,133) = (Bio2d(i,k,iiPhS ) - st(i,j,k,nnew,119))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,134) = (Bio2d(i,k,iiPhL ) - st(i,j,k,nnew,120))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,135) = (Bio2d(i,k,iiMZL ) - st(i,j,k,nnew,121))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,136) = (Bio2d(i,k,iiCop ) - st(i,j,k,nnew,122))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,137) = (Bio2d(i,k,iiNCaS) - st(i,j,k,nnew,123))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,138) = (Bio2d(i,k,iiEupS) - st(i,j,k,nnew,124))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,139) = (Bio2d(i,k,iiNCaO) - st(i,j,k,nnew,125))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,140) = (Bio2d(i,k,iiEupO) - st(i,j,k,nnew,126))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,141) = (Bio2d(i,k,iiDet ) - st(i,j,k,nnew,127))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,142) = (Bio2d(i,k,iiDetF) - st(i,j,k,nnew,128))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,143) = (Bio2d(i,k,iiJel ) - st(i,j,k,nnew,129))/dtdays ! mg C m^-2 d^-1
+            st(i,j,k,nstp,144) = (Bio2d(i,k,iiFe  ) - st(i,j,k,nnew,130))/dtdays ! umol Fe m^-2 d^-1
+#endif
           END DO
         END DO
 
@@ -2795,17 +2816,31 @@
               end if
             end do
             
-            ! Add tracer values to diagnostic array to allow calculation 
-            ! of advective-diffusive fluxes 
-            
-            
-            
-!             if (exit_flag>0) then
-! !               CALL ROMS_finalize
-! !               CALL abort(my_exit_flag)
-!             endif
+#ifdef STATIONARY
+            ! Add 2D tracer values to diagnostic array to allow 
+            ! calculation of advective-diffusive fluxes.  A bit silly to 
+            ! have these as extra outputs, but sticking the values here 
+            ! is a lot easier than creating and allocating entirely new 
+            ! arrays for it.
+            ! (Note: step3d_t.F copies the nstp values to nnew, so when 
+            ! bestnpz.h is next called, the nnew values will hold the 
+            ! previous step... I think)
 
-
+            st(i,j,k,nstp,117) = t(i,j,k,nnew,iNO3 )
+            st(i,j,k,nstp,118) = t(i,j,k,nnew,iNH4 )
+            st(i,j,k,nstp,119) = t(i,j,k,nnew,iPhS )
+            st(i,j,k,nstp,120) = t(i,j,k,nnew,iPhL )
+            st(i,j,k,nstp,121) = t(i,j,k,nnew,iMZL )
+            st(i,j,k,nstp,122) = t(i,j,k,nnew,iCop )
+            st(i,j,k,nstp,123) = t(i,j,k,nnew,iNCaS)
+            st(i,j,k,nstp,124) = t(i,j,k,nnew,iEupS)
+            st(i,j,k,nstp,125) = t(i,j,k,nnew,iNCaO)
+            st(i,j,k,nstp,126) = t(i,j,k,nnew,iEupO)
+            st(i,j,k,nstp,127) = t(i,j,k,nnew,iDet )
+            st(i,j,k,nstp,128) = t(i,j,k,nnew,iDetF)
+            st(i,j,k,nstp,129) = t(i,j,k,nnew,iJel )
+            st(i,j,k,nstp,130) = t(i,j,k,nnew,iFe  )
+#endif
 
 #ifdef TS_MPDATA
             t(i,j,k,3,iNO3 ) = t(i,j,k,nnew,iNO3 ) * Hz_inv(i,k)

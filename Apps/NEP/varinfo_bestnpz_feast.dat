@@ -7713,12 +7713,264 @@
   'r3dvar'
   1.0d0
 
+'onExit_NO3'
+  'NO biomass tracker'
+  'mmol N m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat117)'
+  'r3dvar'
+  1.0d0
+
+'onExit_NH4'
+  'NH biomass tracker'
+  'mmol N m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat118)'
+  'r3dvar'
+  1.0d0
+
+'onExit_PhS'
+  'PhS biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat119)'
+  'r3dvar'
+  1.0d0
+
+'onExit_PhL'
+  'PhL biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat120)'
+  'r3dvar'
+  1.0d0
+
+'onExit_MZL'
+  'MZL biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat121)'
+  'r3dvar'
+  1.0d0
+
+'onExit_Cop'
+  'Cop biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat122)'
+  'r3dvar'
+  1.0d0
+
+'onExit_NCaS'
+  'NCaS biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat123)'
+  'r3dvar'
+  1.0d0
+
+'onExit_EupS'
+  'EupS biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat124)'
+  'r3dvar'
+  1.0d0
+
+'onExit_NCaO'
+  'NCaO biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat125)'
+  'r3dvar'
+  1.0d0
+
+'onExit_EupO'
+  'EupO biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat126)'
+  'r3dvar'
+  1.0d0
+
+'onExit_Det'
+  'Det biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat127)'
+  'r3dvar'
+  1.0d0
+
+'onExit_DetF'
+  'DetF biomass tracker'
+  'mgC m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat128)'
+  'r3dvar'
+  1.0d0
+
+'onExit_Jel'
+  'Jel biomass tracker'
+  'umolFe m^-2'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat129)'
+  'r3dvar'
+  1.0d0
+
+'onExit_Fe'
+  'Fe biomass tracker'
+  ''
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat130)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_NO3'
+  'NO rate of change due to advection and diffusion'
+  'mmol N m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat131)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_NH4'
+  'NH rate of change due to advection and diffusion'
+  'mmol N m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat132)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_PhS'
+  'PhS rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat133)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_PhL'
+  'PhL rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat134)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_MZL'
+  'MZL rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat135)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_Cop'
+  'Cop rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat136)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_NCaS'
+  'NCaS rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat137)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_EupS'
+  'EupS rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat138)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_NCaO'
+  'NCaO rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat139)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_EupO'
+  'EupO rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat140)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_Det'
+  'Det rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat141)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_DetF'
+  'DetF rate of change due to advection and diffusion'
+  'mgC m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat142)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_Jel'
+  'Jel rate of change due to advection and diffusion'
+  'umolFe m^-2 d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat143)'
+  'r3dvar'
+  1.0d0
+
+'advdiff_Fe'
+  'Fe rate of change due to advection and diffusion'
+  ' d^-1'
+  'StatVar, scalar, series'
+  'bio_time'
+  'idTSvar(i3Stat144)'
+  'r3dvar'
+  1.0d0
+
 'feastpred_Cop'
   'Cop cumulative daily predation loss to fish'
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat117)'
+  'idTSvar(i3Stat145)'
   'r3dvar'
   1.0d0
 
@@ -7727,7 +7979,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat118)'
+  'idTSvar(i3Stat146)'
   'r3dvar'
   1.0d0
 
@@ -7736,7 +7988,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat119)'
+  'idTSvar(i3Stat147)'
   'r3dvar'
   1.0d0
 
@@ -7745,7 +7997,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat120)'
+  'idTSvar(i3Stat148)'
   'r3dvar'
   1.0d0
 
@@ -7754,7 +8006,7 @@
   'mg C m^-2'
   'StatVar, scalar, series'
   'bio_time'
-  'idTSvar(i3Stat121)'
+  'idTSvar(i3Stat149)'
   'r3dvar'
   1.0d0
 

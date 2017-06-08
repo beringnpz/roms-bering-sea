@@ -114,10 +114,38 @@
       i3Stat114 = 114
       i3Stat115 = 115
       i3Stat116 = 116
-#  ifdef FEAST
       i3Stat117 = 117
       i3Stat118 = 118
       i3Stat119 = 119
       i3Stat120 = 120
       i3Stat121 = 121
+      i3Stat122 = 122
+      i3Stat123 = 123
+      i3Stat124 = 124
+      i3Stat125 = 125
+      i3Stat126 = 126
+      i3Stat127 = 127
+      i3Stat128 = 128
+      i3Stat129 = 129
+      i3Stat130 = 130
+      i3Stat131 = 131
+      i3Stat132 = 132
+      i3Stat133 = 133
+      i3Stat134 = 134
+      i3Stat135 = 135
+      i3Stat136 = 136
+      i3Stat137 = 137
+      i3Stat138 = 138
+      i3Stat139 = 139
+      i3Stat140 = 140
+      i3Stat141 = 141
+      i3Stat142 = 142
+      i3Stat143 = 143
+      i3Stat144 = 144
+#  ifdef FEAST
+      i3Stat145 = 145
+      i3Stat146 = 146
+      i3Stat147 = 147
+      i3Stat148 = 148
+      i3Stat149 = 149
 #  endif
