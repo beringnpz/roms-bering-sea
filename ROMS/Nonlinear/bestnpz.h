@@ -2794,6 +2794,12 @@
                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
               end if
             end do
+            
+            ! Add tracer values to diagnostic array to allow calculation 
+            ! of advective-diffusive fluxes 
+            
+            
+            
 !             if (exit_flag>0) then
 ! !               CALL ROMS_finalize
 ! !               CALL abort(my_exit_flag)
