@@ -7714,7 +7714,7 @@
   1.0d0
 
 'onExit_NO3'
-  'NO biomass tracker'
+  'NO3 biomass tracker'
   'mmol N m^-2'
   'StatVar, scalar, series'
   'bio_time'
@@ -7723,7 +7723,7 @@
   1.0d0
 
 'onExit_NH4'
-  'NH biomass tracker'
+  'NH4 biomass tracker'
   'mmol N m^-2'
   'StatVar, scalar, series'
   'bio_time'
@@ -7840,7 +7840,7 @@
   1.0d0
 
 'advdiff_NO3'
-  'NO rate of change due to advection and diffusion'
+  'NO3 rate of change due to advection and diffusion'
   'mmol N m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
@@ -7849,7 +7849,7 @@
   1.0d0
 
 'advdiff_NH4'
-  'NH rate of change due to advection and diffusion'
+  'NH4 rate of change due to advection and diffusion'
   'mmol N m^-2 d^-1'
   'StatVar, scalar, series'
   'bio_time'
