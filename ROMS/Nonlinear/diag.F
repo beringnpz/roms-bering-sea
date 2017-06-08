@@ -450,7 +450,31 @@
 #  endif
           DO ibt=1,NBT
             IF (maxbio(ibt,ng).gt.max_bio(ibt)) THEN
+#  ifdef BEST_NPZ
+              IF (MASTER) THEN
+                
+                print *, "DIAG Bio trouble: NO3:  ", maxbio(iNO3 -NAT, ng)
+                print *, "                  NH4:  ", maxbio(iNH4 -NAT, ng)
+                print *, "                  PhS:  ", maxbio(iPhS -NAT, ng)
+                print *, "                  PhL:  ", maxbio(iPhL -NAT, ng)
+                print *, "                  MZL:  ", maxbio(iMZL -NAT, ng)
+                print *, "                  Cop:  ", maxbio(iCop -NAT, ng)
+                print *, "                  NCaS: ", maxbio(iNCaS-NAT,ng)
+                print *, "                  EupS: ", maxbio(iEupS-NAT,ng)
+                print *, "                  NCaO: ", maxbio(iNCaO-NAT,ng)
+                print *, "                  EupO: ", maxbio(iEupO-NAT,ng)
+                print *, "                  Det:  ", maxbio(iDet -NAT,ng)
+                print *, "                  DetF: ", maxbio(iDetF-NAT,ng)
+#   ifdef JELLY
+                print *, "                  Jel:  ", maxbio(iJel-NAT,ng)
+#   endif
+#   ifdef IRON_LIMIT
+                print *, "                  Fe:   ", maxbio(iFe-NAT,ng)
+#   endif  
+              END IF
+#  else
               IF (Master) print *, 'BIO trouble in DIAG ', maxbio(:,ng)
+#  endif
               exit_flag=1
             END IF
           END DO
