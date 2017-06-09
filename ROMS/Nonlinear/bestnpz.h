@@ -739,16 +739,13 @@
             DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
-            
-            if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1)) then
-              write(*, '(A40,E14.6,E14.6,E14.6)'), "bestnpz, line 744: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
-            end if
+
 #ifdef STATIONARY
             ! Rate of change due to processes outside this subroutine
-            ! (Note: this calc depends on the step3d_t.F code where 
+            ! (Note: this calc depends on the step3d_t.F code where
             ! stationary diagnostic values are copied from nstp to nnew...
             ! if that changes, this will break.)
-            
+
             st(i,j,k,nstp,131) = (Bio2d(i,k,iiNO3 ) - st(i,j,k,nnew,117))/dtdays ! mmol N m^-2 d^-1
             st(i,j,k,nstp,132) = (Bio2d(i,k,iiNH4 ) - st(i,j,k,nnew,118))/dtdays ! mmol N m^-2 d^-1
             st(i,j,k,nstp,133) = (Bio2d(i,k,iiPhS ) - st(i,j,k,nnew,119))/dtdays ! mg C m^-2 d^-1
@@ -2764,10 +2761,10 @@
         !  Update global tracer variables (m Tunits).
         !=============================================
 
-        ! Calculate rate of change due to biogeochemical processes, based 
-        ! on difference between Bio2d now and Bio_bak from beginning of 
-        ! routine, and add this to the values in the predictor time step. 
-        ! (recall that everything in the t(nnew) step is in transport 
+        ! Calculate rate of change due to biogeochemical processes, based
+        ! on difference between Bio2d now and Bio_bak from beginning of
+        ! routine, and add this to the values in the predictor time step.
+        ! (recall that everything in the t(nnew) step is in transport
         ! units, i.e. m*Tunits)
 
         ! TODO: Georgina's code has a max(t,0) applied to all tracers...
@@ -2775,7 +2772,7 @@
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            
+
             t(i,j,k,nnew,iNO3 ) = t(i,j,k,nnew,iNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 ))
             t(i,j,k,nnew,iNH4 ) = t(i,j,k,nnew,iNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 ))
             t(i,j,k,nnew,iPhS ) = t(i,j,k,nnew,iPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS ))
@@ -2803,19 +2800,15 @@
 !                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
 !               end if
 !             end do
-!
-            if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1)) then
-              write(*, '(A40,E14.6,E14.6,E14.6)'), "bestnpz, line 2824: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
-            end if
-            
+
 #ifdef STATIONARY
-            ! Add 2D tracer values to diagnostic array to allow 
-            ! calculation of advective-diffusive fluxes.  A bit silly to 
-            ! have these as extra outputs, but sticking the values here 
-            ! is a lot easier than creating and allocating entirely new 
+            ! Add 2D tracer values to diagnostic array to allow
+            ! calculation of advective-diffusive fluxes.  A bit silly to
+            ! have these as extra outputs, but sticking the values here
+            ! is a lot easier than creating and allocating entirely new
             ! arrays for it.
-            ! (Note: step3d_t.F copies the nstp values to nnew, so when 
-            ! bestnpz.h is next called, the nnew values will hold the 
+            ! (Note: step3d_t.F copies the nstp values to nnew, so when
+            ! bestnpz.h is next called, the nnew values will hold the
             ! previous step... I think)
 
             st(i,j,k,nstp,117) = t(i,j,k,nnew,iNO3 )
@@ -2868,8 +2861,8 @@
 #endif
 
 #ifdef ICE_BIO
-        ! Note: Ice variables aren't subject to the same tranport 
-        ! equations as pelagic, so these use tracer units rather than 
+        ! Note: Ice variables aren't subject to the same tranport
+        ! equations as pelagic, so these use tracer units rather than
         ! tranport units in the nnew timestep.
 # if defined CLIM_ICE_1D
 

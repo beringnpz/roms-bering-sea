@@ -379,7 +379,7 @@
 !           END DO
 !         END DO
 !       END DO
-      
+
 ! #   ifdef BEST_NPZ
 !
 !       CALL bestnpz_swfrac_tile(                                         &
@@ -393,7 +393,7 @@
 !    &        swdk, Ifrac)
 !
 ! #   endif
-     
+
         DO j=Jstr,Jend
           DO i=Istr,Iend
 #   if defined BEST_NPZ
@@ -439,9 +439,9 @@
       T_LOOP1 :DO ibt=1,NBT
         itrc=idbio(ibt)
 #else
-      T_LOOP1 :DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+      T_LOOP1 :DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #endif
         K_LOOP: DO k=1,N(ng)
@@ -635,14 +635,14 @@
             cff1=0.5_r8+Gamma
             cff2=0.5_r8-Gamma
           END IF
-    
+
 !g     IF ( itrc.gt.2 ) THEN
 !g                cff=0.0_r8
 !g    cff1=0.0_r8
 !g    cff2=0.0_r8
 !g           END IF
-        
-    
+
+
           DO j=Jstr,Jend
             DO i=Istr,Iend
 
@@ -653,10 +653,6 @@
      &                         FE(i,j+1)-FE(i,j))
 !            endif
 
-              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
-                write(*, '(A40,E14.6,E14.6,E14.6)'), "pre_step3d, line 657: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3), t(i,j,k,3,iNO3)/Hz(i,j,k)
-              end if
-     
             END DO
           END DO
         END DO K_LOOP
@@ -690,9 +686,9 @@
         T_LOOP2: DO ibt=1,NBT
           itrc=idbio(ibt)
 #else
-        T_LOOP2: DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+        T_LOOP2: DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #endif
 
@@ -846,19 +842,15 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
               cff1=cff*pm(i,j)*pn(i,j)
-        
+
 !g         IF ( itrc.gt.2 ) THEN
 !g                cff1=0.0_r8
 !g              END IF
-        
-        
+
+
               t(i,j,k,3,itrc)=DC(i,k)*                                  &
      &                        (t(i,j,k,3,itrc)-                         &
      &                         cff1*(FC(i,k)-FC(i,k-1)))
-     
-              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
-                write(*, '(A40,E14.6,E14.6,E14.6)'), "pre_step3d, line 860: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3), t(i,j,k,3,iNO3)
-              end if
             END DO
           END DO
         END DO T_LOOP2
@@ -879,15 +871,15 @@
         DO ibt=1,NBT
           itrc=idbio(ibt)
 #else
-        DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+        DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #endif
           ltrc=MIN(NAT,itrc)
 #ifdef LIMIT_BIO_AKT
           IF (itrc == 2) ltrc = 1
-#endif    
+#endif
           DO k=1,N(ng)-1
             DO i=Istr,Iend
               cff=1.0_r8/(z_r(i,j,k+1)-z_r(i,j,k))
@@ -896,7 +888,7 @@
      &                 t(i,j,k  ,nstp,itrc))
             END DO
           END DO
-    
+
 #  ifdef LMD_NONLOCAL
 !
 !  Add in the nonlocal transport flux for unstable (convective)
@@ -913,7 +905,7 @@
             END DO
           END IF
 #  endif
-          
+
 #  ifdef SOLAR_SOURCE
 !
 !  Add in incoming solar radiation at interior W-points using decay
@@ -948,10 +940,10 @@
 #  ifdef JELLY
               IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
      &      itrc.eq.iEupO.or.itrc.eq.iJel ) THEN
-#  else       
+#  else
               IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
      &        itrc.eq.iEupO) THEN
-#  endif        
+#  endif
                  cff2=0.0_r8
              END IF
 
@@ -973,9 +965,7 @@
 #  ifdef TS_MPDATA
               t(i,j,k,3,itrc)=t(i,j,k,nnew,itrc)/Hz(i,j,k)
 #  endif
-              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
-                write(*, '(A40,E14.6,E14.6,E14.6)'), "pre_step3d, line 977: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
-              end if
+
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iTrate)=cff1
               DiaTwrk(i,j,k,itrc,iTvdif)=cff2
@@ -1295,9 +1285,9 @@
       DO ibt=1,NBT
         itrc=idbio(ibt)
 #  else
-      DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+      DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #  endif
         CALL t3dbc_tile (ng, tile, itrc,                                &
