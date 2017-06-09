@@ -653,8 +653,8 @@
      &                         FE(i,j+1)-FE(i,j))
 !            endif
 
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "pre_step3d, line 657, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "pre_step3d, line 657: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3), t(i,j,k,3,iNO3)/Hz(i,j,k)
               end if
      
             END DO
@@ -856,8 +856,8 @@
      &                        (t(i,j,k,3,itrc)-                         &
      &                         cff1*(FC(i,k)-FC(i,k-1)))
      
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "pre_step3d, line 860, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "pre_step3d, line 860: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3), t(i,j,k,3,iNO3)
               end if
             END DO
           END DO
@@ -973,8 +973,8 @@
 #  ifdef TS_MPDATA
               t(i,j,k,3,itrc)=t(i,j,k,nnew,itrc)/Hz(i,j,k)
 #  endif
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "pre_step3d, line 977, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "pre_step3d, line 977: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
               end if
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iTrate)=cff1

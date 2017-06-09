@@ -846,8 +846,8 @@
 
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
               
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 850, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "step3d_t, line 850: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
               end if
 
 
@@ -1118,8 +1118,8 @@
 #  endif
 # else
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1122, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "step3d_t, line 1122: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
               end if
 #  ifdef SPLINES
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)*oHz(i,j,k)
@@ -1387,8 +1387,8 @@
 #  endif
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+cff1
               
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1391, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "step3d_t, line 1391, NO3 = ", t(i,j,k,:,iNO3)
               end if
               
 #  ifdef DIAGNOSTICS_TS
@@ -1501,8 +1501,8 @@
 !g           else
               t(i,j,k,nnew,itrc)=DC(i,k)
               
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1505, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "step3d_t, line 1505: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3), t(i,j,k,3,iNO3)
               end if
               
 #  if defined BIO_GOANPZ || defined BEST_NPZ
@@ -1599,8 +1599,8 @@
      &                           (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
      
      
-              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1603, NO3 = ", t(i,j,k,:,iNO3)
+              if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1) .and. (itrc.eq.iNO3)) then
+                write(*, '(A40,E14.6,E14.6,E14.6)'), "step3d_t, line 1603: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3), t(i,j,k,3,iNO3)
               end if
      
 !ajh trap wild values of temp or salt
@@ -1642,9 +1642,6 @@
      &                             cff*(Tobs(i,j,k,itrc)-               &
      &                                  t(i,j,k,nnew,itrc))
      
-                if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                  write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1645, NO3 = ", t(i,j,k,:,iNO3)
-                end if
               END DO
             END DO
           END DO

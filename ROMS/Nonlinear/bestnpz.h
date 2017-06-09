@@ -740,8 +740,8 @@
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
             
-            if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-              write(*, '(A40,E8.3,E8.3,E8.3)'), "Beginning of bestnpz, NO3 = ", t(i,j,k,:,iNO3)
+            if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1)) then
+              write(*, '(A40,E14.6,E14.6,E14.6)'), "bestnpz, line 744: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
             end if
 #ifdef STATIONARY
             ! Rate of change due to processes outside this subroutine
@@ -2764,64 +2764,48 @@
         !  Update global tracer variables (m Tunits).
         !=============================================
 
-        ! Place the appropriate biomass values into main tracer arrays
-        ! (recall that everything in the t(nnew) step is in m*Tunits)
-        !
-        ! The Bio_bak step accounts for the fact that tracer values may
-        ! have been negative when passed to this function, and this
-        ! conserves that biomass.
+        ! Calculate rate of change due to biogeochemical processes, based 
+        ! on difference between Bio2d now and Bio_bak from beginning of 
+        ! routine, and add this to the values in the predictor time step. 
+        ! (recall that everything in the t(nnew) step is in transport 
+        ! units, i.e. m*Tunits)
 
         ! TODO: Georgina's code has a max(t,0) applied to all tracers...
-        ! maybe add?  Or is it okay for things to go slightly negative,
-        ! assuming they'll self-correct?
+        ! maybe add?
 
         DO i=Istr,Iend
           DO k = 1,N(ng)
-            t(i,j,k,nnew,iNO3 ) = max(0.0_r8, Bio2d(i,k,iiNO3 ))
-            t(i,j,k,nnew,iNH4 ) = max(0.0_r8, Bio2d(i,k,iiNH4 ))
-            t(i,j,k,nnew,iPhS ) = max(0.0_r8, Bio2d(i,k,iiPhS ))
-            t(i,j,k,nnew,iPhL ) = max(0.0_r8, Bio2d(i,k,iiPhL ))
-            t(i,j,k,nnew,iMZL ) = max(0.0_r8, Bio2d(i,k,iiMZL ))
-            t(i,j,k,nnew,iCop ) = max(0.0_r8, Bio2d(i,k,iiCop ))
-            t(i,j,k,nnew,iNCaS) = max(0.0_r8, Bio2d(i,k,iiNCaS))
-            t(i,j,k,nnew,iEupS) = max(0.0_r8, Bio2d(i,k,iiEupS))
-            t(i,j,k,nnew,iNCaO) = max(0.0_r8, Bio2d(i,k,iiNCaO))
-            t(i,j,k,nnew,iEupO) = max(0.0_r8, Bio2d(i,k,iiEupO))
-            t(i,j,k,nnew,iDet ) = max(0.0_r8, Bio2d(i,k,iiDet ))
-            t(i,j,k,nnew,iDetF) = max(0.0_r8, Bio2d(i,k,iiDetF))
-            t(i,j,k,nnew,iJel ) = max(0.0_r8, Bio2d(i,k,iiJel ))
-            t(i,j,k,nnew,iFe  ) = max(0.0_r8, Bio2d(i,k,iiFe  ))
-            t(i,j,k,nnew,iMZS ) = 0.0_r8
-!             t(i,j,k,nnew,iNO3 ) = max(0.0_r8, Bio_bak(i,k,iiNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 )))
-!             t(i,j,k,nnew,iNH4 ) = max(0.0_r8, Bio_bak(i,k,iiNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 )))
-!             t(i,j,k,nnew,iPhS ) = max(0.0_r8, Bio_bak(i,k,iiPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS )))
-!             t(i,j,k,nnew,iPhL ) = max(0.0_r8, Bio_bak(i,k,iiPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL )))
-!             t(i,j,k,nnew,iMZL ) = max(0.0_r8, Bio_bak(i,k,iiMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL )))
-!             t(i,j,k,nnew,iCop ) = max(0.0_r8, Bio_bak(i,k,iiCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop )))
-!             t(i,j,k,nnew,iNCaS) = max(0.0_r8, Bio_bak(i,k,iiNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS)))
-!             t(i,j,k,nnew,iEupS) = max(0.0_r8, Bio_bak(i,k,iiEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS)))
-!             t(i,j,k,nnew,iNCaO) = max(0.0_r8, Bio_bak(i,k,iiNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO)))
-!             t(i,j,k,nnew,iEupO) = max(0.0_r8, Bio_bak(i,k,iiEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO)))
-!             t(i,j,k,nnew,iDet ) = max(0.0_r8, Bio_bak(i,k,iiDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet )))
-!             t(i,j,k,nnew,iDetF) = max(0.0_r8, Bio_bak(i,k,iiDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF)))
-!             t(i,j,k,nnew,iJel ) = max(0.0_r8, Bio_bak(i,k,iiJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel )))
-!             t(i,j,k,nnew,iFe  ) = max(0.0_r8, Bio_bak(i,k,iiFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  )))
-!             t(i,j,k,nnew,iMZS ) = 0.0_r8
+            
+            t(i,j,k,nnew,iNO3 ) = t(i,j,k,nnew,iNO3 ) + (Bio2d(i,k,iiNO3 ) - Bio_bak(i,k,iiNO3 ))
+            t(i,j,k,nnew,iNH4 ) = t(i,j,k,nnew,iNH4 ) + (Bio2d(i,k,iiNH4 ) - Bio_bak(i,k,iiNH4 ))
+            t(i,j,k,nnew,iPhS ) = t(i,j,k,nnew,iPhS ) + (Bio2d(i,k,iiPhS ) - Bio_bak(i,k,iiPhS ))
+            t(i,j,k,nnew,iPhL ) = t(i,j,k,nnew,iPhL ) + (Bio2d(i,k,iiPhL ) - Bio_bak(i,k,iiPhL ))
+            t(i,j,k,nnew,iMZL ) = t(i,j,k,nnew,iMZL ) + (Bio2d(i,k,iiMZL ) - Bio_bak(i,k,iiMZL ))
+            t(i,j,k,nnew,iCop ) = t(i,j,k,nnew,iCop ) + (Bio2d(i,k,iiCop ) - Bio_bak(i,k,iiCop ))
+            t(i,j,k,nnew,iNCaS) = t(i,j,k,nnew,iNCaS) + (Bio2d(i,k,iiNCaS) - Bio_bak(i,k,iiNCaS))
+            t(i,j,k,nnew,iEupS) = t(i,j,k,nnew,iEupS) + (Bio2d(i,k,iiEupS) - Bio_bak(i,k,iiEupS))
+            t(i,j,k,nnew,iNCaO) = t(i,j,k,nnew,iNCaO) + (Bio2d(i,k,iiNCaO) - Bio_bak(i,k,iiNCaO))
+            t(i,j,k,nnew,iEupO) = t(i,j,k,nnew,iEupO) + (Bio2d(i,k,iiEupO) - Bio_bak(i,k,iiEupO))
+            t(i,j,k,nnew,iDet ) = t(i,j,k,nnew,iDet ) + (Bio2d(i,k,iiDet ) - Bio_bak(i,k,iiDet ))
+            t(i,j,k,nnew,iDetF) = t(i,j,k,nnew,iDetF) + (Bio2d(i,k,iiDetF) - Bio_bak(i,k,iiDetF))
+            t(i,j,k,nnew,iJel ) = t(i,j,k,nnew,iJel ) + (Bio2d(i,k,iiJel ) - Bio_bak(i,k,iiJel ))
+            t(i,j,k,nnew,iFe  ) = t(i,j,k,nnew,iFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  ))
+            t(i,j,k,nnew,iMZS ) = t(i,j,k,nnew,iMZS ) + 0.0_r8
 
             ! Check for negatives and NaNs (for debugging)
 
-            do itrc = iNO3,size(t,5)
-              if (t(i,j,k,nnew,itrc) < 0) then
-                write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
-              end if
-
-              if (t(i,j,k,nnew,itrc) /= t(i,j,k,nnew,itrc)) then
-                write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
-              end if
-            end do
-            
-            if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-              write(*, '(A40,E8.3,E8.3,E8.3)'), "End of bestnpz, NO3 = ", t(i,j,k,:,iNO3)
+!             do itrc = iNO3,size(t,5)
+!               if (t(i,j,k,nnew,itrc) < 0) then
+!                 write(*, '(A19,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "Negative tracer: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+!               end if
+!
+!               if (t(i,j,k,nnew,itrc) /= t(i,j,k,nnew,itrc)) then
+!                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
+!               end if
+!             end do
+!
+            if ((i.eq.171) .and. (j.eq.25) .and. (k.eq.1)) then
+              write(*, '(A40,E14.6,E14.6,E14.6)'), "bestnpz, line 2824: ", t(i,j,k,nstp,iNO3), t(i,j,k,nnew,iNO3)/Hz(i,j,k), t(i,j,k,3,iNO3)
             end if
             
 #ifdef STATIONARY
@@ -2873,10 +2857,8 @@
 #ifdef BENTHIC
 
         DO i=Istr,Iend
-          bt(i,j,1,nnew,iBen   ) = Bio2d(i,1,iiBen   )
-          bt(i,j,1,nnew,iDetBen) = Bio2d(i,1,iiDetBen)
-!           bt(i,j,1,nnew,iBen   ) = Bio_bak(i,1,iiBen   ) + (Bio2d(i,1,iiBen   ) - Bio_bak(i,1,iiBen   ))
-!           bt(i,j,1,nnew,iDetBen) = Bio_bak(i,1,iiDetBen) + (Bio2d(i,1,iiDetBen) - Bio_bak(i,1,iiDetBen))
+          bt(i,j,1,nnew,iBen   ) = bt(i,j,1,nnew,iBen   ) + (Bio2d(i,1,iiBen   ) - Bio_bak(i,1,iiBen   ))
+          bt(i,j,1,nnew,iDetBen) = bt(i,j,1,nnew,iDetBen) + (Bio2d(i,1,iiDetBen) - Bio_bak(i,1,iiDetBen))
 
 # ifdef MASKING
           bt(i,j,1,nnew,iBen)    = bt(i,j,1,nnew,iBen   )*rmask(i,j)
@@ -2886,18 +2868,15 @@
 #endif
 
 #ifdef ICE_BIO
-        ! TODO: eliminated check for whether ice is present, b/c if not
-        ! Bio3d of ice vars should be 0 anyway... might need to check
-        ! this though
+        ! Note: Ice variables aren't subject to the same tranport 
+        ! equations as pelagic, so these use tracer units rather than 
+        ! tranport units in the nnew timestep.
 # if defined CLIM_ICE_1D
 
         DO i=Istr,Iend
-!           it(i,j,nnew,iIceNO3) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
-!           it(i,j,nnew,iIceNH4) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
-!           it(i,j,nnew,iIcePhL) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
-          it(i,j,nnew,iIceNO3) = Bio2d(i,N(ng),iiIceNO3)/aidz
-          it(i,j,nnew,iIceNH4) = Bio2d(i,N(ng),iiIceNH4)/aidz
-          it(i,j,nnew,iIcePhL) = Bio2d(i,N(ng),iiIcePhL)/aidz
+          it(i,j,nnew,iIceNO3) = it(i,j,nnew,iIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3))/aidz
+          it(i,j,nnew,iIceNH4) = it(i,j,nnew,iIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4))/aidz
+          it(i,j,nnew,iIcePhL) = it(i,j,nnew,iIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL))/aidz
 
           itL(i,j,nnew,iIceLog) = itL(i,j,nstp,iIceLog)
 
@@ -2910,13 +2889,9 @@
         END DO
 # else
         DO i=Istr,Iend
-!           IceNO3(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNO3) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3)))/aidz
-!           IceNH4(i,j,nnew) = (Bio_bak(i,N(ng),iiIceNH4) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4)))/aidz
-!           IcePhL(i,j,nnew) = (Bio_bak(i,N(ng),iiIcePhL) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL)))/aidz
-
-          IceNO3(i,j,nnew) = Bio2d(i,N(ng),iiIceNO3)/aidz
-          IceNH4(i,j,nnew) = Bio2d(i,N(ng),iiIceNH4)/aidz
-          IcePhL(i,j,nnew) = Bio2d(i,N(ng),iiIcePhL)/aidz
+          IceNO3(i,j,nnew) = IceNO3(i,j,nnew) + (Bio2d(i,N(ng),iiIceNO3) - Bio_bak(i,N(ng),iiIceNO3))/aidz
+          IceNH4(i,j,nnew) = IceNH4(i,j,nnew) + (Bio2d(i,N(ng),iiIceNH4) - Bio_bak(i,N(ng),iiIceNH4))/aidz
+          IcePhL(i,j,nnew) = IcePhL(i,j,nnew) + (Bio2d(i,N(ng),iiIcePhL) - Bio_bak(i,N(ng),iiIcePhL))/aidz
 
           IceLog(i,j,nnew) = IceLog(i,j,nstp) ! TODO: Current step value now in both positions... doublecheck that this is correct (real update in =happens in ice_limit.F))
 
