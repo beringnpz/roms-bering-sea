@@ -739,6 +739,10 @@
             DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
+            
+            if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+              write(*, '(A40,E8.3,E8.3,E8.3)'), "Beginning of bestnpz, NO3 = ", t(i,j,k,:,iNO3)
+            end if
 #ifdef STATIONARY
             ! Rate of change due to processes outside this subroutine
             ! (Note: this calc depends on the step3d_t.F code where 
@@ -2815,6 +2819,10 @@
                 write(*, '(A23,I3,A1,I3,A1,I3,A1,I3,A1,I3,A1)') "NaN in tracer array: t(", i, ",", j, ",", k, ",", nnew, ",", itrc, ")"
               end if
             end do
+            
+            if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+              write(*, '(A40,E8.3,E8.3,E8.3)'), "End of bestnpz, NO3 = ", t(i,j,k,:,iNO3)
+            end if
             
 #ifdef STATIONARY
             ! Add 2D tracer values to diagnostic array to allow 

@@ -845,6 +845,10 @@
 # else
 
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
+              
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 850, NO3 = ", t(i,j,k,:,iNO3)
+              end if
 
 
 !!     if(itrc.gt.2)THEN
@@ -1114,6 +1118,9 @@
 #  endif
 # else
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1122, NO3 = ", t(i,j,k,:,iNO3)
+              end if
 #  ifdef SPLINES
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)*oHz(i,j,k)
 #  endif
@@ -1379,6 +1386,11 @@
               END IF
 #  endif
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+cff1
+              
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1391, NO3 = ", t(i,j,k,:,iNO3)
+              end if
+              
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iTvdif)=DiaTwrk(i,j,k,itrc,iTvdif)+    &
      &                                   cff1
@@ -1488,6 +1500,11 @@
 !g              t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)
 !g           else
               t(i,j,k,nnew,itrc)=DC(i,k)
+              
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1505, NO3 = ", t(i,j,k,:,iNO3)
+              end if
+              
 #  if defined BIO_GOANPZ || defined BEST_NPZ
 !g              END IF
 #  endif
@@ -1571,6 +1588,7 @@
               t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) +                 &
      &                             dt(ng)*cff*                          &
      &                             (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
+     
 #  endif
 #  if defined BIO_NUDGE_ONLY
               ! ajh only nudge for iron or nitrate or ammonium
@@ -1579,6 +1597,12 @@
      &               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+             &
      &                           dt(ng)*Tnudgcof(i,j,itrc)*             &
      &                           (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
+     
+     
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1603, NO3 = ", t(i,j,k,:,iNO3)
+              end if
+     
 !ajh trap wild values of temp or salt
 !if (itrc.eq.itemp) then
 !if (t(i,j,k,nnew,itrc).gt.40.d0.or.t(i,j,k,nnew,itrc).lt.-3.d0) then
@@ -1617,6 +1641,10 @@
                 t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+                  &
      &                             cff*(Tobs(i,j,k,itrc)-               &
      &                                  t(i,j,k,nnew,itrc))
+     
+                if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                  write(*, '(A40,E8.3,E8.3,E8.3)'), "step3d_t, line 1645, NO3 = ", t(i,j,k,:,iNO3)
+                end if
               END DO
             END DO
           END DO

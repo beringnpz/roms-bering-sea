@@ -652,6 +652,10 @@
      &                        (FX(i+1,j)-FX(i,j)+                       &
      &                         FE(i,j+1)-FE(i,j))
 !            endif
+
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "pre_step3d, line 657, NO3 = ", t(i,j,k,:,iNO3)
+              end if
      
             END DO
           END DO
@@ -851,6 +855,10 @@
               t(i,j,k,3,itrc)=DC(i,k)*                                  &
      &                        (t(i,j,k,3,itrc)-                         &
      &                         cff1*(FC(i,k)-FC(i,k-1)))
+     
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "pre_step3d, line 860, NO3 = ", t(i,j,k,:,iNO3)
+              end if
             END DO
           END DO
         END DO T_LOOP2
@@ -965,6 +973,9 @@
 #  ifdef TS_MPDATA
               t(i,j,k,3,itrc)=t(i,j,k,nnew,itrc)/Hz(i,j,k)
 #  endif
+              if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+                write(*, '(A40,E8.3,E8.3,E8.3)'), "pre_step3d, line 977, NO3 = ", t(i,j,k,:,iNO3)
+              end if
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iTrate)=cff1
               DiaTwrk(i,j,k,itrc,iTvdif)=cff2
