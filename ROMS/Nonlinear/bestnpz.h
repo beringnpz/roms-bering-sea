@@ -1080,73 +1080,73 @@
         ! Calculate light decay in the water column
         !------------------------------------------
 
+        DO i=Istr,Iend
+          DO k=1,N(ng)
+            PAR(i,k) = Ifrac(i,j,k) * PARs(i)
+          END DO
+        END DO
+
+! #ifdef NEWSHADE
+!         ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
+!
 !         DO i=Istr,Iend
-!           DO k=1,N(ng)
-!             PAR(i,k) = Ifrac(i,j,k) * PARs(i)
+!
+!           cff10=h(i,j)
+!           k_extV= k_ext+2.00_r8*exp(-cff10*.05)
+!
+!           cff0=PARs(i)
+!
+!           DO k=N(ng),1,-1
+!
+!             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+!             cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
+!             cff2 = (k_chl*(cff5)**(0.428_r8))
+!             !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
+!             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+!             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
+!
 !           END DO
 !         END DO
-
-#ifdef NEWSHADE
-        ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
-
-        DO i=Istr,Iend
-
-          cff10=h(i,j)
-          k_extV= k_ext+2.00_r8*exp(-cff10*.05)
-
-          cff0=PARs(i)
-
-          DO k=N(ng),1,-1
-
-            dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
-            cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
-            cff2 = (k_chl*(cff5)**(0.428_r8))
-            !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
-            PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
-            cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
-
-          END DO
-        END DO
-
-#elif defined COKELET
-        ! Version from Ned Cokelet
-
-        DO i=Istr,Iend
-
-          cff10=h(i,j)
-          !  k_extV= k_ext+k_extZ*exp(-cff10*.05)
-          k_extV= k_ext
-          cff0=PARs(i)
-
-          DO k=N(ng),1,-1
-
-            dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
-            cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
-            cff2 = (k_chlA*(cff5)**(k_chlB))
-
-            PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
-            cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
-
-          END DO
-        END DO
-#else
-        ! Version from Sarah Hinckley old C code
-        ! (KAK: probably wrong... do not use)
-
-        DO k=N(ng),1,-1
-          DO i=Istr,Iend
-            cff3 = z_r(i,j,k)+2.5_r8
-            IF ( cff3 .gt. -71.0_r8 ) THEN
-              cff1 = k_ext + k_chl *                                 &
-     &                  ( Bio3d(i,k,iiPhS) + Bio3d(i,k,iiPhL) ) / ccr
-            ELSE
-                cff1 = 0.077_r8
-            END IF
-            PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
-
-          END DO
-        END DO
-#endif
+!
+! #elif defined COKELET
+!         ! Version from Ned Cokelet
+!
+!         DO i=Istr,Iend
+!
+!           cff10=h(i,j)
+!           !  k_extV= k_ext+k_extZ*exp(-cff10*.05)
+!           k_extV= k_ext
+!           cff0=PARs(i)
+!
+!           DO k=N(ng),1,-1
+!
+!             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
+!             cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
+!             cff2 = (k_chlA*(cff5)**(k_chlB))
+!
+!             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
+!             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
+!
+!           END DO
+!         END DO
+! #else
+!         ! Version from Sarah Hinckley old C code
+!         ! (KAK: probably wrong... do not use)
+!
+!         DO k=N(ng),1,-1
+!           DO i=Istr,Iend
+!             cff3 = z_r(i,j,k)+2.5_r8
+!             IF ( cff3 .gt. -71.0_r8 ) THEN
+!               cff1 = k_ext + k_chl *                                 &
+!      &                  ( Bio3d(i,k,iiPhS) + Bio3d(i,k,iiPhL) ) / ccr
+!             ELSE
+!                 cff1 = 0.077_r8
+!             END IF
+!             PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
+!
+!           END DO
+!         END DO
+! #endif
 
 
         !================================================================
