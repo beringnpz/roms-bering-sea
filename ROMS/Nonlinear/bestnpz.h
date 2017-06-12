@@ -664,12 +664,17 @@
         ! running with the ice submodel, or being set analytically in
         ! climatological 1D mode).
         !
-        ! Further complicating things is the mix of units.  The main
-        ! tracer array uses a mix of units: Tunits (i.e. tracer units, in
-        ! this case mass m^-3) for t(:,:,:,nstp,:) but m Tunits for
-        ! t(:,:,:,nnew,:) (b/c we don't yet know the layer thicknesses
-        ! that will be used in the predictor step nnew).  The benthic
-        ! Tunits are mass m^-2, and the ice Tunits are mass m^-3.
+        ! Further complicating things is the mix of units and 
+        ! stage-of-integration of the various tracers.  The array for 
+        ! water column tracers uses tracer units (Tunits) in the current 
+        ! step, i.e. t(:,:,:,nstp,:), and transport units (Tunits * m) in 
+        ! the predictor step, i.e. t(:,:,:,nnew,:); the predictor step 
+        ! may already include some changes due to advection and diffusion 
+        ! since the biological routine is called in the middle of the 
+        ! forward-stepping process.  The ice and benthic variables are 
+        ! not subject to the same integration procedure; tracer units are 
+        ! used in both time indices in their arrays (per volume for ice, 
+        ! and per area for benthic).
         !
         ! To make long-term maintenance of this code easier, within this
         ! J_LOOP section we'll work with i x k x var arrays, where
@@ -705,7 +710,7 @@
 
         ! All state variables will be saved in two different versions:
         ! mass m^-3 (Bio3d) and mass m^-2 (Bio2d).  This redundancy
-        ! makes for clearer (for human readers) code,
+        ! makes for clearer (for human readers) code.
 
         Bio3d = 0.0_r8 ! Initialize to 0
         Bio2d = 0.0_r8
@@ -774,6 +779,10 @@
         ! benthic biomass in the bottom layer of our Bio3d/2d arrays.  If
         ! we ever change the number of benthic layers, we may need to
         ! rethink this schema.
+        !
+        ! The 3d equivalent here is just for bookkeeping consistency (and 
+        ! it's never used) so I'll just use the thickness of the bottom 
+        ! layer for this conversion.
 
 #ifdef BENTHIC
         DO k=1,NBL(ng) ! Note: For BESTNPZ, NBL = 1 is hard-coded in mod_param.F
@@ -834,17 +843,17 @@
           end if
 
           ! Ice status
-          ! (Note: Most arrays have data arranged such that time
-          ! dimensions = [1 2 3]
-          !            = [nstp nnew 3]
-          !            = [current predictor intermediate]
-          ! Ice needs to hold on to the previous step, so those arrays
-          ! are [1 2] = [nprev nstp] = [previous current].  The flipflop
-          ! of values below is simply done so we can keep all the nstp
-          ! values at the same index location (1) and therefore access
-          ! them with the nstp shorthand.  Side effect is the confusing
-          ! shorthand that for ice, nnew refers to the previous step
-          ! when reading, and the predictor step later when writing.
+          !
+          ! Note: because ice uses a different integration scheme than 
+          ! the pelagic tracers, the nstp, nnew terminology becomes a 
+          ! little misleading here.  The nnew index is holding the 
+          ! current concentration and the nstp index the value from the 
+          ! previous time step. The flipflop of values below is simply 
+          ! done so we can keep all the current-step values at the same 
+          ! index location and therefore access them with the nstp 
+          ! shorthand.  Side effect is the confusing shorthand that for 
+          ! ice variables, nnew refers to the previous step when reading, 
+          ! and the predictor step later when writing.
 
           cff1=IceLog(i,j,nnew)
           cff2=IceLog(i,j,nstp)
@@ -879,6 +888,8 @@
         ! Start by extracting ice biomass from the main ice bio tracer
         ! arrays (we'll deal with changes due to appearing or
         ! disappearing ice in a moment)
+        
+        ! TODO: double check indices... should this be nstp or nnew?
 
 #ifdef ICE_BIO
         DO i=Istr,Iend
@@ -900,7 +911,7 @@
         END DO
 #endif
 
-        ! Temperature and salinity, for easier reference
+        ! Extract temperature and salinity, for easier reference
 
         Temp = t(Istr:Iend,j,1:N(ng),nstp,itemp)
         Salt = t(Istr:Iend,j,1:N(ng),nstp,isalt)
@@ -910,11 +921,11 @@
         Temp = Temp - 1.94_r8 ! bias correction for bio only, not fed back
 #endif
 
-        ! Save a copy of the original biomass
+        ! Save a copy of the original biomass, prior to any adjustments
 
         Bio_bak = Bio2d
 
-        ! If any biomass is negtive, replace with 0 for all source/sink
+        ! If any biomass is negative, replace with 0 for all source/sink
         ! calculations
 
         Bio2d = max(0.0_r8, Bio2d)
@@ -1086,69 +1097,6 @@
           END DO
         END DO
 
-! #ifdef NEWSHADE
-!         ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
-!
-!         DO i=Istr,Iend
-!
-!           cff10=h(i,j)
-!           k_extV= k_ext+2.00_r8*exp(-cff10*.05)
-!
-!           cff0=PARs(i)
-!
-!           DO k=N(ng),1,-1
-!
-!             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
-!             cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
-!             cff2 = (k_chl*(cff5)**(0.428_r8))
-!             !cff2 = min(0.05_r8,max(0.0067_r8,(k_chl*(cff5)**(-0.428_r8))))
-!             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
-!             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
-!
-!           END DO
-!         END DO
-!
-! #elif defined COKELET
-!         ! Version from Ned Cokelet
-!
-!         DO i=Istr,Iend
-!
-!           cff10=h(i,j)
-!           !  k_extV= k_ext+k_extZ*exp(-cff10*.05)
-!           k_extV= k_ext
-!           cff0=PARs(i)
-!
-!           DO k=N(ng),1,-1
-!
-!             dz=0.5_r8*(z_w(i,j,k)-z_w(i,j,k-1))
-!             cff5=(Bio3d(i,k,iiPhS)/ccr)+ (Bio3d(i,k,iiPhL)/ccrPhL)
-!             cff2 = (k_chlA*(cff5)**(k_chlB))
-!
-!             PAR(i,k) = cff0 * EXP(-(k_extV+cff2)*dz)
-!             cff0=cff0 * EXP(-(k_extV+cff2)*dz*2.0_r8)
-!
-!           END DO
-!         END DO
-! #else
-!         ! Version from Sarah Hinckley old C code
-!         ! (KAK: probably wrong... do not use)
-!
-!         DO k=N(ng),1,-1
-!           DO i=Istr,Iend
-!             cff3 = z_r(i,j,k)+2.5_r8
-!             IF ( cff3 .gt. -71.0_r8 ) THEN
-!               cff1 = k_ext + k_chl *                                 &
-!      &                  ( Bio3d(i,k,iiPhS) + Bio3d(i,k,iiPhL) ) / ccr
-!             ELSE
-!                 cff1 = 0.077_r8
-!             END IF
-!             PAR(i,k) = PARfrac(ng) * cff2 * exp( cff1 * cff3 )
-!
-!           END DO
-!         END DO
-! #endif
-
-
         !================================================================
         !  Begin time loop (if BioIter > 1, this divides the main time
         !  step into smaller steps for biological calculations)
@@ -1156,7 +1104,7 @@
 
         ITER_LOOP: DO Iter=1,BioIter(ng)
 
-          ! Initialize the rate of change, dB/dt, to 0 for all elements.
+          ! Initialize the rate of change, dB/dt, to 0 for all tracers.
           ! Same for all intermediate flux arrays.  Note that these
           ! fluxes will hold the 2D equivalent of all the fluxes (i.e.
           ! per area, rather than per volume); this makes it easier to

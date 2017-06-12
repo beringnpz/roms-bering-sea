@@ -393,38 +393,6 @@
      &      swdk, Ifrac)
 
 #   endif
-
-!         DO j=Jstr,Jend
-!           DO i=Istr,Iend
-! #   if defined BEST_NPZ
-!             ! use bio to set shortwave absorption
-!             PhSsum=0
-!             PhLsum=0
-!             do kk=N(ng),k,-1
-!                PhSsum = PhSsum + t(i,j,kk,nstp,iPhS)*(z_w(i,j,kk)-z_w(i,j,kk-1))
-!                PhLsum = PhLsum + t(i,j,kk,nstp,iPhL)*(z_w(i,j,kk)-z_w(i,j,kk-1))
-!             end do
-!             PhSave = PhSsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
-!             PhLave = PhLsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
-!
-!             cffa1 = max(1.e-3,(PhSave/ccr) + (PhLave/ccrPhL))
-!             cffa2 = k_ext+2.00_r8*exp(z_w(i,j,0)*.05)
-! #    if defined COKELET
-!             cffa3=(k_chlA*(cffa1)**(k_chlB))+k_chlC
-! #    else
-!             cffa3 = (k_chl*(cffa1)**(0.428_r8))
-! #    endif
-!
-!             FX(i,j) = z_w(i,j,N(ng))-z_w(i,j,k)
-!             swdk(i,j,k) = (1.-a_frac)*EXP(-1.*FX(i,j)*(cffa2+cffa3))    &
-!      &                  + a_frac*EXP(-1.*FX(i,j)/a_mu1)
-! #   else
-!             swdk(i,j,k)=FE(i,j)
-! #   endif
-!
-!           END DO
-!         END DO
-!       END DO
 #  endif
 #  ifndef TS_MPDATA
 !
