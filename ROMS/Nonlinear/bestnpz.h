@@ -1366,7 +1366,7 @@
 
 #ifdef ICE_BIO
               ! Amount of ice algae available, assuming that all algae in
-              ! the bottom 2 cm (aidz=0.02) of ice is relocated to the
+              ! the ice skeletal layer is relocated to the
               ! top water layer.  Will be 0 for all but k = N(ng)
 
               IcePhlAvail = Bio2d(i,k,iiIcePhl)/Hz(i,j,k) ! mg C m^-3
@@ -1790,7 +1790,7 @@
               cff2 = cff2 + Hz(i,j,k)
             END DO
 
-            ! Fraction each layer contributing to each food source
+            ! Fraction of total food coming from each layer
 
             DO k = 1,N(ng)
               frac2(k,1) = mfromlayer(k)*Bio3d(i,k,iiDet) /totD
