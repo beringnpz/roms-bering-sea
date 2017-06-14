@@ -7990,7 +7990,7 @@
   45  FORMAT (/,/,' Biology Parameters (Legacy)',                       &
      &        /,  ' =============================',/)
   50  FORMAT (1x,i10,2x,a,t28,a)
-  60  FORMAT (10x,l1,2x,a,t28,a,i2.2,':',1x,a)
+  60  FORMAT (10x,l1,2x,a,t28,a,i3.3,':',1x,a)
   70  FORMAT (f11.3,2x,a,t28,a)
 ! 80  FORMAT (f11.3,2x,a,t28,a,/,t30,a)
   90  FORMAT (1p,e11.4,2x,a,'(',i2.2,')',t28,a,/,t30,a,i2.2,':',1x,a)
@@ -11356,11 +11356,11 @@
 #endif
       integer, dimension(Ngrids) :: is
 
-      real(r8), dimension(100) :: Rval
+      real(r8), dimension(300) :: Rval
 
       character (len=40) :: KeyWord
       character (len=160) :: line
-      character (len=160), dimension(100) :: Cval
+      character (len=160), dimension(300) :: Cval
 !
 !-----------------------------------------------------------------------
 !  Read in stations parameters.
@@ -12000,7 +12000,7 @@
      &        /,  ' =============================',/)  
   70  FORMAT (1x,i10,2x,a,t30,a)
   80  FORMAT (10x,l1,2x,a,t30,a)
-  90  FORMAT (10x,l1,2x,a,t30,a,i2.2,':',1x,a)
+  90  FORMAT (10x,l1,2x,a,t30,a,i3.3,':',1x,a)
  100  FORMAT (13x,'Flag and positions for station ',i4.4,':',           &
      &        i3,1x,2f10.4)
  110  FORMAT (/,' READ_StaPAR - variable info not yet loaded, ', a)
