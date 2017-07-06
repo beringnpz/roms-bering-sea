@@ -657,7 +657,7 @@
 #ifdef BIOLOGY
         real(r8), dimension(NBT, Ngrids) :: maxbio
 # ifdef BEST_NPZ
-        real(r8), dimension(NBT) :: max_bio = 50000.0_r8   ! bio units
+        real(r8), dimension(NBT) :: max_bio = 100000.0_r8  ! bio units
 # else
         real(r8), dimension(NBT) :: max_bio = 10000.0_r8   ! bio units
 # endif
