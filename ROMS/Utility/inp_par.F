@@ -11715,6 +11715,9 @@
             IF (Sout(idIceNH4,ng)) WRITE (out,90)                       &
      &            Sout(idIceNH4,ng), 'Sout(idIceNH4)',                  &
      &            'Write out ice tracer ', 3, TRIM(Vname(1,idIceNH4))
+            IF (Sout(idIceLog,ng)) WRITE (out,90)                       &
+     &            Sout(idIceLog,ng), 'Sout(idIceLog)',                  &
+     &            'Write out ice tracer ', 3, TRIM(Vname(1,idIceLog))
 #   endif 
 #  endif  
 #  ifdef STATIONARY
