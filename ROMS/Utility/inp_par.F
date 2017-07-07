@@ -7591,6 +7591,9 @@
             IF (Hout(idIceNH4,ng)) WRITE (out,60)                       &
      &            Hout(idIceNH4,ng), 'Hout(idIceNH4)',                  &
      &            'Write out ice tracer ', 3, TRIM(Vname(1,idIceNH4))
+            IF (Hout(idIceLog,ng)) WRITE (out,60)                       &
+     &            Hout(idIceLog,ng), 'Hout(idIceLog)',                  &
+     &            'Write out ice tracer ', 4, TRIM(Vname(1,idIceLog))
 #   endif
 #  endif
 #  ifdef STATIONARY
@@ -11613,7 +11616,9 @@
           ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNO3)') THEN
             Npts=load_l(Nval, Cval, Ngrids, Sout(idIceNO3,1))
           ELSE IF (TRIM(KeyWord).eq.'Sout(idIceNH4)') THEN
-            Npts=load_l(Nval, Cval, Ngrids, Sout(idIceNH4,1))  
+            Npts=load_l(Nval, Cval, Ngrids, Sout(idIceNH4,1))
+          ELSE IF (TRIM(KeyWord).eq.'Sout(idIceLog)') THEN
+            Npts=load_l(Nval, Cval, Ngrids, Sout(idIceLog,1))  
 #   endif
 #  endif  
 # endif
@@ -11717,7 +11722,7 @@
      &            'Write out ice tracer ', 3, TRIM(Vname(1,idIceNH4))
             IF (Sout(idIceLog,ng)) WRITE (out,90)                       &
      &            Sout(idIceLog,ng), 'Sout(idIceLog)',                  &
-     &            'Write out ice tracer ', 3, TRIM(Vname(1,idIceLog))
+     &            'Write out ice tracer ', 4, TRIM(Vname(1,idIceLog))
 #   endif 
 #  endif  
 #  ifdef STATIONARY
