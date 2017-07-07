@@ -1310,6 +1310,18 @@
      &                   SetParAccess = .FALSE.)
           IF (exit_flag.ne.NoError) RETURN
         END IF
+        
+	      IF (Sout(idIceLog,ng)) THEN
+          Vinfo( 1)=Vname(1,idIceLog)
+          Vinfo( 2)=Vname(2,idIceLog)
+          Vinfo( 3)=Vname(3,idIceLog)
+          Vinfo(14)=Vname(4,idIceLog)
+          Vinfo(16)=Vname(1,idtime)
+          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceNH4,ng),    &
+     &                   NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,         &
+     &                   SetParAccess = .FALSE.)
+          IF (exit_flag.ne.NoError) RETURN
+        END IF
 #   endif	
 #  endif
 # endif
