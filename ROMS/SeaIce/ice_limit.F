@@ -81,6 +81,7 @@
       USE IcePhLbc_mod, ONLY : IcePhLbc_tile
       USE IceNO3bc_mod, ONLY : IceNO3bc_tile
       USE IceNH4bc_mod, ONLY : IceNH4bc_tile
+      USE mod_biology, ONLY: aidz
 #  endif
 # endif
       USE hsnbc_mod, ONLY : hsnbc_tile
