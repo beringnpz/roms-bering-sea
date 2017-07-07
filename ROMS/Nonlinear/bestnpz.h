@@ -1381,7 +1381,8 @@
               ! the ice skeletal layer is relocated to the
               ! top water layer.  Will be 0 for all but k = N(ng)
 
-              IcePhlAvail = Bio2d(i,k,iiIcePhl)/Hz(i,j,k) ! mg C m^-3
+!               IcePhlAvail = Bio2d(i,k,iiIcePhl)/Hz(i,j,k) ! mg C m^-3
+              IcePhlAvail = 0.0_r8 ! TODO: debugging
 #else
               ! Placeholder to simplify code in no-ice runs
 
