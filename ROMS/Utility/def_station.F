@@ -1317,7 +1317,7 @@
           Vinfo( 3)=Vname(3,idIceLog)
           Vinfo(14)=Vname(4,idIceLog)
           Vinfo(16)=Vname(1,idtime)
-          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceNH4,ng),    &
+          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceLog,ng),    &
      &                   NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,         &
      &                   SetParAccess = .FALSE.)
           IF (exit_flag.ne.NoError) RETURN
