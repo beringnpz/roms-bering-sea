@@ -844,8 +844,8 @@
 
           ! Ice status
           !
-          ! IceLog(i,j,nstp) holds the previous time step, and 
-          ! IceLog(i,j,nnew) has the current one.  I think.  Maybe.
+          ! IceLog(i,j,nstp) holds the current time step, and 
+          ! IceLog(i,j,nnew) has the previous one.  I think.  Maybe.
           
 !           cff1=IceLog(i,j,nnew)
 !           cff2=IceLog(i,j,nstp)
@@ -853,13 +853,13 @@
 !           IceLog(i,j,nnew)=cff2
 !           IceLog(i,j,nstp)=cff1
 
-          if     (IceLog(i,j,nstp).lt.0 .and. IceLog(i,j,nnew).gt.0) THEN
+          if     (hi(i,j,nstp).ge.aidz .and. hi(i,j,nnew).lt.aidz) THEN
             ice_status(i,j) = 1.0  ! ice appeared
-          elseif (IceLog(i,j,nstp).gt.0 .and. IceLog(i,j,nnew).gt.0) THEN
+          elseif (hi(i,j,nstp).ge.aidz .and. hi(i,j,nnew).ge.aidz) THEN
             ice_status(i,j) = 2.0  ! ice stayed
-          elseif (IceLog(i,j,nstp).gt.0 .and. IceLog(i,j,nnew).lt.0) THEN
+          elseif (hi(i,j,nstp).lt.aidz .and. hi(i,j,nnew).ge.aidz) THEN
             ice_status(i,j) = -1.0 ! ice disappeared
-          elseif (IceLog(i,j,nstp).lt.0 .and. IceLog(i,j,nnew).lt.0) THEN
+          elseif (hi(i,j,nstp).lt.aidz .and. hi(i,j,nnew).lt.aidz) THEN
             ice_status(i,j) = 0.0  ! no ice, now or previous
           endif
 
