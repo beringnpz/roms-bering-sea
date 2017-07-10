@@ -1450,6 +1450,7 @@
      &                        ncid = ncSTAid(ng),                       &
      &                        varid = staVid(idIceNH4,ng))
         IF (exit_flag.ne.NoError) RETURN
+      END IF
       
       IF (Sout(idIceLog,ng)) THEN
         scale=1.0_r8
