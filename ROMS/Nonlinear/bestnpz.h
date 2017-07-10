@@ -844,22 +844,20 @@
 
           ! Ice status
           !
-          ! IceLog(i,j,nstp) holds the current time step, and 
-          ! IceLog(i,j,nnew) has the previous one.  I think.  Maybe.
-          
-!           cff1=IceLog(i,j,nnew)
-!           cff2=IceLog(i,j,nstp)
-!
-!           IceLog(i,j,nnew)=cff2
-!           IceLog(i,j,nstp)=cff1
+          ! IceLog(i,j,nstp) holds the previous time step, and 
+          ! IceLog(i,j,nnew) has the current one.  I think.  Maybe.
 
-          if     (hi(i,j,nstp).ge.aidz .and. hi(i,j,nnew).lt.aidz) THEN
+!           if ((i .eq. 103) .and. (j .eq. 131)) then
+!             write(*,'(A11,F8.4,A11,F8.4)'), "hi(nstp) = ", hi(i,j,nstp), "hi(nnew) = ", hi(i,j,nnew)
+!           endif
+
+          if     (hi(i,j,nnew).ge.aidz .and. hi(i,j,nstp).lt.aidz) THEN
             ice_status(i,j) = 1.0  ! ice appeared
-          elseif (hi(i,j,nstp).ge.aidz .and. hi(i,j,nnew).ge.aidz) THEN
+          elseif (hi(i,j,nnew).ge.aidz .and. hi(i,j,nstp).ge.aidz) THEN
             ice_status(i,j) = 2.0  ! ice stayed
-          elseif (hi(i,j,nstp).lt.aidz .and. hi(i,j,nnew).ge.aidz) THEN
+          elseif (hi(i,j,nnew).lt.aidz .and. hi(i,j,nstp).ge.aidz) THEN
             ice_status(i,j) = -1.0 ! ice disappeared
-          elseif (hi(i,j,nstp).lt.aidz .and. hi(i,j,nnew).lt.aidz) THEN
+          elseif (hi(i,j,nnew).lt.aidz .and. hi(i,j,nstp).lt.aidz) THEN
             ice_status(i,j) = 0.0  ! no ice, now or previous
           endif
 
@@ -1910,140 +1908,140 @@
           END DO
 #endif
 
-! #ifdef ICE_BIO
-!           !-----------------
-!           ! Ice Sub Model
-!           !-----------------
-!
-!           DO i=Istr,Iend
-!             if (ice_status(i,j) .ge. 1.0_r8) then
-!
-!               ! Ice algae production limitation terms
-!
-!               Temp1 = Temp(i,N(ng)) ! Assume temperature of top layer = temp ice skeletal layer
-!               Par1  = PARs(i)/0.394848_r8  ! surface light, W m^-2
-!
-!               aiceIfrac = (1-exp(-alphaIb*Par1))*exp(-betaI*Par1) ! light limitation
-!
-!               cff1 = Bio3d(i,N(ng),iiIceNO3)/(ksnut1 + Bio3d(i,N(ng),iiIceNO3)) ! NO3 limitation
-!               cff2 = Bio3d(i,N(ng),iiIceNH4)/(ksnut2 + Bio3d(i,N(ng),iiIceNH4)) ! NH4 limitation
-!               aiceNfrac = cff1*exp(-inhib*Bio3d(i,N(ng),iiIceNH4)) + cff2       ! N limitation
-!               fNO3      = cff1*exp(-inhib*Bio3d(i,N(ng),iiIceNH4))/aiceNfrac    ! f-ratio
-!               if (fNO3 /= fNO3) then ! catch NaN if aiceNfrac=0
-!                 fNO3 = 0
-!               end if
-!
-! # ifdef BERING_10K
-!               ! Ice algae growth is also limited by suboptimal brine
-!               ! salinity in the ice.  This value isn't tracked explicitly
-!               ! by the ice model, so instead we use the brine salinty vs
-!               ! ice temperature polynomial fit from Arrigo 1993 Appendix
-!               ! A to estimate brine salinity.
-!
-!               if (ti(i,j,nstp) .ge. -22.9_r8) THEN
-!                 cff1=-3.9921
-!                 cff2=-22.7
-!                 cff3=-1.0015
-!                 cff4=-0.019956
-!               else if (ti(i,j,nstp) .gt. -44.0_r8  .AND. ti(i,j,nstp) .lt. -22.9_r8) THEN
-!                 cff1=206.24
-!                 cff2=-1.8907
-!                 cff3=-0.060868
-!                 cff4=-0.0010247
-!               else
-!                 cff1=-4442.1
-!                 cff2=-277.86
-!                 cff3=-5.501
-!                 cff4=-0.03669
-!               endif
-!
-!               sb = cff1 + cff2*ti(i,j,nstp) + cff3*ti(i,j,nstp)**2 +    &
-!      &             cff4*ti(i,j,nstp)**3 ! brine salinity
-!
-!               ! Salinity impact on ice algal growth (gesi) is determined
-!               ! by a polynomial fit to brine salinty (Arrigo 1993
-!               ! Appendix B)
-!
-!               gesi = max(0.0_r8, (1.1e-2                                &
-!      &                          + 3.012e-2*sb                           &
-!      &                          + 1.0342e-3*sb**2                       &
-!      &                          - 4.6033e-5*sb**3                       &
-!      &                          + 4.926e-7*sb**4                        &
-!      &                          - 1.659e-9*sb**5              ))
-!
-! # else
-!               ! When running without an accompanying ice model, assume no
-!               ! salinity limitation on ice algae growth
-!
-!               gesi=1.0_r8
-! # endif
-!
-!               ! Ice algae production
-!
-!               grow1 = mu0*exp(0.0633*Temp1)
-!               GROWAice=grow1 * min(aiceNfrac,aiceIfrac) * gesi
-!
-!               Gpp_INO3_IPhL(i,N(ng)) = (GrowAice * Bio3d(i,N(ng),iiIcePhL) *    fNO3 )*aidz ! mg C m^-2 d^-1
-!               Gpp_INH4_IPhL(i,N(ng)) = (GrowAice * Bio3d(i,N(ng),iiIcePhL) * (1-fNO3))*aidz ! mg C m^-2 d^-1
-!
-!               ! Ice algae respiration
-!
-!               RAi0 = R0i*mu0*exp(0.0633*Temp1)
-!
-!               Res_IPhL_INH4(i,N(ng)) = (RAi0 * Bio3d(i,N(ng),iiIcePhL))*aidz ! mg C m^-2 d^-1
-!
-!               ! Ice algae mortality
-!
-!               RgAi = rg0*exp(rg*Temp1)
-!
-!               Mor_IPhL_INH4(i,N(ng)) = (Bio3d(i,N(ng),iiIcePhL)*RgAi)*aidz ! mg C m^-2 d^-1
-!
-!               ! Nitrification
-!
-!               Nit_INH4_INO3(i,N(ng)) = (annit*Bio3d(i,N(ng),iiIceNH4)/xi)*aidz ! mg C m^-2 d^-1
-!
-!               ! Ice/water convective exchange covers transfer of algae,
-!               ! NO3, and NH4 between the ice and surface water based on
-!               ! water exchange between the two layers, following Jin et
-!               ! al. 2006.  The water-ice interface transport (twi) rate
-!               ! is determined based on a polynomial fit with rate of
-!               ! change of ice thickness.
-!
-! # if defined CLIM_ICE_1D
-!               dhicedt=it(i,j,nnew,iIceZ)-it(i,j,nstp,iIceZ) ! change in ice thickness over this time step (m)
-! # elif defined BERING_10K
-!               dhicedt=hi(i,j,nstp)-hi(i,j,nnew) ! change in ice thickness over this time step (m)
-! # endif
-!               dhicedt=dhicedt*sec2day/dtdays ! convert to m/s for polynomial fit
-!
-!               IF (dhicedt.lt.0) THEN ! Ice is melting
-!
-!                 trs=4.49e-6*ABS(dhicedt)-1.39e-5*ABS(dhicedt)**2
-!                 trs=trs*86400   ! convert back to m/d
-!                 twi=720*trs
-!
-!               ELSE                   ! Ice is growing
-!                 trs=9.667e-11+4.49e-6*dhicedt-1.39e-5*dhicedt**2
-!                 trs=trs*86400   ! convert back to m/d
-!                 twi=72*trs
-!               ENDIF
-!
-!               ! IcePhL can get washed out of ice, but not in, so assume
-!               ! [PhL] = 0 for this exchange
-!
-!               Twi_IPhL_PhL(i,N(ng)) = twi * Bio3d(i,N(ng),iiIcePhL) ! mg C m^-2 d^-1
-!
-!               ! NO3 and NH4 have two-way exchange, based on gradient
-!               ! across the ice/water interface.  Note that I'm using
-!               ! ice-to-water as the naming convention for this flux, but
-!               ! it may be negative, implying the reverse direction.
-!
-!               Twi_INO3_NO3(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNO3) - Bio3d(i,N(ng),iiNO3))/xi ! mg C m^-2 d^-1
-!               Twi_INH4_NH4(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNH4) - Bio3d(i,N(ng),iiNH4))/xi ! mg C m^-2 d^-1
-!
-!             endif
-!           END DO
-! #endif
+#ifdef ICE_BIO
+          !-----------------
+          ! Ice Sub Model
+          !-----------------
+
+          DO i=Istr,Iend
+            if (ice_status(i,j) .ge. 1.0_r8) then
+
+              ! Ice algae production limitation terms
+
+              Temp1 = Temp(i,N(ng)) ! Assume temperature of top layer = temp ice skeletal layer
+              Par1  = PARs(i)/0.394848_r8  ! surface light, W m^-2
+
+              aiceIfrac = (1-exp(-alphaIb*Par1))*exp(-betaI*Par1) ! light limitation
+
+              cff1 = Bio3d(i,N(ng),iiIceNO3)/(ksnut1 + Bio3d(i,N(ng),iiIceNO3)) ! NO3 limitation
+              cff2 = Bio3d(i,N(ng),iiIceNH4)/(ksnut2 + Bio3d(i,N(ng),iiIceNH4)) ! NH4 limitation
+              aiceNfrac = cff1*exp(-inhib*Bio3d(i,N(ng),iiIceNH4)) + cff2       ! N limitation
+              fNO3      = cff1*exp(-inhib*Bio3d(i,N(ng),iiIceNH4))/aiceNfrac    ! f-ratio
+              if (fNO3 /= fNO3) then ! catch NaN if aiceNfrac=0
+                fNO3 = 0
+              end if
+
+# ifdef BERING_10K
+              ! Ice algae growth is also limited by suboptimal brine
+              ! salinity in the ice.  This value isn't tracked explicitly
+              ! by the ice model, so instead we use the brine salinty vs
+              ! ice temperature polynomial fit from Arrigo 1993 Appendix
+              ! A to estimate brine salinity.
+
+              if (ti(i,j,nstp) .ge. -22.9_r8) THEN
+                cff1=-3.9921
+                cff2=-22.7
+                cff3=-1.0015
+                cff4=-0.019956
+              else if (ti(i,j,nstp) .gt. -44.0_r8  .AND. ti(i,j,nstp) .lt. -22.9_r8) THEN
+                cff1=206.24
+                cff2=-1.8907
+                cff3=-0.060868
+                cff4=-0.0010247
+              else
+                cff1=-4442.1
+                cff2=-277.86
+                cff3=-5.501
+                cff4=-0.03669
+              endif
+
+              sb = cff1 + cff2*ti(i,j,nstp) + cff3*ti(i,j,nstp)**2 +    &
+     &             cff4*ti(i,j,nstp)**3 ! brine salinity
+
+              ! Salinity impact on ice algal growth (gesi) is determined
+              ! by a polynomial fit to brine salinty (Arrigo 1993
+              ! Appendix B)
+
+              gesi = max(0.0_r8, (1.1e-2                                &
+     &                          + 3.012e-2*sb                           &
+     &                          + 1.0342e-3*sb**2                       &
+     &                          - 4.6033e-5*sb**3                       &
+     &                          + 4.926e-7*sb**4                        &
+     &                          - 1.659e-9*sb**5              ))
+
+# else
+              ! When running without an accompanying ice model, assume no
+              ! salinity limitation on ice algae growth
+
+              gesi=1.0_r8
+# endif
+
+              ! Ice algae production
+
+              grow1 = mu0*exp(0.0633*Temp1)
+              GROWAice=grow1 * min(aiceNfrac,aiceIfrac) * gesi
+
+              Gpp_INO3_IPhL(i,N(ng)) = (GrowAice * Bio3d(i,N(ng),iiIcePhL) *    fNO3 )*aidz ! mg C m^-2 d^-1
+              Gpp_INH4_IPhL(i,N(ng)) = (GrowAice * Bio3d(i,N(ng),iiIcePhL) * (1-fNO3))*aidz ! mg C m^-2 d^-1
+
+              ! Ice algae respiration
+
+              RAi0 = R0i*mu0*exp(0.0633*Temp1)
+
+              Res_IPhL_INH4(i,N(ng)) = (RAi0 * Bio3d(i,N(ng),iiIcePhL))*aidz ! mg C m^-2 d^-1
+
+              ! Ice algae mortality
+
+              RgAi = rg0*exp(rg*Temp1)
+
+              Mor_IPhL_INH4(i,N(ng)) = (Bio3d(i,N(ng),iiIcePhL)*RgAi)*aidz ! mg C m^-2 d^-1
+
+              ! Nitrification
+
+              Nit_INH4_INO3(i,N(ng)) = (annit*Bio3d(i,N(ng),iiIceNH4)/xi)*aidz ! mg C m^-2 d^-1
+
+              ! Ice/water convective exchange covers transfer of algae,
+              ! NO3, and NH4 between the ice and surface water based on
+              ! water exchange between the two layers, following Jin et
+              ! al. 2006.  The water-ice interface transport (twi) rate
+              ! is determined based on a polynomial fit with rate of
+              ! change of ice thickness.
+
+# if defined CLIM_ICE_1D
+              dhicedt=it(i,j,nnew,iIceZ)-it(i,j,nstp,iIceZ) ! change in ice thickness over this time step (m)
+# elif defined BERING_10K
+              dhicedt=hi(i,j,nnew)-hi(i,j,nstp) ! change in ice thickness over this time step (m)
+# endif
+              dhicedt=dhicedt*sec2day/dtdays ! convert to m/s for polynomial fit
+
+              IF (dhicedt.lt.0) THEN ! Ice is melting
+
+                trs=4.49e-6*ABS(dhicedt)-1.39e-5*ABS(dhicedt)**2
+                trs=trs*86400   ! convert back to m/d
+                twi=720*trs
+
+              ELSE                   ! Ice is growing
+                trs=9.667e-11+4.49e-6*dhicedt-1.39e-5*dhicedt**2
+                trs=trs*86400   ! convert back to m/d
+                twi=72*trs
+              ENDIF
+
+              ! IcePhL can get washed out of ice, but not in, so assume
+              ! [PhL] = 0 for this exchange
+
+              Twi_IPhL_PhL(i,N(ng)) = twi * Bio3d(i,N(ng),iiIcePhL) ! mg C m^-2 d^-1
+
+              ! NO3 and NH4 have two-way exchange, based on gradient
+              ! across the ice/water interface.  Note that I'm using
+              ! ice-to-water as the naming convention for this flux, but
+              ! it may be negative, implying the reverse direction.
+
+              Twi_INO3_NO3(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNO3) - Bio3d(i,N(ng),iiNO3))/xi ! mg C m^-2 d^-1
+              Twi_INH4_NH4(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNH4) - Bio3d(i,N(ng),iiNH4))/xi ! mg C m^-2 d^-1
+
+            endif
+          END DO
+#endif
 
           !------------------------------
           ! Combine bio source/sinks
