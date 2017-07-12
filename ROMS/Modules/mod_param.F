@@ -886,8 +886,8 @@
 !
 !  Source and sink biology diagnostic terms.
 !
-        NDbio3d=6
-        NDbio2d=2
+        NDbio3d=5
+        NDbio2d=3
 
 #endif
 #endif
