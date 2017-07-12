@@ -1433,8 +1433,8 @@
 #endif
 #ifdef OXYGEN
                 Bio(i,k,iOxyg)=Bio(i,k,iOxyg)+                          &
-     &                         NOup*xi*rOxNO3+                          &
-     &                         NHup*xi*rOxNH4
+     &                         NOup*xi*rOxNO3*dtdays+                   &
+     &                         NHup*xi*rOxNH4*dtdays
 #endif
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iPPro)=DiaBio3d(i,j,k,iPPro)+            &
@@ -1688,8 +1688,8 @@
 #endif
 #ifdef OXYGEN
                 Bio(i,k,iOxyg)=Bio(i,k,iOxyg)+                          &
-     &                         NOup*xi*rOxNO3+                          &
-     &                         NHup*xi*rOxNH4
+     &                         NOup*xi*rOxNO3*dtdays+                   &
+     &                         NHup*xi*rOxNH4*dtdays
 #endif     
 #ifdef DIAGNOSTICS_BIO
                 DiaBio3d(i,j,k,iPPro)=DiaBio3d(i,j,k,iPPro)+            &

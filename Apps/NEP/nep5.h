@@ -317,7 +317,7 @@
 #  define DIAGNOSTICS_BIO
 #  undef CARBON_DEBUG     /* for debugging carbon chem */
 #  define CARBON_FLUX     /* include ALK,TIC river inputs */
-#  undef OXYGEN          /* enable oxygen cycling */
+#  define OXYGEN          /* enable oxygen cycling */
 #  define BENTHIC          /*FENNEL or BENTHIC or TRAP*/
 #  define ICE_BIO
 #  undef CLIM_ICE_1D
