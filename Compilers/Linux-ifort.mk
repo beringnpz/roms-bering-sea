@@ -53,7 +53,7 @@ else
     NETCDF_INCDIR ?= /home/aydink/include
     NETCDF_LIBDIR ?= /home/aydink/lib
 endif
-             LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
+             LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf
 ifdef USE_NETCDF4
              LIBS += -L$(HDF5_LIBDIR) -lhdf5_hl -lhdf5 -lz
 endif
