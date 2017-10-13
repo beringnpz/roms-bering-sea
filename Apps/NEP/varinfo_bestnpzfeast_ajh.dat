@@ -4032,6 +4032,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'r3dvar'
   1.0d0
 
+'MZS'
+  'Small microzooplankton concentration'
+  'mg C m^-3'
+  'small microzooplankton, scalar, series'
+  'bio_time'
+  'idTvar(iMZS)'
+  'r3dvar'
+  1.0d0
+
 'MZL'
   'Microzooplankton concentration'
   'mg C m^-3'
@@ -4374,6 +4383,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'nulvar'
   1.0d0
 
+'mzs_north'
+  'Small microzooplankton concentration northern boundary condition'
+  'mg C m^-3'
+  'small microzooplankton, scalar, series'
+  'ocean_time'
+  'idTbry(inorth,iMZS)'
+  'nulvar'
+  1.0d0
+
 'mzl_north'
   'Microzooplankton concentration northern boundary condition'
   'mg C m^-3'
@@ -4695,6 +4713,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'large phytoplankton, scalar, series'
   'ocean_time'
   'idTbry(isouth,iPhL)'
+  'nulvar'
+  1.0d0
+
+'mzs_south'
+  'Small microzooplankton concentration southern boundary condition'
+  'mg C m^-3'
+  'small microzooplankton, scalar, series'
+  'ocean_time'
+  'idTbry(isouth,iMZS)'
   'nulvar'
   1.0d0
 
@@ -5022,6 +5049,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'nulvar'
   1.0d0
 
+'mzs_east'
+  'Small microzooplankton concentration eastern boundary condition'
+  'mg C m^-3'
+  'small microzooplankton, scalar, series'
+  'ocean_time'
+  'idTbry(ieast,iMZS)'
+  'nulvar'
+  1.0d0
+
 'mzl_east'
   'Microzooplankton concentration eastern boundary condition'
   'mg C m^-3'
@@ -5343,6 +5379,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'large phytoplankton, scalar, series'
   'ocean_time'
   'idTbry(iwest,iPhL)'
+  'nulvar'
+  1.0d0
+
+'mzs_west'
+  'Small microzooplankton concentration western boundary condition'
+  'mg C m^-3'
+  'small microzooplankton, scalar, series'
+  'ocean_time'
+  'idTbry(iwest,iMZS)'
   'nulvar'
   1.0d0
 
