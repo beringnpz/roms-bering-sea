@@ -4167,6 +4167,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'r2dvar'
   1.0d0
 
+'IceLog'
+  'Ice log'
+  'unitless'
+  'ice log, scalar, series'
+  'bio_time'
+  'idIceLog'
+  'r2dvar'
+  1.0d0
+
 'Fe'
   'Iron concentration'
   'umol Fe m^-3'
@@ -4497,6 +4506,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'ice ammonium conc, scalar, series'
   'ocean_time'
   'idIceNH4bc(inorth)'
+  'nulvar'
+  1.0d0
+
+'icelog_north'
+  'Ice log northern boundary condition'
+  'unitless'
+  'ice log, scalar, series'
+  'ocean_time'
+  'idIceLogbc(inorth)'
   'nulvar'
   1.0d0
 
@@ -4833,6 +4851,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'nulvar'
   1.0d0
 
+'icelog_south'
+  'Ice log southern boundary condition'
+  'unitless'
+  'ice log, scalar, series'
+  'ocean_time'
+  'idIceLogbc(isouth)'
+  'nulvar'
+  1.0d0
+
 'iron_south'
   'Iron concentration southern boundary condition'
   'umol Fe m^-3'
@@ -5166,6 +5193,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'nulvar'
   1.0d0
 
+'icelog_east'
+  'Ice log eastern boundary condition'
+  'unitless'
+  'ice log, scalar, series'
+  'ocean_time'
+  'idIceLogbc(ieast)'
+  'nulvar'
+  1.0d0
+
 'iron_east'
   'Iron concentration eastern boundary condition'
   'umol Fe m^-3'
@@ -5496,6 +5532,15 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'ice ammonium conc, scalar, series'
   'ocean_time'
   'idIceNH4bc(iwest)'
+  'nulvar'
+  1.0d0
+
+'icelog_west'
+  'Ice log western boundary condition'
+  'unitless'
+  'ice log, scalar, series'
+  'ocean_time'
+  'idIceLogbc(iwest)'
   'nulvar'
   1.0d0
 
