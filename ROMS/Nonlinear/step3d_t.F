@@ -1715,30 +1715,32 @@
 
 # ifdef BEST_NPZ
 
+! KAK note: this method falls apart on restart from non-analytical 
+! conditions, since nnew has not yet been set.  Moving to bestnpz.h.
 !# if !defined ANA_BIOLOGY
-#  ifdef BENTHIC
-      do i=IstrR,IendR
-        do j=JstrR,JendR
-          do k=1,NBL(ng)
-            bt(i,j,k,nstp,1) = bt(i,j,k,nnew,1)
-            bt(i,j,k,nstp,2) = bt(i,j,k,nnew,2)
-#   ifdef MASKING
-            bt(i,j,k,nstp,1)= bt(i,j,k,nstp,1)*rmask(i,j)
-            bt(i,j,k,nstp,2)= bt(i,j,k,nstp,2)*rmask(i,j)
-#   endif
-
-!          if(i.eq.144.and.j.eq.144) THEN
-!   print*,'Step3d'
-!   print*,'nstp=',nstp,'nnew=',nnew
-!          print*,'bt(i,j,k,nstp,1)=', bt(i,j,k,nstp,1)
+! #  ifdef BENTHIC
+!       do i=IstrR,IendR
+!         do j=JstrR,JendR
+!           do k=1,NBL(ng)
+!             bt(i,j,k,nstp,1) = bt(i,j,k,nnew,1)
+!             bt(i,j,k,nstp,2) = bt(i,j,k,nnew,2)
+! #   ifdef MASKING
+!             bt(i,j,k,nstp,1)= bt(i,j,k,nstp,1)*rmask(i,j)
+!             bt(i,j,k,nstp,2)= bt(i,j,k,nstp,2)*rmask(i,j)
+! #   endif
 !
-!          print*,'bt(i,j,k,nnew,1)=', bt(i,j,k,nnew,1)
-!          print*,''
-!          end if
-          enddo
-        enddo
-      enddo
-#  endif
+! !          if(i.eq.144.and.j.eq.144) THEN
+! !   print*,'Step3d'
+! !   print*,'nstp=',nstp,'nnew=',nnew
+! !          print*,'bt(i,j,k,nstp,1)=', bt(i,j,k,nstp,1)
+! !
+! !          print*,'bt(i,j,k,nnew,1)=', bt(i,j,k,nnew,1)
+! !          print*,''
+! !          end if
+!           enddo
+!         enddo
+!       enddo
+! #  endif
 !# endif
 #  if defined ICE_BIO
 #   if defined CLIM_ICE_1D

@@ -138,14 +138,14 @@
         END DO
 #  endif
 #  if defined BENTHIC && defined BERING_10K
-       DO itrc=1,NBeT(ng)
-         get_var(idBvar(itrc))=.TRUE.
-       END DO     
+        DO itrc=1,NBeT(ng)
+          get_var(idBvar(itrc))=.TRUE.
+        END DO     
 #  endif
 #  if defined ICE_BIO
-     get_var(idIcePhL)=.TRUE.
-	   get_var(idIceNO3)=.True.
-	   get_var(idIceNH4)=.True.         
+        get_var(idIcePhL)=.TRUE.
+	      get_var(idIceNO3)=.True.
+	      get_var(idIceNH4)=.True.         
 #  endif
 # endif
 

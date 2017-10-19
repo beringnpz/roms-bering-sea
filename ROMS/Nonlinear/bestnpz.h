@@ -2816,6 +2816,11 @@
           bt(i,j,1,nnew,iBen)    = bt(i,j,1,nnew,iBen   )*rmask(i,j)
           bt(i,j,1,nnew,iDetBen) = bt(i,j,1,nnew,iDetBen)*rmask(i,j)
 # endif
+          ! Benthos are not subject to any outside movement or mixing, so 
+          ! we'll just do the time-step copy here
+
+          bt(i,j,1,nstp,iBen)    = bt(i,j,1,nnew,iBen)
+          bt(i,j,1,nstp,iDetBen) = bt(i,j,1,nnew,iDetBen)
         END DO
 #endif
 

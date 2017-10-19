@@ -1098,14 +1098,14 @@
         END DO
 	
 #if defined BERING_10K && defined INI_NO3_WOA
-       itrc=ino3
-          print*,'get_var(idTvar(itrc)=',get_var(idTvar(itrc))
-!          IF (get_var(idTvar(itrc))) THEN
-            foundit=find_string(var_name, n_var,                        &
-     &                          TRIM(Vname(1,idTvar(itrc))), varid)
-            gtype=var_flag(varid)*r3dvar
-            IF (Perfect3D) THEN
-              status=nf_fread4d(ng, IDmod, ncname, ncINPid,             &
+        itrc=ino3
+        print*,'get_var(idTvar(itrc)=',get_var(idTvar(itrc))
+!       IF (get_var(idTvar(itrc))) THEN
+        foundit=find_string(var_name, n_var,                            &
+     &                      TRIM(Vname(1,idTvar(itrc))), varid)
+        gtype=var_flag(varid)*r3dvar
+        IF (Perfect3D) THEN
+          status=nf_fread4d(ng, IDmod, ncname, ncINPid,                 &
      &                          Vname(1,idTvar(itrc)), varid,           &
      &                          InpRec, gtype, Vsize,                   &
      &                          LBi, UBi, LBj, UBj, 1, N(ng), 1, 2,     &
@@ -1114,8 +1114,8 @@
      &                          GRID(ng) % rmask,                       &
 #  endif
      &                          OCEAN(ng) % t(:,:,:,:,itrc))
-            ELSE
-              status=nf_fread3d(ng, IDmod, ncname, ncINPid,             &
+        ELSE
+            status=nf_fread3d(ng, IDmod, ncname, ncINPid,               &
      &                          Vname(1,idTvar(itrc)), varid,           &
      &                          InpRec, gtype, Vsize,                   &
      &                          LBi, UBi, LBj, UBj, 1, N(ng),           &
@@ -1124,33 +1124,29 @@
      &                          GRID(ng) % rmask,                       &
 #  endif
      &                          OCEAN(ng) % t(:,:,:,Tindex,itrc))
-            END IF
-            IF (status.ne.nf90_noerr) THEN
-              IF (Master) THEN
-                WRITE (stdout,30) string, TRIM(Vname(1,idTvar(itrc))),  &
-     &                            InpRec, TRIM(ncname)
-              END IF
-              exit_flag=2
-              ioerror=status
-              RETURN
-            ELSE
-              IF (Master) THEN
-                WRITE (stdout,100) TRIM(Vname(2,idTvar(itrc))),         &
-     &                             Fmin, Fmax
-              END IF
-            END IF
-!          END IF
-
-
+        END IF
+        IF (status.ne.nf90_noerr) THEN
+          IF (Master) THEN
+            WRITE (stdout,30) string, TRIM(Vname(1,idTvar(itrc))),      &
+     &               InpRec, TRIM(ncname)
+          END IF
+          exit_flag=2
+          ioerror=status
+          RETURN
+        ELSE
+          IF (Master) THEN
+            WRITE (stdout,100) TRIM(Vname(2,idTvar(itrc))),             &
+     &             Fmin, Fmax
+          END IF
+        END IF
+!       END IF
 #endif	
 
-
 #if defined ICE_BIO  && defined BERING_10K 
-
+!
 !  Read in ice biology initial conditions.
-
-
-   foundit=find_string(var_name, n_var, TRIM(Vname(1,idIcePhL)),   &
+!
+        foundit=find_string(var_name, n_var, TRIM(Vname(1,idIcePhL)),   &
      &                        varid)
         gtype=var_flag(varid)*r2dvar
         status=nf_fread2d(ng, IDmod, ncname, ncINPid,                   &
@@ -1175,10 +1171,7 @@
           END IF
         END IF
 
-
-
-
-   foundit=find_string(var_name, n_var, TRIM(Vname(1,idIceNO3)),   &
+        foundit=find_string(var_name, n_var, TRIM(Vname(1,idIceNO3)),   &
      &                        varid)
         gtype=var_flag(varid)*r2dvar
         status=nf_fread2d(ng, IDmod, ncname, ncINPid,                   &
@@ -1203,9 +1196,7 @@
           END IF
         END IF
 
-
-
-   foundit=find_string(var_name, n_var, TRIM(Vname(1,idIceNH4)),   &
+        foundit=find_string(var_name, n_var, TRIM(Vname(1,idIceNH4)),   &
      &                        varid)
         gtype=var_flag(varid)*r2dvar
         status=nf_fread2d(ng, IDmod, ncname, ncINPid,                   &
@@ -1229,15 +1220,13 @@
             WRITE (stdout,100) TRIM(Vname(2,idIceNH4)), Fmin, Fmax
           END IF
         END IF
-
-
 # endif
 	
 #if defined BENTHIC && defined BERING_10K 
-    
-    
+!   
 !  Read in benthic initial conditions.
-!        if(time(ng).eq.ntstart(ng)) THEN
+!
+        ! if(time(ng).eq.ntstart(ng)) THEN
         DO itrc=1,NBeT(ng)
           IF (get_var(idBvar(itrc))) THEN
             foundit=find_string(var_name, n_var,                        &
@@ -1264,7 +1253,7 @@
 #  endif
      &                          OCEAN(ng) % bt(:,:,1,Tindex,itrc))
             END IF
-!	    print*,'GET_STATE'
+!	          print*,'GET_STATE'
             IF (status.ne.nf90_noerr) THEN
               IF (Master) THEN
                 WRITE (stdout,30) string, TRIM(Vname(1,idBvar(itrc))),  &
@@ -1283,8 +1272,6 @@
         END DO
 !	END IF
 #  endif
-
-
 
 #  if !(defined W4DPSAS || defined TL_W4DPSAS  || \
         defined W4DPSAS_SENSITIVITY) && defined ADJUST_BOUNDARY
