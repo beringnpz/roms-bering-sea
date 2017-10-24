@@ -785,6 +785,15 @@
         ! layer for this conversion.
 
 #ifdef BENTHIC
+        if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+          print *, "In bestnpz.h, beginning"
+          write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
+          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", bt(i,j,k,1,1)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", bt(i,j,k,2,1)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", bt(i,j,k,1,2)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", bt(i,j,k,2,2)
+        end if
+
         DO k=1,NBL(ng) ! Note: For BESTNPZ, NBL = 1 is hard-coded in mod_param.F
           DO i=Istr,Iend
             Bio2d(i,k,iiBen   ) = bt(i,j,k,nstp,iBen)
@@ -2822,6 +2831,15 @@
           bt(i,j,1,nstp,iBen)    = bt(i,j,1,nnew,iBen)
           bt(i,j,1,nstp,iDetBen) = bt(i,j,1,nnew,iDetBen)
         END DO
+        
+        if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+          print *, "In bestnpz.h, end"
+          write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
+          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", bt(i,j,k,1,1)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", bt(i,j,k,2,1)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", bt(i,j,k,1,2)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", bt(i,j,k,2,2)
+        end if
 #endif
 
 #ifdef ICE_BIO
