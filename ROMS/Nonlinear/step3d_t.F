@@ -1719,14 +1719,20 @@
 ! conditions, since nnew has not yet been set.  Moving to bestnpz.h.
 !# if !defined ANA_BIOLOGY
 #  ifdef BENTHIC
-      if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-        print *, "In step3d_t"
-        write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
-        write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", bt(i,j,k,1,1)
-        write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", bt(i,j,k,2,1)
-        write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", bt(i,j,k,1,2)
-        write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", bt(i,j,k,2,2)
-      end if
+      DO j=Jstr,Jend
+        DO i=Istr,Iend
+          DO k=1,N(ng)
+            if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+              print *, "In step3d_t"
+              write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
+              write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", bt(i,j,k,1,1)
+              write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", bt(i,j,k,2,1)
+              write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", bt(i,j,k,1,2)
+              write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", bt(i,j,k,2,2)
+            END IF
+          END DO
+        END DO
+      END DO
 #  endif
 !       do i=IstrR,IendR
 !         do j=JstrR,JendR

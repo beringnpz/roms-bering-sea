@@ -1271,14 +1271,15 @@
           END IF
         END DO
         
-        if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
+        IF (Master) THEN
           print *, "In get_state.F"
           write(*, '(A9,I2,A11,I2)'), 'InpRec = ',InpRec,', Tindex = ',Tindex
-          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", OCEAN(ng) % bt(i,j,k,1,1)
-          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", OCEAN(ng) % bt(i,j,k,2,1)
-          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", OCEAN(ng) % bt(i,j,k,1,2)
-          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", OCEAN(ng) % bt(i,j,k,2,2)
-        end if
+          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", OCEAN(ng) % bt(172,26,1,1,1)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", OCEAN(ng) % bt(172,26,1,2,1)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", OCEAN(ng) % bt(172,26,1,1,2)
+          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", OCEAN(ng) % bt(172,26,1,2,2)
+        ENDIF
+
         
 !	END IF
 #  endif
