@@ -813,12 +813,12 @@
                 if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
                   print *, "In mod_ocean.F"
                   write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", bt(i,j,k,1,1)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", bt(i,j,k,2,1)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=1) = ", bt(i,j,k,3,1)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", bt(i,j,k,1,2)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", bt(i,j,k,2,2)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=2) = ", bt(i,j,k,3,2)
+                  write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", OCEAN(ng) % bt(i,j,k,1,1)
+                  write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", OCEAN(ng) % bt(i,j,k,2,1)
+                  write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=1) = ", OCEAN(ng) % bt(i,j,k,3,1)
+                  write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", OCEAN(ng) % bt(i,j,k,1,2)
+                  write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", OCEAN(ng) % bt(i,j,k,2,2)
+                  write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=2) = ", OCEAN(ng) % bt(i,j,k,3,2)
                 END IF
                 
               END DO
