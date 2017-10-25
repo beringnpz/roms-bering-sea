@@ -785,23 +785,6 @@
         ! layer for this conversion.
 
 #ifdef BENTHIC
-
-        DO i=Istr,Iend
-          DO k=1,N(ng)
-            if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-              print *, "In bestnpz.h, beginning"
-              write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
-              write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", bt(i,j,k,1,1)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", bt(i,j,k,2,1)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=1) = ", bt(i,j,k,3,1)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", bt(i,j,k,1,2)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", bt(i,j,k,2,2)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=2) = ", bt(i,j,k,3,2)
-            END IF
-          END DO
-        END DO
-
-
         DO k=1,NBL(ng) ! Note: For BESTNPZ, NBL = 1 is hard-coded in mod_param.F
           DO i=Istr,Iend
             Bio2d(i,k,iiBen   ) = bt(i,j,k,nstp,iBen)
@@ -2825,37 +2808,28 @@
 
 #ifdef BENTHIC
 
+        ! The benthos aren't subject to any advection or diffusion, so 
+        ! the nnew timestep is not pre-stepped like the other tracers. 
+        ! So rather than adding the difference to an existing value (as 
+        ! with the others), we'll just place the new value directly into 
+        ! the nnew timestep.
+
         DO i=Istr,Iend
-          bt(i,j,1,nnew,iBen   ) = bt(i,j,1,nnew,iBen   ) + (Bio2d(i,1,iiBen   ) - Bio_bak(i,1,iiBen   ))
-          bt(i,j,1,nnew,iDetBen) = bt(i,j,1,nnew,iDetBen) + (Bio2d(i,1,iiDetBen) - Bio_bak(i,1,iiDetBen))
+          bt(i,j,1,nnew,iBen   ) = Bio2d(i,1,iiBen   )
+          bt(i,j,1,nnew,iDetBen) = Bio2d(i,1,iiDetBen)
 
 # ifdef MASKING
           bt(i,j,1,nnew,iBen)    = bt(i,j,1,nnew,iBen   )*rmask(i,j)
           bt(i,j,1,nnew,iDetBen) = bt(i,j,1,nnew,iDetBen)*rmask(i,j)
 # endif
           ! Benthos are not subject to any outside movement or mixing, so 
-          ! we'll just do the time-step copy here
+          ! we'll just do the time-step copy here, rather than adding 
+          ! extra code to step3d_t.F
 
           bt(i,j,1,nstp,iBen)    = bt(i,j,1,nnew,iBen)
           bt(i,j,1,nstp,iDetBen) = bt(i,j,1,nnew,iDetBen)
+          
         END DO
-        
-
-        DO i=Istr,Iend
-          DO k=1,N(ng)
-            if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-              print *, "In bestnpz.h, end"
-              write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
-              write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", bt(i,j,k,1,1)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", bt(i,j,k,2,1)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=1) = ", bt(i,j,k,3,1)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", bt(i,j,k,1,2)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", bt(i,j,k,2,2)
-              write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=2) = ", bt(i,j,k,3,2)
-            END IF
-          END DO
-        END DO
-
 #endif
 
 #ifdef ICE_BIO

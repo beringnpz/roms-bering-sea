@@ -762,7 +762,7 @@
             END DO
           END DO 
 # ifdef BEST_NPZ
-#    ifdef STATIONARY
+#  ifdef STATIONARY
           DO itrc=1,NTS(ng)
             DO k=1,N(ng)
               DO i=Imin,Imax
@@ -772,8 +772,8 @@
               END DO
             END DO
           END DO
-#    endif
-#    ifdef STATIONARY2
+#  endif
+#  ifdef STATIONARY2
           DO itrc=1,NTS2(ng)
             DO i=Imin,Imax
               OCEAN(ng) % st2(i,j,1,itrc) = IniVal
@@ -781,8 +781,8 @@
               OCEAN(ng) % st2(i,j,3,itrc) = IniVal
             END DO
           END DO
-#    endif
-#    ifdef PROD2
+#  endif
+#  ifdef PROD2
           DO itrc=1,NPT2(ng)
             DO i=Imin,Imax
               OCEAN(ng) % pt2(i,j,1,itrc) = IniVal
@@ -790,8 +790,8 @@
               OCEAN(ng) % pt2(i,j,3,itrc) = IniVal
             END DO
           END DO
-#    endif
-#    ifdef PROD3
+#  endif
+#  ifdef PROD3
           DO itrc=1,NPT3(ng)
             DO k=1,N(ng)
               DO i=Imin,Imax
@@ -801,33 +801,21 @@
               END DO
             END DO
           END DO
-#    endif
-#    ifdef BENTHIC
+#  endif
+#  ifdef BENTHIC
           DO itrc=1,NBeT(ng)
             DO k=1,NBL(ng)
               DO i=Imin,Imax
                 OCEAN(ng) % bt(i,j,k,1,itrc) = IniVal
                 OCEAN(ng) % bt(i,j,k,2,itrc) = IniVal
                 OCEAN(ng) % bt(i,j,k,3,itrc) = IniVal
-                
-                if ((i.eq.172) .and. (j.eq.26) .and. (k.eq.1)) then
-                  print *, "In mod_ocean.F"
-                  write(*, '(A7,I2,A9,I2)'), 'nstp = ',nstp,', nnew = ',nnew
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", OCEAN(ng) % bt(i,j,k,1,1)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", OCEAN(ng) % bt(i,j,k,2,1)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=1) = ", OCEAN(ng) % bt(i,j,k,3,1)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", OCEAN(ng) % bt(i,j,k,1,2)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", OCEAN(ng) % bt(i,j,k,2,2)
-                  write(*, '(A22,E8.3)'), "bt(i,j,k,3,itrc=2) = ", OCEAN(ng) % bt(i,j,k,3,2)
-                END IF
-                
               END DO
             END DO
           END DO
 #  endif
 
 #  if defined ICE_BIO  
-# ifdef CLIM_ICE_1D
+#   ifdef CLIM_ICE_1D
 
           DO itrc=1,NIceT(ng)
             DO i=Imin,Imax
@@ -845,7 +833,7 @@
               OCEAN(ng) % itL(i,j,3,itrc) = IniVal
             END DO
           END DO
-#  endif
+#   endif
 #  endif
 
 #  ifdef BIOFLUX

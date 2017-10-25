@@ -1227,6 +1227,7 @@
 !  Read in benthic initial conditions.
 !
         ! if(time(ng).eq.ntstart(ng)) THEN
+
         DO itrc=1,NBeT(ng)
           IF (get_var(idBvar(itrc))) THEN
             foundit=find_string(var_name, n_var,                        &
@@ -1269,18 +1270,7 @@
               END IF
             END IF
           END IF
-        END DO
-        
-        IF (Master) THEN
-          print *, "In get_state.F"
-          write(*, '(A9,I2,A11,I2)'), 'InpRec = ',InpRec,', Tindex = ',Tindex
-          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=1) = ", OCEAN(ng) % bt(172,26,1,1,1)
-          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=1) = ", OCEAN(ng) % bt(172,26,1,2,1)
-          write(*, '(A22,E8.3)'), "bt(i,j,k,1,itrc=2) = ", OCEAN(ng) % bt(172,26,1,1,2)
-          write(*, '(A22,E8.3)'), "bt(i,j,k,2,itrc=2) = ", OCEAN(ng) % bt(172,26,1,2,2)
-        ENDIF
-
-        
+        END DO       
 !	END IF
 #  endif
 
