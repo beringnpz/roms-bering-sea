@@ -4399,7 +4399,7 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'bry_time'
   'idTbry(inorth,iMZS)'
   'nulvar'
-  1.0d-16
+  0.0d0
 
 'ones_north'
   'Microzooplankton concentration northern boundary condition'
@@ -4741,7 +4741,7 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'bry_time'
   'idTbry(isouth,iMZS)'
   'nulvar'
-  1.0d-16
+  0.0d0
 
 'ones_south'
   'Microzooplankton concentration southern boundary condition'
@@ -5083,7 +5083,7 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'bry_time'
   'idTbry(ieast,iMZS)'
   'nulvar'
-  1.0d-16
+  0.0d0
 
 'ones_east'
   'Microzooplankton concentration eastern boundary condition'
@@ -5425,7 +5425,7 @@ $URL: https://www.myroms.org/svn/omlab/branches/kate/ROMS/External/varinfo.dat $
   'bry_time'
   'idTbry(iwest,iMZS)'
   'nulvar'
-  1.0d-16
+  0.0d0
 
 'ones_west'
   'Microzooplankton concentration western boundary condition'
