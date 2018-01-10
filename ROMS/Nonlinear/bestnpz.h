@@ -1514,8 +1514,8 @@
               Gra_MZL_EupO(i,k)  = fpMZLEup * Bio3d(i,k,iiMZL)**2  * cff2 * cff3 * cff4
               Gra_Cop_EupO(i,k)  = fpCopEup * Bio3d(i,k,iiCop)**2  * cff2 * cff3 * cff4
               Gra_IPhL_EupO(i,k) = fpPhLEup * (IcePhlAvail)**2     * cff2 * cff3 * cff4
-              Gra_Det_EupO(i,k)  = fpDetEup * Bio3d(i,k,iiDet)**2  * cff2 * cff3 * cff4
-              Gra_DetF_EupO(i,k) = fpDetEup * Bio3d(i,k,iiDetF)**2 * cff2 * cff3 * cff4
+              Gra_Det_EupO(i,k)  = fpDetEupO * Bio3d(i,k,iiDet)**2  * cff2 * cff3 * cff4
+              Gra_DetF_EupO(i,k) = fpDetEupO * Bio3d(i,k,iiDetF)**2 * cff2 * cff3 * cff4
 
               Ege_EupO_DetF(i,k) = ((1.0_r8 - gammaEup) * cff1 +        &
      &                              (1.0_r8 - 0.3_r8)   * cff0) *       &
