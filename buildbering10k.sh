@@ -147,6 +147,10 @@ export            BINDIR=${MY_ROOT_DIR}     # Where the compiled program goes
 # Make
 #--------------
 
+rbsbranch=$(git symbolic-ref -q --short HEAD)
+compdate=$(date)
+revis=$(git rev-parse HEAD)
+
 # Compile physics
 
 export       SCRATCH_DIR=${MY_PROJECT_DIR}/Build_phys
@@ -163,6 +167,7 @@ if [ "$pflag" = true ]; then
     mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanM ${epath%%/}/${pfile}
     echo "  Success: $pfile created"
+    echo "$pfile,$compdate,$rbsbranch,$revis,${MY_CPP_FLAGS}" >> ${epath%%/}/buildbering.log
   fi
 fi
 
@@ -182,6 +187,7 @@ if [ "$Pflag" = true ]; then
     mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanG ${epath%%/}/${Pfile}
     echo "  Success: $Pfile created"
+    echo "$Pfile,$compdate,$rbsbranch,$revis,${MY_CPP_FLAGS}" >> ${epath%%/}/buildbering.log
   fi
 fi
 
@@ -202,6 +208,7 @@ if [ "$nflag" = true ]; then
     mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
       mv oceanM ${epath%%/}/${nfile}
     echo "  Success: $nfile created"
+    echo "$nfile,$compdate,$rbsbranch,$revis,${MY_CPP_FLAGS}" >> ${epath%%/}/buildbering.log
   fi
 fi
 
@@ -221,6 +228,7 @@ if [ "$Nflag" = true ]; then
     mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanG ${epath%%/}/${Nfile}
     echo "  Success: $Nfile created"
+    echo "$Nfile,$compdate,$rbsbranch,$revis,${MY_CPP_FLAGS}" >> ${epath%%/}/buildbering.log
   fi
 fi
 
@@ -241,6 +249,7 @@ if [ "$fflag" = true ]; then
     mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
       mv oceanM ${epath%%/}/${ffile}
     echo "  Success: $ffile created"
+    echo "$ffile,$compdate,$rbsbranch,$revis,${MY_CPP_FLAGS}" >> ${epath%%/}/buildbering.log
   fi
 fi
 
@@ -260,6 +269,7 @@ if [ "$Fflag" = true ]; then
     mv buildouterr.txt ${SCRATCH_DIR}/buildouterr.txt
     mv oceanG ${epath%%/}/${Ffile}
     echo "  Success: $Ffile created"
+    echo "$Ffile,$compdate,$rbsbranch,$revis,${MY_CPP_FLAGS}" >> ${epath%%/}/buildbering.log
   fi
 fi
 
