@@ -1093,7 +1093,7 @@
           ! wavelength of ~547 nm... prob derives from a average across
           ! chl range (~400-700nm).
 
-          PARs(i) = PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8
+          PARs(i) = PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8 ! E/m^2/d
 #endif
         END DO
 
