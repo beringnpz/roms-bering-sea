@@ -1241,10 +1241,11 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
 
-              ! Slope of P-I curve
+              ! Slope of P-I curve, i.e. photosynthetic efficientcy
+              ! TODO: don't trust these units yet 
 
               if (PARs(i).lt.30.0) then
-                alphaPhSv = 18
+                alphaPhSv = 18 ! mg C (mg chla)^-1 E m^-2  ?
                 alphaPhLv = 10
               elseif (PARs(i).gt.40.0) then
                 alphaPhSv = 5.6
@@ -1256,14 +1257,14 @@
 
               ! Maximum uptake rate
 
-              DrateS = DiS * 10.0_r8 ** (DpS * Temp(i,k))
+              DrateS = DiS * 10.0_r8 ** (DpS * Temp(i,k)) ! d^-1
               DrateL = DiL * 10.0_r8 ** (DpL * Temp(i,k))
 
               PmaxS = (2.0_r8 ** DrateS - 1.0_r8 )   ! maximum daily mass specific growth rate FROST (1987)
-              PmaxL = (2.0_r8 ** DrateL - 1.0_r8 )
+              PmaxL = (2.0_r8 ** DrateL - 1.0_r8 )   ! d^-1
 
               PmaxsS=PmaxS*ccr                       ! max chla specific growth rate from FROST (1987)
-              PmaxsL=PmaxL*ccrPhL
+              PmaxsL=PmaxL*ccrPhL                    ! mg C (mg chla)^-1 d^-1
 
 #ifdef DENMAN
               ! N03 limitation following Denman
@@ -1733,7 +1734,7 @@
 
               ! Detrital remineralization
 
-              PON = Bio3d(i,k,iiDet)*xi  ! Particulate organic nitrogen in Det
+              PON = Bio3d(i,k,iiDet)*xi  ! Particulate organic nitrogen in Det, mmol N m^-3
               Rem_Det_NH4(i,k) = (Pv0 * exp(PvT*Temp(i,k)) * PON) ! mmol N m^-3 d^-1
 
               PON = Bio3d(i,k,iiDetF)*xi  ! Particulate organic nitrogen in DetF
