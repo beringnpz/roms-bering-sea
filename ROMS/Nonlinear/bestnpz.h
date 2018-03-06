@@ -634,6 +634,7 @@
       end if
 
       ! Light attenuation fraction
+      ! (calculates Ifrac, unitless)
 
       CALL bestnpz_swfrac_tile(ng, tile,                                &
    &        LBi, UBi, LBj, UBj,                                         &
@@ -903,8 +904,8 @@
 
         ! Extract temperature and salinity, for easier reference
 
-        Temp = t(Istr:Iend,j,1:N(ng),nstp,itemp)
-        Salt = t(Istr:Iend,j,1:N(ng),nstp,isalt)
+        Temp = t(Istr:Iend,j,1:N(ng),nstp,itemp) ! deg C
+        Salt = t(Istr:Iend,j,1:N(ng),nstp,isalt) ! unitless
 
 
 #ifdef CORRECT_TEMP_BIAS
@@ -1038,7 +1039,7 @@
           ! Calculate Day Length:  Day Length is already accounted for
           ! in ANA_SWRAD so disable correction
 
-          Dl = 24.0_r8
+          Dl = 24.0_r8 ! hours
 #else
           ! Day Length calculation (orig from R. Davis) from latitude and
           ! declination.
@@ -1051,12 +1052,12 @@
           cff3 = lat(i,j) * pi /180.0_r8
           IF ( abs( -tan(cff3)*tan(cff2) ) .le. 1.0_r8 ) THEN
             cff1 = acos( -tan(cff3)*tan(cff2) ) * 180.0_r8 / pi
-            Dl = 2.0_r8 / 15.0_r8 * cff1
+            Dl = 2.0_r8 / 15.0_r8 * cff1 ! hours
           ELSE
             IF ( yday.gt.90.0_r8 .and. yday.lt.270.0_r8 ) THEN
-              Dl = 24.0_r8
+              Dl = 24.0_r8  ! hours
             ELSE
-              Dl = 0.0_r8
+              Dl = 0.0_r8   ! hours
             END IF
           END IF
 #endif
@@ -1103,7 +1104,7 @@
 
         DO i=Istr,Iend
           DO k=1,N(ng)
-            PAR(i,k) = Ifrac(i,j,k) * PARs(i)
+            PAR(i,k) = Ifrac(i,j,k) * PARs(i) ! E/m^2/d
           END DO
         END DO
 
@@ -1245,8 +1246,8 @@
               ! TODO: don't trust these units yet 
 
               if (PARs(i).lt.30.0) then
-                alphaPhSv = 18 ! mg C (mg chla)^-1 E m^-2  ?
-                alphaPhLv = 10
+                alphaPhSv = 18 ! mg C (mg chl-a)^-1 (E m^-2)^-1
+                alphaPhLv = 10 ! mg C (mg chl-a)^-1 (E m^-2)^-1
               elseif (PARs(i).gt.40.0) then
                 alphaPhSv = 5.6
                 alphaPhLv = 2.2
@@ -1255,10 +1256,10 @@
                 alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(PARs(i)-30.0)
               end if
 
-              ! Maximum uptake rate
-
-              DrateS = DiS * 10.0_r8 ** (DpS * Temp(i,k)) ! d^-1
-              DrateL = DiL * 10.0_r8 ** (DpL * Temp(i,k))
+              ! Maximum uptake rate 
+              
+              DrateS = DiS * 10.0_r8 ** (DpS * Temp(i,k)) ! doublings d^-1 (temp dependent doubling rate)
+              DrateL = DiL * 10.0_r8 ** (DpL * Temp(i,k)) ! doublings d^-1
 
               PmaxS = (2.0_r8 ** DrateS - 1.0_r8 )   ! maximum daily mass specific growth rate FROST (1987)
               PmaxL = (2.0_r8 ** DrateL - 1.0_r8 )   ! d^-1
@@ -1274,14 +1275,14 @@
 #else
               ! NO3 limitation following Lomas (Marine Biology 1999)
 
-              NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4))))
-              NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4))))
+              NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))) ! unitless
+              NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4)))) ! unitless
 #endif
 #ifdef IRON_LIMIT
 
               ! Iron limitation
 
-              IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS)
+              IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS) ! unitless
               IronLimL = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL)
 #endif
 
@@ -1292,8 +1293,8 @@
               LightLimL = TANH(alphaPhLv * PAR(i,k) / PmaxsL)
 #else
               OffSet = 0.0_r8
-              LightLimS = TANH(alphaPhSv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsS)
-              LightLimL = TANH(alphaPhLv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsL)
+              LightLimS = TANH(alphaPhSv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsS)  ! unitless
+              LightLimL = TANH(alphaPhLv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsL)  ! unitless
 #endif
 #ifdef DENMAN
               ! Uptake of NO3 and NH4
@@ -1902,7 +1903,7 @@
             ! available to remineralize to NH4 (in bottom layer)
 
             PON = Bio3d(i,1,iiDetBen)*0.25*xi  ! Benthic Particulate organic nitrogen
-            cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3
+            cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3 d^-1
 
             Rem_DetBen_NH4(i,1) = cff1*Hz(i,j,1)/xi ! mg C m^-2 d^-1
 
