@@ -1543,17 +1543,17 @@
 #   undef FULL_NUDGE
 #   ifdef FULL_NUDGE
               IF (itrc.eq.itemp) THEN
-                 IF (tclm(i,j,k,itrc).lt.1.0_r8) THEN
-                     cff = 0._r8
-                 ELSEIF (tclm(i,j,k,itrc).ge.2.0_r8) THEN
-                     cff = Tnudgcof(i,j,itrc)
-                 ELSE
-                     cff = Tnudgcof(i,j,itrc)*(tclm(i,j,k,itrc)-1._r8)
-                 ENDIF
+                IF (tclm(i,j,k,itrc).lt.1.0_r8) THEN
+                  cff = 0._r8
+                ELSEIF (tclm(i,j,k,itrc).ge.2.0_r8) THEN
+                  cff = Tnudgcof(i,j,itrc)
+                ELSE
+                  cff = Tnudgcof(i,j,itrc)*(tclm(i,j,k,itrc)-1._r8)
+                ENDIF
               ELSE
-                 cff = Tnudgcof(i,j,itrc)
+                cff = Tnudgcof(i,j,itrc)
               ENDIF
-#    else
+#   else
               IF (itrc.eq.isalt.and.k.eq.N(ng).and.                     &
      &            Tnudgcof(i,j,itrc).le.1.0_r8/(60.0_r8*86400.0_r8)) THEN
                 cff = 1.0_r8/(60.0_r8*86400.0_r8)
@@ -1571,7 +1571,7 @@
                 cff = Tnudgcof(i,j,itrc)
               ENDIF
 
-#    endif
+#   endif
               t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) +                 &
      &                             dt(ng)*cff*                          &
      &                             (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
@@ -1579,27 +1579,31 @@
 #  endif
 #  if defined BIO_NUDGE_ONLY
               ! ajh only nudge for iron or nitrate or ammonium
-!              t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+                    &
-              if (itrc.eq.iFe.or.itrc.eq.iNO3.or.itrc.eq.iNH4)          &
-     &               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)+             &
-     &                           dt(ng)*Tnudgcof(i,j,itrc)*             &
-     &                           (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
+              ! (KAK: Turning off NO3 and NH4 nudging for now)
 
-!ajh trap wild values of temp or salt
-!if (itrc.eq.itemp) then
-!if (t(i,j,k,nnew,itrc).gt.40.d0.or.t(i,j,k,nnew,itrc).lt.-3.d0) then
-!print*,'reset wild value temp,i,j,k ',t(i,j,k,nnew,itrc),i,j,k
-!t(i,j,k,nnew,itrc)=min(t(i,j,k,nnew,itrc),40.d0)
-!t(i,j,k,nnew,itrc)=max(t(i,j,k,nnew,itrc),-3.d0)
-!endif
-!endif
-!if (itrc.eq.isalt) then
-!if (t(i,j,k,nnew,itrc).gt.50.d0.or.t(i,j,k,nnew,itrc).lt.0) then
-!print*,'reset wild value salt,i,j,k ',t(i,j,k,nnew,itrc),i,j,k
-!t(i,j,k,nnew,itrc)=min(t(i,j,k,nnew,itrc),50.d0)
-!t(i,j,k,nnew,itrc)=max(t(i,j,k,nnew,itrc),0.d0)
-!endif
-!endif
+              if (itrc.eq.iFe) then
+!             if (itrc.eq.iFe.or.itrc.eq.iNO3.or.itrc.eq.iNH4) then
+     &          t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc)+                &
+     &                               dt(ng)*Tnudgcof(i,j,itrc)*         &
+     &                            (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
+              endif
+
+              ! ajh trap wild values of temp or salt
+              
+!             if (itrc.eq.itemp) then
+!               if (t(i,j,k,nnew,itrc).gt.40.d0.or.t(i,j,k,nnew,itrc).lt.-3.d0) then
+!                 print*,'reset wild value temp,i,j,k ',t(i,j,k,nnew,itrc),i,j,k
+!                 t(i,j,k,nnew,itrc)=min(t(i,j,k,nnew,itrc),40.d0)
+!                 t(i,j,k,nnew,itrc)=max(t(i,j,k,nnew,itrc),-3.d0)
+!               endif
+!             endif
+!             if (itrc.eq.isalt) then
+!               if (t(i,j,k,nnew,itrc).gt.50.d0.or.t(i,j,k,nnew,itrc).lt.0) then
+!                 print*,'reset wild value salt,i,j,k ',t(i,j,k,nnew,itrc),i,j,k
+!                 t(i,j,k,nnew,itrc)=min(t(i,j,k,nnew,itrc),50.d0)
+!                 t(i,j,k,nnew,itrc)=max(t(i,j,k,nnew,itrc),0.d0)
+!               endif
+!             endif
 
 #  endif
 !
