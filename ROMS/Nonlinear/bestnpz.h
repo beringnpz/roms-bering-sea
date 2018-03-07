@@ -442,9 +442,10 @@
 
       ! Biological source/sinks
 
-      real(r8) :: LightLimS, NOLimS, NHLimS, IronLimS
-      real(r8) :: LightLimL, NOLimL, NHLimL, IronLimL
+      real(r8) :: LightLimS, NOLimS, NHLimS, IronLimS, NLimS
+      real(r8) :: LightLimL, NOLimL, NHLimL, IronLimL, NLimL
       real(r8) :: alphaPhSv, alphaPhLv, DrateS, DrateL, PmaxS, PmaxL, PmaxsS, PmaxsL
+      real(r8) :: fratioS, fratioL
       real(r8) :: IcePhlAvail
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
       real(r8) :: ParW, OffSet
@@ -1242,8 +1243,8 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
 
-              ! Slope of P-I curve, i.e. photosynthetic efficientcy
-              ! TODO: don't trust these units yet 
+              ! Slope of P-I curve, i.e. photosynthetic efficientcy 
+              ! TODO: this is a little... odd.  Why use surface PAR?
 
               if (PARs(i).lt.30.0) then
                 alphaPhSv = 18 ! mg C (mg chl-a)^-1 (E m^-2)^-1
@@ -1267,17 +1268,6 @@
               PmaxsS=PmaxS*ccr                       ! max chla specific growth rate from FROST (1987)
               PmaxsL=PmaxL*ccrPhL                    ! mg C (mg chla)^-1 d^-1
 
-#ifdef DENMAN
-              ! N03 limitation following Denman
-
-              NOLimS = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhS + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
-              NOLimL = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhL + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
-#else
-              ! NO3 limitation following Lomas (Marine Biology 1999)
-
-              NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))) ! unitless
-              NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4)))) ! unitless
-#endif
 #ifdef IRON_LIMIT
 
               ! Iron limitation
@@ -1297,6 +1287,28 @@
               LightLimL = TANH(alphaPhLv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsL)  ! unitless
 #endif
 #ifdef DENMAN
+              ! N03 limitation following Denman
+
+              NOLimS = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhS + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
+              NOLimL = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhL + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
+#else
+              ! NO3 limitation following Lomas (Marine Biology 1999)
+
+!               NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))) ! unitless
+!               NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4)))) ! unitless
+!
+              ! N limitation following NEMURO (Kishi et al., 2007)
+              
+              NOLimS = (Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4))
+              NHLimS = (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
+              NOLimL = (Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4))
+              NHLimL = (Bio3d(i,k,iiNH4)/(knh4L + Bio3d(i,k,iiNH4)))
+              
+!               fratioS = ((Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4)))/(Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4)) + (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
+!               fratioL = ((Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4)))/(Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4)) + (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
+!
+#endif
+#ifdef DENMAN
               ! Uptake of NO3 and NH4
 
               cff1 = 0.2/(0.2+Bio3d(i,k,iiNH4))
@@ -1312,24 +1324,30 @@
 #else
               ! Ammonium limitation
 
-              NHLimS = Bio3d(i,k,iiNH4) / ( k2PhS + Bio3d(i,k,iiNH4) )
-              NHLimL = Bio3d(i,k,iiNH4) / ( k2PhL + Bio3d(i,k,iiNH4) )
-              if((NOLimS+NHLimS).gt.1.0_r8) then
-                NHLimS= 1.0_r8-NOLimS
-              endif
-              if((NOLimL+NHLimL).gt.1.0_r8) then
-                NHLimL= 1.0_r8-NOLimL
-              endif
+!               NHLimS = Bio3d(i,k,iiNH4) / ( k2PhS + Bio3d(i,k,iiNH4) )
+!               NHLimL = Bio3d(i,k,iiNH4) / ( k2PhL + Bio3d(i,k,iiNH4) )
+!               if((NOLimS+NHLimS).gt.1.0_r8) then
+!                 NHLimS= 1.0_r8-NOLimS
+!               endif
+!               if((NOLimL+NHLimL).gt.1.0_r8) then
+!                 NHLimL= 1.0_r8-NOLimL
+!               endif
 
               ! NO3 uptake
-
-              Gpp_NO3_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*MIN(LightLimS, NOLimS, IronLimS))  ! mg C m^-3 d^-1
-              Gpp_NO3_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL)*PmaxsL*MIN(LightLimL, NOLimL, IronLimL))
+              
+              Gpp_NO3_PhS(i,k) = (Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*LightLimS*NOLimS*IronLimS ! mg C m^-3 d^-1
+              Gpp_NO3_PhL(i,k) = (Bio3d(i,k,iiPhS)/ccrPhL)*PmaxsL*LightLimL*NOLimL*IronLimL
+              
+!               Gpp_NO3_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*MIN(LightLimS, NOLimS, IronLimS))  ! mg C m^-3 d^-1
+!               Gpp_NO3_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL)*PmaxsL*MIN(LightLimL, NOLimL, IronLimL))
 
               ! NH4 uptake
-
-              Gpp_NH4_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)    * PmaxsS * MIN(LightLimS, NHLimS)) ! mg C m^-3 d^-1
-              Gpp_NH4_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL) * PmaxsL * MIN(LightLimL ,NHLimL))
+              
+              Gpp_NH4_PhS(i,k) = (Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*LightLimS*NHLimS ! mg C m^-3 d^-1
+              Gpp_NH4_PhL(i,k) = (Bio3d(i,k,iiPhS)/ccrPhL)*PmaxsL*LightLimL*NHLimL
+              
+!               Gpp_NH4_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)    * PmaxsS * MIN(LightLimS, NHLimS)) ! mg C m^-3 d^-1
+!               Gpp_NH4_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL) * PmaxsL * MIN(LightLimL ,NHLimL))
 
 #endif
               ! Convert intermediate fluxes from volumetric to per area

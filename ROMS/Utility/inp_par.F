@@ -6766,6 +6766,18 @@
             Npts=load_r(Nval, Rval, 1, kfePhS)
           ELSE IF (TRIM(KeyWord).eq.'kfePhL') THEN
             Npts=load_r(Nval, Rval, 1, kfePhL)
+          ELSE IF (TRIM(KeyWord).eq.'kno3S') THEN
+              Npts=load_r(Nval, Rval, 1, kno3S)
+          ELSE IF (TRIM(KeyWord).eq.'kno3L') THEN
+              Npts=load_r(Nval, Rval, 1, kno3L)
+          ELSE IF (TRIM(KeyWord).eq.'knh4S') THEN
+              Npts=load_r(Nval, Rval, 1, knh4S)
+          ELSE IF (TRIM(KeyWord).eq.'knh4L') THEN
+              Npts=load_r(Nval, Rval, 1, knh4L)
+          ELSE IF (TRIM(KeyWord).eq.'psiS') THEN
+              Npts=load_r(Nval, Rval, 1, psiS)
+          ELSE IF (TRIM(KeyWord).eq.'psiL') THEN
+              Npts=load_r(Nval, Rval, 1, psiS)
             
           ! Feeding preferences
           

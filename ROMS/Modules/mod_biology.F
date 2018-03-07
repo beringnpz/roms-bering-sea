@@ -1234,6 +1234,7 @@
 
       real(r8) :: DiS, DiL, DpS, DpL
       real(r8) :: k1PhS, k1PhL, k2PhS, k2PhL
+      real(r8) :: kno3S, kno3L, knh4S, knh4L, psiS, psiL
       real(r8) :: FeCritPS, FeCritPL, kfePhS, kfePhL
 
       ! Feeding preferences
