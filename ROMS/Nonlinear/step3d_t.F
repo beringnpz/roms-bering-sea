@@ -1583,7 +1583,7 @@
 
               if (itrc.eq.iFe) then
 !             if (itrc.eq.iFe.or.itrc.eq.iNO3.or.itrc.eq.iNH4) then
-     &          t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc)+                &
+                t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc)+                &
      &                               dt(ng)*Tnudgcof(i,j,itrc)*         &
      &                            (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
               endif
