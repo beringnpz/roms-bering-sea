@@ -473,6 +473,24 @@
 
       real(r8), parameter :: eps  = 1.0E-20_r8
       real(r8), parameter :: minv = 0.0E-20_r8
+      real(r8), parameter :: watts2photons = 0.394848_r8 ! W m^-2 -> E/m^2/d
+      
+      ! Note on watts2photons above:
+      !
+      ! Eq = I * lambda/(h*c*A) * s2d
+      !   where
+      !
+      !   Eq = photon flux (E/m^2/d)
+      !   I = irradiance (W/m^2)
+      !   lambda = wavelength (m)
+      !   h = Plank's constant (Js)
+      !   c = speed of light (m/s)
+      !   A = Avogadro's number (mol^-1)
+      !   s2d = 86400 s/d
+      !
+      ! The constant used here (copied from GOANPZ) implies an
+      ! wavelength of ~547 nm... prob derives from a average across
+      ! chl range (~400-700nm).
 
 #include "set_bounds.h"
 
@@ -1063,40 +1081,13 @@
           END IF
 #endif
 
-#ifdef KODIAK_IRAD
-
-          ! Calculate PAR at the surface
-          ! Eyeball fit of data from Hinckley''s ezeroday.dat (E d-1 m-2)
-          ! TODO: this option is definitely deprecated, and doesn't
-          ! actually calculate PAR.  Should be removed soon.
-
-          cff2 = 41.0_r8 - 35.0_r8                                      &
-     &           * COS( ( 12.0_r8 + yday) * 2.0_r8 * pi / 365.0_r8 )
-#else
-
           ! Calculate PAR at the surface
           ! Shortwave radiation input (in deg C m/s) is converted to
           ! W/m^2 (assuming standard density rho0=1025 kg/m^3 and heat
-          ! capacity Cp=3985 J/kg/degC of seawater), then to photon flux
-          ! (E/m^2/day) via
-          !
-          ! Eq = I * lambda/(h*c*A) * s2d
-          !   where
-          !
-          !   Eq = photon flux (E/m^2/d)
-          !   lambda = wavelength (m)
-          !   I = irradiance (W/m^2)
-          !   h = Plank's constant (Js)
-          !   c = speed of light (m/s)
-          !   A = Avogadro's number (mol^-1)
-          !   s2d = 86400 s/d
-          !
-          ! The constant used here (copied from GOANPZ) implies an
-          ! wavelength of ~547 nm... prob derives from a average across
-          ! chl range (~400-700nm).
-
-          PARs(i) = PARfrac(ng) * srflx(i,j) * rho0 * Cp * 0.394848_r8 ! E/m^2/d
-#endif
+          ! capacity Cp=3985 J/kg/degC of seawater)
+          
+          PARs(i) = PARfrac(ng) * srflx(i,j) * rho0 * Cp ! W m^-2
+          
         END DO
 
         !------------------------------------------
@@ -1105,7 +1096,7 @@
 
         DO i=Istr,Iend
           DO k=1,N(ng)
-            PAR(i,k) = Ifrac(i,j,k) * PARs(i) ! E/m^2/d
+            PAR(i,k) = Ifrac(i,j,k) * PARs(i) ! W m^-2
           END DO
         END DO
 
@@ -1246,15 +1237,15 @@
               ! Slope of P-I curve, i.e. photosynthetic efficientcy 
               ! TODO: this is a little... odd.  Why use surface PAR?
 
-              if (PARs(i).lt.30.0) then
+              if (PARs(i)*watts2photons.lt.30.0) then
                 alphaPhSv = 18 ! mg C (mg chl-a)^-1 (E m^-2)^-1
                 alphaPhLv = 10 ! mg C (mg chl-a)^-1 (E m^-2)^-1
-              elseif (PARs(i).gt.40.0) then
+              elseif (PARs(i)*watts2photons.gt.40.0) then
                 alphaPhSv = 5.6
                 alphaPhLv = 2.2
               else
-                alphaPhSv = 18.0-((18.0-5.6)/(40.0-30.0))*(PARs(i)-30.0)
-                alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(PARs(i)-30.0)
+                alphaPhSv = 18.0-((18.0-5.6)/(40.0-30.0))*(PARs(i)*watts2photons-30.0)
+                alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(PARs(i)*watts2photons-30.0)
               end if
 
               ! Maximum uptake rate 
@@ -1279,12 +1270,12 @@
               ! Light limitation
 
 #ifdef DENMAN
-              LightLimS = TANH(alphaPhSv * PAR(i,k) / PmaxsS)
-              LightLimL = TANH(alphaPhLv * PAR(i,k) / PmaxsL)
+              LightLimS = TANH(alphaPhSv * PAR(i,k)*watts2photons / PmaxsS)
+              LightLimL = TANH(alphaPhLv * PAR(i,k)*watts2photons / PmaxsL)
 #else
               OffSet = 0.0_r8
-              LightLimS = TANH(alphaPhSv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsS)  ! unitless
-              LightLimL = TANH(alphaPhLv * MAX(PAR(i,k) - OffSet,0.0_r8)/PmaxsL)  ! unitless
+              LightLimS = TANH(alphaPhSv * MAX(PAR(i,k)*watts2photons - OffSet,0.0_r8)/PmaxsS)  ! unitless
+              LightLimL = TANH(alphaPhLv * MAX(PAR(i,k)*watts2photons - OffSet,0.0_r8)/PmaxsL)  ! unitless
 #endif
 #ifdef DENMAN
               ! N03 limitation following Denman
@@ -1763,7 +1754,7 @@
 
               NitrifMax = Nitr0 * exp(-ktntr*(Temp(i,k) - ToptNtr)**2)     ! Arhonditsis 2005 temperature dependence
 
-              ParW = PAR(i,k)/0.394848_r8 ! convert to W
+              ParW = PAR(i,k) ! convert to W m^-2
               DLNitrif = (1 - MAX(0.0_r8, (ParW - tI0)/(KI + ParW - tI0))) ! Fennel light dependence
               DLNitrif = 1.0_r8  ! No light/depth dependence (overrides previous line)
 
@@ -1939,7 +1930,7 @@
               ! Ice algae production limitation terms
 
               Temp1 = Temp(i,N(ng)) ! Assume temperature of top layer = temp ice skeletal layer
-              Par1  = PARs(i)/0.394848_r8  ! surface light, W m^-2
+              Par1  = PARs(i)  ! surface light, W m^-2
 
               aiceIfrac = (1-exp(-alphaIb*Par1))*exp(-betaI*Par1) ! light limitation
 
@@ -2566,11 +2557,11 @@
             ! no migration movement.  If not, target depth is midpoint of
             ! highest layer where PAR < 0.5 E/m^2/d
 
-            if (      (ANY(PAR(i,:) < 0.5_r8)) .and.                    &
-     &          (.not. ALL(PAR(i,:) < 0.5_r8))) then
+            if (      (ANY(PAR(i,:)*watts2photons < 0.5_r8)) .and.                    &
+     &          (.not. ALL(PAR(i,:)*watts2photons < 0.5_r8))) then
 
               do k = 1,N(ng)
-                if (PAR(i,k) < 0.5_r8) then
+                if (PAR(i,k)*watts2photons < 0.5_r8) then
                   targetdepth = (z_w(i,j,k-1) + z_w(i,j,k))/2
                 endif
               end do
