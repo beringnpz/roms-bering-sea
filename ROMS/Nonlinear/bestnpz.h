@@ -488,7 +488,7 @@
       !   A = Avogadro's number (mol^-1)
       !   s2d = 86400 s/d
       !
-      ! The constant used here (copied from GOANPZ) implies an
+      ! The constant used here (copied from GOANPZ) implies a
       ! wavelength of ~547 nm... prob derives from a average across
       ! chl range (~400-700nm).
 
@@ -1233,6 +1233,20 @@
 
           DO k=1,N(ng)
             DO i=Istr,Iend
+              
+#ifdef IRON_LIMIT
+
+              ! Iron limitation
+
+              IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS) ! unitless
+              IronLimL = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL)
+#endif
+              
+#ifdef BANASGPP
+
+
+
+#else           
 
               ! Slope of P-I curve, i.e. photosynthetic efficientcy 
               ! TODO: this is a little... odd.  Why use surface PAR?
@@ -1259,30 +1273,24 @@
               PmaxsS=PmaxS*ccr                       ! max chla specific growth rate from FROST (1987)
               PmaxsL=PmaxL*ccrPhL                    ! mg C (mg chla)^-1 d^-1
 
-#ifdef IRON_LIMIT
 
-              ! Iron limitation
-
-              IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS) ! unitless
-              IronLimL = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL)
-#endif
 
               ! Light limitation
 
-#ifdef DENMAN
+# ifdef DENMAN
               LightLimS = TANH(alphaPhSv * PAR(i,k)*watts2photons / PmaxsS)
               LightLimL = TANH(alphaPhLv * PAR(i,k)*watts2photons / PmaxsL)
-#else
+# else
               OffSet = 0.0_r8
               LightLimS = TANH(alphaPhSv * MAX(PAR(i,k)*watts2photons - OffSet,0.0_r8)/PmaxsS)  ! unitless
               LightLimL = TANH(alphaPhLv * MAX(PAR(i,k)*watts2photons - OffSet,0.0_r8)/PmaxsL)  ! unitless
-#endif
-#ifdef DENMAN
+# endif
+# ifdef DENMAN
               ! N03 limitation following Denman
 
               NOLimS = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhS + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
               NOLimL = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhL + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
-#else
+# else
               ! NO3 limitation following Lomas (Marine Biology 1999)
 
 !               NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))) ! unitless
@@ -1298,8 +1306,8 @@
 !               fratioS = ((Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4)))/(Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4)) + (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
 !               fratioL = ((Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4)))/(Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4)) + (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
 !
-#endif
-#ifdef DENMAN
+# endif
+# ifdef DENMAN
               ! Uptake of NO3 and NH4
 
               cff1 = 0.2/(0.2+Bio3d(i,k,iiNH4))
@@ -1312,7 +1320,7 @@
               cff3 = PmaxL*LightLimL*NOLimL*IronLimL
               Gpp_NO3_PhL(i,k) = Bio3d(i,k,iiPhL) * cff3 * cff2       ! mg C m^-3 d^-1
               Gpp_NH4_PhL(i,k) = Bio3d(i,k,iiPhL) * cff3 * (1 - cff2) ! mg C m^-3 d^-1
-#else
+# else
               ! Ammonium limitation
 
 !               NHLimS = Bio3d(i,k,iiNH4) / ( k2PhS + Bio3d(i,k,iiNH4) )
@@ -1340,7 +1348,7 @@
 !               Gpp_NH4_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)    * PmaxsS * MIN(LightLimS, NHLimS)) ! mg C m^-3 d^-1
 !               Gpp_NH4_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL) * PmaxsL * MIN(LightLimL ,NHLimL))
 
-#endif
+# endif
               ! Convert intermediate fluxes from volumetric to per area
 
               Gpp_NO3_PhS(i,k) = Gpp_NO3_PhS(i,k) * Hz(i,j,k) ! mg C m^-2 d^-1
@@ -1361,6 +1369,7 @@
                 Gpp_NO3_PhL(i,k) = 0; ! mg C m^-2 d^-1
                 Gpp_NH4_PhL(i,k) = 0; ! mg C m^-2 d^-1
               endif
+#endif
 
 #ifdef STATIONARY
 
@@ -3361,6 +3370,54 @@
 
       RETURN
       END SUBROUTINE BIOSINK
+
+!=====================================================================
+!  LightAttenuation: Calculates light attenuation at a specific depth
+!  K. Kearney, 04/2018
+!
+! Input (and *output) variables:
+!
+!   nn:  1 x 1,    number of vertical layers
+!   z:       1 x 1,    depth, relative to mean sea level (m,negative down)
+!   z_w:     1 x nn+1, depth of layer edges (m, negative down)
+!   PS:      1 x nn,   PhS in each layer (mmol N m^-3)
+!   PS:      1 x nn,   PhL in each layer (mmol N m^-3)
+!
+! Returns fraction of surface light reaching the specified depth.
+!
+!=====================================================================
+      
+      FUNCTION LightAttenuation(nn, z, z_w, PS, PL)
+        
+        USE mod_param
+        USE mod_scalars
+        
+        implicit none
+        
+        integer :: nn
+        real(r8) :: z
+        real(r8) :: z_w(0:nn) 
+        real(r8) :: PS(1,nn)
+        real(r8) :: PL(1,nn)
+        integer :: k
+        real(r8) :: kP
+        real(r8) :: dz(1,nn)
+        real(r8) :: chl(1,nn)
+        
+        do k = nn,1,-1
+          dz(k) = max(z_w(k),z) - max(z_w(k-1),z) ! m of layer above target depth
+          chl(k) = PS(k)/ccr + PL(k)/ccrPhL ! chlorophyll in layer (mg chl/m^3)
+        end do
+
+        if (sum(dz).eq.0) then
+          kP = 0
+        else
+          kP = sum(k_chlA * chl**(k_chlB) * dz)/sum(dz)
+        end
+        LightAttenuation = exp(sum(dz) * -(k_ext + kP + k_chlC))
+        
+        
+      END FUNCTION LightAttenuation
 
 
 
