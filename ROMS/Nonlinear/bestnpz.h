@@ -3371,54 +3371,6 @@
       RETURN
       END SUBROUTINE BIOSINK
 
-!=====================================================================
-!  LightAttenuation: Calculates light attenuation at a specific depth
-!  K. Kearney, 04/2018
-!
-! Input (and *output) variables:
-!
-!   nn:  1 x 1,    number of vertical layers
-!   z:       1 x 1,    depth, relative to mean sea level (m,negative down)
-!   z_w:     1 x nn+1, depth of layer edges (m, negative down)
-!   PS:      1 x nn,   PhS in each layer (mmol N m^-3)
-!   PS:      1 x nn,   PhL in each layer (mmol N m^-3)
-!
-! Returns fraction of surface light reaching the specified depth.
-!
-!=====================================================================
-      
-      FUNCTION LightAttenuation(nn, z, z_w, PS, PL)
-        
-        USE mod_param
-        USE mod_scalars
-        
-        implicit none
-        
-        integer :: nn
-        real(r8) :: z
-        real(r8) :: z_w(0:nn) 
-        real(r8) :: PS(1,nn)
-        real(r8) :: PL(1,nn)
-        integer :: k
-        real(r8) :: kP
-        real(r8) :: dz(1,nn)
-        real(r8) :: chl(1,nn)
-        
-        do k = nn,1,-1
-          dz(k) = max(z_w(k),z) - max(z_w(k-1),z) ! m of layer above target depth
-          chl(k) = PS(k)/ccr + PL(k)/ccrPhL ! chlorophyll in layer (mg chl/m^3)
-        end do
-
-        if (sum(dz).eq.0) then
-          kP = 0
-        else
-          kP = sum(k_chlA * chl**(k_chlB) * dz)/sum(dz)
-        end
-        LightAttenuation = exp(sum(dz) * -(k_ext + kP + k_chlC))
-        
-        
-      END FUNCTION LightAttenuation
-
 
 
 
