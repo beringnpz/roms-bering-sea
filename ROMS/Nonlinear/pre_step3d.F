@@ -330,6 +330,7 @@
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS,0:N(ng)) :: swdk
 #  ifdef BEST_NPZ
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS,0:N(ng)) :: Ifrac
+      real(r8) :: zmid
 #  endif
 # endif
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: FE
@@ -382,15 +383,19 @@
 
 #   ifdef BEST_NPZ
 
-      CALL bestnpz_swfrac_tile(                                         &
-     &      ng, tile,                                                   &
-     &      LBi, UBi, LBj, UBj,                                         &
-     &      IminS, ImaxS, JminS, JmaxS,                                 &
-     &      z_w(IminS:ImaxS,JminS:JmaxS,0),                             &
-     &      z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng)),                       &
-     &      max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhS)),  &
-     &      max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhL)),  &
-     &      swdk, Ifrac)
+      DO j=Jstr,Jend
+        DO i=Istr,Iend
+          do k = N(ng),1,-1
+            
+            zmid = (z_w(i,j,k-1) + z_w(i,j,k))/2 ! depth of layer midpoints
+            Ifrac(i,j,k) = LightAttenuation(N(ng), zmid, z_w(i,j,:),    &
+     &                max(0.0_r8, t(i,j,1:N(ng),nstp,iPhS)),            &
+     &                max(0.0_r8, t(i,j,1:N(ng),nstp,iPhL)))
+            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) +              &
+     &                    a_frac*exp(-zmid/a_mu1)
+          END DO
+        END DO
+      END DO
 
 #   endif
 #  endif
