@@ -385,7 +385,22 @@
 
       DO j=Jstr,Jend
         DO i=Istr,Iend
-          do k = N(ng),1,-1
+          
+          ! This method of accounts for nonlinear light profiles within 
+          ! a single layer. The nonlinearity arises in models with 
+          ! coarse vertical resolution.  The effect of this 
+          ! nonlinearity is probably insignificant when looking at the 
+          ! affect on heat content here, so it's probably overkill here.
+          ! But the nonlinearity can significantly reduce primary 
+          ! production in surface layers over deep water; we replicate 
+          ! the light attenuation calculations used in the biological 
+          ! module here to maintain internal consistency.
+          
+          ! Edges of mini-layers over top 150 m (~max depth of light)
+                      
+            
+            
+            
             
             zmid = (z_w(i,j,k-1) + z_w(i,j,k))/2 ! depth of layer midpoints
             Ifrac(i,j,k) = LightAttenuation(N(ng), zmid, z_w(i,j,:),    &
