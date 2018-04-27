@@ -307,8 +307,9 @@
 # define BIO_NUDGE_ONLY
 
 # undef LIMIT_BIO_AKT
-# undef NEWSHADE           /* formulation for self shading in PAR calc basrd on Morel*/
-# define COKELET           /* updated light attenuation, based on  */
+# if !defined(NEWSHADE) && !defined(NEWSHADESHALLOW) && !defined(COKELET)
+#   define COKELET           /* updated light attenuation, based on  */
+# endif
 # undef KODIAK_IRAD        /* Generate irradiance with curve matching Kodiak data
                               Else use Sarah Hinckly originl code   */
 # define JELLY
