@@ -329,8 +329,7 @@
 # ifdef SOLAR_SOURCE
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS,0:N(ng)) :: swdk
 #  ifdef BEST_NPZ
-      real(r8), dimension(IminS:ImaxS,JminS:JmaxS,0:N(ng)) :: Ifrac
-      real(r8) :: zmid
+      real(r8) :: Ifrac, chl, z0, z1, z2, f0, f1, f2, katten
 #  endif
 # endif
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: FE
@@ -390,24 +389,51 @@
           ! a single layer. The nonlinearity arises in models with 
           ! coarse vertical resolution.  The effect of this 
           ! nonlinearity is probably insignificant when looking at the 
-          ! affect on heat content here, so it's probably overkill here.
+          ! affect on heat content, so it's likely overkill here.
           ! But the nonlinearity can significantly reduce primary 
           ! production in surface layers over deep water; we replicate 
           ! the light attenuation calculations used in the biological 
           ! module here to maintain internal consistency.
           
-          ! Edges of mini-layers over top 150 m (~max depth of light)
-                      
+          Ifrac = 1
+          DO k=N(ng),1,-1
+          
+            ! chl-a in layer
             
+            chl = max(0.0_r8, t(i,j,k,nstp,iPhS))/ccr +                 &
+     &            max(0.0_r8, t(i,j,k,nstp,iPhL))/ccrPhL
+          
+            ! Attenuation coefficient, including that due to clear water, 
+            ! chlorophyll, and optionally other organics/sediment/etc.
             
+#    ifdef NEWSHADE
+            katten = k_ext + k_chl*chl**0.428
+#    elif defined NEWSHADESHALLOW
+            katten = k_ext + k_chl*chl**0.428 + 2.0*exp(z_w(i,j,0)*0.05)
+#    elif defined COKELET  
+            katten = k_ext + k_chlA*chl**k_chlB + k_chlC
+#    endif          
             
+            ! Fraction of light in layer (averaged over layer using 
+            ! Simpson's rule).  Attenuation uses Jerlov water type 
+            ! equation, following Paulson and Simpson (1977, J. Phys. 
+            ! Oceanogr. v7:6) (same as lmd_swfrac_tile), but applies 
+            ! attenuation due to chlorophyll, etc. first.
+            ! TODO: are we doubling up the clear-water attenuation here?
+            ! Need to read up of Jerlov water type attenuation
+
+            z0 = 0 ! m, measured from top of layer
+            z2 = z_w(i,j,k-1) - z_w(i,j,k)
+            z1 = (z0+z2)/2
             
-            zmid = (z_w(i,j,k-1) + z_w(i,j,k))/2 ! depth of layer midpoints
-            Ifrac(i,j,k) = LightAttenuation(N(ng), zmid, z_w(i,j,:),    &
-     &                max(0.0_r8, t(i,j,1:N(ng),nstp,iPhS)),            &
-     &                max(0.0_r8, t(i,j,1:N(ng),nstp,iPhL)))
-            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) +              &
-     &                    a_frac*exp(-zmid/a_mu1)
+            f0 = Ifrac*((1-a_frac)*exp(z0*katten) + a_frac*(exp(z0/a_mu1)))
+            f1 = Ifrac*((1-a_frac)*exp(z1*katten) + a_frac*(exp(z1/a_mu1)))
+            f2 = Ifrac*((1-a_frac)*exp(z2*katten) + a_frac*(exp(z2/a_mu1)))
+            
+            swdk(i,j,k) = (((z0-z1)/3) * (f0 + 4*f1 + f2))/(z0-z2)
+            
+            Ifrac = f2
+            
           END DO
         END DO
       END DO
