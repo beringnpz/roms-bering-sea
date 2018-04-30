@@ -1,4 +1,4 @@
-#include "cppdefs.h"
+ #include "cppdefs.h"
       SUBROUTINE biology (ng,tile)
 
 !========================================== Alexander F. Shchepetkin ===
@@ -444,8 +444,17 @@
 
       real(r8) :: LightLimS, NOLimS, NHLimS, IronLimS, NLimS
       real(r8) :: LightLimL, NOLimL, NHLimL, IronLimL, NLimL
-      real(r8) :: alphaPhSv, alphaPhLv, DrateS, DrateL, PmaxS, PmaxL, PmaxsS, PmaxsL
+      real(r8) :: LightLimS0, LightLimS1, LightLimS2
+      real(r8) :: LightLimL0, LightLimL1, LightLimL2
+      real(r8) :: alphaPhS, alphaPhS0, alphaPhS1, alphaPhS2
+      real(r8) :: alphaPhL, alphaPhL0, alphaPhL1, alphaPhL2
+      real(r8) :: amax, amin, ihi, ilo
+      real(r8) :: DrateS, DrateL
+      real(r8) :: PmaxS, PmaxL, PmaxSs, PmaxLs
       real(r8) :: fratioS, fratioL
+      real(r8) :: katten, chl
+      real(r8) :: f0, f1, f2, z0, z1, z2, I0, I1, I2
+      real(r8) :: GppS, GppL
       real(r8) :: IcePhlAvail
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
       real(r8) :: ParW, OffSet
@@ -477,21 +486,11 @@
       
       ! Note on watts2photons above:
       !
-      ! Eq = I * lambda/(h*c*A) * s2d
-      !   where
-      !
-      !   Eq = photon flux (E/m^2/d)
-      !   I = irradiance (W/m^2)
-      !   lambda = wavelength (m)
-      !   h = Plank's constant (Js)
-      !   c = speed of light (m/s)
-      !   A = Avogadro's number (mol^-1)
-      !   s2d = 86400 s/d
-      !
-      ! The constant used here (copied from GOANPZ) implies a
-      ! wavelength of ~547 nm... prob derives from a average across
-      ! chl range (~400-700nm).
-
+      ! Conversion factor of 4.57 umol photons s^-1 m^-2 per 1 W m^-2 
+      ! comes from Thimijan and Heins (1983, HortScience, vol 18(6)), 
+      ! estimate for the 400-700 nm band with a light source of "sun & 
+      ! sky, daylight"
+      
 #include "set_bounds.h"
 
 #ifdef MATLABCOMPILE
@@ -651,18 +650,6 @@
         respCM = respNCa
         eCM = eNCa
       end if
-
-      ! Light attenuation fraction
-      ! (calculates Ifrac, unitless)
-
-      CALL bestnpz_swfrac_tile(ng, tile,                                &
-   &        LBi, UBi, LBj, UBj,                                         &
-   &        IminS, ImaxS, JminS, JmaxS,                                 &
-   &        h(IminS:ImaxS,JminS:JmaxS),                                 &
-   &        z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng)),                       &
-   &        max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhS)),  &
-   &        max(0.0_r8, t(IminS:ImaxS,JminS:JmaxS,1:N(ng),nstp,iPhL)),  &
-   &        cffsw, Ifrac)
 
 #endif
 
@@ -1090,16 +1077,6 @@
           
         END DO
 
-        !------------------------------------------
-        ! Calculate light decay in the water column
-        !------------------------------------------
-
-        DO i=Istr,Iend
-          DO k=1,N(ng)
-            PAR(i,k) = Ifrac(i,j,k) * PARs(i) ! W m^-2
-          END DO
-        END DO
-
         !================================================================
         !  Begin time loop (if BioIter > 1, this divides the main time
         !  step into smaller steps for biological calculations)
@@ -1225,130 +1202,176 @@
           LightLimS = 1.0_r8
           NOLimS    = 1.0_r8
           NHLimS    = 1.0_r8
+          NLimS     = 1.0_r8
           IronLimS  = 1.0_r8
           LightLimL = 1.0_r8
           NOLimL    = 1.0_r8
           NHLimL    = 1.0_r8
           IronLimL  = 1.0_r8
+          NLimL     = 1.0_r8
 
-          DO k=1,N(ng)
-            DO i=Istr,Iend
+          DO i=Istr,Iend
+            
+            ! Set top-of-layer irradiance to surface irradiance, 
+            ! converted to E/m^2/d
+            
+            I0 = PARs(i) * watts2photons
+            
+            ! Loop over layers, starting at surface...
+            
+            DO k=N(ng),1,-1
               
 #ifdef IRON_LIMIT
 
               ! Iron limitation
+              ! (Hinckley et al., 2009, Deep Sea Res. II, v56(24))
 
               IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS) ! unitless
               IronLimL = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL)
 #endif
-              
-#ifdef BANASGPP
-
-
-
-#else           
-
-              ! Slope of P-I curve, i.e. photosynthetic efficientcy 
-              ! TODO: this is a little... odd.  Why use surface PAR?
-
-              if (PARs(i)*watts2photons.lt.30.0) then
-                alphaPhSv = 18 ! mg C (mg chl-a)^-1 (E m^-2)^-1
-                alphaPhLv = 10 ! mg C (mg chl-a)^-1 (E m^-2)^-1
-              elseif (PARs(i)*watts2photons.gt.40.0) then
-                alphaPhSv = 5.6
-                alphaPhLv = 2.2
-              else
-                alphaPhSv = 18.0-((18.0-5.6)/(40.0-30.0))*(PARs(i)*watts2photons-30.0)
-                alphaPhLv = 10.0-((10.0-2.2)/(40.0-30.0))*(PARs(i)*watts2photons-30.0)
-              end if
-
-              ! Maximum uptake rate 
-              
-              DrateS = DiS * 10.0_r8 ** (DpS * Temp(i,k)) ! doublings d^-1 (temp dependent doubling rate)
-              DrateL = DiL * 10.0_r8 ** (DpL * Temp(i,k)) ! doublings d^-1
-
-              PmaxS = (2.0_r8 ** DrateS - 1.0_r8 )   ! maximum daily mass specific growth rate FROST (1987)
-              PmaxL = (2.0_r8 ** DrateL - 1.0_r8 )   ! d^-1
-
-              PmaxsS=PmaxS*ccr                       ! max chla specific growth rate from FROST (1987)
-              PmaxsL=PmaxL*ccrPhL                    ! mg C (mg chla)^-1 d^-1
-
-
-
-              ! Light limitation
-
-# ifdef DENMAN
-              LightLimS = TANH(alphaPhSv * PAR(i,k)*watts2photons / PmaxsS)
-              LightLimL = TANH(alphaPhLv * PAR(i,k)*watts2photons / PmaxsL)
-# else
-              OffSet = 0.0_r8
-              LightLimS = TANH(alphaPhSv * MAX(PAR(i,k)*watts2photons - OffSet,0.0_r8)/PmaxsS)  ! unitless
-              LightLimL = TANH(alphaPhLv * MAX(PAR(i,k)*watts2photons - OffSet,0.0_r8)/PmaxsL)  ! unitless
-# endif
-# ifdef DENMAN
-              ! N03 limitation following Denman
-
-              NOLimS = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhS + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
-              NOLimL = (Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))/(k1PhL + Bio3d(i,k,iiNO3) + Bio3d(i,k,iiNH4))
-# else
-              ! NO3 limitation following Lomas (Marine Biology 1999)
-
-!               NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))) ! unitless
-!               NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * (1-(0.8_r8*Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4)))) ! unitless
-!
-              ! N limitation following NEMURO (Kishi et al., 2007)
+              ! Nitrogen limitation
+              ! (Wroblewski 1977, Sarmiento & Gruber 2006, etc.)
               
               NOLimS = (Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4))
               NHLimS = (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
               NOLimL = (Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4))
               NHLimL = (Bio3d(i,k,iiNH4)/(knh4L + Bio3d(i,k,iiNH4)))
+              NLimS = min(NOLimS + NHLimS, 1.0)
+              NLimL = min(NOLimL + NHLimL, 1.0)
+              if (NLimS .le. 0.0) then
+                fratioS = 0.0
+              else
+                fratioS = NHLimS/(NOLimS + NHLimS) ! Note: intentionally not using capped-at-1 NLim for denominator... want to keep the real ratio even if the cap applies
+              endif
+              if (NLimL .le. 0.0) then
+                fratioL = 0.0
+              else
+                fratioL = NHLimL/(NOLimL + NHLimL)
+              end
               
-!               fratioS = ((Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4)))/(Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4)) + (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
-!               fratioL = ((Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4)))/(Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4)) + (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
-!
-# endif
-# ifdef DENMAN
-              ! Uptake of NO3 and NH4
+              ! Maximum uptake rate, carbon-specific and chl-specific
+              ! (Frost 1987,  Mar Ecol Prog Ser, v39)
+              
+              DrateS = DiS * 10.0_r8 ** (DpS * Temp(i,k)) ! doublings d^-1 (temp dependent doubling rate)
+              DrateL = DiL * 10.0_r8 ** (DpL * Temp(i,k)) ! doublings d^-1
 
-              cff1 = 0.2/(0.2+Bio3d(i,k,iiNH4))
-              cff2 = cff1 * Bio3d(i,k,iiNO3)/(Bio3d(i,k,iiNO3)+Bio3d(i,k,iiNH4))
+              PmaxS = (2.0_r8 ** DrateS - 1.0_r8 )   ! mg C production (mg C biomass)^-1 d^-1
+              PmaxL = (2.0_r8 ** DrateL - 1.0_r8 )   ! mg C production (mg C biomass)^-1 d^-1
+              
+              PmaxSs = PmaxS*ccr    ! mg C (mg chl)^-1 d^-1
+              PmaxLs = PmaxL*ccrPhl ! mg C (mg chl)^-1 d^-1
+              
+              ! chl-a in layer
+              
+              chl = Bio3d(i,k,iiPhS)/ccr + Bio3d(i,k,iiPhL)/ccrPhL ! mg chl-a m^-3
+              
+              ! Attenuation coefficient, including that due to clear water, 
+              ! chlorophyll, and optionally other organics/sediment/etc.
+            
+# ifdef NEWSHADE
+              ! Luokos et al (1997, Deep Sea Res. Part II,v44(97)), after 
+              ! Morel (1988, J. Geophys. Res., v93(C9))
+              katten = k_ext + k_chl*chl**0.428
+# elif defined NEWSHADESHALLOW
+              ! As above, but with modification so attenuation increases 
+              ! in shallow water
+              katten = k_ext + k_chl*chl**0.428 + 2.0*exp(z_w(i,j,0)*0.05)
+# elif defined COKELET  
+              ! Ned Cokelet, personal communication
+              katten = k_ext + k_chlA*chl**k_chlB + k_chlC
+# endif  
+                  
+              ! Calculate light at depth levels relevant for Simpson's 
+              ! rule integration      
 
-              cff3 = PmaxS*LightLimS*NOLimS*IronLimS
-              Gpp_NO3_PhS(i,k) = Bio3d(i,k,iiPhS) * cff3 * cff2       ! mg C m^-3 d^-1
-              Gpp_NH4_PhS(i,k) = Bio3d(i,k,iiPhS) * cff3 * (1 - cff2) ! mg C m^-3 d^-1
+              z0 = 0
+              z2 = z_w(i,j,k-1) - z_w(i,j,k)
+              z1 = (z0+z2)/2
+              
+              I1 = I0 * exp(z1 * katten)
+              I2 = I0 * exp(z2 * katten)
+              
+              PAR(i,k) = (((z0-z1)/3 * (I0 + 4*I1 + I2))/(z0-z2))/watts2photons ! mean over layer, W m^-2
+              
+              ! Calculate average light limitation across the layer
+              ! This approach has been adopted in order to properly 
+              ! capture surface production, even when using coarse 
+              ! vertical resolution, where light levels may not be linear 
+              ! within a layer (the usual convention of using the depth 
+              ! midpoint to represent the entire layer makes the 
+              ! assumption that the vertical resolution is high enough 
+              ! that one can assume linearity within a layer).
 
-              cff3 = PmaxL*LightLimL*NOLimL*IronLimL
-              Gpp_NO3_PhL(i,k) = Bio3d(i,k,iiPhL) * cff3 * cff2       ! mg C m^-3 d^-1
-              Gpp_NH4_PhL(i,k) = Bio3d(i,k,iiPhL) * cff3 * (1 - cff2) ! mg C m^-3 d^-1
+# ifdef PI_CONSTANT
+
+              ! Light limitation (Jassby & Platt, 1976, Limnol Oceanogr, 
+              ! v21(4))
+              
+              alphaPhS = 2.2
+              alphaPhL = 5.6
+            
+              LightLimS0 = tanh(alphaPhS * I0/PmaxSs)
+              LightLimS1 = tanh(alphaPhS * I1/PmaxSs)
+              LightLimS2 = tanh(alphaPhS * I2/PmaxSs)
+              
+              LightLimL0 = tanh(alphaPhL * I0/PmaxLs)
+              LightLimL1 = tanh(alphaPhL * I1/PmaxLs)
+              LightLimL2 = tanh(alphaPhL * I2/PmaxLs)
 # else
-              ! Ammonium limitation
 
-!               NHLimS = Bio3d(i,k,iiNH4) / ( k2PhS + Bio3d(i,k,iiNH4) )
-!               NHLimL = Bio3d(i,k,iiNH4) / ( k2PhL + Bio3d(i,k,iiNH4) )
-!               if((NOLimS+NHLimS).gt.1.0_r8) then
-!                 NHLimS= 1.0_r8-NOLimS
-!               endif
-!               if((NOLimL+NHLimL).gt.1.0_r8) then
-!                 NHLimL= 1.0_r8-NOLimL
-!               endif
+              ! Light limitation, Jassby & Platt (1976, Limnol Oceanogr, 
+              ! v21(4)) but with modifiction so phytoplankton can take 
+              ! better advantage of low light levels (personal 
+              ! communication, Ken Coyle)
+              
+              amax = 10.0
+              amin =  2.2
+              ihi  = 40.0
+              ilo  = 30.0
+              alphaPhS0 = min(max(amax - (amax - amin)/(ihi-ilo)*(I0-ilo), amin), amax) ! mg C (mg chl-a)^-1 (E m^-2)^-1
+              alphaPhS1 = min(max(amax - (amax - amin)/(ihi-ilo)*(I1-ilo), amin), amax)
+              alphaPhS2 = min(max(amax - (amax - amin)/(ihi-ilo)*(I2-ilo), amin), amax)
 
-              ! NO3 uptake
-              
-              Gpp_NO3_PhS(i,k) = (Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*LightLimS*NOLimS*IronLimS ! mg C m^-3 d^-1
-              Gpp_NO3_PhL(i,k) = (Bio3d(i,k,iiPhS)/ccrPhL)*PmaxsL*LightLimL*NOLimL*IronLimL
-              
-!               Gpp_NO3_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*MIN(LightLimS, NOLimS, IronLimS))  ! mg C m^-3 d^-1
-!               Gpp_NO3_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL)*PmaxsL*MIN(LightLimL, NOLimL, IronLimL))
+              amax = 18.0
+              amin =  5.6
+              ihi  = 40.0
+              ilo  = 30.0
+              alphaPhL0 = min(max(amax - (amax - amin)/(ihi-ilo)*(I0-ilo), amin), amax)
+              alphaPhL1 = min(max(amax - (amax - amin)/(ihi-ilo)*(I1-ilo), amin), amax)
+              alphaPhL2 = min(max(amax - (amax - amin)/(ihi-ilo)*(I2-ilo), amin), amax)
 
-              ! NH4 uptake
-              
-              Gpp_NH4_PhS(i,k) = (Bio3d(i,k,iiPhS)/ccr)   *PmaxsS*LightLimS*NHLimS ! mg C m^-3 d^-1
-              Gpp_NH4_PhL(i,k) = (Bio3d(i,k,iiPhS)/ccrPhL)*PmaxsL*LightLimL*NHLimL
-              
-!               Gpp_NH4_PhS(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhS)/ccr)    * PmaxsS * MIN(LightLimS, NHLimS)) ! mg C m^-3 d^-1
-!               Gpp_NH4_PhL(i,k) = MAX(0.0_r8,(Bio3d(i,k,iiPhL)/ccrPhL) * PmaxsL * MIN(LightLimL ,NHLimL))
+              LightLimS0 = tanh(alphaPhS0 * I0/PmaxSs)
+              LightLimS1 = tanh(alphaPhS1 * I1/PmaxSs)
+              LightLimS2 = tanh(alphaPhS2 * I2/PmaxSs)
+
+              LightLimL0 = tanh(alphaPhL0 * I0/PmaxLs)
+              LightLimL1 = tanh(alphaPhL1 * I1/PmaxLs)
+              LightLimL2 = tanh(alphaPhL2 * I2/PmaxLs)
 
 # endif
+
+              ! Light at bottom of this layer is the top of next layer
+              
+              I0 = I2
+              
+              ! Total GPP, averaged over layer
+              
+              f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NLimS*IronLimS)
+              f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NLimS*IronLimS)
+              f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NLimS*IronLimS)
+
+              GppS = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+              Gpp_NH4_PhS(i,k) = GppS * fratioS        ! mg C m^-3 d^-1
+              Gpp_NO3_PhS(i,k) = GppS * (1 - fratioS)  ! mg C m^-3 d^-1
+              
+              f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NLimL*IronLimL)
+              f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NLimL*IronLimL)
+              f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NLimL*IronLimL)
+
+              GppL = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+              Gpp_NH4_PhL(i,k) = GppL * fratioL       ! mg C m^-3 d^-1
+              Gpp_NO3_PhL(i,k) = GppL * (1 - fratioL) ! mg C m^-3 d^-1
+
               ! Convert intermediate fluxes from volumetric to per area
 
               Gpp_NO3_PhS(i,k) = Gpp_NO3_PhS(i,k) * Hz(i,j,k) ! mg C m^-2 d^-1
@@ -1369,7 +1392,6 @@
                 Gpp_NO3_PhL(i,k) = 0; ! mg C m^-2 d^-1
                 Gpp_NH4_PhL(i,k) = 0; ! mg C m^-2 d^-1
               endif
-#endif
 
 #ifdef STATIONARY
 

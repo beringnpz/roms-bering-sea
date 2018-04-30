@@ -385,7 +385,7 @@
       DO j=Jstr,Jend
         DO i=Istr,Iend
           
-          ! This method of accounts for nonlinear light profiles within 
+          ! This method accounts for nonlinear light profiles within 
           ! a single layer. The nonlinearity arises in models with 
           ! coarse vertical resolution.  The effect of this 
           ! nonlinearity is probably insignificant when looking at the 
@@ -407,10 +407,15 @@
             ! chlorophyll, and optionally other organics/sediment/etc.
             
 #    ifdef NEWSHADE
+            ! Luokos et al (1997, Deep Sea Res. Part II,v44(97)), after 
+            ! Morel (1988, J. Geophys. Res., v93(C9))
             katten = k_ext + k_chl*chl**0.428
 #    elif defined NEWSHADESHALLOW
+            ! As above, but with modification so attenuation increases in 
+            ! shallow water
             katten = k_ext + k_chl*chl**0.428 + 2.0*exp(z_w(i,j,0)*0.05)
 #    elif defined COKELET  
+            ! Ned Cokelet, personal communication
             katten = k_ext + k_chlA*chl**k_chlB + k_chlC
 #    endif          
             
