@@ -1247,7 +1247,7 @@
                 fratioL = 0.0
               else
                 fratioL = NHLimL/(NOLimL + NHLimL)
-              end
+              endif
               
               ! Maximum uptake rate, carbon-specific and chl-specific
               ! (Frost 1987,  Mar Ecol Prog Ser, v39)
