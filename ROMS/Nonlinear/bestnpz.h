@@ -1360,7 +1360,12 @@
               f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NLimS*IronLimS)
               f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NLimS*IronLimS)
 
+# ifdef GPPMID
+              GppS = f1
+# else
               GppS = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+# endif
+              
               Gpp_NH4_PhS(i,k) = GppS * fratioS        ! mg C m^-3 d^-1
               Gpp_NO3_PhS(i,k) = GppS * (1 - fratioS)  ! mg C m^-3 d^-1
               
@@ -1368,7 +1373,11 @@
               f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NLimL*IronLimL)
               f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NLimL*IronLimL)
 
+# ifdef GPPMID
+              GppL = f1
+# else
               GppL = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+# endif
               Gpp_NH4_PhL(i,k) = GppL * fratioL       ! mg C m^-3 d^-1
               Gpp_NO3_PhL(i,k) = GppL * (1 - fratioL) ! mg C m^-3 d^-1
 
@@ -1396,7 +1405,8 @@
 #ifdef STATIONARY
 
               ! Save limitation terms for output
-
+              ! TODO: need to update these for Simpson's rule version and new nuts
+              
               st(i,j,k,nstp,1) = LightLimS
               st(i,j,k,nstp,2) = LightLimL
               st(i,j,k,nstp,3) = NOLimS

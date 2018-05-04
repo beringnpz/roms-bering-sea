@@ -435,8 +435,11 @@
             f1 = Ifrac*((1-a_frac)*exp(z1*katten) + a_frac*(exp(z1/a_mu1)))
             f2 = Ifrac*((1-a_frac)*exp(z2*katten) + a_frac*(exp(z2/a_mu1)))
             
-            swdk(i,j,k) = (((z0-z1)/3) * (f0 + 4*f1 + f2))/(z0-z2)
-            
+#    ifdef GPPMID
+              swdk(i,j,k) = f1
+#    else
+              swdk(i,j,k) = (((z0-z1)/3) * (f0 + 4*f1 + f2))/(z0-z2)
+#    endif            
             Ifrac = f2
             
           END DO
