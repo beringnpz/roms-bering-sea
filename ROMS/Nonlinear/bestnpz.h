@@ -1406,9 +1406,14 @@
 
               ! Save limitation terms for output
               ! TODO: need to update these for Simpson's rule version and new nuts
-              
-              st(i,j,k,nstp,1) = LightLimS
-              st(i,j,k,nstp,2) = LightLimL
+
+# ifdef GPPMID              
+              st(i,j,k,nstp,1) = LightLimS1
+              st(i,j,k,nstp,2) = LightLimL1
+# else
+              st(i,j,k,nstp,1) = ((z0-z1)/3 * (LightLimS0 + 4*LightLimS1 + LightLimS2))/(z0-z2)
+              st(i,j,k,nstp,2) = ((z0-z1)/3 * (LightLimL0 + 4*LightLimL1 + LightLimL2))/(z0-z2)
+# endif
               st(i,j,k,nstp,3) = NOLimS
               st(i,j,k,nstp,4) = NOLimL
               st(i,j,k,nstp,5) = NHLimS
