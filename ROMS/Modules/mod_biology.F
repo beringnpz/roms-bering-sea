@@ -1223,7 +1223,7 @@
       ! Light
 
       real(r8), dimension(Ngrids) :: PARfrac       ! nondimensional
-      real(r8) :: k_ext, k_chl, k_extZ, k_chlA, k_chlB, k_chlC
+      real(r8) :: k_ext, k_chl, k_extZ, k_chlA, k_chlB, k_chlC, k_shallow
       real(r8) :: a_frac, a_mu1
 
       ! Conversion factors

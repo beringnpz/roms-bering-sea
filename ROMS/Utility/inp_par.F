@@ -7680,13 +7680,13 @@
      &          'PhS Doubling rate exponent'
           WRITE (out,70) DpL, 'DpL',                                    &
      &          'PhL Doubling rate exponent'
-          WRITE (out,70) k1PhS, 'k1PhS',                                &
+          WRITE (out,70) k1PhS, 'k1PhS',                                & ! deprecated
      &          'PhS Half-saturation constant for NO3 limitation'
-          WRITE (out,70) k1PhL, 'k1PhL',                                &
+          WRITE (out,70) k1PhL, 'k1PhL',                                & ! deprecated
      &          'PhL Half-saturation constant for NO3 limitation'
-          WRITE (out,70) k2PhS, 'k2PhS',                                &
+          WRITE (out,70) k2PhS, 'k2PhS',                                & ! deprecated
      &          'PhS Half-saturation constant for NH4 limitation'
-          WRITE (out,70) k2PhL, 'k2PhL',                                &
+          WRITE (out,70) k2PhL, 'k2PhL',                                & ! deprecated
      &          'PhL Half-saturation constant for NH4 limitation'
           WRITE (out,70) FeCritPS, 'FeCritPS',                          &
      &          'related to iron limitation' 
@@ -7696,6 +7696,19 @@
      &          'PhS Half-saturation constant for iron (umol/m^3)'
           WRITE (out,70) kfePhL, 'kfePhL',                              &
      &          'PhL Half-saturation constant for iron (umol/m^3)'
+          WRITE (out,70) kno3S, 'kno3S',                                &
+     &          'PhS Half-saturation constant for nitrate (mmol/m^3)'
+          WRITE (out,70) kno3L, 'kno3L',                                &
+     &          'PhL Half-saturation constant for nitrate (mmol/m^3)'
+          WRITE (out,70) kh4S, 'knh4S',                                 &
+     &          'PhS Half-saturation constant for ammonium (mmol/m^3)'
+          WRITE (out,70) knh4L, 'knh4L',                                &
+     &          'PhL Half-saturation constant for ammonium (mmol/m^3)'
+          WRITE (out,70) psiS, 'psiS',                                  &
+     &          'PhS Ammonium inhibition constant (mmol/m^3)'
+          WRITE (out,70) psiL, 'psiL',                                  &
+     &          'PhL Ammonium inhibition constant (mmol/m^3)'
+     
      
           ! Feeding preference
      
