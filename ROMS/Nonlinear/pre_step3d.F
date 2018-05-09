@@ -426,8 +426,6 @@
             ! equation, following Paulson and Simpson (1977, J. Phys. 
             ! Oceanogr. v7:6) (same as lmd_swfrac_tile), but applies 
             ! attenuation due to chlorophyll, etc. first.
-            ! TODO: are we doubling up the clear-water attenuation here?
-            ! Need to read up of Jerlov water type attenuation
 
             z0 = 0 ! m, measured from top of layer
             z2 = z_w(i,j,k-1) - z_w(i,j,k)

@@ -6714,9 +6714,9 @@
             Npts=load_r(Nval, Rval, Ngrids, Parfrac)
           ELSE IF (TRIM(KeyWord).eq.'k_ext') THEN
             Npts=load_r(Nval, Rval, 1, k_ext)
-          ELSE IF (TRIM(KeyWord).eq.'k_chl') THEN
+          ELSE IF (TRIM(KeyWord).eq.'k_chl') THEN ! TODO: deprecated
             Npts=load_r(Nval, Rval, 1, k_chl)
-          ELSE IF (TRIM(KeyWord).eq.'k_extZ') THEN
+          ELSE IF (TRIM(KeyWord).eq.'k_extZ') THEN ! TODO: deprecated
              Npts=load_r(Nval, Rval, 1, k_extZ)
           ELSE IF (TRIM(KeyWord).eq.'k_chlA') THEN
              Npts=load_r(Nval, Rval, 1, k_chlA)
@@ -6728,6 +6728,8 @@
              Npts=load_r(Nval, Rval, 1, a_frac)
           ELSE IF (TRIM(KeyWord).eq.'a_mu1') THEN
              Npts=load_r(Nval, Rval, 1, a_mu1)
+          ELSE IF (TRIM(KeyWord).eq.'k_shallow') THEN
+             Npts=load_r(Nval, Rval, 1, k_shallow)
              
           ! Conversion factors
             
@@ -7645,15 +7647,17 @@
           WRITE (out,70) k_extZ, 'k_extZ',                              &
      &          'Cokelet light parameter' 
           WRITE (out,70) k_chlA, 'k_chlA',                              &
-     &          'Cokelet light parameter' 
+     &          'Factor for extinction coefficient due to phytoplankton (1/m)' 
           WRITE (out,70) k_chlB, 'k_chlB',                              &
-     &          'Cokelet light parameter' 
+     &          'Exponent for extinction coefficient due to phytoplankton' 
           WRITE (out,70) k_chlC, 'k_chlC',                              &
-     &          'Cokelet light parameter' 
+     &          'Extinction coefficient due to CDOM/sediment/detritus (1/m)' 
           WRITE (out,70) a_frac, 'a_frac',                              &
-     &          'light parameter' 
+     &          'R fraction for attenuation of shortwave' 
           WRITE (out,70) a_mu1, 'a_mu1',                                &
-     &          'light parameter' 
+     &          'Attenuation length for shortwave in deep water (m)' 
+          WRITE (out,70) k_shallow, 'k_shallow',                        &
+     &          'Factor for bottom-depth-based extinction coefficient' 
      
           ! Conversion factors
      
