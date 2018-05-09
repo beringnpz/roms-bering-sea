@@ -405,19 +405,21 @@
           
             ! Attenuation coefficient, including that due to clear water, 
             ! chlorophyll, and optionally other organics/sediment/etc.
-            
-#    ifdef NEWSHADE
-            ! Luokos et al (1997, Deep Sea Res. Part II,v44(97)), after 
+            ! Citations for indended parameter sets are as follows:
+            !
+            ! Luokos et al (1997, Deep Sea Res. Part II,v44(97)), after
             ! Morel (1988, J. Geophys. Res., v93(C9))
-            katten = k_ext + k_chl*chl**0.428
-#    elif defined NEWSHADESHALLOW
-            ! As above, but with modification so attenuation increases in 
-            ! shallow water
-            katten = k_ext + k_chl*chl**0.428 + 2.0*exp(z_w(i,j,0)*0.05)
-#    elif defined COKELET  
-            ! Ned Cokelet, personal communication
-            katten = k_ext + k_chlA*chl**k_chlB + k_chlC
-#    endif          
+            ! k_ext = 0.0384, k_chlA = 0.0518, k_chlB = 0.428, 
+            ! k_chlC = 0, k_shallow = 0
+            !
+            ! Ned Cokelet, personal communication (based on BEST 
+            ! cruises and following the method of Morel (1988)
+            ! k_ext = 0.034, k_chlA = 0.1159, k_chlB = 0.2829, 
+            ! k_chlC = 0, k_shallow = 0
+            !
+            ! When used in the past, k_shallow = 2.0 (citation unknown)
+            
+            katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)       
             
             ! Fraction of light in layer (averaged over layer using 
             ! Simpson's rule).  Attenuation uses Jerlov water type 
