@@ -2306,29 +2306,29 @@
       iEupO=ic+11
       iDet=ic+12
       iDetF=ic+13
-#ifdef JELLY
+# ifdef JELLY
       iJel=ic+14
       ic=ic+14
-#else
+# else
       ic=ic+13
-#endif
+# endif
 
 # ifdef IRON_LIMIT
       iFe=ic+1
       ic=ic+1
 # endif
 # ifdef CLIM_ICE_1D
-       i1CI=ic+1
-       ic=ic+1
+      i1CI=ic+1
+      ic=ic+1
 # endif
 # ifdef AKT_3D
-       iAKt3=ic+1
-       ic=ic+1
+      iAKt3=ic+1
+      ic=ic+1
 # endif
 
-#  ifdef BIOFLUX
-        iBF=1
-#  endif
+# ifdef BIOFLUX
+      iBF=1
+# endif
 
 # ifdef STATIONARY
       DO i=1,NBTS
@@ -2365,26 +2365,26 @@
 #  ifdef JELLY
       iJelPrd = 8
 #  endif
-# ifdef FEAST
-        iFCopMort  = 9
-        iFNCaSMort  = 10
-        iFEupSMort  = 11
-        iQCopMort  = 12
-        iQNCaSMort = 13
-        iQNCaOMort = 14
-        iQEupSMort = 15
-        iQEupOMort = 16
-        iFishOne   = 17
-        iFishTwo   = 18
-        iFishThree = 19
-        iFishFour  = 20
-        iFishFive  = 21
-        iFishSix   = 22
-        iFishSeven = 23
-        iFishEight = 24
-        iFNCaOMort = 25
-        iFEupOMort = 26
-# endif
+#  ifdef FEAST
+      iFCopMort  = 9
+      iFNCaSMort  = 10
+      iFEupSMort  = 11
+      iQCopMort  = 12
+      iQNCaSMort = 13
+      iQNCaOMort = 14
+      iQEupSMort = 15
+      iQEupOMort = 16
+      iFishOne   = 17
+      iFishTwo   = 18
+      iFishThree = 19
+      iFishFour  = 20
+      iFishFive  = 21
+      iFishSix   = 22
+      iFishSeven = 23
+      iFishEight = 24
+      iFNCaOMort = 25
+      iFEupOMort = 26
+#  endif
 # endif
 # ifdef PROD2
       DO i=1,NBPT2
@@ -2396,30 +2396,28 @@
 # endif
 
 # ifdef BENTHIC
-          DO i=1,NBEN
-            idben(i)=i
-          END DO
-       iBen=1
-       iDetBen=2
+      DO i=1,NBEN
+        idben(i)=i
+      END DO
+      iBen=1
+      iDetBen=2
 # endif
 # ifdef ICE_BIO
-          DO i=1,NIB
-            idice(i)=i
-          END DO
-#   ifdef CLIM_ICE_1D
-          iIceLog=1
+      DO i=1,NIB
+        idice(i)=i
+      END DO
+#  ifdef CLIM_ICE_1D
+      iIceLog=1
 
-       iIcePhL=1
-       iIceNO3=2
-       iIceNH4=3
-       iIceZ=4
-
-# else ifdef BERING_10k
-        iIcePhL=1
-       iIceNO3=2
-       iIceNH4=3
-
-# endif
+      iIcePhL=1
+      iIceNO3=2
+      iIceNH4=3
+      iIceZ=4
+#  else
+      iIcePhL=1
+      iIceNO3=2
+      iIceNH4=3
+#  endif
 # endif
 
 #elif defined BIO_GOANPZ

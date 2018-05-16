@@ -1,4 +1,4 @@
- #include "cppdefs.h"
+#include "cppdefs.h"
       SUBROUTINE biology (ng,tile)
 
 !========================================== Alexander F. Shchepetkin ===
@@ -26,12 +26,12 @@
 
       ! TODO: is ICE_BIO bestnpz-specific?
 #if defined BERING_10K
-#if defined ICE_BIO
+# if defined ICE_BIO
       USE mod_ice
-#endif
-#if defined FEAST
+# endif
+# if defined FEAST
       USE mod_feast
-#endif
+# endif
 #endif
 # if defined CLIM_ICE_1D
       USE mod_clima

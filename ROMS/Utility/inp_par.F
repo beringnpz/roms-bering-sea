@@ -7700,7 +7700,7 @@
      &          'PhS Half-saturation constant for nitrate (mmol/m^3)'
           WRITE (out,70) kno3L, 'kno3L',                                &
      &          'PhL Half-saturation constant for nitrate (mmol/m^3)'
-          WRITE (out,70) kh4S, 'knh4S',                                 &
+          WRITE (out,70) knh4S, 'knh4S',                                 &
      &          'PhS Half-saturation constant for ammonium (mmol/m^3)'
           WRITE (out,70) knh4L, 'knh4L',                                &
      &          'PhL Half-saturation constant for ammonium (mmol/m^3)'
@@ -7708,7 +7708,6 @@
      &          'PhS Ammonium inhibition constant (mmol/m^3)'
           WRITE (out,70) psiL, 'psiL',                                  &
      &          'PhL Ammonium inhibition constant (mmol/m^3)'
-     
      
           ! Feeding preference
      
