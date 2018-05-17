@@ -1232,10 +1232,10 @@
               ! Nitrogen limitation
               ! (Wroblewski 1977, Sarmiento & Gruber 2006, etc.)
               
-              NOLimS = (Bio3d(i,k,iiNO3)/(kno3S + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4))
-              NHLimS = (Bio3d(i,k,iiNH4)/(knh4S + Bio3d(i,k,iiNH4)))
-              NOLimL = (Bio3d(i,k,iiNO3)/(kno3L + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4))
-              NHLimL = (Bio3d(i,k,iiNH4)/(knh4L + Bio3d(i,k,iiNH4)))
+              NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4))
+              NHLimS = (Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))
+              NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4))
+              NHLimL = (Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4)))
               NLimS = min(NOLimS + NHLimS, 1.0)
               NLimL = min(NOLimL + NHLimL, 1.0)
               if (NLimS .le. 0.0) then
