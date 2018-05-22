@@ -6752,6 +6752,10 @@
             Npts=load_r(Nval, Rval, 1, DpS)
           ELSE IF (TRIM(KeyWord).eq.'DpL') THEN
             Npts=load_r(Nval, Rval, 1, DpL)
+          ELSE IF (TRIM(KeyWord).eq.'alphaPhS') THEN
+            Npts=load_r(Nval, Rval, 1, DpL)
+          ELSE IF (TRIM(KeyWord).eq.'alphaPhL') THEN
+            Npts=load_r(Nval, Rval, 1, DpL)
           ELSE IF (TRIM(KeyWord).eq.'k1PhS') THEN
             Npts=load_r(Nval, Rval, 1, k1PhS)
           ELSE IF (TRIM(KeyWord).eq.'k1PhL') THEN
@@ -6768,14 +6772,6 @@
             Npts=load_r(Nval, Rval, 1, kfePhS)
           ELSE IF (TRIM(KeyWord).eq.'kfePhL') THEN
             Npts=load_r(Nval, Rval, 1, kfePhL)
-          ELSE IF (TRIM(KeyWord).eq.'kno3S') THEN
-              Npts=load_r(Nval, Rval, 1, kno3S)
-          ELSE IF (TRIM(KeyWord).eq.'kno3L') THEN
-              Npts=load_r(Nval, Rval, 1, kno3L)
-          ELSE IF (TRIM(KeyWord).eq.'knh4S') THEN
-              Npts=load_r(Nval, Rval, 1, knh4S)
-          ELSE IF (TRIM(KeyWord).eq.'knh4L') THEN
-              Npts=load_r(Nval, Rval, 1, knh4L)
           ELSE IF (TRIM(KeyWord).eq.'psiS') THEN
               Npts=load_r(Nval, Rval, 1, psiS)
           ELSE IF (TRIM(KeyWord).eq.'psiL') THEN
@@ -7680,13 +7676,17 @@
      &          'PhS Doubling rate exponent'
           WRITE (out,70) DpL, 'DpL',                                    &
      &          'PhL Doubling rate exponent'
-          WRITE (out,70) k1PhS, 'k1PhS',                                & ! deprecated
+          WRITE (out,70) alphaPhS, 'alphaPhS',                          &
+     &          'PhS PI curve slope'
+          WRITE (out,70) alphaPhL, 'alphaPhL',                          &
+     &          'PhL PI curve slope'
+          WRITE (out,70) k1PhS, 'k1PhS',                                & 
      &          'PhS Half-saturation constant for NO3 limitation'
-          WRITE (out,70) k1PhL, 'k1PhL',                                & ! deprecated
+          WRITE (out,70) k1PhL, 'k1PhL',                                & 
      &          'PhL Half-saturation constant for NO3 limitation'
-          WRITE (out,70) k2PhS, 'k2PhS',                                & ! deprecated
+          WRITE (out,70) k2PhS, 'k2PhS',                                & 
      &          'PhS Half-saturation constant for NH4 limitation'
-          WRITE (out,70) k2PhL, 'k2PhL',                                & ! deprecated
+          WRITE (out,70) k2PhL, 'k2PhL',                                & 
      &          'PhL Half-saturation constant for NH4 limitation'
           WRITE (out,70) FeCritPS, 'FeCritPS',                          &
      &          'related to iron limitation' 
@@ -7696,14 +7696,6 @@
      &          'PhS Half-saturation constant for iron (umol/m^3)'
           WRITE (out,70) kfePhL, 'kfePhL',                              &
      &          'PhL Half-saturation constant for iron (umol/m^3)'
-          WRITE (out,70) kno3S, 'kno3S',                                &
-     &          'PhS Half-saturation constant for nitrate (mmol/m^3)'
-          WRITE (out,70) kno3L, 'kno3L',                                &
-     &          'PhL Half-saturation constant for nitrate (mmol/m^3)'
-          WRITE (out,70) knh4S, 'knh4S',                                 &
-     &          'PhS Half-saturation constant for ammonium (mmol/m^3)'
-          WRITE (out,70) knh4L, 'knh4L',                                &
-     &          'PhL Half-saturation constant for ammonium (mmol/m^3)'
           WRITE (out,70) psiS, 'psiS',                                  &
      &          'PhS Ammonium inhibition constant (mmol/m^3)'
           WRITE (out,70) psiL, 'psiL',                                  &

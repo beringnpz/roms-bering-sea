@@ -446,8 +446,8 @@
       real(r8) :: LightLimL, NOLimL, NHLimL, IronLimL, NLimL
       real(r8) :: LightLimS0, LightLimS1, LightLimS2
       real(r8) :: LightLimL0, LightLimL1, LightLimL2
-      real(r8) :: alphaPhS, alphaPhS0, alphaPhS1, alphaPhS2
-      real(r8) :: alphaPhL, alphaPhL0, alphaPhL1, alphaPhL2
+      real(r8) :: alphaPhS0, alphaPhS1, alphaPhS2
+      real(r8) :: alphaPhL0, alphaPhL1, alphaPhL2
       real(r8) :: amax, amin, ihi, ilo
       real(r8) :: DrateS, DrateL
       real(r8) :: PmaxS, PmaxL, PmaxSs, PmaxLs
@@ -1308,9 +1308,6 @@
 
               ! Light limitation (Jassby & Platt, 1976, Limnol Oceanogr, 
               ! v21(4))
-              
-              alphaPhS = 2.2
-              alphaPhL = 5.6
             
               LightLimS0 = tanh(alphaPhS * I0/PmaxSs)
               LightLimS1 = tanh(alphaPhS * I1/PmaxSs)
