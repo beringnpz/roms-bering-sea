@@ -1326,16 +1326,16 @@
               ! better advantage of low light levels (personal 
               ! communication, Ken Coyle)
               
-              amax = 10.0
-              amin =  2.2
+              amax = 18.0
+              amin =  5.6
               ihi  = 40.0
               ilo  = 30.0
               alphaPhS0 = min(max(amax - (amax - amin)/(ihi-ilo)*(I0-ilo), amin), amax) ! mg C (mg chl-a)^-1 (E m^-2)^-1
               alphaPhS1 = min(max(amax - (amax - amin)/(ihi-ilo)*(I1-ilo), amin), amax)
               alphaPhS2 = min(max(amax - (amax - amin)/(ihi-ilo)*(I2-ilo), amin), amax)
-
-              amax = 18.0
-              amin =  5.6
+              
+              amax = 10.0
+              amin =  2.2
               ihi  = 40.0
               ilo  = 30.0
               alphaPhL0 = min(max(amax - (amax - amin)/(ihi-ilo)*(I0-ilo), amin), amax)
