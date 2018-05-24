@@ -1404,7 +1404,6 @@
 #ifdef STATIONARY
 
               ! Save limitation terms for output
-              ! TODO: need to update these for Simpson's rule version and new nuts
 
 # ifdef GPPMID              
               st(i,j,k,nstp,1) = LightLimS1
@@ -1435,8 +1434,7 @@
               ! the ice skeletal layer is relocated to the
               ! top water layer.  Will be 0 for all but k = N(ng)
 
-!               IcePhlAvail = Bio2d(i,k,iiIcePhl)/Hz(i,j,k) ! mg C m^-3
-              IcePhlAvail = 0.0_r8 ! TODO: debugging
+              IcePhlAvail = Bio2d(i,k,iiIcePhl)/Hz(i,j,k) ! mg C m^-3
 #else
               ! Placeholder to simplify code in no-ice runs
 
@@ -1594,7 +1592,7 @@
               Gra_EupS_Jel(i,k) = fpEupJel * Bio3d(i,k,iiEupS)**2 * cff2 * cff3
               Gra_EupO_Jel(i,k) = fpEupJel * Bio3d(i,k,iiEupO)**2 * cff2 * cff3
 
-              ! Note: mentioned in docs that gammaJel can be >1 to allow
+              ! Note: mentioned in Gibson & Spitz, 2011 that gammaJel can be >1 to allow
               ! for an outside food source.  However, GG's code doesn't
               ! specify how the flux to detritus might change in that
               ! case (as written currently, that extra would come out of
@@ -1758,7 +1756,7 @@
           Res_EupS_NH4 = exp(ktbmE * (Temp - TrefE)) * BasMetEup * Bio3d(:,:,iiEupS)
           Res_EupO_NH4 = exp(ktbmE * (Temp - TrefE)) * BasMetEup * Bio3d(:,:,iiEupO)
 
-          ! Jellyfish
+          ! Jellyfish (Uye & Shimauchi, 2005, J. Plankton Res. 27 (3))
 
           Res_Jel_NH4 = Q10Jelr ** ((Temp-Q10JelTr)/10.0_r8) * respJel * Bio3d(:,:,iiJel)
 
@@ -1954,10 +1952,11 @@
      &                            cff0*BenPred*Bio2d(i,1,iiBen)**2  ! mg C m^-2 d^-1
 
             ! Benthic remineralization: assumes only the top 25% is
-            ! available to remineralize to NH4 (in bottom layer)
+            ! available to remineralize to NH4 (in bottom layer) 
+            ! (Kawamiya et al., 2000, J. Mar. Syst., v25(2))
 
             PON = Bio3d(i,1,iiDetBen)*0.25*xi  ! Benthic Particulate organic nitrogen
-            cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! Kawamiya 2000, mmol N m^-3 d^-1
+            cff1 = Pv0*exp(PvT*Temp(i,1))*PON  ! mmol N m^-3 d^-1
 
             Rem_DetBen_NH4(i,1) = cff1*Hz(i,j,1)/xi ! mg C m^-2 d^-1
 
@@ -1968,6 +1967,9 @@
           !-----------------
           ! Ice Sub Model
           !-----------------
+
+          ! All equations after Jin et al., 2006 (Ann. Glaciol., vol. 44) unless otherwise 
+          ! specified
 
           DO i=Istr,Iend
             if (ice_status(i,j) .ge. 1.0_r8) then
@@ -1992,7 +1994,7 @@
               ! salinity in the ice.  This value isn't tracked explicitly
               ! by the ice model, so instead we use the brine salinty vs
               ! ice temperature polynomial fit from Arrigo 1993 Appendix
-              ! A to estimate brine salinity.
+              ! A (JGR, v98(C4)) to estimate brine salinity.
 
               if (ti(i,j,nstp) .ge. -22.9_r8) THEN
                 cff1=-3.9921
