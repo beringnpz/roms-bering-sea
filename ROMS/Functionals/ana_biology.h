@@ -22,17 +22,12 @@
       USE mod_clima
 # endif
 # ifdef ICE_MODEL
-#ifdef  ICE_BIO
+#  ifdef  ICE_BIO
       USE mod_ice
-# endif
-#endif     
-
+#  endif
+# endif     
 #endif
 
-
-#ifdef BEST_NPZ
-      USE mod_grid
-#endif
 !
 ! Imported variable declarations.
 !

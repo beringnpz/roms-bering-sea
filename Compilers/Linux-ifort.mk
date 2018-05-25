@@ -53,7 +53,16 @@ else
     NETCDF_INCDIR ?= /home/aydink/include
     NETCDF_LIBDIR ?= /home/aydink/lib
 endif
+# KAK 2017/10/11 netcdf library may be split across two files 
+# (libnetcdf.a and libnetcdff.a)... this part is very 
+# computer-specific at the moment, designed so code will work on mox with 
+# two files (HOSTNAME is eithermox1.hyak.local or mox2.hyak.local) or 
+# beast or cluster1 with a single file.
+ifeq ($(shell echo $(HOSTNAME) | head -c 3), mox)
+             LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf
+else
              LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
+endif
 ifdef USE_NETCDF4
              LIBS += -L$(HDF5_LIBDIR) -lhdf5_hl -lhdf5 -lz
 endif

@@ -175,6 +175,9 @@
       real(r8) :: my_maxrho
 # ifdef BIOLOGY
       real(r8) :: my_maxbio(NBT)
+#  ifdef BEST_NPZ
+      integer :: nanbio = 0
+#  endif
 # endif
 #endif
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: ke2d
@@ -191,17 +194,17 @@
 !
 
         
-	
+  
       IF (MOD(iic(ng)-1,ninfo(ng)).eq.0) THEN
         my_maxspeed=0.0_r8
-	
+  
 #ifdef SOLVE3D
        
         my_maxrho=-1.0E+20_r8
 # ifdef BIOLOGY 
        
         DO ibt=1,NBT
-	
+  
           my_maxbio(ibt)=-1.0E+20_r8
         END DO
 # endif
@@ -216,7 +219,7 @@
           cff=g/rho0
           DO k=N(ng),1,-1
             DO i=Istr,Iend
-	   
+     
               u2v2=u(i  ,j,k,nstp)*u(i  ,j,k,nstp)+                     &
      &             u(i+1,j,k,nstp)*u(i+1,j,k,nstp)+                     &
      &             v(i,j  ,k,nstp)*v(i,j  ,k,nstp)+                     &
@@ -236,6 +239,11 @@
               itrc=idbio(ibt)
               DO i=Istr,Iend
                 my_maxbio(ibt)=MAX(my_maxbio(ibt),t(i,j,k,nstp,itrc))
+#  ifdef BEST_NPZ
+                if (t(i,j,k,nstp,itrc) /= t(i,j,k,nstp,itrc)) then
+                  nanbio = 1
+                endif
+#  endif                
               END DO
             END DO
           END DO
@@ -398,9 +406,9 @@
           IF (Master) WRITE (stdout,20) iic(ng)-1, time_code(ng),       &
      &                                  avgke, avgpe, avgkp, volume
  20       FORMAT (i7,1x,a,4(1pe14.6))
-!#ifdef BIOLOGY
+! #ifdef BIOLOGY
 !          IF (Master) print *, 'BIO in diag ', maxbio(:,ng)
-!#endif
+! #endif
           IF (Master) CALL my_flush (stdout)
 !
 !  If blowing-up, set exit_flag to stop computations.
@@ -420,7 +428,7 @@
 !
           IF (maxspeed(ng).gt.max_speed) THEN
             exit_flag=1
-	    IF (Master) print *, 'DIAG speed trouble ', maxspeed(ng)
+          IF (Master) print *, 'DIAG speed trouble ', maxspeed(ng)
          END IF
 #ifdef SOLVE3D
 !
@@ -431,15 +439,45 @@
 !
           IF (maxrho(ng).gt.max_rho) THEN
             exit_flag=1
-	    IF (Master) print *, 'DIAG rho trouble ', maxrho(ng)
+            IF (Master) print *, 'DIAG rho trouble ', maxrho(ng)
           END IF
 # ifdef BIOLOGY
-!          DO ibt=1,NBT
-!            IF (maxbio(ibt,ng).gt.max_bio(ibt)) THEN
-!              IF (Master) print *, 'BIO trouble in DIAG ', maxbio(:,ng)
-!              exit_flag=1
-!            END IF
-!          END DO
+#  ifdef BEST_NPZ
+          IF (nanbio == 1) THEN
+            exit_flag=1
+            IF (Master) print *, 'DIAG NaN in biology'
+          END IF
+#  endif
+          DO ibt=1,NBT
+            IF (maxbio(ibt,ng).gt.max_bio(ibt)) THEN
+#  ifdef BEST_NPZ
+              IF (MASTER) THEN
+                
+                print *, "DIAG Bio trouble: NO3:  ", maxbio(iNO3 -NAT, ng)
+                print *, "                  NH4:  ", maxbio(iNH4 -NAT, ng)
+                print *, "                  PhS:  ", maxbio(iPhS -NAT, ng)
+                print *, "                  PhL:  ", maxbio(iPhL -NAT, ng)
+                print *, "                  MZL:  ", maxbio(iMZL -NAT, ng)
+                print *, "                  Cop:  ", maxbio(iCop -NAT, ng)
+                print *, "                  NCaS: ", maxbio(iNCaS-NAT,ng)
+                print *, "                  EupS: ", maxbio(iEupS-NAT,ng)
+                print *, "                  NCaO: ", maxbio(iNCaO-NAT,ng)
+                print *, "                  EupO: ", maxbio(iEupO-NAT,ng)
+                print *, "                  Det:  ", maxbio(iDet -NAT,ng)
+                print *, "                  DetF: ", maxbio(iDetF-NAT,ng)
+#   ifdef JELLY
+                print *, "                  Jel:  ", maxbio(iJel-NAT,ng)
+#   endif
+#   ifdef IRON_LIMIT
+                print *, "                  Fe:   ", maxbio(iFe-NAT,ng)
+#   endif  
+              END IF
+#  else
+              IF (Master) print *, 'BIO trouble in DIAG ', maxbio(:,ng)
+#  endif
+              exit_flag=1
+            END IF
+          END DO
 # endif
 #endif
 

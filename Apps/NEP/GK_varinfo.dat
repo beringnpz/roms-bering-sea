@@ -6429,7 +6429,7 @@
   'milligram carbon meter-2'
   'benthic detritus, scalar, series'                                          
   'bio_time'
-  'idBvar(iBenDet)'
+  'idBvar(iDetBen)'
   'r3dvar'
   1.0d0
   

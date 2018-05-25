@@ -50,6 +50,9 @@
 # ifdef TS_PSOURCE
       USE mod_sources
 # endif
+# ifdef BEST_NPZ
+      USE mod_biology
+# endif
       USE mod_stepping
 !
 !  Imported variable declarations.
@@ -161,6 +164,9 @@
 !
       USE mod_param
       USE mod_scalars
+# ifdef BEST_NPZ
+      USE mod_biology
+# endif
 !
 # if defined EW_PERIODIC || defined NS_PERIODIC
       USE exchange_3d_mod, ONLY : exchange_r3d_tile
@@ -322,6 +328,9 @@
 
 # ifdef SOLAR_SOURCE
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS,0:N(ng)) :: swdk
+#  ifdef BEST_NPZ
+      real(r8) :: Ifrac, chl, z0, z1, z2, f0, f1, f2, katten
+#  endif
 # endif
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: FE
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: FX
@@ -329,12 +338,12 @@
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: grad
 
 !ajh coefs for bio absorption
-      real(r8), parameter :: ccr = 65.0d0
-      real(r8), parameter :: ccrPhL = 25.0d0
-      real(r8), parameter :: k_ext = .046d0
-      real(r8), parameter :: k_chl = .121d0
-      real(r8), parameter :: a_frac = .58d0
-      real(r8), parameter :: a_mu1 = .35d0
+!       real(r8), parameter :: ccr = 65.0d0
+!       real(r8), parameter :: ccrPhL = 25.0d0
+!       real(r8), parameter :: k_ext = .046d0
+!       real(r8), parameter :: k_chl = .121d0
+!       real(r8), parameter :: a_frac = .58d0
+!       real(r8), parameter :: a_mu1 = .35d0
 
       integer :: kk
       real(r8) :: PhSsum,PhLsum,PhSave,PhLave
@@ -366,31 +375,78 @@
      &                        -1.0_r8, FX, FE)
         DO j=Jstr,Jend
           DO i=Istr,Iend
-#   if defined BEST_NPZ
-            ! use bio to set shortwave absorption
-            PhSsum=0
-            PhLsum=0
-            do kk=N(ng),k,-1
-               PhSsum = PhSsum + t(i,j,kk,nstp,iPhS)*(z_w(i,j,kk)-z_w(i,j,kk-1))
-               PhLsum = PhLsum + t(i,j,kk,nstp,iPhL)*(z_w(i,j,kk)-z_w(i,j,kk-1))
-            end do
-            PhSave = PhSsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
-            PhLave = PhLsum/(z_w(i,j,N(ng))-z_w(i,j,k-1))
-
-            cffa1 = max(1.e-3,(PhSave/ccr) +                & 
-     &                 (PhLave/ccrPhL))
-            cffa2 = k_ext+2.00_r8*exp(z_w(i,j,0)*.05)
-            cffa3 = (k_chl*(cffa1)**(0.428_r8))   
-            FX(i,j) = z_w(i,j,N(ng))-z_w(i,j,k)
-            swdk(i,j,k) = (1.-a_frac)*EXP(-1.*FX(i,j)*(cffa2+cffa3))    &
-     &                  + a_frac*EXP(-1.*FX(i,j)/a_mu1)
-#   else
             swdk(i,j,k)=FE(i,j)
-#   endif
-
           END DO
         END DO
       END DO
+
+#   ifdef BEST_NPZ
+
+      DO j=Jstr,Jend
+        DO i=Istr,Iend
+          
+          ! This method accounts for nonlinear light profiles within 
+          ! a single layer. The nonlinearity arises in models with 
+          ! coarse vertical resolution.  The effect of this 
+          ! nonlinearity is probably insignificant when looking at the 
+          ! affect on heat content, so it's likely overkill here.
+          ! But the nonlinearity can significantly reduce primary 
+          ! production in surface layers over deep water; we replicate 
+          ! the light attenuation calculations used in the biological 
+          ! module here to maintain internal consistency.
+          
+          Ifrac = 1
+          DO k=N(ng),1,-1
+          
+            ! chl-a in layer
+            
+            chl = max(0.0_r8, t(i,j,k,nstp,iPhS))/ccr +                 &
+     &            max(0.0_r8, t(i,j,k,nstp,iPhL))/ccrPhL
+          
+            ! Attenuation coefficient, including that due to clear water, 
+            ! chlorophyll, and optionally other organics/sediment/etc.
+            ! Citations for indended parameter sets are as follows:
+            !
+            ! Luokos et al (1997, Deep Sea Res. Part II,v44(97)), after
+            ! Morel (1988, J. Geophys. Res., v93(C9))
+            ! k_ext = 0.0384, k_chlA = 0.0518, k_chlB = 0.428, 
+            ! k_chlC = 0, k_shallow = 0
+            !
+            ! Ned Cokelet, personal communication (based on BEST 
+            ! cruises and following the method of Morel (1988)
+            ! k_ext = 0.034, k_chlA = 0.1159, k_chlB = 0.2829, 
+            ! k_chlC = 0, k_shallow = 0
+            !
+            ! When used in the past, k_shallow = 2.0 (citation unknown)
+            
+            katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)       
+            
+            ! Fraction of light in layer (averaged over layer using 
+            ! Simpson's rule).  Attenuation uses Jerlov water type 
+            ! equation, following Paulson and Simpson (1977, J. Phys. 
+            ! Oceanogr. v7:6) (same as lmd_swfrac_tile), but applies 
+            ! attenuation due to chlorophyll, etc. first.
+
+            z0 = 0 ! m, measured from top of layer
+            z2 = z_w(i,j,k-1) - z_w(i,j,k)
+            z1 = (z0+z2)/2
+            
+            f0 = Ifrac*((1-a_frac)*exp(z0*katten) + a_frac*(exp(z0/a_mu1)))
+            f1 = Ifrac*((1-a_frac)*exp(z1*katten) + a_frac*(exp(z1/a_mu1)))
+            f2 = Ifrac*((1-a_frac)*exp(z2*katten) + a_frac*(exp(z2/a_mu1)))
+            
+#    ifdef GPPMID
+              swdk(i,j,k) = f1
+#    else
+              swdk(i,j,k) = (((z0-z1)/3) * (f0 + 4*f1 + f2))/(z0-z2)
+#    endif            
+            Ifrac = f2
+            
+          END DO
+        END DO
+      END DO
+
+#   endif
 #  endif
 #  ifndef TS_MPDATA
 !
@@ -405,9 +461,9 @@
       T_LOOP1 :DO ibt=1,NBT
         itrc=idbio(ibt)
 #else
-      T_LOOP1 :DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+      T_LOOP1 :DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #endif
         K_LOOP: DO k=1,N(ng)
@@ -601,14 +657,14 @@
             cff1=0.5_r8+Gamma
             cff2=0.5_r8-Gamma
           END IF
-    
+
 !g     IF ( itrc.gt.2 ) THEN
 !g                cff=0.0_r8
 !g    cff1=0.0_r8
 !g    cff2=0.0_r8
 !g           END IF
-        
-    
+
+
           DO j=Jstr,Jend
             DO i=Istr,Iend
 
@@ -618,7 +674,7 @@
      &                        (FX(i+1,j)-FX(i,j)+                       &
      &                         FE(i,j+1)-FE(i,j))
 !            endif
-     
+
             END DO
           END DO
         END DO K_LOOP
@@ -652,9 +708,9 @@
         T_LOOP2: DO ibt=1,NBT
           itrc=idbio(ibt)
 #else
-        T_LOOP2: DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+        T_LOOP2: DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #endif
 
@@ -808,12 +864,12 @@
           DO k=1,N(ng)
             DO i=Istr,Iend
               cff1=cff*pm(i,j)*pn(i,j)
-        
+
 !g         IF ( itrc.gt.2 ) THEN
 !g                cff1=0.0_r8
 !g              END IF
-        
-        
+
+
               t(i,j,k,3,itrc)=DC(i,k)*                                  &
      &                        (t(i,j,k,3,itrc)-                         &
      &                         cff1*(FC(i,k)-FC(i,k-1)))
@@ -837,15 +893,15 @@
         DO ibt=1,NBT
           itrc=idbio(ibt)
 #else
-        DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+        DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #endif
           ltrc=MIN(NAT,itrc)
 #ifdef LIMIT_BIO_AKT
           IF (itrc == 2) ltrc = 1
-#endif    
+#endif
           DO k=1,N(ng)-1
             DO i=Istr,Iend
               cff=1.0_r8/(z_r(i,j,k+1)-z_r(i,j,k))
@@ -854,7 +910,7 @@
      &                 t(i,j,k  ,nstp,itrc))
             END DO
           END DO
-    
+
 #  ifdef LMD_NONLOCAL
 !
 !  Add in the nonlocal transport flux for unstable (convective)
@@ -871,7 +927,7 @@
             END DO
           END IF
 #  endif
-          
+
 #  ifdef SOLAR_SOURCE
 !
 !  Add in incoming solar radiation at interior W-points using decay
@@ -906,10 +962,10 @@
 #  ifdef JELLY
               IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
      &      itrc.eq.iEupO.or.itrc.eq.iJel ) THEN
-#  else       
+#  else
               IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
      &        itrc.eq.iEupO) THEN
-#  endif        
+#  endif
                  cff2=0.0_r8
              END IF
 
@@ -931,6 +987,7 @@
 #  ifdef TS_MPDATA
               t(i,j,k,3,itrc)=t(i,j,k,nnew,itrc)/Hz(i,j,k)
 #  endif
+
 #  ifdef DIAGNOSTICS_TS
               DiaTwrk(i,j,k,itrc,iTrate)=cff1
               DiaTwrk(i,j,k,itrc,iTvdif)=cff2
@@ -1250,9 +1307,9 @@
       DO ibt=1,NBT
         itrc=idbio(ibt)
 #  else
-      DO itrc=1,NT(ng) 
-#if defined FEAST 
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE 
+      DO itrc=1,NT(ng)
+#if defined FEAST
+ IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
 #endif
 #  endif
         CALL t3dbc_tile (ng, tile, itrc,                                &

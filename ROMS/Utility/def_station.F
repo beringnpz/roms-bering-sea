@@ -356,7 +356,7 @@
 !
 !  Define stationary 3D variables.
 !
-#ifdef STATIONARY
+#  ifdef STATIONARY
         DO itrc=1,NTS(ng)
           IF (Sout(idTSvar(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idTSvar(itrc))
@@ -365,18 +365,19 @@
             Vinfo(14)=Vname(4,idTSvar(itrc))
             Vinfo(16)=Vname(1,idtime)
 
-            status=def_var(ng, iNLM, ncSTAid(ng), staTSid(itrc,ng),      &
+            status=def_var(ng, iNLM, ncSTAid(ng), staTSid(itrc,ng),     &
      &                     NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,       &
      &                     SetParAccess = .FALSE.)
             IF (exit_flag.ne.NoError) RETURN
           END IF
         END DO
-#endif
-
+#  endif
+! TODO: STATIONARY2 not included here?  Will need to be added if I add 
+! anything to that array (currently just a placeholder).
 !
 !  Define 3D production type variables.
 !
-# ifdef PROD3
+#  ifdef PROD3
         DO itrc=1,NPT3(ng)
           IF (Sout(idPT3var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idPT3var(itrc))
@@ -386,18 +387,17 @@
             Vinfo(16)=Vname(1,idtime)
 
             status=def_var(ng, iNLM, ncSTAid(ng), staPT3id(itrc,ng),    &
-    &                     NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,       &
+    &                     NF_FOUT, 3, rgrd, Aval, Vinfo, ncname,        &
     &                     SetParAccess = .FALSE.)
             IF (exit_flag.ne.NoError) RETURN
           END IF
-       END DO
+        END DO
 	
-#endif
-
-
-#ifdef PROD2
+#  endif
+#  ifdef PROD2
+!
 !  Define 2D production type variables.
-
+!
         DO itrc=1,NPT2(ng)
           IF (Sout(idPT2var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idPT2var(itrc))
@@ -412,40 +412,31 @@
             IF (exit_flag.ne.NoError) RETURN
           END IF
         END DO
-#endif	
-	
-#if defined BEST_NPZ
-#  if defined BENTHIC
-!------------------------------------------
+#  endif	
+#  if defined BEST_NPZ
+#   if defined BENTHIC
+!
 !  Define benthic tracer type variables.
-!------------------------------------------   
-         DO itrc=1,NBeT(ng)
-          
+!
+        DO itrc=1,NBeT(ng)
           IF (Sout(idBvar(itrc),ng)) THEN
 
-          Vinfo( 1)=Vname(1,idBvar(itrc))
-          Vinfo( 2)=Vname(2,idBvar(itrc))
-          Vinfo(3)=Vname(3,idBvar(itrc))
-          Vinfo(14)=Vname(4,idBvar(itrc))
-          Vinfo(16)=Vname(1,idtime)
-          Vinfo(22)='coordinates'
-          Aval(5)=REAL(r2dvar,r8)
-	
-          status=def_var(ng,iNLM,ncSTAid(ng),staBid(itrc,ng),NF_FOUT,    &
+            Vinfo( 1)=Vname(1,idBvar(itrc))
+            Vinfo( 2)=Vname(2,idBvar(itrc))
+            Vinfo(3)=Vname(3,idBvar(itrc))
+            Vinfo(14)=Vname(4,idBvar(itrc))
+            Vinfo(16)=Vname(1,idtime)
+            Vinfo(22)='coordinates'
+            Aval(5)=REAL(r2dvar,r8)
+	          
+            status=def_var(ng,iNLM,ncSTAid(ng),staBid(itrc,ng),NF_FOUT, &
      &                     2,pgrd,Aval,Vinfo,ncname)
 
-
-     
-          IF (exit_flag.ne.NoError) RETURN
-               END IF
-            END DO
+            IF (exit_flag.ne.NoError) RETURN
+          END IF
+        END DO
+#   endif
 #  endif
-
-
-#endif
-
-	
-	
 !
 !  Define density anomaly.
 !
@@ -1274,51 +1265,66 @@
      &                   NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,         &
      &                   SetParAccess = .FALSE.)
           IF (exit_flag.ne.NoError) RETURN
-        END IF
-	
-	
-	
+        END IF	
+!
 !  Define Ice Bio.
 !
-#ifdef ICE_BIO
+#  ifdef ICE_BIO
+#   ifdef CLIM_ICE_1D
+        ! TODO: I'm assuming GG never uses station files in this mode 
+        ! (not really useful in a 1D geometry).  But we might want to add 
+        ! this eventually, just for consistency.
+#   elif defined BERING_10K
         IF (Sout(idIcePhL,ng)) THEN
           Vinfo( 1)=Vname(1,idIcePhL)
           Vinfo( 2)=Vname(2,idIcePhL)
           Vinfo( 3)=Vname(3,idIcePhL)
           Vinfo(14)=Vname(4,idIcePhL)
           Vinfo(16)=Vname(1,idtime)
-          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIcePhL,ng),      &
+          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIcePhL,ng),    &
      &                   NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,         &
      &                   SetParAccess = .FALSE.)
           IF (exit_flag.ne.NoError) RETURN
         END IF
 	
-	 IF (Sout(idIceNO3,ng)) THEN
+	      IF (Sout(idIceNO3,ng)) THEN
           Vinfo( 1)=Vname(1,idIceNO3)
           Vinfo( 2)=Vname(2,idIceNO3)
           Vinfo( 3)=Vname(3,idIceNO3)
           Vinfo(14)=Vname(4,idIceNO3)
           Vinfo(16)=Vname(1,idtime)
-          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceNO3,ng),      &
+          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceNO3,ng),    &
      &                   NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,         &
      &                   SetParAccess = .FALSE.)
           IF (exit_flag.ne.NoError) RETURN
         END IF
 	
-	
-	 IF (Sout(idIceNH4,ng)) THEN
+	      IF (Sout(idIceNH4,ng)) THEN
           Vinfo( 1)=Vname(1,idIceNH4)
           Vinfo( 2)=Vname(2,idIceNH4)
           Vinfo( 3)=Vname(3,idIceNH4)
           Vinfo(14)=Vname(4,idIceNH4)
           Vinfo(16)=Vname(1,idtime)
-          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceNH4,ng),      &
+          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceNH4,ng),    &
      &                   NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,         &
      &                   SetParAccess = .FALSE.)
           IF (exit_flag.ne.NoError) RETURN
         END IF
-#endif	
-#endif
+        
+	      IF (Sout(idIceLog,ng)) THEN
+          Vinfo( 1)=Vname(1,idIceLog)
+          Vinfo( 2)=Vname(2,idIceLog)
+          Vinfo( 3)=Vname(3,idIceLog)
+          Vinfo(14)=Vname(4,idIceLog)
+          Vinfo(16)=Vname(1,idtime)
+          status=def_var(ng, iNLM, ncSTAid(ng), staVid(idIceLog,ng),    &
+     &                   NF_FOUT, 2, pgrd, Aval, Vinfo, ncname,         &
+     &                   SetParAccess = .FALSE.)
+          IF (exit_flag.ne.NoError) RETURN
+        END IF
+#   endif	
+#  endif
+# endif
 
 !
 !-----------------------------------------------------------------------

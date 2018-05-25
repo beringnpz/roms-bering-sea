@@ -306,49 +306,51 @@
 
 # define BIO_NUDGE_ONLY
 
-#  undef LIMIT_BIO_AKT
-#  define NEWSHADE         /* formulation for self shading in PAR calc basrd on Morel*/
-#  undef KODIAK_IRAD       /* Generate irradiance with curve matching Kodiak data
-                              Else use Sarah Hinckly originl code   */
-#  define JELLY
-#  define IRON_LIMIT       /* Add iron  */
-#  define BENTHIC          /*FENNEL or BENTHIC or TRAP*/
-#  define ICE_BIO
-#  undef CLIM_ICE_1D
-#  define  TCLM_NUDGING    /* Nudging of tracer climatology for iron */
-#  define ANA_TCLIMA       /* analytical tracers climatology for iron */
-#  define TCLIMATOLOGY     /* Processing of tracer climatology for iron */
-#  undef   STATIONARY
-#  undef   STATIONARY2
-#  undef  PROD3 
-#  undef  PROD2
-#  undef SINKVAR           /* for variable sinking rate*/
-#  undef DENMAN
-#  undef CORRECT_TEMP_BIAS /* corrects ROMS temp for biology only */
+# undef LIMIT_BIO_AKT
+# if !defined(NEWSHADE) && !defined(NEWSHADESHALLOW) && !defined(COKELET)
+#   define COKELET           /* updated light attenuation, based on  */
 # endif
+# undef KODIAK_IRAD        /* Generate irradiance with curve matching Kodiak data
+                              Else use Sarah Hinckly originl code   */
+# define JELLY
+# define IRON_LIMIT        /* Add iron  */
+# define BENTHIC           /*FENNEL or BENTHIC or TRAP*/
+# define ICE_BIO
+# undef CLIM_ICE_1D
+# define TCLM_NUDGING      /* Nudging of tracer climatology for iron */
+# define ANA_TCLIMA        /* analytical tracers climatology for iron */
+# define TCLIMATOLOGY      /* Processing of tracer climatology for iron */
+# define STATIONARY
+# undef STATIONARY2
+# undef PROD3 
+# undef PROD2
+# undef SINKVAR            /* for variable sinking rate*/
+# undef DENMAN
+# undef CORRECT_TEMP_BIAS  /* corrects ROMS temp for biology only */
+#endif
 
-# undef  OFFLINE_BIOLOGY   /* define if offline simulation of bio tracers */
-#   if defined OFFLINE_BIOLOGY
-#    define AKSCLIMATOLOGY /* Processing of AKS climatology */
-#    undef ANA_AKSCLIMA    /* Processing of AKS climatology */
-#   endif
+#undef  OFFLINE_BIOLOGY    /* define if offline simulation of bio tracers */
+#if defined OFFLINE_BIOLOGY
+# define AKSCLIMATOLOGY    /* Processing of AKS climatology */
+# undef ANA_AKSCLIMA       /* Processing of AKS climatology */
+#endif
 
 
 /* Here's the new stuff for feast*/
 
 #ifdef FEAST
-#  ifdef PROD3
-#    define FEAST_DAT     /* only use this if using 60-layer model */
-#  endif
-#  undef FEAST_DAT        /* so undef in the 10-layer model */
-#  define FEAST_FORCING
-#  define T_PASSIVE
-#  define ANA_PASSIVE
-#  undef ANA_PASSIVE
-#  undef FLOATS
-#  define ANA_BPFLUX
-#  define ANA_SPFLUX
-#  undef FEAST_NOEXCHANGE
+# ifdef PROD3
+#  define FEAST_DAT        /* only use this if using 60-layer model */
+# endif
+# undef FEAST_DAT          /* so undef in the 10-layer model */
+# define FEAST_FORCING
+# define T_PASSIVE
+# define ANA_PASSIVE
+# undef ANA_PASSIVE
+# undef FLOATS
+# define ANA_BPFLUX
+# define ANA_SPFLUX
+# undef FEAST_NOEXCHANGE
 #endif
 
 

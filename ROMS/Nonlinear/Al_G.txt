@@ -548,9 +548,9 @@
 ---
 > 
 3436c3298
-<  	     DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)-dtdays*cff11
+<  	     DBioB(i,k,iDetBen)=DBioB(i,k,iDetBen)-dtdays*cff11
 ---
->   	     DBioB(i,k,iBenDet)=DBioB(i,k,iBenDet)-dtdays*cff11
+>   	     DBioB(i,k,iDetBen)=DBioB(i,k,iDetBen)-dtdays*cff11
 3446,3447c3308
 < ! Spread removal evenly over water column 
 < !ajh note I have changed the following section of benthic removal	   
@@ -610,9 +610,9 @@
 ---
 >           DBio(i,k,iNH4)= DBio(i,k,iNH4)+xi*dtdays*0.5_r8      &
 3530c3382
-<          DBioB(i,k,iBenDet)= DBioB(i,k,iBenDet)+dtdays        &
+<          DBioB(i,k,iDetBen)= DBioB(i,k,iDetBen)+dtdays        &
 ---
->           DBioB(i,k,iBenDet)= DBioB(i,k,iBenDet)+dtdays        &
+>           DBioB(i,k,iDetBen)= DBioB(i,k,iDetBen)+dtdays        &
 3534,3535c3386,3387
 < 	Stat2(i,3)=(cff1+cff2+cff3+cff4+cff5)*dtdays
 <      
@@ -646,9 +646,9 @@
 ---
 > !     	Stat2(i,7)=cff0*BenPred*dtdays*BioB(i,k,iBen)**2 
 3629c3480
-<               DBioB(i,k,iBenDet) =DBioB(i,k,iBenDet)               &
+<               DBioB(i,k,iDetBen) =DBioB(i,k,iDetBen)               &
 ---
->                DBioB(i,k,iBenDet) =DBioB(i,k,iBenDet)               &
+>                DBioB(i,k,iDetBen) =DBioB(i,k,iDetBen)               &
 3632,3633c3483
 < 
 <               DBio(i,k,iNH4)= DBio(i,k,iNH4)                       &

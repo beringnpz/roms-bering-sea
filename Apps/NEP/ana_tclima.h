@@ -107,16 +107,16 @@
           val2 = Feinhi + val3*(Feoffhi-Feinhi)
           val3 = (val2-val1) / 300._r8
           DO k=1,N(ng)
-	   if(GRID(ng)%h(i,j).gt.Feoffh.and.GRID(ng)%z_r(i,j,k).ge.-50_r8)THEN
-             tclm(i,j,k,iFe) =  val1  
-	    else 
-	    tclm(i,j,k,iFe) = MIN(val2, val1 - GRID(ng)%z_r(i,j,k)*val3 )
-	    endif
-	               
-!ajh nitrate
-	tclm(i,j,k,iNO3) = MIN(30._r8, 18._r8 - GRID(ng)%z_r(i,j,k)*(30._r8-18._r8)/200._r8)
-!ajh nh4
-	tclm(i,j,k,iNH4) = 1.d-16
+            if(GRID(ng)%h(i,j).gt.Feoffh.and.GRID(ng)%z_r(i,j,k).ge.-50_r8)THEN
+              tclm(i,j,k,iFe) =  val1  
+            else 
+              tclm(i,j,k,iFe) = MIN(val2, val1 - GRID(ng)%z_r(i,j,k)*val3 )
+            endif
+                 
+            !ajh nitrate
+            tclm(i,j,k,iNO3) = MIN(30._r8, 18._r8 - GRID(ng)%z_r(i,j,k)*(30._r8-18._r8)/200._r8)
+            !ajh nh4
+            tclm(i,j,k,iNH4) = 1.d-16
           END DO
         END DO
       END DO

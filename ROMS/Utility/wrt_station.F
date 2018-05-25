@@ -1412,43 +1412,57 @@
 !
       IF (Sout(idIcePhL,ng)) THEN
         scale=1.0_r8
-        CALL extract_sta2d (ng, iNLM, Cgrid, idIcePhL, r2dvar,            &
+        CALL extract_sta2d (ng, iNLM, Cgrid, idIcePhL, r2dvar,          &
      &                      LBi, UBi, LBj, UBj,                         &
      &                      scale, ICE(ng)%IcePhL(:,:,IOUT),            &
      &                      Nstation(ng), Xpos, Ypos, psta)
         CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                    &
-     &                        TRIM(Vname(1,idIcePhL)), psta,              &
+     &                        TRIM(Vname(1,idIcePhL)), psta,            &
      &                        (/1,tSTAindx(ng)/), (/Nstation(ng),1/),   &
      &                        ncid = ncSTAid(ng),                       &
      &                        varid = staVid(idIcePhL,ng))
         IF (exit_flag.ne.NoError) RETURN
       END IF
       
-       IF (Sout(idIceNO3,ng)) THEN
+      IF (Sout(idIceNO3,ng)) THEN
         scale=1.0_r8
-        CALL extract_sta2d (ng, iNLM, Cgrid, idIceNO3, r2dvar,            &
+        CALL extract_sta2d (ng, iNLM, Cgrid, idIceNO3, r2dvar,          &
      &                      LBi, UBi, LBj, UBj,                         &
      &                      scale, ICE(ng)%IceNO3(:,:,IOUT),            &
      &                      Nstation(ng), Xpos, Ypos, psta)
         CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                    &
-     &                        TRIM(Vname(1,idIcePhL)), psta,              &
+     &                        TRIM(Vname(1,idIcePhL)), psta,            &
      &                        (/1,tSTAindx(ng)/), (/Nstation(ng),1/),   &
      &                        ncid = ncSTAid(ng),                       &
      &                        varid = staVid(idIceNO3,ng))
         IF (exit_flag.ne.NoError) RETURN
       END IF
       
-       IF (Sout(idIceNH4,ng)) THEN
+      IF (Sout(idIceNH4,ng)) THEN
         scale=1.0_r8
-        CALL extract_sta2d (ng, iNLM, Cgrid, idIceNH4, r2dvar,            &
+        CALL extract_sta2d (ng, iNLM, Cgrid, idIceNH4, r2dvar,          &
      &                      LBi, UBi, LBj, UBj,                         &
      &                      scale, ICE(ng)%IceNH4(:,:,IOUT),            &
      &                      Nstation(ng), Xpos, Ypos, psta)
         CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                    &
-     &                        TRIM(Vname(1,idIceNH4)), psta,              &
+     &                        TRIM(Vname(1,idIceNH4)), psta,            &
      &                        (/1,tSTAindx(ng)/), (/Nstation(ng),1/),   &
      &                        ncid = ncSTAid(ng),                       &
      &                        varid = staVid(idIceNH4,ng))
+        IF (exit_flag.ne.NoError) RETURN
+      END IF
+      
+      IF (Sout(idIceLog,ng)) THEN
+        scale=1.0_r8
+        CALL extract_sta2d (ng, iNLM, Cgrid, idIceNH4, r2dvar,          &
+     &                      LBi, UBi, LBj, UBj,                         &
+     &                      scale, ICE(ng)%IceLog(:,:,IOUT),            &
+     &                      Nstation(ng), Xpos, Ypos, psta)
+        CALL netcdf_put_fvar (ng, iNLM, STAname(ng),                    &
+     &                        TRIM(Vname(1,idIceLog)), psta,            &
+     &                        (/1,tSTAindx(ng)/), (/Nstation(ng),1/),   &
+     &                        ncid = ncSTAid(ng),                       &
+     &                        varid = staVid(idIceLog,ng))
         IF (exit_flag.ne.NoError) RETURN
       END IF
 #endif      

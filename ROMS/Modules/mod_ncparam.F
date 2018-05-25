@@ -3189,11 +3189,11 @@
 # ifdef BENTHIC
               CASE ('idBvar(iBen)')
                idBvar(iBen)=varid
-              CASE ('idBvar(iBenDet)')
-                idBvar(iBenDet)=varid
+              CASE ('idBvar(iDetBen)')
+                idBvar(iDetBen)=varid
 # endif
 # ifdef ICE_BIO
-#ifdef CLIM_ICE_1D
+#  ifdef CLIM_ICE_1D
               CASE ('idIceBvar(iIcePhL)')
                idIceBvar(iIcePhL)=varid
               CASE ('idIceBvar(iIceNO3)')
@@ -3204,15 +3204,13 @@
                 idIceBvar(iIceZ)=varid
               CASE ('idIceBvar(iIceLog)')
                 idIceBvar(iIceLog)=varid
-                CASE ('idIceLogvar(iIceLog)')
+              CASE ('idIceLogvar(iIceLog)')
                idIceLogvar(iIceLog)=varid
               CASE ('idTclm(i1CI)')
                 idTclm(i1CI)=varid
-#elif defined BERING_10K 
+#  elif defined BERING_10K 
               CASE ('idIcePhL')
                  idIcePhL=varid
-     
-
               CASE ('idIcePhLbc(iwest)')
                 idIcePhLbc(iwest)=varid
               CASE ('idIcePhLbc(ieast)')
@@ -3221,10 +3219,9 @@
                 idIcePhLbc(isouth)=varid
               CASE ('idIcePhLbc(inorth)')
                 idIcePhLbc(inorth)=varid
-    
+
               CASE ('idIceNO3')
                  idIceNO3=varid
-    
               CASE ('idIceNO3bc(iwest)')
                 idIceNO3bc(iwest)=varid
               CASE ('idIceNO3bc(ieast)')
@@ -3234,10 +3231,8 @@
               CASE ('idIceNO3bc(inorth)')
                 idIceNO3bc(inorth)=varid
     
-    
               CASE ('idIceNH4')
                  idIceNH4=varid
-    
               CASE ('idIceNH4bc(iwest)')
                 idIceNH4bc(iwest)=varid
               CASE ('idIceNH4bc(ieast)')
@@ -3247,74 +3242,22 @@
               CASE ('idIceNH4bc(inorth)')
                 idIceNH4bc(inorth)=varid
 
-                CASE ('idIceLog')
-                 idIceLog=varid
+              CASE ('idIceLog')
+                idIceLog=varid
      
+#  endif
 # endif
+# ifdef STATIONARY
+#  include <bestnpz_mod_ncparam_i3stat.h>
 # endif
-
-#ifdef STATIONARY
-             !-----------------------------
-             !3D Stationary Array
-             !-----------------------------
-              CASE ('idTSvar(i3Stat1)')
-                idTSvar(i3Stat1) = varid
-              CASE ('idTSvar(i3Stat2)')
-                idTSvar(i3Stat2) = varid
-              CASE ('idTSvar(i3Stat3)')
-                idTSvar(i3Stat3) = varid
-              CASE ('idTSvar(i3Stat4)')
-                idTSvar(i3Stat4) = varid
-              CASE ('idTSvar(i3Stat5)')
-                idTSvar(i3Stat5) = varid
-              CASE ('idTSvar(i3Stat6)')
-                idTSvar(i3Stat6) = varid
-              CASE ('idTSvar(i3Stat7)')
-                idTSvar(i3Stat7) = varid
-
-              CASE ('idTSvar(i3Stat8)')
-                idTSvar(i3Stat8) = varid
-              CASE ('idTSvar(i3Stat9)')
-                idTSvar(i3Stat9) = varid
-              CASE ('idTSvar(i3Stat10)')
-                idTSvar(i3Stat10) = varid
-              CASE ('idTSvar(i3Stat11)')
-                idTSvar(i3Stat11) = varid
-              CASE ('idTSvar(i3Stat12)')
-                idTSvar(i3Stat12) = varid
-                CASE ('idTSvar(i3Stat13)')
-                idTSvar(i3Stat13) = varid
-                CASE ('idTSvar(i3Stat14)')
-                idTSvar(i3Stat14) = varid
-                CASE ('idTSvar(i3Stat15)')
-                idTSvar(i3Stat15) = varid
-                CASE ('idTSvar(i3Stat16)')
-                idTSvar(i3Stat16) = varid
-#endif
-#ifdef STATIONARY2
+# ifdef STATIONARY2
              !-----------------------------
              !2D Stationary Array
              !-----------------------------
               CASE ('idTS2var(i2Stat1)')
                 idTS2var(i2Stat1) = varid
-              CASE ('idTS2var(i2Stat2)')
-                idTS2var(i2Stat2) = varid
-              CASE ('idTS2var(i2Stat3)')
-                idTS2var(i2Stat3) = varid
-              CASE ('idTS2var(i2Stat4)')
-                idTS2var(i2Stat4) = varid
-              CASE ('idTS2var(i2Stat5)')
-                idTS2var(i2Stat5) = varid
-              CASE ('idTS2var(i2Stat6)')
-                idTS2var(i2Stat6) = varid
-              CASE ('idTS2var(i2Stat7)')
-                idTS2var(i2Stat7) = varid
-              CASE ('idTS2var(i2Stat8)')
-                idTS2var(i2Stat8) = varid
-
-
-#endif
-#ifdef PROD3
+# endif
+# ifdef PROD3
              !-----------------------------
              !3D Production Array
              !-----------------------------
@@ -3332,7 +3275,7 @@
                 idPT3var(iNCaPrd) = varid
               CASE ('idPT3var(iEupPrd)')
                 idPT3var(iEupPrd) = varid
-#ifdef FEAST
+#  ifdef FEAST
               CASE ('idPT3var(iFCopMort)')
                 idPT3var(iFCopMort) = varid
               CASE ('idPT3var(iFNCaSMort)')
@@ -3369,15 +3312,13 @@
                 idPT3var(iFishSeven) = varid
               CASE ('idPT3var(iFishEight)')
                 idPT3var(iFishEight) = varid
-#endif
-
-#ifdef JELLY
+#  endif
+#  ifdef JELLY
               CASE ('idPT3var(iJelPrd)')
                 idPT3var(iJelPrd) = varid
-#endif
+#  endif
 # endif
-
-#ifdef PROD2
+# ifdef PROD2
              !-----------------------------
              !2D Production Array
              !-----------------------------
@@ -3387,16 +3328,16 @@
                 idPT2var(iIAPrd) = varid
               CASE ('idPT2var(iXPrd)')
                 idPT2var(iXPrd) = varid
-#endif
-#ifdef BIOFLUX
+# endif
+# ifdef BIOFLUX
              !-----------------------------
              !bio flux Array
              !-----------------------------
               CASE ('idTBFvar(iBF)')
                 idTBFvar(iBF) = varid
 
-#endif
 # endif
+#endif
 
 
 !==================================================

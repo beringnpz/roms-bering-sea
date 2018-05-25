@@ -1314,8 +1314,10 @@
 !  averaged fields are computed correctly.
 !-----------------------------------------------------------------------
 !
+  
       IF (((iic(ng).gt.ntsAVG(ng)).and.                                 &
      &     (MOD(iic(ng)-1,nAVG(ng)).eq.1)).or.                          &
+     &    ((iic(ng).ge.ntsAVG(ng)).and.(nAVG(ng).eq.1)).or.             &
      &    ((nrrec(ng).gt.0).and.(iic(ng).eq.ntstart(ng)))) THEN
 
 # if defined AVERAGES_DETIDE && (defined SSH_TIDES || defined UV_TIDES)
@@ -2036,13 +2038,23 @@
 !  Convert accumulated sums into time-averages, if appropriate.
 !-----------------------------------------------------------------------
 !
-      IF ((iic(ng).gt.ntsAVG(ng)).and.                                  &
-     &    (MOD(iic(ng)-1,nAVG(ng)).eq.0).and.                           &
-     &    ((iic(ng).ne.ntstart(ng)).or.(nrrec(ng).eq.0))) THEN
-        fac=1.0_r8/REAL(nAVG(ng),r8)
-        IF (SOUTH_WEST_TEST) THEN
-          AVGtime(ng)=AVGtime(ng)+REAL(nAVG(ng),r8)*dt(ng)
-        END IF
+      IF (((iic(ng).gt.ntsAVG(ng)).and.                                 &
+     &     (MOD(iic(ng)-1,nAVG(ng)).eq.0).and.                          &
+     &     ((iic(ng).ne.ntstart(ng)).or.(nrrec(ng).eq.0))).or.          &
+     &    ((iic(ng).ge.ntsAVG(ng)).and.(nAVG(ng).eq.1))) THEN
+        
+        if ((iic(ng) - ntstart(ng)) .lt. nAVG(ng)) then
+          fac = 1.0_r8/REAL(iic(ng) - ntstart(ng),r8) ! if started mid-step
+          IF (SOUTH_WEST_TEST) THEN
+            AVGtime(ng)=AVGtime(ng)+REAL(iic(ng) - ntstart(ng),r8)*dt(ng)
+          ENDIF
+        else
+          fac=1.0_r8/REAL(nAVG(ng),r8)
+          IF (SOUTH_WEST_TEST) THEN
+            AVGtime(ng)=AVGtime(ng)+REAL(nAVG(ng),r8)*dt(ng)
+          END IF
+        end if
+        
 
 # if defined AVERAGES_DETIDE && (defined SSH_TIDES || defined UV_TIDES)
 !

@@ -762,7 +762,7 @@
             END DO
           END DO 
 # ifdef BEST_NPZ
-#    ifdef STATIONARY
+#  ifdef STATIONARY
           DO itrc=1,NTS(ng)
             DO k=1,N(ng)
               DO i=Imin,Imax
@@ -772,8 +772,8 @@
               END DO
             END DO
           END DO
-#    endif
-#    ifdef STATIONARY2
+#  endif
+#  ifdef STATIONARY2
           DO itrc=1,NTS2(ng)
             DO i=Imin,Imax
               OCEAN(ng) % st2(i,j,1,itrc) = IniVal
@@ -781,8 +781,8 @@
               OCEAN(ng) % st2(i,j,3,itrc) = IniVal
             END DO
           END DO
-#    endif
-#    ifdef PROD2
+#  endif
+#  ifdef PROD2
           DO itrc=1,NPT2(ng)
             DO i=Imin,Imax
               OCEAN(ng) % pt2(i,j,1,itrc) = IniVal
@@ -790,8 +790,8 @@
               OCEAN(ng) % pt2(i,j,3,itrc) = IniVal
             END DO
           END DO
-#    endif
-#    ifdef PROD3
+#  endif
+#  ifdef PROD3
           DO itrc=1,NPT3(ng)
             DO k=1,N(ng)
               DO i=Imin,Imax
@@ -801,8 +801,8 @@
               END DO
             END DO
           END DO
-#    endif
-#    ifdef BENTHIC
+#  endif
+#  ifdef BENTHIC
           DO itrc=1,NBeT(ng)
             DO k=1,NBL(ng)
               DO i=Imin,Imax
@@ -815,7 +815,7 @@
 #  endif
 
 #  if defined ICE_BIO  
-# ifdef CLIM_ICE_1D
+#   ifdef CLIM_ICE_1D
 
           DO itrc=1,NIceT(ng)
             DO i=Imin,Imax
@@ -833,7 +833,7 @@
               OCEAN(ng) % itL(i,j,3,itrc) = IniVal
             END DO
           END DO
-#  endif
+#   endif
 #  endif
 
 #  ifdef BIOFLUX

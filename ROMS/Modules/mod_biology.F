@@ -68,7 +68,7 @@
         USE mod_param
 
         implicit none
-        
+
         integer, dimension(Ngrids) :: BioIter
 
         real(r8), dimension(Ngrids) :: AttSW         ! 1/m
@@ -95,7 +95,7 @@
         real(r8), dimension(Ngrids) :: SDeRRN        ! 1/day
         real(r8), dimension(Ngrids) :: SDeRRC        ! 1/day
         real(r8), dimension(Ngrids) :: Vp0           ! nondimensional
-        real(r8), dimension(Ngrids) :: wLDet         ! m/day 
+        real(r8), dimension(Ngrids) :: wLDet         ! m/day
         real(r8), dimension(Ngrids) :: wPhy          ! m/day
         real(r8), dimension(Ngrids) :: wSDet         ! m/day
         real(r8), dimension(Ngrids) :: ZooAE_N       ! nondimensional
@@ -180,7 +180,7 @@
         USE mod_param
 
         implicit none
-        
+
         integer, dimension(Ngrids) :: BioIter
 
         real(r8), dimension(Ngrids) :: reg1          ! 1/day
@@ -214,7 +214,7 @@
         real(r8), dimension(Ngrids) :: bgamma3       ! 1/day
         real(r8), dimension(Ngrids) :: bgamma4       ! 1/day
         real(r8), dimension(Ngrids) :: bgamma5       ! 1/day
-        real(r8), dimension(Ngrids) :: bgamma6       ! 
+        real(r8), dimension(Ngrids) :: bgamma6       !
         real(r8), dimension(Ngrids) :: bgamma7       ! 1/day
         real(r8), dimension(Ngrids) :: wsd           ! m/day
         real(r8), dimension(Ngrids) :: wsdsi         ! m/day
@@ -277,7 +277,7 @@
         USE mod_param
 
         implicit none
-        
+
         integer, dimension(Ngrids) :: BioIter
 
         real(r8), dimension(Ngrids) :: AttSW         ! 1/m
@@ -298,7 +298,7 @@
         real(r8), dimension(Ngrids) :: z_mort2
         real(r8), dimension(Ngrids) :: d1_rem
         real(r8), dimension(Ngrids) :: d2_rem
-        real(r8), dimension(Ngrids) :: wDet2         ! m/day    
+        real(r8), dimension(Ngrids) :: wDet2         ! m/day
         real(r8), dimension(Ngrids) :: p1_kno3
         real(r8), dimension(Ngrids) :: p2_kno3
         real(r8), dimension(Ngrids) :: p1_knh4
@@ -320,7 +320,7 @@
 # endif
 # ifdef NEMURO
 !
-!  Parameters for Nemuro ecosystem model:                              ! 
+!  Parameters for Nemuro ecosystem model:                              !
 !                                                                      !
 !  AlphaPS     Small Phytoplankton photochemical reaction coefficient: !
 !                initial slope (low light) of the P-I curve,           !
@@ -498,7 +498,7 @@
         USE mod_param
 
         implicit none
-        
+
         integer, dimension(Ngrids) :: BioIter
 
         real(r8), dimension(Ngrids) :: AlphaPL       ! 1/(W/m2) 1/day
@@ -624,7 +624,7 @@
         USE mod_param
 
         implicit none
-        
+
         integer, dimension(Ngrids) :: BioIter
 
 #  ifdef ANA_BIOLOGY
@@ -688,7 +688,7 @@
         USE mod_param
 
         implicit none
-        
+
         integer, dimension(Ngrids) :: BioIter
 
 #  ifdef ANA_BIOLOGY
@@ -800,7 +800,7 @@
 !                   [(ug_Chl_b/ug_Chl_a)/(ug_C/ug_Chl_a)].             !
 !  b_ChlB         Maximum Chl_b:Chl_a ratio                            !
 !                   (microgram_Chl_b/microgram_Chl_a).                 !
-!  mxChlC         Rate of change in the Chl_c:Chl_a ratio              !             
+!  mxChlC         Rate of change in the Chl_c:Chl_a ratio              !
 !                   [(ug_Chl_c/ug_Chl_a)/(ug_C/ug_Chl_a)].             !
 !  b_ChlC         Maximum Chl_c:Chl_a ratio                            !
 !                   (microgram_Chl_c/microgram_Chl_a).                 !
@@ -997,7 +997,7 @@
       real(r8), dimension(Ngrids) :: ExBacC2N
       real(r8), dimension(Ngrids) :: Bac_Ceff
       real(r8), dimension(Ngrids) :: RtNIT
-      real(r8), dimension(Ngrids) :: HsNIT  
+      real(r8), dimension(Ngrids) :: HsNIT
 !
 !  DOM parameters.
 !
@@ -1019,7 +1019,7 @@
 !-----------------------------------------------------------------------
 !  Internal parameters.
 !-----------------------------------------------------------------------
-!    
+!
 !  Spectral band width used in light calculations.
 
       real(r8), parameter :: DLAM  = 5.0_r8
@@ -1145,7 +1145,7 @@
         N2cBAC(ng)=1.0_r8/C2nBAC(ng)
         P2cBAC(ng)=1.0_r8/C2pBAC(ng)
         Fe2cBAC(ng)=1.0_r8/C2FeBAC(ng)
-        I_Bac_Ceff(ng)=1.0_r8/Bac_Ceff(ng) 
+        I_Bac_Ceff(ng)=1.0_r8/Bac_Ceff(ng)
       END DO
 !
 !  Reciprocal of non baterial recalcitran carbon excretion.
@@ -1165,7 +1165,7 @@
 !
       DO ng=1,Ngrids
         RtUVR_DIC(ng)=RtUVR_DIC(ng)/3600.0_r8
-        RtUVR_DOC(ng)=RtUVR_DOC(ng)/3600.0_r8 
+        RtUVR_DOC(ng)=RtUVR_DOC(ng)/3600.0_r8
       END DO
 !
 !  If applicable, zero-out fecal regeneration parameters.
@@ -1206,280 +1206,212 @@
       RETURN
       END SUBROUTINE initialize_biology
 # endif
-#ifdef BEST_NPZ
+# ifdef BEST_NPZ
 !=======================================================================
 !   Parameters for BEST NPZ Biological Model
-!      Georgina Gibson 
+!      Georgina Gibson
 !=======================================================================
 
       USE mod_param
 
-        implicit none
+      implicit none
 
-        integer, dimension(Ngrids) :: BioIter
-        real(r8) :: VertMixIncr
-        real(r8), dimension(Ngrids) :: PARfrac       ! nondimensional
-!  Bio- conversions
-        real(r8) :: xi, ccr, ccrPhL
-!  extinction coefficients
-        real(r8) :: k_ext, k_chl
-!  PhS growth params
-        real(r8) :: DiS, DpS,aPS
-        real(r8) :: alphaPhS
-        real(r8) :: psiPhS
-        real(r8) :: k1PhS, k2PhS
-!  PhL growth params
-        real(r8) :: DiL,aPL
-        real(r8) :: DpL
-        real(r8) :: alphaPhL
-        real(r8) :: psiPhL
-        real(r8) :: k1PhL
-        real(r8) :: k2PhL
-!  MZS preference params
-        real(r8) :: fpPhSMZS, fpPhLMZS
-!  MZS growth and feeding params
-        real(r8) :: eMZS
-        real(r8) :: Q10MZS
-        real(r8) :: Q10MZST
-        real(r8) :: fMZS
-        real(r8) :: kMZS
-        real(r8) :: gammaMZS
-!  MZL preferences params
-        real(r8) :: fpPhSMZL, fpPhLMZL, fpMZSMZL
-!  MZL growth and feeding params
-        real(r8) :: eMZL
-        real(r8) :: Q10MZL
-        real(r8) :: Q10MZLT
-        real(r8) :: fMZL
-        real(r8) :: kMZL
-        real(r8) :: gammaMZL
-!  Cop preference params
-        real(r8) :: fpPhSCop, fpPhLCop, fpMZSCop, fpMZLCop
-!  Cop growth and feeding params
-        real(r8) :: eCop
-        real(r8) :: Q10Cop
-        real(r8) :: Q10CopT
-        real(r8) :: fCop
-        real(r8) :: gammaCop
-        real(r8) :: kCop
-!  NCa preference params
-        real(r8) :: fpPhSNCa, fpPhLNCa, fpMZSNCa, fpMZLNCa
-!  NCa growth and feeding params
-        real(r8) :: eNCa
-        real(r8) :: Q10NCa
-        real(r8) :: Q10NCaT
-        real(r8) :: fNCa
-        real(r8) :: gammaNCa
-        real(r8) :: kNCa
-!  Eup preference params
-        real(r8) :: fpPhSEup, fpPhLEup, fpMZSEup, fpMZLEup, fpCopEup
-!  Eup growth and feeding params
-        real(r8) :: eEup
-        real(r8) :: Q10Eup
-        real(r8) :: Q10EupT
-        real(r8) :: fEup
-        real(r8) :: gammaEup
-        real(r8) :: kEup
-# ifdef JELLY
-!  Jellyfish Parameters
-        real(r8) :: eJel, gammaJel,fJel
-        real(r8) :: respJel,mpredJel
-        real(r8) :: fpCopJel, fpNCaJel, fpEupJel
-        real(r8) :: Q10Jelr, Q10JelTr,Q10Jele, Q10JelTe
-        real(r8) :: bmJ,ktbmJ,TrefJ
+      ! General
 
-# endif
+      integer, dimension(Ngrids) :: BioIter
 
-!  Phytoplankton senescence
-        real(r8) :: mPhS, maxmPhS, NcritPhS,minmPhS
-        real(r8) :: mPhL, maxmPhL, NcritPhL, minmPhL
-!  Zoopkankton mortality
-        real(r8) :: mMZS, mMZL, mCop, mNCa, mEup
-!  predation closure
-        real(r8) :: mpredCop, mpredNCa, mpredEup
-        real(r8) :: mpredMZS, mpredMZL
-!  sinking
-        real(r8) :: wPhS, wPhL, wDet, wDetF
-!  Terms to define the Iron climatology field
-        real(r8) :: Feinlo, Feinhi, Feinh, Feofflo, Feoffhi, Feoffh
+      ! Light
 
-!  Terms to define respiration
-        real(r8) :: respPhS, respPhL, respMZS, respMZL
-        real(r8) :: respCop, respNCa, respEup
-        real(r8) :: TmaxPhS,TminPhS, Topt_PhS, KtBm_PhS
-        real(r8) :: TmaxPhL, TminPhL, Topt_PhL, KtBm_PhL
-        real(r8) :: TmaxMZS, KtBm_MZS, TmaxMZL, KtBm_MZL
-        real(r8) :: ktbmC,TrefC
-        real(r8) :: ktbmN,TrefN
-        real(r8) :: ktbmE,TrefE
-!  Detrital Remineralization and Nitrification
-        real(r8) :: regen, dgrad
-        real(r8) :: Pv0, PvT
-        real(r8) :: KnT, Nitr0,ToptNtr,ktntr,KNH4Nit
-        real(r8) :: tI0,KI
+      real(r8), dimension(Ngrids) :: PARfrac       ! nondimensional
+      real(r8) :: k_ext, k_chl, k_extZ, k_chlA, k_chlB, k_chlC, k_shallow
+      real(r8) :: a_frac, a_mu1
 
-!  Iron limitation terms
-        real(r8) :: kfePhS, kfePhL, FeC
-!  Diapause
-        real(r8) :: NCmaxz
-        real(r8) :: wNCrise,wNCsink
-        real(r8) :: RiseStart, RiseEnd, SinkStart, SinkEnd
-# ifdef BENTHIC
-        real(r8) :: bmB,ktbmB,TrefB
-        real(r8) :: iremin
-        real(r8) :: q10,q10r
-        real(r8) :: Rup,KupP,LupD, LupP,KupD
-        real(r8) :: Qres,Rres,rmort,eex,eexD,BenPred
-        real(r8) :: prefD,prefPS,prefPL,T0ben,T0benr
-# endif
-# ifdef ICE_BIO
-        real(r8) :: alphaIb, betaI,  inhib
-        real(r8) :: ksnut1,ksnut2,mu0, R0i
-        real(r8) :: rg0,rg,annit
-        real(r8) :: aidz
-# endif
+      ! Conversion factors
 
-# ifdef FEAST
+      real(r8) :: xi, ccr, ccrPhL, FeC
 
-  !  FEAST parameters
- 
-!!MOD_PARAM   ! Local set constant parameters (e.g. #defines in C)
-!!MOD_PARAM     real(r8),    parameter :: EPSILON      = 1e-20
-!!MOD_PARAM     !integer, parameter :: ROMS_LAYERS    = 60  ! MUST MATCH UBk
-!!MOD_PARAM     integer, parameter :: LAYERS         =  3  !// Number of vert layers for fish
-!!MOD_PARAM     !integer, parameter :: FEAST_PASSIVES = 21  ! FEAST passive tracers
-!!MOD_PARAM
-!!MOD_PARAM!integer, parameter :: NUM_ROMS_DEPTHS       = 60
-!!MOD_PARAM!integer, parameter :: NUM_PLANKTON          =  4 ! COP, NCA, EUP, BEN
-!!MOD_PARAMinteger, parameter :: NUM_PLANKTON          =  6 ! COP, NCAS, NCA0, EUPS, EUPO, BEN
-!!MOD_PARAMinteger, parameter :: MAX_LCLASS            = 60 !// Maximum length classes
-!!MOD_PARAMinteger, parameter :: NUM_AGES              = 11 ! nac
-!!MOD_PARAMinteger, parameter :: NUM_AGED_LENGTHS      = 14 ! nlc
-!!MOD_PARAMinteger, parameter :: NUM_NOAGE_LENGTHS     = 20 !nlct
-!!MOD_PARAMinteger, parameter :: NUM_AGED_SPECIES      = 3 ! POL, COD, ATF
-!!MOD_PARAMinteger, parameter :: NUM_LENGTHED_SPECIES  = 7 ! HER, CAP, EUL, SAN, MYC, SAL1, SAL2 
-!!MOD_PARAMinteger, parameter :: NUM_SIMPLE_SPECIES    = 5 ! SHR, SQU, EPI, CRA, OTH 
-!!MOD_PARAMinteger, parameter :: NUM_GEARS             = 8 ! COD_CVPOT, COD_CVLGL, COD_CVTWL, COD_CPPOT, COD_CPLGL, COD_CPTWL, POL_CVTWL, POL_CPTWL
-!!MOD_PARAMinteger, parameter :: NUM_TVAR              = 20
-!!MOD_PARAM
-!!MOD_PARAMinteger, parameter :: nfvaral = 3          !Numbers, CF, Cal
-!!MOD_PARAMinteger, parameter :: nfvarl  = 3          !Numbers, CF, Cal
-!!MOD_PARAMinteger, parameter :: nfvar   = 2          !Biomass, Cal
-!!MOD_PARAMinteger, parameter :: nrates  = 5          !Catch,happiness,dN,dCF,dCAL
-!!MOD_PARAM
-!!MOD_PARAMinteger, parameter :: TOT_LENGTHED = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES
-!!MOD_PARAMinteger, parameter :: TOT_FEAST    = NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES + NUM_SIMPLE_SPECIES
-!!MOD_PARAMinteger, parameter :: TOT_LINKS = NUM_AGED_SPECIES * NUM_AGES * NUM_AGED_LENGTHS + NUM_NOAGE_LENGTHS * NUM_LENGTHED_SPECIES + 1
-                                     
-  !     TYPE species_params   !struct species_params{
-          !  Identifiers
-   	         !character(len=20) Name 
-             !integer, dimension(NUM_SPECIES)  :: Guild 
-          !  Parameters         
-        integer ALL_LINKS
-        integer, dimension(TOT_LENGTHED)   :: fsh_Lsize     !// width of length bins
-        integer, dimension(NUM_AGED_SPECIES,NUM_AGES) :: fsh_age_offset
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_a_T, fsh_b_T, fsh_c_T
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_A_L, fsh_B_L 
-        !real(r8), dimension(TOT_LENGTHED)  :: fsh_H, fsh_theta 
-        real(r8), dimension(TOT_FEAST,TOT_FEAST+NUM_PLANKTON) :: fsh_q_G
-				integer, dimension(TOT_LENGTHED)   :: fsh_base_prey      
-				real(r8), dimension(TOT_LENGTHED,TOT_FEAST+NUM_PLANKTON)   :: fsh_alpha_G, fsh_beta_G  
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_A_S, fsh_B_S 
-        !real(r8), dimension(TOT_LENGTHED)  :: fsh_a_C, fsh_b_C !fsh_CQ
-        !real(r8), dimension(TOT_LENGTHED)  :: fsh_A_Q, fsh_B_Q 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_ED_m, fsh_ED_b 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_A_R, fsh_B_R 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_F_A, fsh_U_A, fsh_SDA 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_R_TM, fsh_R_T0, fsh_R_Q 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_C_TM, fsh_C_T0, fsh_C_Q 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_omega, fsh_mu, fsh_zeta, fsh_smallomega 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_g_W 
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_lambda, fsh_phi, fsh_D, fsh_kappa, fsh_chi 
-      ! recruitment added 9/6/2009 KYA                
-        real(r8), dimension(TOT_LENGTHED)  :: fsh_z_muL, fsh_z_sdL
-        real(r8), dimension(TOT_LENGTHED)   :: fsh_z_sday, fsh_z_eday, fsh_sp_sday, fsh_sp_eday
+      ! Phytoplankton growth parameters
+
+      real(r8) :: DiS, DiL, DpS, DpL
+      real(r8) :: alphaPhS, alphaPhL
+      real(r8) :: k1PhS, k1PhL, k2PhS, k2PhL
+      real(r8) :: kno3S, kno3L, knh4S, knh4L, psiS, psiL
+      real(r8) :: FeCritPS, FeCritPL, kfePhS, kfePhL
+
+      ! Feeding preferences
+
+      real(r8) :: fpPhSMZL, fpPhLMZL, fpMZSMZL
+      real(r8) :: fpPhSCop, fpPhLCop, fpMZLCop
+      real(r8) :: fpPhSNCa, fpPhLNCa, fpMZLNCa
+      real(r8) :: fpPhSEup, fpPhLEup, fpMZLEup, fpCopEup, fpDetEup 
+      real(r8) :: fpDetEupO
+      real(r8) :: fpCopJel, fpNCaJel, fpEupJel
+
+      ! Zooplankton growth and feeding
+
+      real(r8) :: eMZL, eCop, eNCa, eEup, eJel
+      real(r8) :: Q10MZL, Q10Cop, Q10NCa, Q10Eup, Q10Jele
+      real(r8) :: Q10MZLT, Q10CopT, Q10NCaT, Q10EupT, Q10JelTe
+      real(r8) :: fMZL, fCop, fNCa, fEup, fJel
+      real(r8) :: gammaMZL, gammaCop, gammaNCa, gammaEup, gammaJel
+
+      ! Phytoplankton sensescence
+
+      real(r8) :: mPhS, mPhL
+
+      ! Predation closure
+
+      real(r8) :: mpredMZL, mpredCop, mpredNCa, mpredEup, mpredJel
+
+      ! Sinking
+
+      real(r8) :: wPhS, wPhL, wDet, wDetF
+
+      ! Respiration
+
+      real(r8) :: respPhS, respPhL, respMZL, respCop, respNCa, respEup
+      real(r8) :: Q10Jelr, Q10JelTr, respJel
+      real(r8) :: KtBm_PhS, KtBm_PhL, KtBm_MZL, ktbmC, ktbmN, ktbmE
+      real(r8) :: TmaxPhS, TmaxPhL, TmaxMZL, TrefC, TrefN, TrefE
+
+      ! Iron climatology
+
+      real(r8) :: Feinlo, Feinhi, Feinh, Feofflo, Feoffhi, Feoffh
+
+      ! Diapause
+
+      real(r8) :: wNCrise,wNCsink
+      real(r8) :: RiseStart, RiseEnd, SinkStart, SinkEnd
+      real(r8) :: RiseStartCM, RiseEndCM, SinkStartCM, SinkEndCM
+
+      ! Remineralization and nitrification
+
+      real(r8) :: Pv0, PvT, Nitr0, ToptNtr, ktntr, KNH4Nit, tI0, KI
+
+      ! Benthos
+
+      real(r8) :: iremin
+      real(r8) :: q10r
+      real(r8) :: Rup, KupD, KupP, LupD, LupP
+      real(r8) :: Qres, Rres, rmort, eex, eexD
+      real(r8) :: prefD, prefPS, prefPL
+      real(r8) :: T0benr, BenPred
+
+      ! Ice biology
+
+      real(r8) :: alphaIb, betaI, inhib
+      real(r8) :: ksnut1, ksnut2, mu0, R0i
+      real(r8) :: rg0, rg, annit
+      real(r8) :: aidz
+
+#  ifdef FEAST
+
+      ! FEAST parameters
+
+      integer ALL_LINKS
+      integer, dimension(TOT_LENGTHED)   :: fsh_Lsize     !// width of length bins
+      integer, dimension(NUM_AGED_SPECIES,NUM_AGES) :: fsh_age_offset
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_a_T, fsh_b_T, fsh_c_T
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_A_L, fsh_B_L
+      real(r8), dimension(TOT_FEAST,TOT_FEAST+NUM_PLANKTON) :: fsh_q_G
+      integer, dimension(TOT_LENGTHED)   :: fsh_base_prey
+      real(r8), dimension(TOT_LENGTHED,TOT_FEAST+NUM_PLANKTON)   :: fsh_alpha_G, fsh_beta_G
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_A_S, fsh_B_S
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_ED_m, fsh_ED_b
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_A_R, fsh_B_R
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_F_A, fsh_U_A, fsh_SDA
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_R_TM, fsh_R_T0, fsh_R_Q
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_C_TM, fsh_C_T0, fsh_C_Q
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_omega, fsh_mu, fsh_zeta, fsh_smallomega
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_g_W
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_lambda, fsh_phi, fsh_D, fsh_kappa, fsh_chi
+
+      ! recruitment added 9/6/2009 KYA
+
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_z_muL, fsh_z_sdL
+      real(r8), dimension(TOT_LENGTHED)   :: fsh_z_sday, fsh_z_eday, fsh_sp_sday, fsh_sp_eday
+
       ! recruitment of 12/23/2101
-         real(r8), dimension(TOT_LENGTHED)  :: fsh_mat_a, fsh_mat_b, fsh_fec_a, fsh_fec_b
-         real(r8), dimension(TOT_LENGTHED)  :: fsh_fec_max, fsh_fem_prop, fsh_rec_prop
+
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_mat_a, fsh_mat_b, fsh_fec_a, fsh_fec_b
+      real(r8), dimension(TOT_LENGTHED)  :: fsh_fec_max, fsh_fem_prop, fsh_rec_prop
       ! variable activity added 10/28/11
-			    real(r8), dimension(TOT_LENGTHED) :: fsh_A_enc, fsh_B_enc
-			    real(r8), dimension(TOT_LENGTHED) :: fsh_Bv_min, fsh_B_Lzero, fsh_B_Lone, fsh_B_Lpow
-					!real(r8), dimension(TOT_LENGTHED) :: fsh_minVel, fsh_A_v, fsh_B_v, fsh_minACT 
-          
-					                   !fsh_minVel(sp) = (fsh_A_v(sp)/fsh_minACT(sp)) **(-1.0/fsh_B_v(sp))	            
-       ! feeding for simple and zoops
-       real(r8), dimension(NUM_SIMPLE_SPECIES) :: fsh_simple_len, fsh_simple_wt, fsh_simple_JperG 
-       real(r8), dimension(NUM_PLANKTON) :: fsh_zoop_len, fsh_zoop_wt, fsh_zoop_JperG 
-       
+
+      real(r8), dimension(TOT_LENGTHED) :: fsh_A_enc, fsh_B_enc
+      real(r8), dimension(TOT_LENGTHED) :: fsh_Bv_min, fsh_B_Lzero, fsh_B_Lone, fsh_B_Lpow
+
+      ! feeding for simple and zoops
+
+      real(r8), dimension(NUM_SIMPLE_SPECIES) :: fsh_simple_len, fsh_simple_wt, fsh_simple_JperG
+      real(r8), dimension(NUM_PLANKTON) :: fsh_zoop_len, fsh_zoop_wt, fsh_zoop_JperG
+
       ! movement
-        real(r8), dimension(TOT_FEAST)     :: fsh_max_speed, fsh_happy_01, fsh_happy_99  !bodL/day
+
+      real(r8), dimension(TOT_FEAST)     :: fsh_max_speed, fsh_happy_01, fsh_happy_99  !bodL/day
+
       ! derived quantities
-        real(r8), dimension(TOT_LENGTHED) :: fsh_RTM_RT0, fsh_CTM_CT0 
-        real(r8), dimension(TOT_LENGTHED) :: fsh_CTMoverCTM_CT0, fsh_RTMoverRTM_RT0 
-        real(r8), dimension(TOT_LENGTHED) :: fsh_X_R, fsh_X_C, fsh_P_j 
-        real(r8) :: fpredCop, fpredNcaS, fpredNcaO, fpredEupS, fpredEupO
-      ! parameter vectors      
-        !real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_LL, fsh_AL_LL_BL, fsh_AS_LL_BS
-        !real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_L_deriv, fsh_ED, fsh_zeros
-     !  Gear vectors
-     	 real, dimension(NUM_GEARS,TOT_FEAST) :: fsh_catch_sel, fsh_catch_01, fsh_catch_99
-     	 !real, dimension(NUM_GEARS,TOT_FEAST,MAX_LCLASS) :: fsh_catch_CPUF
-     	 !real(r8) fsh_qq(NUM_GEARS,NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
-     	 
-  integer rlook_fal(NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
-  integer rlook_fl(NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS)
-  integer, dimension(TOT_LINKS) :: sp_all,age_all,lc_all,all_order,rev_order
-  integer, dimension(TOT_LINKS) :: prev_len,next_len,type_all
-  real(r8), dimension(TOT_LINKS) :: all_AL_LL_BL, all_AS_LL_BS
-	real(r8), dimension(TOT_LINKS) :: all_Aenc_LL_Benc, all_Ar_v_LL 
-	real(r8), dimension(TOT_LINKS) :: all_L_deriv,all_zeros,L_all,CALbase_all, L_width
-  real(r8), dimension(TOT_LINKS) :: swim_all, swim_selm, swim_selk
-  real(r8), dimension(TOT_LINKS) :: all_mat_rec, sum_preference
-  
-  real(r8) :: all_QQ(NUM_GEARS,TOT_LINKS), all_preference(TOT_LINKS,TOT_LINKS)
-  real(r8) :: zoop_preference(TOT_LINKS,NUM_PLANKTON)
-  real(r8) :: simple_preference(TOT_LINKS,NUM_SIMPLE_SPECIES)
-  integer :: tspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
-  integer :: tspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
-  integer :: tsp(nfvar,NUM_SIMPLE_SPECIES)
-  integer :: kspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
-  integer :: kspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
-  integer :: ksp(nfvar,NUM_SIMPLE_SPECIES)	
-	integer :: teggs(TOT_LENGTHED), tspawn(TOT_LENGTHED)
-	integer :: keggs(TOT_LENGTHED), kspawn(TOT_LENGTHED)
-	      	 
-  !    END TYPE   
-  !     real(r8), dimension(NUM_PLANKTON) ::  fsh_Zoop_JperG 
 
-  real(r8) :: feast_test
-  real(r8) :: force_ration
-  real(r8) :: force_vonB
-  integer :: dye_update
-  integer :: dye_loaded = 0 
-  integer :: feast_mixed
-  integer :: feast_coupled
-  integer :: feast_mort
-  integer :: feast_fishing
-  integer :: feast_growth
-  integer :: feast_movement
-  integer :: feast_recruitment       ! flag to do or not do recruitment
-  integer :: feast_promotion         ! flag to do promotion or not
-  integer :: feast_time = 0          ! Set the time of day at which FEAST is updated
-  integer :: feast_sp_view  = 1      ! species to output detailed statistics
-  integer :: feast_age_view = 1      ! age to output detailed statistics
-  !real(r8), dimension(TOT_FEAST) :: age_zeros
+      real(r8), dimension(TOT_LENGTHED) :: fsh_RTM_RT0, fsh_CTM_CT0
+      real(r8), dimension(TOT_LENGTHED) :: fsh_CTMoverCTM_CT0, fsh_RTMoverRTM_RT0
+      real(r8), dimension(TOT_LENGTHED) :: fsh_X_R, fsh_X_C, fsh_P_j
+      real(r8) :: fpredCop, fpredNcaS, fpredNcaO, fpredEupS, fpredEupO
 
+      ! parameter vectors
 
+      !real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_LL, fsh_AL_LL_BL, fsh_AS_LL_BS
+      !real, dimension(TOT_LENGTHED,MAX_LCLASS) :: fsh_L_deriv, fsh_ED, fsh_zeros
+
+      ! Gear vectors
+
+      real, dimension(NUM_GEARS,TOT_FEAST) :: fsh_catch_sel, fsh_catch_01, fsh_catch_99
+      !real, dimension(NUM_GEARS,TOT_FEAST,MAX_LCLASS) :: fsh_catch_CPUF
+      !real(r8) fsh_qq(NUM_GEARS,NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
+
+      integer rlook_fal(NUM_AGED_SPECIES,NUM_AGES,NUM_AGED_LENGTHS)
+      integer rlook_fl(NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS)
+      integer, dimension(TOT_LINKS) :: sp_all,age_all,lc_all,all_order,rev_order
+      integer, dimension(TOT_LINKS) :: prev_len,next_len,type_all
+      real(r8), dimension(TOT_LINKS) :: all_AL_LL_BL, all_AS_LL_BS
+      real(r8), dimension(TOT_LINKS) :: all_Aenc_LL_Benc, all_Ar_v_LL
+      real(r8), dimension(TOT_LINKS) :: all_L_deriv,all_zeros,L_all,CALbase_all, L_width
+      real(r8), dimension(TOT_LINKS) :: swim_all, swim_selm, swim_selk
+      real(r8), dimension(TOT_LINKS) :: all_mat_rec, sum_preference
+
+      real(r8) :: all_QQ(NUM_GEARS,TOT_LINKS), all_preference(TOT_LINKS,TOT_LINKS)
+      real(r8) :: zoop_preference(TOT_LINKS,NUM_PLANKTON)
+      real(r8) :: simple_preference(TOT_LINKS,NUM_SIMPLE_SPECIES)
+      integer :: tspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
+      integer :: tspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
+      integer :: tsp(nfvar,NUM_SIMPLE_SPECIES)
+      integer :: kspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
+      integer :: kspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
+      integer :: ksp(nfvar,NUM_SIMPLE_SPECIES)
+      integer :: teggs(TOT_LENGTHED), tspawn(TOT_LENGTHED)
+      integer :: keggs(TOT_LENGTHED), kspawn(TOT_LENGTHED)
+
+      ! END TYPE
+      !real(r8), dimension(NUM_PLANKTON) ::  fsh_Zoop_JperG
+
+      real(r8) :: feast_test
+      real(r8) :: force_ration
+      real(r8) :: force_vonB
+      integer :: dye_update
+      integer :: dye_loaded = 0
+      integer :: feast_mixed
+      integer :: feast_coupled
+      integer :: feast_mort
+      integer :: feast_fishing
+      integer :: feast_growth
+      integer :: feast_movement
+      integer :: feast_recruitment       ! flag to do or not do recruitment
+      integer :: feast_promotion         ! flag to do promotion or not
+      integer :: feast_time = 0          ! Set the time of day at which FEAST is updated
+      integer :: feast_sp_view  = 1      ! species to output detailed statistics
+      integer :: feast_age_view = 1      ! age to output detailed statistics
+      !real(r8), dimension(TOT_FEAST) :: age_zeros
+
+#  endif
 # endif
-!#  if defined BIOFLUX
-!        real(r8), dimension(NAT+NBT,NAT+NBT) :: bflx
-!#  endif
-# endif
-       
-
-
-
 
 # ifdef BIO_GOANPZ
 !=======================================================================
@@ -1564,7 +1496,7 @@
         real(r8) :: mMZS, mMZL, mCop, mNCa, mEup
 !  predation closure
         real(r8) :: mpredCop, mpredNCa, mpredEup
-	real(r8) :: mpredMZS, mpredMZL
+  real(r8) :: mpredMZS, mpredMZL
 !  sinking and regeneration terms
         real(r8) :: regen, dgrad
         real(r8) :: wPhS, wPhL, wDet, terms
@@ -1572,7 +1504,7 @@
         real(r8) :: Feinlo, Feinhi, Feinh, Feofflo, Feoffhi, Feoffh
 !  Terms to define respiration
         real(r8) :: respPhS, respPhL, respMZS, respMZL
-	real(r8) :: respCop, respNCa, respEup
+  real(r8) :: respCop, respNCa, respEup
 !  Iron limitation terms
         real(r8) :: kfePhS, kfePhL, FeC
 !  Diapause
@@ -1584,540 +1516,698 @@
 #  endif
 # endif
         integer :: dummy_bio
-        
-#ifdef FEAST
+
+# ifdef BEST_NPZ
       CONTAINS
-!!-----------------------------------------------------------------------------
-          subroutine QsortC(A, index)
-            real, intent(in out), dimension(:) :: A
-            integer, intent(in out), dimension(:) :: index
-            integer :: L,i,j,tind
-            real :: temp
-            
-            L=size(A)
-            do i = 1,L-1
-              do j = i+1,L
-                 if (A(i) < A(j)) then
-                  temp = A(i)
-                  A(i) = A(j)
-                  A(j) = temp
-                  tind = index(i)
-                  index(i) = index(j)
-                  index(j) = tind          
-                 end if
-              end do
-            end do
-          end subroutine QsortC
+!========================================================================
+!  bestnpz_swfrac_tile: light attenuation with phytoplankton
+!
+!  This function provides an alternative light attenuation curve
+!  calculation; it allows for attenuation due to chlorphyll (in 
+!  addition to that due to water and organic material).  This function
+!  is called both in the biological calculations (bestnpz.h) and when
+!  determining light penetration for the physical model (pre_step3d.F).
+!
+! Input (and *output) variables:
+!
+!   ng, ntile, LBi, UBi, LBj, UBj, IminS, ImaxS, JminS, JmaxS: 
+!
+!   h:      i x j, bathymetry in tile (m)
+!
+!   z_w:    i x j x k+1, layer depth edges in tile (m)
+!
+!   PhS:    i x j x k, small phytoplankton concentration (mg C m^-3)
+!
+!   PhL:    i x j x k, large phytoplankton concentration (mg C m^-3)
+!
+!   *swdk:  i x j x k, fractional decay of shortwave radiation (at 
+!           mid-point of layers), based on Jerlov water type parameters
+!
+!   *Ifrac: i x j x k, fractional decay of surface radiation (at 
+!           mid-point of layers), w/o water type modification
+!
+!
+!========================================================================
+      SUBROUTINE bestnpz_swfrac_tile (ng, tile,                         &
+     &                                LBi, UBi, LBj, UBj,               &
+     &                                IminS, ImaxS, JminS, JmaxS,       &
+     &                                h, z_w, PhS, PhL, swdk, Ifrac)
 
-!!------------------------------------------------------------------------------
-SUBROUTINE initialize_feast
-      
-  USE mod_param
-          
-  implicit none
-  integer :: isp, sp, gr, ac, lc, py, ng, lastT, lastK
-  integer :: fvaral,fvarl,fvar,spal,spl,spalindex,splindex,spindex
-  integer :: spalindexmax,splindexmax,spindexmax          
-  integer :: NL
-  real(r8) :: Z,Y, mu, sd, lp, selk, selm, sels, Smax, Ratio
-  real(r8) :: rec,mat
-  integer:: i,L, NN, SS, spn, spy, YY
-  !integer :: pcount(TOT_FEAST,200)
-  real(r8), dimension(TOT_LINKS) :: prob 
-  real(r8), dimension(TOT_FEAST) :: probtot
-  real, dimension(TOT_LINKS) :: tmp_order
-! initialize paramters for fish
+      USE mod_param
+      USE mod_scalars
 
-  real(r8),    parameter :: PIPI = 3.14159265358979
+      implicit none
+
+      ! Imported
+
+      integer, intent(in) :: ng, tile
+      integer, intent(in) :: LBi, UBi, LBj, UBj
+      integer, intent(in) :: IminS, ImaxS, JminS, JmaxS
+      real(r8), intent(in) :: h(IminS:ImaxS,JminS:JmaxS)
+      real(r8), intent(in) :: z_w(IminS:ImaxS,JminS:JmaxS,0:N(ng))
+      real(r8), intent(in) :: PhS(IminS:ImaxS,JminS:JmaxS,N(ng))
+      real(r8), intent(in) :: PhL(IminS:ImaxS,JminS:JmaxS,N(ng))
+
+      real(r8), intent(out) :: swdk(IminS:ImaxS,JminS:JmaxS,N(ng))
+      real(r8), intent(out) :: Ifrac(IminS:ImaxS,JminS:JmaxS,N(ng))
+
+      ! Local
+
+      real(r8), dimension(1:N(ng)) :: chl, zmid
+      real(r8) :: k_tot, cff1, k_w, kpsum, dz
+      integer :: i, j, k
+
+# include "set_bounds.h"
+
+!-----------------------------------------------------------------------
+! Calculate light attenuation
+!-----------------------------------------------------------------------
+
+      DO j=Jstr,Jend
+        DO i=Istr,Iend
+
+          do k = N(ng),1,-1
+            chl(k) = PhS(i,j,k)/ccr + PhL(i,j,k)/ccrPhL ! chlorophyll in layer (mg chl/m^3)
+            zmid(k) = z_w(i,j,N(ng)) - (z_w(i,j,k-1) + z_w(i,j,k))/2 ! layer midpoint measured from surface (m, positive)
+          end do
+  
+#ifdef NEWSHADE
+
+          ! Georgina Gibsons version after Morel 1988 (in Loukos 1997)
+
+          k_w = k_ext + 2.00_r8*exp(-h(i,j)*.05)
+
+          kpsum = 0.0_r8
+          do k = N(ng),1,-1
+            dz = z_w(i,j,k) - z_w(i,j,k-1)
+            cff1 = k_chl * chl(k)**(0.428_r8)
+            k_tot = k_w + (cff1 * dz/2 + kpsum)/zmid(k)
+            kpsum = kpsum + (cff1*dz)
     
-  ! print *, 'Initializing FEAST variables'
-  open (unit = 5, file = "init.txt", status='REPLACE')
-
-! derived and stored bioenergetics quantities    
-  DO isp=1,TOT_LENGTHED
-     !fsh_minVel(isp) = (fsh_A_v(isp)/fsh_minACT(isp)) **(-1.0/fsh_B_v(isp))
+            Ifrac(i,j,k) = exp(-k_tot*zmid(k))
+            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) +              &
+     &                    a_frac*exp(-zmid(k)/a_mu1)
     
-     fsh_CTM_CT0(isp) = fsh_C_TM(isp) - fsh_C_T0(isp)    
-     fsh_CTMoverCTM_CT0(isp) = fsh_C_TM(isp) / fsh_CTM_CT0(isp)
-     Z = log(fsh_C_Q(isp)) * fsh_CTM_CT0(isp)
-     Y = log(fsh_C_Q(isp)) * (fsh_CTM_CT0(isp) + 2.0)  			 
-     fsh_X_C(isp) = ( Z*Z * (1.0 + ( (1.0 + 40.0/Y) ** 0.5)) ** 2.0)/400.0 
-		 		  
-     fsh_RTM_RT0(isp) = fsh_R_TM(isp) - fsh_R_T0(isp)    
-     fsh_RTMoverRTM_RT0(isp) = fsh_R_TM(isp) / fsh_RTM_RT0(isp)   
-     Z = log(fsh_R_Q(isp)) * fsh_RTM_RT0(isp)
-     Y = log(fsh_R_Q(isp)) * (fsh_RTM_RT0(isp) + 2.0)  			 
-     fsh_X_R(isp) = ( Z*Z * (1.0 + ( (1.0 + 40.0/Y) ** 0.5)) ** 2.0)/400.0 
-
-     fsh_P_j(isp) = (fsh_F_A(isp) + (fsh_U_A(isp) + fsh_SDA(isp))*(1.0-fsh_F_A(isp))) 
-  END DO
-          
-          NN = 0
-          all_QQ=0.0
-          
-          			rlook_fal= 0
-          			rlook_fl=0
-                sp_all= 0
-          			age_all= 0
-          			lc_all= 0
-          			all_order= 0
-                rev_order=0 
-          			!labs_all= 0
-          			
-          do sp = 1,NUM_AGED_SPECIES
-            do ac = 1,NUM_AGES
-              do lc = 1,NUM_AGED_LENGTHS
-                NN = NN+1
-          			rlook_fal(sp,ac,lc) = NN
-                sp_all(NN)   = sp
-          			age_all(NN)  = ac
-          			lc_all(NN)   = lc
-          			all_order(NN) = NN 
-          			!labs_all(NN) = lc + fsh_age_offset(sp,ac)
-                type_all(NN)  = 1
-          		end do
-           end do
           end do
-          !write(5,"(I5 I5)") NN, ALL_LINKS
-          do sp = 1,NUM_LENGTHED_SPECIES
-             do lc = 1,NUM_NOAGE_LENGTHS
-                NN=NN+1
-          			rlook_fl(sp,lc)=NN
-                sp_all(NN)   = sp + NUM_AGED_SPECIES
-                age_all(NN)  = 0
-                lc_all(NN)   = lc
-                !labs_all(NN) = lc
-                all_order(NN) = NN
-                type_all(NN)  = 2 
-             end do
+
+#elif defined COKELET
+
+          ! Version from Ned Cokelet
+  
+          k_w = k_ext
+  
+          kpsum = 0.0_r8
+          do k = N(ng),1,-1
+            dz = z_w(i,j,k) - z_w(i,j,k-1)
+            cff1 = k_chlA * chl(k)**(k_chlB)
+            k_tot = k_w + (cff1 * dz/2 + kpsum)/zmid(k) + k_chlC ! TODO: In old version, k_chlC is in pre_step3d.F but not bestnpz.h
+            kpsum = kpsum + (cff1*dz)
+    
+            Ifrac(i,j,k) = exp(-k_tot*zmid(k))
+            swdk(i,j,k) = (1.0_r8 - a_frac)*Ifrac(i,j,k) +              &
+     &                    a_frac*exp(-zmid(k)/a_mu1)
+    
           end do
-          
-          
-          ALL_LINKS = NN
-          
-            !do SS = 1,ALL_LINKS
-            !   spn = all_order(SS)
-            !   write (5,*),SS,spn,L_all(spn),sp_all(spn),age_all(spn),lc_all(spn),labs_all(spn)
-            !end do
-          !write(5,"(I5 I5)") NN, ALL_LINKS
-          probtot = 0.0
-          prob    = 0.0
-          
-          prev_len = 0
-          next_len = 0
-          
-          do NN = 1,ALL_LINKS
-             sp = sp_all(NN)
-             lc = lc_all(NN)
-             ac = age_all(NN)
-             if (ac>0) then
-                if (lc>1)                  prev_len(NN) = rlook_fal(sp,ac,lc-1) ! else 0
-                if (lc<NUM_AGED_LENGTHS)   next_len(NN) = rlook_fal(sp,ac,lc+1) ! else 0
-                !if (ac>1)                  prev_age(NN) = rlook_fal(sp,ac-1,lc) ! else 0
-                !if (ac<NUM_AGES)           next_age(NN) = rlook_fal(sp,ac+1,lc) ! else 0
-             else
-                if (lc>1)                  prev_len(NN) = rlook_fl(sp-NUM_AGED_SPECIES,lc-1)  ! else 0
-                if (lc<NUM_NOAGE_LENGTHS)  next_len(NN) = rlook_fl(sp-NUM_AGED_SPECIES,lc+1)	 ! else 0
-          	 end if 
-						    ! Age 0s and noaged species are half the length set for adults
-						 
-						 if (ac>0) then
-						   if (ac<2) then
-								L_width(NN) = fsh_Lsize(sp_all(NN))/2.0
-								L_all(NN)   = lc * L_width(NN) - L_width(NN)/2.0
-						   else            
-								L_width(NN) = fsh_Lsize(sp_all(NN))
-							  L_all(NN)   = (lc+fsh_age_offset(sp,ac))*L_width(NN) - L_width(NN)/2.0
-               end if
-						 else
-								L_width(NN) = fsh_Lsize(sp_all(NN))
-							  L_all(NN)   = lc*L_width(NN) - L_width(NN)/2.0
-						 end if	
-						 					    
-						 !print *,sp,ac,lc,L_all(NN) 
-                CALbase_all(NN)  = fsh_ED_b(sp) + fsh_ED_m(sp)*L_all(NN)
-                all_AL_LL_BL(NN) = fsh_A_L(sp) * (L_all(NN) ** fsh_B_L(sp))    
-                all_AS_LL_BS(NN) = fsh_A_S(sp) * (L_all(NN) ** fsh_B_S(sp))
-          			all_Aenc_LL_Benc(NN) = fsh_A_enc(sp) * (L_all(NN) ** fsh_B_enc(sp))
-          			all_Ar_v_LL(NN) = fsh_Bv_min(sp)+fsh_B_Lzero(sp) / &
-								                & (1.0 +(fsh_B_Lzero(sp)/fsh_B_Lone(sp)-1.0) * &
-																& (L_all(NN) ** fsh_B_Lpow(sp)))
-								
-								!write(*,'(A10,I4,4G14.6)'),"stuff",sp,L_all(NN),fsh_A_enc(sp),fsh_B_enc(sp),all_Aenc_LL_Benc(NN) 
-								!write(*,'(A10,I4,2G14.6)'),"Lpow",sp,L_all(NN),all_Ar_v_LL(NN)
-								!write(*,'(A10,G14.6)'),"Bv_min",fsh_Bv_min(sp)
-								!write(*,'(A10,G14.6)'),"Lzero",fsh_B_Lzero(sp)
-								!write(*,'(A10,G14.6)'),"Lone",fsh_B_Lone(sp)
-								!write(*,'(A10,G14.6)'),"Lpow",fsh_B_Lpow(sp)
-																								
-								all_L_deriv(NN)  = fsh_A_L(sp) * fsh_B_L(sp) * L_all(NN) ** (fsh_B_L(sp) - 1.0)
-          			!all_ED(NN)       = fsh_ED_b(sp) + fsh_ED_m(sp) * all_AS_LL_BS(NN)
-          			
-          		  swim_all(NN)  = L_all(NN) * fsh_max_speed(sp) / 100.0  ! Units are m/s
-								swim_selk(NN) = -log((1.0-0.99)/0.99)/((fsh_happy_99(sp)-fsh_happy_01(sp))/2.0)  !=-LN((1-0.99)/0.99)/((L_99-L_01)/2) 
-          			swim_selm(NN) = fsh_happy_01(sp)+(fsh_happy_99(sp)-fsh_happy_01(sp))/2.0 !=L_01+(L_99-L_01)/2
-
-                do gr = 1, NUM_GEARS
-                   if (fsh_catch_sel(gr,sp)>0.0) then
-             		      selk  = -log((1.0-0.99)/0.99)/((fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0)  !=-LN((1-0.99)/0.99)/((L_99-L_01)/2) 
-                      selm  = fsh_catch_01(gr,sp)+(fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0 !=L_01+(L_99-L_01)/2
-          		        sels  = selm-(log((1.0/0.001)-1.0))/selk
-          		        !write (5,*) selk,selm,sels,L_all(NN),1.0/(1.0 + exp(-selk*(L_all(NN)-selm)))
-                      if (L_all(NN)>=sels) then
-                       		all_QQ(gr,NN) = fsh_catch_sel(gr,sp) * 1.0/(1.0 + exp(-selk*(L_all(NN)-selm)))
-                      end if
-                      !write (5,*) selk,selm,sels,L_all(NN),1.0/(1.0 + exp(-selk*(L_all(NN)-selm))),fsh_catch_sel(gr,sp),all_QQ(gr,NN)
-                    end if
-                end do
-                ! recruitment
-                  mat =             1.0 / (1.0 + exp( -(fsh_mat_a(sp) + fsh_mat_b(sp) * L_all(NN))))
-									if (mat < 0.05) then
-									   mat = 0.0
-									end if
-                  rec = fsh_fec_max(sp) / (1.0 + exp( -(fsh_fec_a(sp) + fsh_fec_b(sp) * L_all(NN))))  
-									all_mat_rec(NN) = mat * rec  * fsh_fem_prop(sp)  ! * fsh_rec_prop(sp)
-                  
-                  if (ac.eq.1 .or. ac.eq.0) then
-                    mu = fsh_z_muL(sp)  
-                    sd = fsh_z_sdL(sp)
-									  lp = log(mu/L_all(NN))
-									  prob(NN) = (1.0/sqrt(2.0*PIPI*sd*sd))*exp(-(lp*lp)/(2.0*sd*sd))
-                    probtot(sp) = probtot(sp) + prob(NN)
-                  end if
-          end do
-          
-      ! 10/27/11 Made preference a normalized sum
-          sum_preference = 0.0
-            !#prefbase <-  ifelse(pynum==BASE_PREY,
-            !#          ifelse(logratio <= py_Smax,  py_q,  py_q*((logratio/py_Smax)^(py_alpha-1))*exp(-(logratio-py_Smax)/py_beta) ),
-            !#          ifelse(logratio <= 0.0,       0.0,  py_q*((logratio/py_Smax)^(py_alpha-1))*exp(-(logratio-py_Smax)/py_beta) )
-					  !#  )
-          !pcount = 0
-					do spn = 1,ALL_LINKS
-             sp=sp_all(spn)
-             do spy = 1,ALL_LINKS
-                py=sp_all(spy)
-          		! 11/3/11 Made cutoff 80% of length, not 100%, maybe replace 0.80
-          		! with species-specific parameter at some point
-								if (L_all(spn)*0.80 <= L_all(spy)) THEN 
-          			   all_preference(spn,spy)=0.0
-          			else
-          		   Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
-                 Ratio = log (L_all(spn)/L_all(spy))
-								 ! uncomment this if-else for saturation
-								 !if (Ratio .ge. Smax) then
-								 !	 all_preference(spn,spy) = fsh_q_G(sp,py)
-								 !else				                 
-                   all_preference(spn,spy) = fsh_q_G(sp,py) *                  & 
-          					              &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-          						            & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))	 	            
-          			 !end if
-								end if
-						    sum_preference(spn) = sum_preference(spn) + all_preference(spn,spy)
-						    !if (pcount(sp,int(L_all(spn))) .eq. 0) then
-                !write(*,'(I4,F10.2,I4,F10.2,G14.6)'),sp,real(L_all(spn)),py,real(L_all(spy)),all_preference(spn,spy)
-								!end if
-             end do
-             !pcount(sp,int(L_all(spn)))=1
-          end do
-          
-          !pcount = 0
-          do spn = 1,ALL_LINKS
-             sp=sp_all(spn)
-             do spy = 1,NUM_SIMPLE_SPECIES
-              py=spy + NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES
-          		if (fsh_base_prey(sp) == py) then
-          		  Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
-          		  Ratio = log (L_all(spn)/fsh_simple_len(spy))
-          		  if (Ratio .le. Smax ) then
-							     simple_preference(spn,spy) = fsh_q_G(sp,py)
-							  else
-                   simple_preference(spn,spy) = fsh_q_G(sp,py) *               & 
-          					              &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-          						            & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))							  
-							  end if
-							else					  
-          			if (L_all(spn) <= fsh_simple_len(spy)) THEN 
-          			   simple_preference(spn,spy)=0.0
-          			else
-                 Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
-								 Ratio = log (L_all(spn)/fsh_simple_len(spy))
-								 !if (Ratio .ge. Smax) then
-								 !  simple_preference(spn,spy) = fsh_q_G(sp,py)
-								 !else						                 
-                   simple_preference(spn,spy) = fsh_q_G(sp,py) *               & 
-          					              &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-          						            & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
-          			 !end if
-								end if    
-          		end if
-          		sum_preference(spn) = sum_preference(spn) + simple_preference(spn,spy)
-						    !if (pcount(sp,int(L_all(spn))) .eq. 0) then
-              !write(*,'(I4,F10.2,I4,F10.2,G14.6)'),sp,real(L_all(spn)),py,real(fsh_simple_len(spy)),simple_preference(spn,spy)
-
-								!end if
-             end do
-             !pcount(sp,int(L_all(spn)))=1
-          end do
-          
-          !pcount = 0     
-          do spn = 1,ALL_LINKS
-             sp=sp_all(spn)
-             !write(0,*),sp,fsh_base_prey(sp)
-             do spy = 1,NUM_PLANKTON
-               py=spy + NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES + NUM_SIMPLE_SPECIES
-               if (fsh_base_prey(sp) == py) then 
-          		    Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
-          		    Ratio = log (L_all(spn)/fsh_zoop_len(spy))
-          		    if (Ratio .le. Smax ) then
-                     zoop_preference(spn,spy) = fsh_q_G(sp,py)
-                  else
-									 zoop_preference(spn,spy) = fsh_q_G(sp,py) *                 & 
-          					              &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-          						            & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
-									end if
-									!write(0,*),sp,py,Ratio,Smax,zoop_preference(spn,spy)                 
-							 else
-          			if (L_all(spn) <= fsh_zoop_len(spy)) THEN 
-          			   zoop_preference(spn,spy)=0.0
-          			else
-          		    Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
-                  Ratio = log (L_all(spn)/fsh_zoop_len(spy))						                 
-                  !if (Ratio .ge. Smax) then
-                  ! zoop_preference(spn,spy) = fsh_q_G(sp,py)
-									!else   
-									 zoop_preference(spn,spy) = fsh_q_G(sp,py) *                 & 
-          					              &((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
-          						            & * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
-									!end if	 
-          			end if
-          		 end if	
-							sum_preference(spn)  = sum_preference(spn) + zoop_preference(spn,spy) 
-						    !if (pcount(sp,int(L_all(spn))) .eq. 0) then
-          		  !  write(*,'(I4,F10.2,I4,F10.2,G14.6)'),sp,real(L_all(spn)),py,real(fsh_zoop_len(spy)),zoop_preference(spn,spy)
-								!end if 
-             end do
-            !pcount(sp,int(L_all(spn)))=1
-          end do 
- 
-         ! Regardless of above, set BASE_PREY preference to 1.0
-
-				   
- 
-         ! Use following if preference is normalized
-          !do spn = 1,ALL_LINKS
-          !  if (sum_preference(spn) > 0.0) then
-          !      do spy = 1,ALL_LINKS
-          !         all_preference(spn,spy) = all_preference(spn,spy)/sum_preference(spn)
-          !      end do
-          !      do spy = 1,NUM_SIMPLE_SPECIES
-          !         simple_preference(spn,spy) = simple_preference(spn,spy)/sum_preference(spn)
-          !      end do
-          !      do spy = 1,NUM_PLANKTON
-          !         zoop_preference(spn,spy) = zoop_preference(spn,spy)/sum_preference(spn)
-          !      end do
-          !  end if
-          !end do
-                
-          do NN = 1,ALL_LINKS
-             sp = sp_all(NN)
-             all_zeros(NN) = prob(NN)/probtot(sp) 
-             if (all_zeros(NN)<1e-20) then
-                all_zeros(NN) = 0.0
-             end if
-          end do
-          
-          
-          !write(5,"(I5 I5)") NN, ALL_LINKS
-          
-          
-          !probtot = 0.0
-          !mu = fsh_z_muL(isp)  
-          !sd = fsh_z_sdL(isp)  
-          !
-          ! DO L=1,MAX_LCLASS
-          !    lp = fsh_LL(isp,L)
-          !    prob(L) = (1.0/sqrt(2.0*PIPI*sd*sd)) * exp ( -(log(mu/lp)*log(mu/lp)) / (2.0*sd*sd) )
-          !    probtot  = probtot+prob(L)
-          !    !print *,'INIT,',isp,lp,mu,sd,PIPI,prob(L),probtot,(1.0/sqrt(2.0*PIPI*sd*sd))*exp(-(log(mu/lp)*log(mu/lp))/(2.0*sd*sd))
-          ! END DO
-          !             
-          ! DO L=1,MAX_LCLASS  
-          !    prob(L) = prob(L)/ probtot  
-          !    fsh_zeros(isp,L) = prob(L) * fsh_z_N(isp)
-          !    if (fsh_zeros(isp,L)<1e-20) then
-          !       fsh_zeros(isp,L) = 0.0
-          !    end if
-          !    ! print *,'INIT,',isp,L,mu,sd,prob(L),fsh_z_N,fsh_zeros(L)
-          ! end DO
-          
-          
-          
-          !    do gr = 1, NUM_GEARS
-          !		 selk  = -log((1.0-0.99)/0.99)/((fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0)  !=-LN((1-0.99)/0.99)/((L_99-L_01)/2) 
-          !     selm  = fsh_catch_01(gr,sp)+(fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0 !=L_01+(L_99-L_01)/2
-          !		 sels  = selm-(log((1.0/0.001)-1.0))/selk
-          !     if (fsh_catch_sel(gr,sp)>0.0) then
-          !          do ac = 1,NUM_AGES
-          !            do lc = 1,NUM_AGED_LENGTHS
-          !                !NS   = rlook(sp,ac,lc)
-          !								lp = (lc + fsh_age_offset(sp,ac)) * fsh_Lsize(sp) + fsh_Lsize(sp)/2
-          !								if (lp>=sels) then
-          !							     fsh_qq(gr,sp,ac,lc) = fsh_catch_sel(gr,sp) * 1.0/(1.0 + exp(-selk*(lp-selm)))
-          !                else
-          !								   fsh_qq(gr,sp,ac,lc) = 0.0
-          !								end if
-          !            end do
-          !          end do
-          !      end if
-          !    end do
-            tmp_order = L_all
-            call QsortC(tmp_order,all_order)
-            do NN = 1,ALL_LINKS
-               rev_order(all_order(NN))=NN
-            end do
-            
-				 write(5,'(3A4,A6,A4,A4,A14)')," pdS"," pdA"," PdL", &
-				      & "  Prey","pyA","PyL","Pref"              						
-						!do SS = 1,ALL_LINKS
-						!
-            !   spn = all_order(SS)
-            !   DO py = 1,NUM_PLANKTON
-						!      write(5,'(I4,I4,F4.0,A4,I2.2,I4,F4.0,G14.6)'), &
-						!			sp_all(spn), age_all(spn), real(L_all(spn)), &
-						!	    &	'ZZ_',py, 0, 0.0, &
-						!	    & real(zoop_preference(spn,py))
-						!	 end do
-            !  DO py = 1,NUM_SIMPLE_SPECIES
-						!      write(5,'(I4,I4,F4.0,A4,I2.2,I4,F4.0,G14.6)'), &
-						!			sp_all(spn), age_all(spn), real(L_all(spn)), &
-						!	    &	'SS_',py, 0, 0.0, &
-						!	    & real(simple_preference(spn,py))
-						!	 end do							 
-						!	 do YY = 1,ALL_LINKS
-						!	    spy = all_order(YY)							    
-						!     write(5,'(I4,I4,F4.0,A4,I2.2,I4,F4.0,G14.6)'), &
-						!			sp_all(spn), age_all(spn), real(L_all(spn)), &
-						!	    &	'FF_',sp_all(spy), age_all(spy), L_all(spy), &
-						!	    & real(all_preference(spn,spy))
-						!	 end do			
-						!	 !write (5,*),sp_all(spn),age_all(spn),L_all(spn),all_AL_LL_BL(spn),all_mat_rec(spn)
-            !end do
-            
-            close(5)
-
-!subroutine fish_indices(tspal,tspl,tsp,kspal,kspl,ksp,NL)
-
-!USE mod_param
-!USE mod_feast
-
-!integer, intent(inout) :: tspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
-!integer, intent(inout) :: tspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
-!integer, intent(inout) :: tsp(nfvar,NUM_SIMPLE_SPECIES)
-!integer, intent(inout) :: kspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
-!integer, intent(inout) :: kspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
-!integer, intent(inout) :: ksp(nfvar,NUM_SIMPLE_SPECIES)
-ng = 1
-NL = N(ng) !ROMS_LAYERS !integer :: NL
-!print *,NAT,NPT,NL
-
-spalindexmax = nfvaral*NUM_AGED_SPECIES*NUM_AGED_LENGTHS*NUM_AGES
-splindexmax = nfvarl*NUM_LENGTHED_SPECIES*NUM_NOAGE_LENGTHS 
-spindexmax = nfvar*NUM_SIMPLE_SPECIES
-
-open (unit = 5, file = "dyes.txt", status='REPLACE')
-write (5,'(A6,6A4)'),"typ","dye","lev","var","sp","lc","ac"
-
-do fvaral=1,nfvaral
-do spal=1,NUM_AGED_SPECIES
-do lc=1,NUM_AGED_LENGTHS
-do ac=1,NUM_AGES
-spalindex = (fvaral-1)*NUM_AGED_SPECIES*NUM_AGED_LENGTHS*NUM_AGES + (spal-1)*NUM_AGED_LENGTHS*NUM_AGES + (lc-1)*NUM_AGES +ac
-tspal(fvaral,spal,lc,ac) = int((spalindex-1)/NL) + 1 + NAT
-kspal(fvaral,spal,lc,ac) = mod((spalindex-1),NL) + 1
-
-
-write (5,'(A6,6I4)'),"age",tspal(fvaral,spal,lc,ac)-NAT,kspal(fvaral,spal,lc,ac),fvaral,spal,lc,ac
-!print*,"fvaral,spal,lc,ac,spalindex,&
-!           &tspal(fvaral,spal,lc,ac),&
-!           &kspal(fvaral,spal,lc,ac)",&
-!           &fvaral,spal,lc,ac,spalindex,&
-!           &tspal(fvaral,spal,lc,ac),&
-!           &kspal(fvaral,spal,lc,ac)
-
-end do
-end do
-end do
-end do
-
-do fvarl=1,nfvarl
-do spl=1,NUM_LENGTHED_SPECIES
-do lc=1,NUM_NOAGE_LENGTHS 
-splindex = spalindexmax + (fvarl-1)*NUM_LENGTHED_SPECIES*NUM_NOAGE_LENGTHS  + (spl-1)*NUM_NOAGE_LENGTHS  +lc
-tspl(fvarl,spl,lc) = int((splindex-1)/NL) + 1 + NAT
-kspl(fvarl,spl,lc) = mod((splindex-1),NL) + 1
-
-write (5,'(A6,6I4)'),"len",tspl(fvarl,spl,lc)-NAT,kspl(fvarl,spl,lc),fvarl,spl,lc,0
-!print*,"fvarl,spl,lc,splindex,&
-!           &tspl(fvarl,spl,lc),&
-!           &kspl(fvarl,spl,lc)",&
-!           &fvarl,spl,lc,splindex,&
-!           &tspl(fvarl,spl,lc),&
-!           &kspl(fvarl,spl,lc)
-
-
-end do
-end do
-end do
-
-do fvar=1,nfvar
-do sp=1,NUM_SIMPLE_SPECIES
-spindex = spalindexmax + splindexmax + (fvar-1)*NUM_SIMPLE_SPECIES + sp
-tsp(fvar,sp) = int((spindex-1)/NL) + 1 + NAT
-ksp(fvar,sp) = mod((spindex-1),NL) + 1
-
-write (5,'(A6,6I4)'),"sim",tsp(fvar,sp)-NAT,ksp(fvar,sp),fvar,sp,0,0
-
-lastT = tsp(fvar,sp)
-lastK = ksp(fvar,sp)
-end do
-end do
-
-do sp=1,TOT_LENGTHED
-   lastK = lastK + 1
-   if (lastK > NL) then
-       lastK = 1
-       lastT = lastT + 1
-   end if
-   teggs(sp) = lastT
-   keggs(sp) = lastK
-   write (5,'(A6,6I4)'),"egg",teggs(sp)-NAT,keggs(sp),0,sp,0,0
-   
-end do
-
-do sp=1,TOT_LENGTHED
-   lastK = lastK + 1
-   if (lastK > NL) then
-       lastK = 1
-       lastT = lastT + 1
-   end if
-   tspawn(sp) = lastT
-   kspawn(sp) = lastK
-   write (5,'(A6,6I4)'),"spn",tspawn(sp)-NAT,kspawn(sp),0,sp,0,0
-end do
-
- close(5)
-!print *,"last tspawn",tspawn(TOT_LENGTHED)
-!print *,"last kspawn",kspawn(TOT_LENGTHED)
-
-!return
-!END SUBROUTINE FISH_INDICES
-
-
+#endif
+        END DO
+      END DO
+      END SUBROUTINE bestnpz_swfrac_tile
+      !=====================================================================
+      !  LightAttenuation: Calculates light attenuation at a specific depth
+      !  K. Kearney, 04/2018
+      !
+      ! Input (and *output) variables:
+      !
+      !   nn:      1 x 1,    number of vertical layers
+      !   z:       1 x 1,    depth, relative to mean sea level (m,negative down)
+      !   z_w:     1 x nn+1, depth of layer edges (m, negative down)
+      !   PS:      1 x nn,   PhS in each layer (mmol N m^-3)
+      !   PS:      1 x nn,   PhL in each layer (mmol N m^-3)
+      !
+      !   *atten:  1 x 1,    fraction of surface light reaching the specified depth.
+      !
+      !=====================================================================
       
-      end SUBROUTINE initialize_feast
-#endif        
+      function LightAttenuation(nn, z, z_w, PS, PL)
+  
+        USE mod_param
+        USE mod_scalars
+  
+        implicit none
+  
+        integer :: nn
+        real(r8):: z
+        real(r8):: z_w(0:nn) 
+        real(r8):: PS(nn)
+        real(r8):: PL(nn)
+        real(r8):: LightAttenuation
+        integer :: k
+        real(r8) :: kP
+        real(r8) :: dz(nn)
+        real(r8) :: chl(nn)
         
+        do k = nn,1,-1
+          dz(k) = max(z_w(k),z) - max(z_w(k-1),z) ! m of layer above target depth
+          chl(k) = PS(k)/ccr + PL(k)/ccrPhL ! chlorophyll in layer (mg chl/m^3)
+        end do
+
+        if (sum(dz).eq.0) then
+          kP = 0
+        else
+          kP = sum(k_chlA * chl**(k_chlB) * dz)/sum(dz)
+        end if
+        LightAttenuation = exp(sum(dz) * -(k_ext + kP + k_chlC))
+      END function LightAttenuation
+      
+#  ifdef FEAST
+!========================================================================
+      subroutine QsortC(A, index)
+
+      real, intent(in out), dimension(:) :: A
+      integer, intent(in out), dimension(:) :: index
+      integer :: L,i,j,tind
+      real :: temp
+
+      L=size(A)
+      do i = 1,L-1
+        do j = i+1,L
+           if (A(i) < A(j)) then
+            temp = A(i)
+            A(i) = A(j)
+            A(j) = temp
+            tind = index(i)
+            index(i) = index(j)
+            index(j) = tind
+           end if
+        end do
+      end do
+
+      end subroutine QsortC
+      
+!========================================================================
+      SUBROUTINE initialize_feast
+
+      USE mod_param
+
+      implicit none
+      integer :: isp, sp, gr, ac, lc, py, ng, lastT, lastK
+      integer :: fvaral,fvarl,fvar,spal,spl,spalindex,splindex,spindex
+      integer :: spalindexmax,splindexmax,spindexmax
+      integer :: NL
+      real(r8) :: Z,Y, mu, sd, lp, selk, selm, sels, Smax, Ratio
+      real(r8) :: rec,mat
+      integer:: i,L, NN, SS, spn, spy, YY
+      !integer :: pcount(TOT_FEAST,200)
+      real(r8), dimension(TOT_LINKS) :: prob
+      real(r8), dimension(TOT_FEAST) :: probtot
+      real, dimension(TOT_LINKS) :: tmp_order
+
+      ! initialize paramters for fish
+
+      real(r8),    parameter :: PIPI = 3.14159265358979
+
+      ! print *, 'Initializing FEAST variables'
+      open (unit = 5, file = "init.txt", status='REPLACE')
+
+      ! derived and stored bioenergetics quantities
+
+      DO isp=1,TOT_LENGTHED
+        !fsh_minVel(isp) = (fsh_A_v(isp)/fsh_minACT(isp)) **(-1.0/fsh_B_v(isp))
+
+        fsh_CTM_CT0(isp) = fsh_C_TM(isp) - fsh_C_T0(isp)
+        fsh_CTMoverCTM_CT0(isp) = fsh_C_TM(isp) / fsh_CTM_CT0(isp)
+        Z = log(fsh_C_Q(isp)) * fsh_CTM_CT0(isp)
+        Y = log(fsh_C_Q(isp)) * (fsh_CTM_CT0(isp) + 2.0)
+        fsh_X_C(isp) = ( Z*Z * (1.0 + ( (1.0 + 40.0/Y) ** 0.5)) ** 2.0)/400.0
+
+        fsh_RTM_RT0(isp) = fsh_R_TM(isp) - fsh_R_T0(isp)
+        fsh_RTMoverRTM_RT0(isp) = fsh_R_TM(isp) / fsh_RTM_RT0(isp)
+        Z = log(fsh_R_Q(isp)) * fsh_RTM_RT0(isp)
+        Y = log(fsh_R_Q(isp)) * (fsh_RTM_RT0(isp) + 2.0)
+        fsh_X_R(isp) = ( Z*Z * (1.0 + ( (1.0 + 40.0/Y) ** 0.5)) ** 2.0)/400.0
+
+        fsh_P_j(isp) = (fsh_F_A(isp) + (fsh_U_A(isp) + fsh_SDA(isp))*(1.0-fsh_F_A(isp)))
+      END DO
+
+      NN = 0
+      all_QQ=0.0
+
+      rlook_fal= 0
+      rlook_fl =0
+      sp_all   = 0
+      age_all  = 0
+      lc_all   = 0
+      all_order= 0
+      rev_order=0
+      !labs_all= 0
+
+      do sp = 1,NUM_AGED_SPECIES
+        do ac = 1,NUM_AGES
+          do lc = 1,NUM_AGED_LENGTHS
+            NN = NN+1
+            rlook_fal(sp,ac,lc) = NN
+            sp_all(NN)   = sp
+            age_all(NN)  = ac
+            lc_all(NN)   = lc
+            all_order(NN) = NN
+            !labs_all(NN) = lc + fsh_age_offset(sp,ac)
+            type_all(NN)  = 1
+          end do
+        end do
+      end do
+      !write(5,"(I5 I5)") NN, ALL_LINKS
+      do sp = 1,NUM_LENGTHED_SPECIES
+         do lc = 1,NUM_NOAGE_LENGTHS
+            NN=NN+1
+            rlook_fl(sp,lc)=NN
+            sp_all(NN)   = sp + NUM_AGED_SPECIES
+            age_all(NN)  = 0
+            lc_all(NN)   = lc
+            !labs_all(NN) = lc
+            all_order(NN) = NN
+            type_all(NN)  = 2
+         end do
+      end do
+
+
+      ALL_LINKS = NN
+
+      !do SS = 1,ALL_LINKS
+      !   spn = all_order(SS)
+      !   write (5,*),SS,spn,L_all(spn),sp_all(spn),age_all(spn),lc_all(spn),labs_all(spn)
+      !end do
+      !write(5,"(I5 I5)") NN, ALL_LINKS
+      probtot = 0.0
+      prob    = 0.0
+
+      prev_len = 0
+      next_len = 0
+
+      do NN = 1,ALL_LINKS
+        sp = sp_all(NN)
+        lc = lc_all(NN)
+        ac = age_all(NN)
+        if (ac>0) then
+          if (lc>1)                  prev_len(NN) = rlook_fal(sp,ac,lc-1) ! else 0
+          if (lc<NUM_AGED_LENGTHS)   next_len(NN) = rlook_fal(sp,ac,lc+1) ! else 0
+          !if (ac>1)                  prev_age(NN) = rlook_fal(sp,ac-1,lc) ! else 0
+          !if (ac<NUM_AGES)           next_age(NN) = rlook_fal(sp,ac+1,lc) ! else 0
+        else
+          if (lc>1)                  prev_len(NN) = rlook_fl(sp-NUM_AGED_SPECIES,lc-1)  ! else 0
+          if (lc<NUM_NOAGE_LENGTHS)  next_len(NN) = rlook_fl(sp-NUM_AGED_SPECIES,lc+1)   ! else 0
+        end if
+
+        ! Age 0s and noaged species are half the length set for adults
+
+        if (ac>0) then
+          if (ac<2) then
+            L_width(NN) = fsh_Lsize(sp_all(NN))/2.0
+            L_all(NN)   = lc * L_width(NN) - L_width(NN)/2.0
+          else
+            L_width(NN) = fsh_Lsize(sp_all(NN))
+            L_all(NN)   = (lc+fsh_age_offset(sp,ac))*L_width(NN) - L_width(NN)/2.0
+          end if
+        else
+          L_width(NN) = fsh_Lsize(sp_all(NN))
+          L_all(NN)   = lc*L_width(NN) - L_width(NN)/2.0
+        end if
+
+        !print *,sp,ac,lc,L_all(NN)
+
+        CALbase_all(NN)  = fsh_ED_b(sp) + fsh_ED_m(sp)*L_all(NN)
+        all_AL_LL_BL(NN) = fsh_A_L(sp) * (L_all(NN) ** fsh_B_L(sp))
+        all_AS_LL_BS(NN) = fsh_A_S(sp) * (L_all(NN) ** fsh_B_S(sp))
+        all_Aenc_LL_Benc(NN) = fsh_A_enc(sp) * (L_all(NN) ** fsh_B_enc(sp))
+        all_Ar_v_LL(NN) = fsh_Bv_min(sp)+fsh_B_Lzero(sp) /              &
+       &                  (1.0 +(fsh_B_Lzero(sp)/fsh_B_Lone(sp)-1.0) *  &
+       &                  (L_all(NN) ** fsh_B_Lpow(sp)))
+
+        !write(*,'(A10,I4,4G14.6)'),"stuff",sp,L_all(NN),fsh_A_enc(sp),fsh_B_enc(sp),all_Aenc_LL_Benc(NN)
+        !write(*,'(A10,I4,2G14.6)'),"Lpow",sp,L_all(NN),all_Ar_v_LL(NN)
+        !write(*,'(A10,G14.6)'),"Bv_min",fsh_Bv_min(sp)
+        !write(*,'(A10,G14.6)'),"Lzero",fsh_B_Lzero(sp)
+        !write(*,'(A10,G14.6)'),"Lone",fsh_B_Lone(sp)
+        !write(*,'(A10,G14.6)'),"Lpow",fsh_B_Lpow(sp)
+
+        all_L_deriv(NN)  = fsh_A_L(sp) * fsh_B_L(sp) * L_all(NN) ** (fsh_B_L(sp) - 1.0)
+        !all_ED(NN)       = fsh_ED_b(sp) + fsh_ED_m(sp) * all_AS_LL_BS(NN)
+
+        swim_all(NN)  = L_all(NN) * fsh_max_speed(sp) / 100.0  ! Units are m/s
+        swim_selk(NN) = -log((1.0-0.99)/0.99)/((fsh_happy_99(sp)-fsh_happy_01(sp))/2.0)  !=-LN((1-0.99)/0.99)/((L_99-L_01)/2)
+        swim_selm(NN) = fsh_happy_01(sp)+(fsh_happy_99(sp)-fsh_happy_01(sp))/2.0 !=L_01+(L_99-L_01)/2
+
+        do gr = 1, NUM_GEARS
+          if (fsh_catch_sel(gr,sp)>0.0) then
+            selk  = -log((1.0-0.99)/0.99)/((fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0)  !=-LN((1-0.99)/0.99)/((L_99-L_01)/2)
+            selm  = fsh_catch_01(gr,sp)+(fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0 !=L_01+(L_99-L_01)/2
+            sels  = selm-(log((1.0/0.001)-1.0))/selk
+            !write (5,*) selk,selm,sels,L_all(NN),1.0/(1.0 + exp(-selk*(L_all(NN)-selm)))
+            if (L_all(NN)>=sels) then
+              all_QQ(gr,NN) = fsh_catch_sel(gr,sp) * 1.0/(1.0 + exp(-selk*(L_all(NN)-selm)))
+            end if
+            !write (5,*) selk,selm,sels,L_all(NN),1.0/(1.0 + exp(-selk*(L_all(NN)-selm))),fsh_catch_sel(gr,sp),all_QQ(gr,NN)
+          end if
+        end do
+        ! recruitment
+        mat = 1.0 / (1.0 + exp( -(fsh_mat_a(sp) + fsh_mat_b(sp) * L_all(NN))))
+        if (mat < 0.05) then
+          mat = 0.0
+        end if
+        rec = fsh_fec_max(sp) / (1.0 + exp( -(fsh_fec_a(sp) + fsh_fec_b(sp) * L_all(NN))))
+        all_mat_rec(NN) = mat * rec  * fsh_fem_prop(sp)  ! * fsh_rec_prop(sp)
+
+        if (ac.eq.1 .or. ac.eq.0) then
+          mu = fsh_z_muL(sp)
+          sd = fsh_z_sdL(sp)
+          lp = log(mu/L_all(NN))
+          prob(NN) = (1.0/sqrt(2.0*PIPI*sd*sd))*exp(-(lp*lp)/(2.0*sd*sd))
+          probtot(sp) = probtot(sp) + prob(NN)
+        end if
+      end do
+
+      ! 10/27/11 Made preference a normalized sum
+
+      sum_preference = 0.0
+      !#prefbase <-  ifelse(pynum==BASE_PREY,
+      !#          ifelse(logratio <= py_Smax,  py_q,  py_q*((logratio/py_Smax)^(py_alpha-1))*exp(-(logratio-py_Smax)/py_beta) ),
+      !#          ifelse(logratio <= 0.0,       0.0,  py_q*((logratio/py_Smax)^(py_alpha-1))*exp(-(logratio-py_Smax)/py_beta) )
+      !#  )
+      !pcount = 0
+      do spn = 1,ALL_LINKS
+        sp=sp_all(spn)
+        do spy = 1,ALL_LINKS
+          py=sp_all(spy)
+          ! 11/3/11 Made cutoff 80% of length, not 100%, maybe replace 0.80
+          ! with species-specific parameter at some point
+          if (L_all(spn)*0.80 <= L_all(spy)) THEN
+            all_preference(spn,spy)=0.0
+          else
+            Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
+            Ratio = log (L_all(spn)/L_all(spy))
+            ! uncomment this if-else for saturation
+            !if (Ratio .ge. Smax) then
+            !   all_preference(spn,spy) = fsh_q_G(sp,py)
+            !else
+            all_preference(spn,spy) = fsh_q_G(sp,py) *                  &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                       * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+            !end if
+          end if
+          sum_preference(spn) = sum_preference(spn) + all_preference(spn,spy)
+          !if (pcount(sp,int(L_all(spn))) .eq. 0) then
+          !write(*,'(I4,F10.2,I4,F10.2,G14.6)'),sp,real(L_all(spn)),py,real(L_all(spy)),all_preference(spn,spy)
+          !end if
+        end do
+        !pcount(sp,int(L_all(spn)))=1
+      end do
+
+      !pcount = 0
+      do spn = 1,ALL_LINKS
+        sp=sp_all(spn)
+        do spy = 1,NUM_SIMPLE_SPECIES
+          py=spy + NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES
+          if (fsh_base_prey(sp) == py) then
+            Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
+            Ratio = log (L_all(spn)/fsh_simple_len(spy))
+            if (Ratio .le. Smax ) then
+              simple_preference(spn,spy) = fsh_q_G(sp,py)
+            else
+              simple_preference(spn,spy) = fsh_q_G(sp,py) *             &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                      * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+            end if
+          else
+            if (L_all(spn) <= fsh_simple_len(spy)) THEN
+              simple_preference(spn,spy)=0.0
+            else
+              Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
+              Ratio = log (L_all(spn)/fsh_simple_len(spy))
+              !if (Ratio .ge. Smax) then
+              !  simple_preference(spn,spy) = fsh_q_G(sp,py)
+              !else
+              simple_preference(spn,spy) = fsh_q_G(sp,py) *             &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                      * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+              !end if
+            end if
+          end if
+          sum_preference(spn) = sum_preference(spn) + simple_preference(spn,spy)
+          !if (pcount(sp,int(L_all(spn))) .eq. 0) then
+          !  write(*,'(I4,F10.2,I4,F10.2,G14.6)'),sp,real(L_all(spn)),py,real(fsh_simple_len(spy)),simple_preference(spn,spy)
+          !end if
+        end do
+        !pcount(sp,int(L_all(spn)))=1
+      end do
+
+      !pcount = 0
+      do spn = 1,ALL_LINKS
+        sp=sp_all(spn)
+        !write(0,*),sp,fsh_base_prey(sp)
+        do spy = 1,NUM_PLANKTON
+          py=spy + NUM_AGED_SPECIES + NUM_LENGTHED_SPECIES + NUM_SIMPLE_SPECIES
+          if (fsh_base_prey(sp) == py) then
+            Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
+            Ratio = log (L_all(spn)/fsh_zoop_len(spy))
+            if (Ratio .le. Smax ) then
+              zoop_preference(spn,spy) = fsh_q_G(sp,py)
+            else
+              zoop_preference(spn,spy) = fsh_q_G(sp,py) *               &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                       * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+            end if
+            !write(0,*),sp,py,Ratio,Smax,zoop_preference(spn,spy)
+          else
+            if (L_all(spn) <= fsh_zoop_len(spy)) THEN
+              zoop_preference(spn,spy)=0.0
+            else
+              Smax  = (fsh_alpha_G(sp,py)-1.0) * fsh_beta_G(sp,py)
+              Ratio = log (L_all(spn)/fsh_zoop_len(spy))
+              !if (Ratio .ge. Smax) then
+              ! zoop_preference(spn,spy) = fsh_q_G(sp,py)
+              !else
+               zoop_preference(spn,spy) = fsh_q_G(sp,py) *              &
+     &                      ((Ratio/Smax) ** (fsh_alpha_G(sp,py)-1.0))  &
+     &                      * exp(-(Ratio-Smax)/fsh_beta_G(sp,py))
+              !end if
+            end if
+          end if
+          sum_preference(spn)  = sum_preference(spn) + zoop_preference(spn,spy)
+          !if (pcount(sp,int(L_all(spn))) .eq. 0) then
+          !  write(*,'(I4,F10.2,I4,F10.2,G14.6)'),sp,real(L_all(spn)),py,real(fsh_zoop_len(spy)),zoop_preference(spn,spy)
+          !end if
+        end do
+        !pcount(sp,int(L_all(spn)))=1
+      end do
+
+      ! Regardless of above, set BASE_PREY preference to 1.0
+
+      ! Use following if preference is normalized
+
+      !do spn = 1,ALL_LINKS
+      !  if (sum_preference(spn) > 0.0) then
+      !      do spy = 1,ALL_LINKS
+      !         all_preference(spn,spy) = all_preference(spn,spy)/sum_preference(spn)
+      !      end do
+      !      do spy = 1,NUM_SIMPLE_SPECIES
+      !         simple_preference(spn,spy) = simple_preference(spn,spy)/sum_preference(spn)
+      !      end do
+      !      do spy = 1,NUM_PLANKTON
+      !         zoop_preference(spn,spy) = zoop_preference(spn,spy)/sum_preference(spn)
+      !      end do
+      !  end if
+      !end do
+
+      do NN = 1,ALL_LINKS
+         sp = sp_all(NN)
+         all_zeros(NN) = prob(NN)/probtot(sp)
+         if (all_zeros(NN)<1e-20) then
+            all_zeros(NN) = 0.0
+         end if
+      end do
+
+
+      !write(5,"(I5 I5)") NN, ALL_LINKS
+
+
+      !probtot = 0.0
+      !mu = fsh_z_muL(isp)
+      !sd = fsh_z_sdL(isp)
+      !
+      !DO L=1,MAX_LCLASS
+      !   lp = fsh_LL(isp,L)
+      !   prob(L) = (1.0/sqrt(2.0*PIPI*sd*sd)) * exp ( -(log(mu/lp)*log(mu/lp)) / (2.0*sd*sd) )
+      !   probtot  = probtot+prob(L)
+      !   !print *,'INIT,',isp,lp,mu,sd,PIPI,prob(L),probtot,(1.0/sqrt(2.0*PIPI*sd*sd))*exp(-(log(mu/lp)*log(mu/lp))/(2.0*sd*sd))
+      !END DO
+      !
+      !DO L=1,MAX_LCLASS
+      !   prob(L) = prob(L)/ probtot
+      !   fsh_zeros(isp,L) = prob(L) * fsh_z_N(isp)
+      !   if (fsh_zeros(isp,L)<1e-20) then
+      !      fsh_zeros(isp,L) = 0.0
+      !   end if
+      !   ! print *,'INIT,',isp,L,mu,sd,prob(L),fsh_z_N,fsh_zeros(L)
+      !end DO
+
+      !do gr = 1, NUM_GEARS
+      !selk  = -log((1.0-0.99)/0.99)/((fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0)  !=-LN((1-0.99)/0.99)/((L_99-L_01)/2)
+      ! selm  = fsh_catch_01(gr,sp)+(fsh_catch_99(gr,sp)-fsh_catch_01(gr,sp))/2.0 !=L_01+(L_99-L_01)/2
+      !sels  = selm-(log((1.0/0.001)-1.0))/selk
+      ! if (fsh_catch_sel(gr,sp)>0.0) then
+      !      do ac = 1,NUM_AGES
+      !        do lc = 1,NUM_AGED_LENGTHS
+      !            !NS   = rlook(sp,ac,lc)
+      !           lp = (lc + fsh_age_offset(sp,ac)) * fsh_Lsize(sp) + fsh_Lsize(sp)/2
+      !           if (lp>=sels) then
+      !              fsh_qq(gr,sp,ac,lc) = fsh_catch_sel(gr,sp) * 1.0/(1.0 + exp(-selk*(lp-selm)))
+      !            else
+      !              fsh_qq(gr,sp,ac,lc) = 0.0
+      !           end if
+      !        end do
+      !      end do
+      !  end if
+      !end do
+      tmp_order = L_all
+      call QsortC(tmp_order,all_order)
+      do NN = 1,ALL_LINKS
+         rev_order(all_order(NN))=NN
+      end do
+
+      write(5,'(3A4,A6,A4,A4,A14)')," pdS"," pdA"," PdL",               &
+     &      "  Prey","pyA","PyL","Pref"
+      !do SS = 1,ALL_LINKS
+      !
+      !   spn = all_order(SS)
+      !   DO py = 1,NUM_PLANKTON
+      !      write(5,'(I4,I4,F4.0,A4,I2.2,I4,F4.0,G14.6)'), &
+      !     sp_all(spn), age_all(spn), real(L_all(spn)), &
+      !     & 'ZZ_',py, 0, 0.0, &
+      !     & real(zoop_preference(spn,py))
+      !  end do
+      !  DO py = 1,NUM_SIMPLE_SPECIES
+      !      write(5,'(I4,I4,F4.0,A4,I2.2,I4,F4.0,G14.6)'), &
+      !     sp_all(spn), age_all(spn), real(L_all(spn)), &
+      !     & 'SS_',py, 0, 0.0, &
+      !     & real(simple_preference(spn,py))
+      !  end do
+      !  do YY = 1,ALL_LINKS
+      !     spy = all_order(YY)
+      !     write(5,'(I4,I4,F4.0,A4,I2.2,I4,F4.0,G14.6)'), &
+      !     sp_all(spn), age_all(spn), real(L_all(spn)), &
+      !     & 'FF_',sp_all(spy), age_all(spy), L_all(spy), &
+      !     & real(all_preference(spn,spy))
+      !  end do
+      !  !write (5,*),sp_all(spn),age_all(spn),L_all(spn),all_AL_LL_BL(spn),all_mat_rec(spn)
+      !end do
+
+      close(5)
+
+      !subroutine fish_indices(tspal,tspl,tsp,kspal,kspl,ksp,NL)
+
+      !USE mod_param
+      !USE mod_feast
+
+      !integer, intent(inout) :: tspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
+      !integer, intent(inout) :: tspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
+      !integer, intent(inout) :: tsp(nfvar,NUM_SIMPLE_SPECIES)
+      !integer, intent(inout) :: kspal(nfvaral,NUM_AGED_SPECIES,NUM_AGED_LENGTHS,NUM_AGES)
+      !integer, intent(inout) :: kspl(nfvarl,NUM_LENGTHED_SPECIES,NUM_NOAGE_LENGTHS )
+      !integer, intent(inout) :: ksp(nfvar,NUM_SIMPLE_SPECIES)
+      ng = 1
+      NL = N(ng) !ROMS_LAYERS !integer :: NL
+      !print *,NAT,NPT,NL
+
+      spalindexmax = nfvaral*NUM_AGED_SPECIES*NUM_AGED_LENGTHS*NUM_AGES
+      splindexmax = nfvarl*NUM_LENGTHED_SPECIES*NUM_NOAGE_LENGTHS
+      spindexmax = nfvar*NUM_SIMPLE_SPECIES
+
+      open (unit = 5, file = "dyes.txt", status='REPLACE')
+      write (5,'(A6,6A4)'),"typ","dye","lev","var","sp","lc","ac"
+
+      do fvaral=1,nfvaral
+        do spal=1,NUM_AGED_SPECIES
+          do lc=1,NUM_AGED_LENGTHS
+            do ac=1,NUM_AGES
+              spalindex = (fvaral-1)*NUM_AGED_SPECIES*NUM_AGED_LENGTHS*NUM_AGES + (spal-1)*NUM_AGED_LENGTHS*NUM_AGES + (lc-1)*NUM_AGES +ac
+              tspal(fvaral,spal,lc,ac) = int((spalindex-1)/NL) + 1 + NAT
+              kspal(fvaral,spal,lc,ac) = mod((spalindex-1),NL) + 1
+
+
+              write (5,'(A6,6I4)'),"age",tspal(fvaral,spal,lc,ac)-NAT,kspal(fvaral,spal,lc,ac),fvaral,spal,lc,ac
+              !print*,"fvaral,spal,lc,ac,spalindex,&
+              !           &tspal(fvaral,spal,lc,ac),&
+              !           &kspal(fvaral,spal,lc,ac)",&
+              !           &fvaral,spal,lc,ac,spalindex,&
+              !           &tspal(fvaral,spal,lc,ac),&
+              !           &kspal(fvaral,spal,lc,ac)
+            end do
+          end do
+        end do
+      end do
+
+      do fvarl=1,nfvarl
+        do spl=1,NUM_LENGTHED_SPECIES
+          do lc=1,NUM_NOAGE_LENGTHS
+            splindex = spalindexmax + (fvarl-1)*NUM_LENGTHED_SPECIES*NUM_NOAGE_LENGTHS  + (spl-1)*NUM_NOAGE_LENGTHS  +lc
+            tspl(fvarl,spl,lc) = int((splindex-1)/NL) + 1 + NAT
+            kspl(fvarl,spl,lc) = mod((splindex-1),NL) + 1
+
+            write (5,'(A6,6I4)'),"len",tspl(fvarl,spl,lc)-NAT,kspl(fvarl,spl,lc),fvarl,spl,lc,0
+            !print*,"fvarl,spl,lc,splindex,&
+            !           &tspl(fvarl,spl,lc),&
+            !           &kspl(fvarl,spl,lc)",&
+            !           &fvarl,spl,lc,splindex,&
+            !           &tspl(fvarl,spl,lc),&
+            !           &kspl(fvarl,spl,lc)
+          end do
+        end do
+      end do
+
+      do fvar=1,nfvar
+        do sp=1,NUM_SIMPLE_SPECIES
+          spindex = spalindexmax + splindexmax + (fvar-1)*NUM_SIMPLE_SPECIES + sp
+          tsp(fvar,sp) = int((spindex-1)/NL) + 1 + NAT
+          ksp(fvar,sp) = mod((spindex-1),NL) + 1
+
+          write (5,'(A6,6I4)'),"sim",tsp(fvar,sp)-NAT,ksp(fvar,sp),fvar,sp,0,0
+
+          lastT = tsp(fvar,sp)
+          lastK = ksp(fvar,sp)
+        end do
+      end do
+
+      do sp=1,TOT_LENGTHED
+        lastK = lastK + 1
+        if (lastK > NL) then
+            lastK = 1
+            lastT = lastT + 1
+        end if
+        teggs(sp) = lastT
+        keggs(sp) = lastK
+        write (5,'(A6,6I4)'),"egg",teggs(sp)-NAT,keggs(sp),0,sp,0,0
+      end do
+
+      do sp=1,TOT_LENGTHED
+        lastK = lastK + 1
+        if (lastK > NL) then
+            lastK = 1
+            lastT = lastT + 1
+        end if
+        tspawn(sp) = lastT
+        kspawn(sp) = lastK
+        write (5,'(A6,6I4)'),"spn",tspawn(sp)-NAT,kspawn(sp),0,sp,0,0
+      end do
+
+      close(5)
+      !print *,"last tspawn",tspawn(TOT_LENGTHED)
+      !print *,"last kspawn",kspawn(TOT_LENGTHED)
+
+      !return
+      !END SUBROUTINE FISH_INDICES
+
+      end SUBROUTINE initialize_feast
+#  endif
+# endif
 #endif
 
       END MODULE mod_biology

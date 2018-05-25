@@ -491,18 +491,15 @@
       !------------------------------------
 
         integer, dimension(Ngrids) :: NTS
-
-        integer, parameter :: NBTS = 16
-
+#  include <bestnpz_mod_param_NBTS.h>
 # endif
-
 # ifdef STATIONARY2
       !------------------------------------
       !2D stationary tracers
       !------------------------------------
 
         integer, dimension(Ngrids) :: NTS2
-        integer, parameter :: NBTS2 = 8
+        integer, parameter :: NBTS2 = 1
 # endif
 # ifdef PROD2
       !------------------------------------
