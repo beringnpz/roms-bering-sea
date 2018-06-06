@@ -353,5 +353,16 @@
 # undef FEAST_NOEXCHANGE
 #endif
 
+/* Some extras if running the Unimak Pass age-tracer option */
+
+#ifdef UNIMAK
+# undef UV_PSOURCE
+# undef Q_PSOURCE
+# define ANA_PASSIVE
+# undef ANA_PSOURCE
+# undef TS_PSOURCE
+# undef ANA_SPFLUX
+# define T_PASSIVE
+#endif
 
 
