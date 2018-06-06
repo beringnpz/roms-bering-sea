@@ -361,8 +361,9 @@
 # define ANA_PASSIVE
 # undef ANA_PSOURCE
 # undef TS_PSOURCE
-# define ANA_SPFLUX
 # define T_PASSIVE
+# define ANA_BPFLUX
+# define ANA_SPFLUX
 #endif
 
 
