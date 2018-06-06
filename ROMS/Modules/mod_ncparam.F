@@ -3747,7 +3747,7 @@
 !
 !  Adjust information for all inert passive tracers.
 ! 
-# ifdef FEAST
+# if (defined FEAST || defined UNIMAK)
               SELECT CASE (TRIM(ADJUSTL(Vinfo(6))))
                 CASE ('idTvar(inert(i))')
                   IF (NPT.gt.0) THEN
@@ -3872,9 +3872,9 @@
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
                       END DO
-                      WRITE (Vname(1,varid),'(a,i3.3)')                 &
+                      WRITE (Vname(1,varid),'(a,i2.2)')                 &
      &                      TRIM(ADJUSTL(Vinfo(1))), i
-                      WRITE (Vname(2,varid),'(a,a,i3.3)')               &
+                      WRITE (Vname(2,varid),'(a,a,i2.2)')               &
      &                      TRIM(ADJUSTL(Vinfo(2))), ', type ', i
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
@@ -3894,9 +3894,9 @@
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
                       END DO
-                      WRITE (Vname(1,varid),'(a,i3.3)')                 &
+                      WRITE (Vname(1,varid),'(a,i2.2)')                 &
      &                      TRIM(ADJUSTL(Vinfo(1))), i
-                      WRITE (Vname(2,varid),'(a,a,i3.3)')               &
+                      WRITE (Vname(2,varid),'(a,a,i2.2)')               &
      &                      TRIM(ADJUSTL(Vinfo(2))), ', type ', i
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
@@ -3916,9 +3916,9 @@
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
                       END DO
-                      WRITE (Vname(1,varid),'(a,i3.3)')                 &
+                      WRITE (Vname(1,varid),'(a,i2.2)')                 &
      &                      TRIM(ADJUSTL(Vinfo(1))), i
-                      WRITE (Vname(2,varid),'(a,a,i3.3)')               &
+                      WRITE (Vname(2,varid),'(a,a,i2.2)')               &
      &                      TRIM(ADJUSTL(Vinfo(2))), ', type ', i
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
@@ -3938,9 +3938,9 @@
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
                       END DO
-                      WRITE (Vname(1,varid),'(a,i3.3)')                 &
+                      WRITE (Vname(1,varid),'(a,i2.2)')                 &
      &                      TRIM(ADJUSTL(Vinfo(1))), i
-                      WRITE (Vname(2,varid),'(a,a,i3.3)')               &
+                      WRITE (Vname(2,varid),'(a,a,i2.2)')               &
      &                      TRIM(ADJUSTL(Vinfo(2))), ', type ', i
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
@@ -3960,9 +3960,9 @@
                         Fscale(varid,ng)=scale
                         Iinfo(1,varid,ng)=gtype
                       END DO
-                      WRITE (Vname(1,varid),'(a,i3.3)')                 &
+                      WRITE (Vname(1,varid),'(a,i2.2)')                 &
      &                      TRIM(ADJUSTL(Vinfo(1))), i
-                      WRITE (Vname(2,varid),'(a,a,i3.3)')               &
+                      WRITE (Vname(2,varid),'(a,a,i2.2)')               &
      &                      TRIM(ADJUSTL(Vinfo(2))), ', type ', i
                       WRITE (Vname(3,varid),'(a)')                      &
      &                      TRIM(ADJUSTL(Vinfo(3)))
