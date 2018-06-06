@@ -123,7 +123,7 @@
 #   ifdef CLIM_ICE_1D
      &                    ,OCEAN(ng) % itL                              &
      &                    ,OCEAN(ng) % it                               &
-!# elif defined BERING_10K
+!#  elif defined BERING_10K
 !     &                   ,ICE(ng) % IcePhL                              &
 !     &                   ,ICE(ng) % IceNO3                              &
 !     &                   ,ICE(ng) % IceNH4                              &
@@ -302,12 +302,12 @@
 #  if defined BEST_NPZ
 #   ifdef ICE_BIO
 #    if defined CLIM_ICE_1D
-       real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
-       real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
+      real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
+      real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
 
 
 !#    elif defined BERING_10K
-!          real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
+!      real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
 !      real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
 !      real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
 !      integer, intent(inout) :: IceLog(LBi:,LBj:,:)
@@ -316,10 +316,10 @@
 #    endif
 #   endif
 #   ifdef STATIONARY
-     real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
+      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
 #   endif
 #   ifdef BENTHIC
-     real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
+      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
 #   endif
 #  endif
 
@@ -396,22 +396,22 @@
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,N(ng),3,NT(ng))
 #  if defined BEST_NPZ
 #   ifdef STATIONARY
-     real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
+      real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
 #   endif
 
 #   ifdef BENTHIC
-     real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
+      real(r8), intent(inout) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
 #   endif
 #   ifdef ICE_BIO
 #    ifdef CLIM_ICE_1D
-       real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
-       real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
+      real(r8), intent(inout) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
+      real(r8), intent(inout) :: itL(LBi:UBi,LBj:UBj,3,1)
 
 !#elif defined BERING_10K
-!          real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
-!      real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
-!      real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
-!      integer, intent(inout) :: IceLog(LBi:,LBj:,:)
+!     real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
+!     real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
+!     real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
+!     integer, intent(inout) :: IceLog(LBi:,LBj:,:)
 
 #    endif
 #   endif
@@ -803,7 +803,7 @@
 !
 !  Time-step horizontal advection term.
 !
-!       print*,'before horz advect','t=',t(1,1,19,2,1)
+!         print*,'before horz advect','t=',t(1,1,19,2,1)
 
 # ifdef TS_MPDATA
 #   ifdef EW_PERIODIC
@@ -830,11 +830,11 @@
               cff1=cff*(FX(i+1,j)-FX(i,j)+                              &
      &                  FE(i,j+1)-FE(i,j))
 
-!g     IF ( itrc.gt.2 ) THEN
+!g            IF ( itrc.gt.2 ) THEN
 !g
-!g    cff1=0.0_r8
+!g              cff1=0.0_r8
 !g
-!g           END IF
+!g            END IF
 
 # ifdef TS_MPDATA
               cff2=Hz(i,j,k)+                                           &
@@ -847,35 +847,35 @@
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
 
 
-!!     if(itrc.gt.2)THEN
-!!      t(i,j,k,nnew,itrc)=max(0,t(i,j,k,nnew,itrc))
-!!     endif
+!             if(itrc.gt.2)THEN
+!               t(i,j,k,nnew,itrc)=max(0,t(i,j,k,nnew,itrc))
+!             endif
 
-!Constraining nutrients in inlets that are only 1 grid cell wide
-!Cook Inlet
+! Constraining nutrients in inlets that are only 1 grid cell wide
+! Cook Inlet
 
-!  if(i.ge.171.and.i.le.179.and.j.ge.18.and.j.le.27)THEN
+!             if(i.ge.171.and.i.le.179.and.j.ge.18.and.j.le.27)THEN
 !
-!   if(itrc.eq.iFe)THEN
-!    t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
-!    else if(itrc.eq.iNH4)THEN
-!    t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
-!     else if(itrc.eq.iNO3)THEN
-!    t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
-!   endif
-!  endif
+!               if(itrc.eq.iFe)THEN
+!                 t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
+!               else if(itrc.eq.iNH4)THEN
+!                 t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
+!               else if(itrc.eq.iNO3)THEN
+!                 t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
+!               endif
+!             endif
 
-!Hagemeister Strait
-!   if(i.ge.121.and.i.le.124.and.j.ge.56.and.j.le.59)THEN
-!   if(itrc.eq.iFe)THEN
-!    t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
-!    else if(itrc.eq.iNH4)THEN
-!    t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
-!     else if(itrc.eq.iNO3)THEN
-!    t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
-!   endif
-!  endif
-
+! Hagemeister Strait
+!
+!             if(i.ge.121.and.i.le.124.and.j.ge.56.and.j.le.59)THEN
+!               if(itrc.eq.iFe)THEN
+!                 t(i,j,k,nnew,itrc)=min(2.0_r8,t(i,j,k,nnew,itrc))
+!               else if(itrc.eq.iNH4)THEN
+!                 t(i,j,k,nnew,itrc)=min(5.0_r8,t(i,j,k,nnew,itrc))
+!               else if(itrc.eq.iNO3)THEN
+!                 t(i,j,k,nnew,itrc)=min(15.0_r8,t(i,j,k,nnew,itrc))
+!               endif
+!             endif
 
 
 # endif
@@ -1101,11 +1101,11 @@
 
 
 
-!g     IF ( itrc.gt.2 ) THEN
+!g            IF ( itrc.gt.2 ) THEN
 !g
-!g    cff1=0.0_r8
+!g              cff1=0.0_r8
 !g
-!g           END IF
+!g            END IF
 
 # ifdef TS_MPDATA
               Ta(i,j,k,itrc)=(Ta(i,j,k,itrc)-cff1)*oHz(i,j,k)
@@ -1201,11 +1201,11 @@
      &              FE(i,j+1)-FE(i,j))
 
 
-!g     IF ( itrc.gt.2 ) THEN
+!g            IF ( itrc.gt.2 ) THEN
 !g
-!g    cff1=0.0_r8
+!g              cff1=0.0_r8
 !g
-!g           END IF
+!g            END IF
 
               t(i,j,k,nnew,itrc)=Ta(i,j,k,itrc)*Hz(i,j,k)-cff1
 #  ifdef DIAGNOSTICS_TS
@@ -1245,11 +1245,11 @@
               cff1=CF(i,0)*(FC(i,k)-FC(i,k-1))
 
 
-!g     IF ( itrc.gt.2 ) THEN
+!g            IF ( itrc.gt.2 ) THEN
 !g
-!g    cff1=0.0_r8
+!g              cff1=0.0_r8
 !g
-!g           END IF
+!g            END IF
 
               t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)-cff1
 #  ifdef DIAGNOSTICS_TS
@@ -1444,23 +1444,23 @@
 #  ifdef BEST_NPZ
 
 #   ifdef JELLY
-!g      IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
-!g     &        itrc.eq.iEupO.or.itrc.eq.iJel) THEN
+!g          IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.     &
+!g   &          itrc.eq.iEupO.or.itrc.eq.iJel) THEN
 #   else
-!g       IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.&
-!g     &        itrc.er.iEupO) THEN
+!g          IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.&
+!g   &          itrc.er.iEupO) THEN
 #   endif
 #  endif
 
 #  ifdef BIO_GOANPZ
-             IF ( itrc.ne.iNCa .and. itrc.ne.iEup ) THEN
+            IF ( itrc.ne.iNCa .and. itrc.ne.iEup ) THEN
 #  endif
-!g      t(i,j,N(ng),nnew,itrc)=t(i,j,N(ng),nnew,itrc)
-!g      else
-        t(i,j,N(ng),nnew,itrc)=DC(i,N(ng))
+!g             t(i,j,N(ng),nnew,itrc)=t(i,j,N(ng),nnew,itrc)
+!g           else
+               t(i,j,N(ng),nnew,itrc)=DC(i,N(ng))
 #  if defined BIO_GOANPZ || defined BEST_NPZ
 
-!g             END IF
+!g          END IF
 #  endif
 #  ifdef DIAGNOSTICS_TS
             DiaTwrk(i,j,N(ng),itrc,iTvdif)=                             &
@@ -1476,11 +1476,11 @@
               DC(i,k)=DC(i,k)-CF(i,k)*DC(i,k+1)
 #  ifdef BEST_NPZ
 #   ifdef JELLY
-!g        IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
-!g     &   itrc.eq.iEupO.or.itrc.eq.iJel) THEN
+!g            IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.   &
+!g   &            itrc.eq.iEupO.or.itrc.eq.iJel) THEN
 #   else
-!g         IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
-!g     &        itrc.eq.iEupO) THEN
+!g            IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.   &
+!g   &            itrc.eq.iEupO) THEN
 #   endif
 #  endif
 
@@ -1489,11 +1489,11 @@
               IF ( itrc.ne.iNCa .and. itrc.ne.iEup ) THEN
 #  endif
 !g              t(i,j,k,nnew,itrc)=t(i,j,k,nnew,itrc)
-!g           else
-              t(i,j,k,nnew,itrc)=DC(i,k)
+!g            else
+                t(i,j,k,nnew,itrc)=DC(i,k)
 
 #  if defined BIO_GOANPZ || defined BEST_NPZ
-!g              END IF
+!g            END IF
 #  endif
 
 #  ifdef DIAGNOSTICS_TS
@@ -1585,7 +1585,7 @@
 !             if (itrc.eq.iFe.or.itrc.eq.iNO3.or.itrc.eq.iNH4) then
                 t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc)+                &
      &                               dt(ng)*Tnudgcof(i,j,itrc)*         &
-     &                            (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
+     &                               (tclm(i,j,k,itrc)-t(i,j,k,nnew,itrc))
               endif
 
               ! ajh trap wild values of temp or salt

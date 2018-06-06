@@ -359,8 +359,8 @@
 
 #  ifdef SOLAR_SOURCE
 !
-!  Compute fraction of the solar shortwave radiation, "swdk"
-!  (at vertical W-points) penetrating water column.
+!     Compute fraction of the solar shortwave radiation, "swdk"
+!     (at vertical W-points) penetrating water column.
 !
 
       DO k=1,N(ng)-1
@@ -457,15 +457,15 @@
 !  Compute time rate of change of intermediate tracer due to
 !  horizontal advection.
 !
-#ifdef OFFLINE_BIOLOGY
+#   ifdef OFFLINE_BIOLOGY
       T_LOOP1 :DO ibt=1,NBT
         itrc=idbio(ibt)
-#else
+#   else
       T_LOOP1 :DO itrc=1,NT(ng)
-#if defined FEAST
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
-#endif
-#endif
+#    if defined FEAST
+        IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#    endif
+#   endif
         K_LOOP: DO k=1,N(ng)
 
 #   if defined TS_C2HADVECTION
@@ -658,11 +658,11 @@
             cff2=0.5_r8-Gamma
           END IF
 
-!g     IF ( itrc.gt.2 ) THEN
-!g                cff=0.0_r8
-!g    cff1=0.0_r8
-!g    cff2=0.0_r8
-!g           END IF
+!g        IF ( itrc.gt.2 ) THEN
+!g          cff=0.0_r8
+!g          cff1=0.0_r8
+!g          cff2=0.0_r8
+!g        END IF
 
 
           DO j=Jstr,Jend
@@ -704,15 +704,15 @@
 !  advection.  Impose artificial continuity equation.
 !-----------------------------------------------------------------------
 !
-#ifdef OFFLINE_BIOLOGY
+#   ifdef OFFLINE_BIOLOGY
         T_LOOP2: DO ibt=1,NBT
           itrc=idbio(ibt)
-#else
+#   else
         T_LOOP2: DO itrc=1,NT(ng)
-#if defined FEAST
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
-#endif
-#endif
+#    if defined FEAST
+          IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#    endif
+#   endif
 
 #   ifdef TS_SVADVECTION
 !
@@ -865,9 +865,9 @@
             DO i=Istr,Iend
               cff1=cff*pm(i,j)*pn(i,j)
 
-!g         IF ( itrc.gt.2 ) THEN
-!g                cff1=0.0_r8
-!g              END IF
+!g            IF ( itrc.gt.2 ) THEN
+!g              cff1=0.0_r8
+!g            END IF
 
 
               t(i,j,k,3,itrc)=DC(i,k)*                                  &
@@ -889,19 +889,19 @@
 !
       DO j=Jstr,Jend
         cff3=dt(ng)*(1.0_r8-lambda)
-#ifdef OFFLINE_BIOLOGY
+#  ifdef OFFLINE_BIOLOGY
         DO ibt=1,NBT
           itrc=idbio(ibt)
-#else
+#  else
         DO itrc=1,NT(ng)
-#if defined FEAST
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
-#endif
-#endif
+#   if defined FEAST
+          IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#   endif
+#  endif
           ltrc=MIN(NAT,itrc)
-#ifdef LIMIT_BIO_AKT
+#  ifdef LIMIT_BIO_AKT
           IF (itrc == 2) ltrc = 1
-#endif
+#  endif
           DO k=1,N(ng)-1
             DO i=Istr,Iend
               cff=1.0_r8/(z_r(i,j,k+1)-z_r(i,j,k))
@@ -956,30 +956,32 @@
               cff1=Hz(i,j,k)*t(i,j,k,nstp,itrc)
               cff2=FC(i,k)-FC(i,k-1)
 
-# ifdef BEST_NPZ
-!  Neocalanus and Euphuasiids don't experience vertical diffusion because
-!  they are big enough to swim.
-#  ifdef JELLY
-              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
-     &      itrc.eq.iEupO.or.itrc.eq.iJel ) THEN
-#  else
-              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or. &
-     &        itrc.eq.iEupO) THEN
-#  endif
-                 cff2=0.0_r8
-             END IF
+#  ifdef BEST_NPZ
+!             Neocalanus and Euphuasiids don't experience vertical diffusion because
+!             they are big enough to swim.
+#   ifdef JELLY
+              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.                    &
+     &            itrc.eq.iEupO.or.itrc.eq.iJel ) THEN
+#   else
+              IF (itrc.eq.iNCaS.or.itrc.eq.iNCaO.or.itrc.eq.iEupS.or.                    &
+     &            itrc.eq.iEupO) THEN
+#   endif
+                cff2=0.0_r8
+              END IF
 
-!     -Remove effects of mixing on biology - usefull for model testing
-!g              IF ( itrc.gt.2)    THEN
-!g               cff2=0.0_r8
-!g               END IF
-# endif
+!             Remove effects of mixing on biology - usefull for model testing
+!
+!g            IF ( itrc.gt.2) THEN
+!g              cff2=0.0_r8
+!g            END IF
+#  endif
 
 #  ifdef BIO_GOANPZ
-!  Neocalanus and Euphuasiids don't experience vertical diffusion because
-!  they are big enough to swim.
-!ff              IF ( itrc.eq.iNCa .or. itrc.eq.iEup ) THEN
-        IF ( itrc.gt.2 ) THEN
+!             Neocalanus and Euphuasiids don't experience vertical diffusion because
+!             they are big enough to swim.
+
+!ff           IF ( itrc.eq.iNCa .or. itrc.eq.iEup ) THEN
+              IF ( itrc.gt.2 ) THEN
                 cff2=0.0_r8
               END IF
 #  endif
@@ -1021,13 +1023,13 @@
 !  Apply bottom and surface stresses, if so is prescribed.
 !
         DO i=IstrU,Iend
-# ifdef BODYFORCE
+#  ifdef BODYFORCE
           FC(i,0)=0.0_r8
           FC(i,N(ng))=0.0_r8
-# else
+#  else
           FC(i,0)=dt(ng)*bustr(i,j)
           FC(i,N(ng))=dt(ng)*sustr(i,j)
-# endif
+#  endif
         END DO
 !
 !  Compute new U-momentum (m m/s).
@@ -1043,22 +1045,22 @@
               cff1=u(i,j,k,nstp)*0.5_r8*(Hz(i,j,k)+Hz(i-1,j,k))
               cff2=FC(i,k)-FC(i,k-1)
               u(i,j,k,nnew)=cff1+cff2
-# ifdef DIAGNOSTICS_UV
+#  ifdef DIAGNOSTICS_UV
               DiaU3wrk(i,j,k,M3rate)=cff1
               DiaU3wrk(i,j,k,M3vvis)=cff2
               DiaU3wrk(i,j,k,M3pgrd)=0.0_r8
-#  ifdef UV_ADV
+#   ifdef UV_ADV
               DiaU3wrk(i,j,k,M3hadv)=0.0_r8
               DiaU3wrk(i,j,k,M3vadv)=0.0_r8
-#  endif
-#  ifdef NEARSHORE_MELLOR
+#   endif
+#   ifdef NEARSHORE_MELLOR
               DiaU3wrk(i,j,k,M3hrad)=0.0_r8
               DiaU3wrk(i,j,k,M3vrad)=0.0_r8
-#  endif
-#  ifdef UV_COR
+#   endif
+#   ifdef UV_COR
               DiaU3wrk(i,j,k,M3fcor)=0.0_r8
+#   endif
 #  endif
-# endif
             END DO
           END DO
         ELSE IF (iic(ng).eq.(ntfirst(ng)+1)) THEN
@@ -1069,33 +1071,33 @@
               u(i,j,k,nnew)=cff1-                                       &
      &                      0.5_r8*DC(i,0)*ru(i,j,k,indx)+              &
      &                      cff2
-# ifdef DIAGNOSTICS_UV
+#  ifdef DIAGNOSTICS_UV
               DiaU3wrk(i,j,k,M3rate)=cff1
               DiaU3wrk(i,j,k,M3vvis)=cff2
               DiaU3wrk(i,j,k,M3pgrd)=-0.5_r8*DC(i,0)*                   &
      &                               DiaRU(i,j,k,indx,M3pgrd)
-#  ifdef UV_ADV
+#   ifdef UV_ADV
               DiaU3wrk(i,j,k,M3hadv)=-0.5_r8*DC(i,0)*                   &
      &                               DiaRU(i,j,k,indx,M3hadv)
               DiaU3wrk(i,j,k,M3vadv)=-0.5_r8*DC(i,0)*                   &
      &                               DiaRU(i,j,k,indx,M3vadv)
-#  endif
-#  ifdef NEARSHORE_MELLOR
+#   endif
+#   ifdef NEARSHORE_MELLOR
               DiaU3wrk(i,j,k,M3hrad)=-0.5_r8*DC(i,0)*                   &
      &                               DiaRU(i,j,k,indx,M3hrad)
               DiaU3wrk(i,j,k,M3vrad)=-0.5_r8*DC(i,0)*                   &
      &                               DiaRU(i,j,k,indx,M3vrad)
-#  endif
-#  ifdef UV_COR
+#   endif
+#   ifdef UV_COR
               DiaU3wrk(i,j,k,M3fcor)=-0.5_r8*DC(i,0)*                   &
      &                               DiaRU(i,j,k,indx,M3fcor)
-#  endif
-#  ifdef BODYFORCE
+#   endif
+#   ifdef BODYFORCE
               DiaU3wrk(i,j,k,M3vvis)=DiaU3wrk(i,j,k,M3vvis)-            &
      &                               0.5_r8*DC(i,0)*                    &
      &                               DiaRU(i,j,k,indx,M3vvis)
+#   endif
 #  endif
-# endif
             END DO
           END DO
         ELSE
@@ -1308,9 +1310,9 @@
         itrc=idbio(ibt)
 #  else
       DO itrc=1,NT(ng)
-#if defined FEAST
- IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
-#endif
+#   if defined FEAST
+        IF (itrc.gt.NAT.and.itrc.le.NAT+NPT) CYCLE
+#   endif
 #  endif
         CALL t3dbc_tile (ng, tile, itrc,                                &
      &                   LBi, UBi, LBj, UBj, N(ng), NT(ng),             &
