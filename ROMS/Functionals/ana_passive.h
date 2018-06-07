@@ -117,7 +117,7 @@
             DO i=IstrT,IendT
               cff1 = SQRT(real(j - 55)**2 + real(i - 74)**2) ! distance, in grid cells
               cff2 = 2.0_r8                                  ! e-folding distance, in grid cell
-              cff3 = 0.0_r8                                  ! max concentration
+              cff3 = 1.0_r8                                  ! max concentration
               t(i,j,k,1,itrc) = exp(-(1/cff2) * cff1) * cff3 
 
               t(i,j,k,2,itrc)=t(i,j,k,1,itrc)
