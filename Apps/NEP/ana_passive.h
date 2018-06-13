@@ -93,6 +93,26 @@
 !         END DO
 !       END DO
 !     END DO
+# if defined UNIMAK
+      DO ip=1,NPT,2
+        itrc=inert(ip)
+        iage=inert(ip+1)
+        DO k=1,N(ng)
+          DO j=JstrT,JendT
+            DO i=IstrT,IendT
+              cff1 = SQRT(real(j - 55)**2 + real(i - 74)**2) ! distance, in grid cells
+              cff2 = 2.0_r8                                  ! e-folding distance, in grid cell
+              cff3 = 1.0_r8                                  ! max concentration
+              t(i,j,k,1,itrc) = exp(-(1/cff2) * cff1) * cff3 
+
+              t(i,j,k,2,itrc)=t(i,j,k,1,itrc)
+              t(i,j,k,1,iage)=0.0_r8
+              t(i,j,k,2,iage)=t(i,j,k,1,iage)
+            END DO
+          END DO
+        END DO
+      END DO
+# else
       DO k=1,N(ng)
         DO j=JstrR,JendR
           DO i=IstrR,IendR
@@ -104,6 +124,8 @@
           END DO
         END DO
       END DO
+      
+# endif
 #else
       ana_passive_user.h: No values provided for passive tracers.
 #endif
