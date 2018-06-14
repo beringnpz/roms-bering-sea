@@ -459,6 +459,11 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: BasMetMZL, BasMetCop, BasMetNC, BasMetCM, BasMetEup
       real(r8) :: ParW, OffSet
       real(r8) :: fracUsed
+      
+#ifdef UNIMAK
+      ! Age tracer
+      integer :: ip, itrc
+#endif
 
       ! Parameter default values
 
@@ -2861,6 +2866,17 @@
             t(i,j,k,3,iFe  ) = t(i,j,k,nnew,iFe  ) * Hz_inv(i,k)
             t(i,j,k,3,iMZS ) = 0
 #endif
+
+#ifdef UNIMAK
+            ! Age tracer dye source: constant source in unimak pass grid cell
+            if ((j .eq. 55) .and. (i .eq. 74)) then
+              DO ip=1,NPT,2
+                itrc=inert(ip)
+                t(i,j,k,nstp,itrc) = t(i,j,k,nstp,itrc) + 1.0_r8*dtdays 
+              END DO
+            endif
+#endif
+
           END DO
         END DO
 

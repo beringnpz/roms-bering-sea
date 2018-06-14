@@ -66,6 +66,10 @@
 !  Local variable declarations.
 !
       integer :: i, ip, itrc, j, k
+#ifdef UNIMAK
+      real(r8) :: cff1, cff2, cff3
+      integer :: iage
+#endif
 
 #include "set_bounds.h"
 !
