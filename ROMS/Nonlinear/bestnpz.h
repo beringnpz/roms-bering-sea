@@ -2872,7 +2872,7 @@
             if ((j .eq. 55) .and. (i .eq. 74)) then
               DO ip=1,NPT,2
                 itrc=inert(ip)
-                t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 1.0_r8*dtdays 
+                t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 100.0_r8*dtdays 
               END DO
             endif
 #endif
