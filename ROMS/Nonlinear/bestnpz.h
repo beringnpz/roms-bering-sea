@@ -462,7 +462,7 @@
       
 #ifdef UNIMAK
       ! Age tracer
-      integer :: ip, itrc
+      integer :: ip
 #endif
 
       ! Parameter default values
