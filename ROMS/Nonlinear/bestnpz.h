@@ -2868,11 +2868,18 @@
 #endif
 
 #ifdef UNIMAK
-            ! Age tracer dye source: constant source in unimak pass grid cell
-            if ((j .eq. 55) .and. (i .eq. 74)) then
+            ! Age tracer dye source, 5 units m^-3 d^-1 (kinda arbitrary value)
+
+# ifdef DYESOURCE1
+            if ((j .eq. 57) .and. (i .eq. 75)) then ! Unimak Pass only
+# elseif defined DYESOURCE2
+            if ((j .eq. 82) .and. (i .eq. 45)) then ! Amukta Pass only
+# elseif defined DYESOURCE3
+            if (((j .eq. 57) .and. (i .eq. 75)) .or. ((j .eq. 82) .and. (i .eq. 45))) then ! both
+# endif
               DO ip=1,NPT,2
                 itrc=inert(ip)
-                t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 100.0_r8*dtdays 
+                t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays 
               END DO
             endif
 #endif
