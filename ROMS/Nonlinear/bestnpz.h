@@ -2872,9 +2872,9 @@
 
 # ifdef DYESOURCE1
             if ((j .eq. 57) .and. (i .eq. 75)) then ! Unimak Pass only
-# elseif defined DYESOURCE2
+# elif defined DYESOURCE2
             if ((j .eq. 82) .and. (i .eq. 45)) then ! Amukta Pass only
-# elseif defined DYESOURCE3
+# elif defined DYESOURCE3
             if (((j .eq. 57) .and. (i .eq. 75)) .or. ((j .eq. 82) .and. (i .eq. 45))) then ! both
 # endif
               DO ip=1,NPT,2

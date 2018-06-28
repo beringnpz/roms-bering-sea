@@ -113,9 +113,9 @@
 
 #  ifdef DYESOURCE1
               t(i,j,k,1,itrc) = exp(-(1/cff2) * cff1) * cff3 ! Unimak only 
-#  elseif defined DYESOURCE2
+#  elif defined DYESOURCE2
               t(i,j,k,1,itrc) = exp(-(1/cff2) * cff4) * cff3 ! Amukta only
-#  elseif defined DYESOURCE3
+#  elif defined DYESOURCE3
               t(i,j,k,1,itrc) = exp(-(1/cff2) * cff4) * cff3 ! both
 #  endif
 
