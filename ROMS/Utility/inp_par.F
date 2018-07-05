@@ -6775,7 +6775,7 @@
           ELSE IF (TRIM(KeyWord).eq.'psiS') THEN
               Npts=load_r(Nval, Rval, 1, psiS)
           ELSE IF (TRIM(KeyWord).eq.'psiL') THEN
-              Npts=load_r(Nval, Rval, 1, psiS)
+              Npts=load_r(Nval, Rval, 1, psiL)
             
           ! Feeding preferences
           
