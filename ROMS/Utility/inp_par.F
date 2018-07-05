@@ -6753,9 +6753,9 @@
           ELSE IF (TRIM(KeyWord).eq.'DpL') THEN
             Npts=load_r(Nval, Rval, 1, DpL)
           ELSE IF (TRIM(KeyWord).eq.'alphaPhS') THEN
-            Npts=load_r(Nval, Rval, 1, DpL)
+            Npts=load_r(Nval, Rval, 1, alphaPhS)
           ELSE IF (TRIM(KeyWord).eq.'alphaPhL') THEN
-            Npts=load_r(Nval, Rval, 1, DpL)
+            Npts=load_r(Nval, Rval, 1, alphaPhL)
           ELSE IF (TRIM(KeyWord).eq.'k1PhS') THEN
             Npts=load_r(Nval, Rval, 1, k1PhS)
           ELSE IF (TRIM(KeyWord).eq.'k1PhL') THEN
