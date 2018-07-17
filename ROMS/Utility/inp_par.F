@@ -6728,8 +6728,10 @@
              Npts=load_r(Nval, Rval, 1, a_frac)
           ELSE IF (TRIM(KeyWord).eq.'a_mu1') THEN
              Npts=load_r(Nval, Rval, 1, a_mu1)
-          ELSE IF (TRIM(KeyWord).eq.'k_shallow') THEN
-             Npts=load_r(Nval, Rval, 1, k_shallow)
+          ELSE IF (TRIM(KeyWord).eq.'k_sed1') THEN
+             Npts=load_r(Nval, Rval, 1, k_sed1)
+          ELSE IF (TRIM(KeyWord).eq.'k_sed2') THEN
+             Npts=load_r(Nval, Rval, 1, k_sed2)
              
           ! Conversion factors
             
@@ -7652,8 +7654,10 @@
      &          'R fraction for attenuation of shortwave' 
           WRITE (out,70) a_mu1, 'a_mu1',                                &
      &          'Attenuation length for shortwave in deep water (m)' 
-          WRITE (out,70) k_shallow, 'k_shallow',                        &
-     &          'Factor for bottom-depth-based extinction coefficient' 
+          WRITE (out,70) k_sed1, 'k_sed1',                              &
+     &          'Factor for extinction coefficient due to depth-correlated sediment' 
+          WRITE (out,70) k_sed2, 'k_sed2',                              &
+     &          'Exponent for extinction coefficient due to depth-correlated sediment' 
      
           ! Conversion factors
      

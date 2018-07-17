@@ -1280,8 +1280,15 @@
               ! k_chlC = 0, k_shallow = 0
               !
               ! When used in the past, k_shallow = 2.0 (citation unknown)
+              !
+              ! Update 7/17/2018: Changed hard-coded negative exponential to parameterized 
+              ! power law.  k_sed1 = 2.833, k_sed2 = -1.079, k_chlC = 0.0363 based
+              ! on fit of bottom depth vs satellite-derived Inherent Optical Properties 
+              ! (SNPP VIRRS absorption due to gelbstoff and detritus @ 443nm, 
+              ! entire-mission composite 2012-2018)
             
-              katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)
+              !katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)
+              katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2
                   
               ! Calculate light at depth levels relevant for Simpson's 
               ! rule integration      

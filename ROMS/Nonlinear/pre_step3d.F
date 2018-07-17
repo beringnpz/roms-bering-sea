@@ -405,21 +405,10 @@
           
             ! Attenuation coefficient, including that due to clear water, 
             ! chlorophyll, and optionally other organics/sediment/etc.
-            ! Citations for indended parameter sets are as follows:
-            !
-            ! Luokos et al (1997, Deep Sea Res. Part II,v44(97)), after
-            ! Morel (1988, J. Geophys. Res., v93(C9))
-            ! k_ext = 0.0384, k_chlA = 0.0518, k_chlB = 0.428, 
-            ! k_chlC = 0, k_shallow = 0
-            !
-            ! Ned Cokelet, personal communication (based on BEST 
-            ! cruises and following the method of Morel (1988)
-            ! k_ext = 0.034, k_chlA = 0.1159, k_chlB = 0.2829, 
-            ! k_chlC = 0, k_shallow = 0
-            !
-            ! When used in the past, k_shallow = 2.0 (citation unknown)
+            ! See bestnpz.h code for further details on these parameters.
             
-            katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)       
+            !katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)
+            katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2      
             
             ! Fraction of light in layer (averaged over layer using 
             ! Simpson's rule).  Attenuation uses Jerlov water type 
