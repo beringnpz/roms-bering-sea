@@ -131,21 +131,32 @@
           DO itrc=1,NBT
             get_var(idTvar(idbio(itrc)))=.TRUE.
           END DO
-        END IF
+#   if defined BENTHIC && defined BERING_10K
+          DO itrc=1,NBeT(ng)  ! TODO: these CPP flags (above) are a bit of a mess... redo w/o B10K eventually
+            get_var(idBvar(itrc))=.TRUE.
+          END DO   
+#   endif
+#   if defined ICE_BIO
+          get_var(idIcePhL)=.TRUE.
+          get_var(idIceNO3)=.True.
+          get_var(idIceNH4)=.True.    
+#   endif
+        ENDIF
 #  else
         DO itrc=1,NBT
           get_var(idTvar(idbio(itrc)))=.TRUE.
         END DO
-#  endif
-#  if defined BENTHIC && defined BERING_10K
+#   if defined BENTHIC && defined BERING_10K
         DO itrc=1,NBeT(ng)
           get_var(idBvar(itrc))=.TRUE.
         END DO     
-#  endif
-#  if defined ICE_BIO
+#   endif
+#   if defined ICE_BIO
         get_var(idIcePhL)=.TRUE.
 	      get_var(idIceNO3)=.True.
 	      get_var(idIceNH4)=.True.         
+#   endif
+        
 #  endif
 # endif
 
