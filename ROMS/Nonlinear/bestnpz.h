@@ -960,7 +960,7 @@
             Frz_NO3_INO3(i,N(ng)) = (Bio3d(i,N(ng),iiIceNO3) * aidz -  Bio2d(i,N(ng),iiIceNO3))/(dt(ng)*sec2day)
             Frz_NH4_INH4(i,N(ng)) = (Bio3d(i,N(ng),iiIceNH4) * aidz -  Bio2d(i,N(ng),iiIceNH4))/(dt(ng)*sec2day)
 
-            if (Frz_PhL_IPhL(i,N(ng)) /= Frz_PhL_IPhL(i,N(ng)) then
+            if (Frz_PhL_IPhL(i,N(ng)) /= Frz_PhL_IPhL(i,N(ng))) then
               write(*, '(A30,I3,A4,I3)') "NaN caught: Frz_PhL_IPhL, i = ", i, "k = ", N(ng)
               exit_flag = 1
             end if
@@ -968,7 +968,7 @@
               write(*, '(A30,I3,A4,I3)') "NaN caught: Frz_NO3_INO3, i = ", i, "k = ", N(ng)
               exit_flag = 1
             end if
-            if (Frz_NH4_INH4(i,N(ng)) /= Frz_NH4_INH4(i,N(ng)) then
+            if (Frz_NH4_INH4(i,N(ng)) /= Frz_NH4_INH4(i,N(ng))) then
               write(*, '(A30,I3,A4,I3)') "NaN caught: Frz_NH4_INH4, i = ", i, "k = ", N(ng)
               exit_flag = 1
             end if
@@ -990,7 +990,7 @@
             Frz_NO3_INO3(i,N(ng)) = -Bio2d(i,N(ng),iiIceNO3)/(dt(ng)*sec2day)
             Frz_NH4_INH4(i,N(ng)) = -Bio2d(i,N(ng),iiIceNH4)/(dt(ng)*sec2day)
             
-            if (Frz_PhL_IPhL(i,N(ng)) /= Frz_PhL_IPhL(i,N(ng)) then
+            if (Frz_PhL_IPhL(i,N(ng)) /= Frz_PhL_IPhL(i,N(ng))) then
               write(*, '(A30,I3,A4,I3)') "NaN caught: Frz_PhL_IPhL, i = ", i, "k = ", N(ng)
               exit_flag = 1
             end if
@@ -998,7 +998,7 @@
               write(*, '(A30,I3,A4,I3)') "NaN caught: Frz_NO3_INO3, i = ", i, "k = ", N(ng)
               exit_flag = 1
             end if
-            if (Frz_NH4_INH4(i,N(ng)) /= Frz_NH4_INH4(i,N(ng)) then
+            if (Frz_NH4_INH4(i,N(ng)) /= Frz_NH4_INH4(i,N(ng))) then
               write(*, '(A30,I3,A4,I3)') "NaN caught: Frz_NH4_INH4, i = ", i, "k = ", N(ng)
               exit_flag = 1
             end if
