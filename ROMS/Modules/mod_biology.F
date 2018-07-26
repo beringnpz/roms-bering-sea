@@ -1303,10 +1303,6 @@
       real(r8) :: ksnut1, ksnut2, mu0, R0i
       real(r8) :: rg0, rg, annit
       real(r8) :: aidz
-      
-      ! Functions (contained below)
-      
-      real(r8) :: CalcLinearCapped
 
 #  ifdef FEAST
 
@@ -1528,12 +1524,13 @@
         ! between two points and capped beyond those points
         FUNCTION CalcLinearCapped(x1, y1, x2, y2, x)
           real(r8) :: x1,y1,x2,y2,x,ymax,ymin
+          real(r8) :: CalcLinearCapped
           
           ymax = max(y1,y2)
           ymin = min(y1,y2)
           
           CalcLinearCapped = max(ymin,min(ymax,((y2-y1)/(x2-x1))*(x-x1)+y1))
-        END FUNCTION
+        END FUNCTION CalcLinearCapped
       
 #  ifdef FEAST
 !========================================================================

@@ -45,11 +45,11 @@
 
             ! Iron: depth-dependant linear-capped profile (same as nudging)
             
-            t(i,j,k,1,iFe) = CalcLinearCapped(-50, FeSurf, -300, FeDeep, GRID(ng)%z_r(i,j,k))
+            t(i,j,k,1,iFe) = CalcLinearCapped(-50.0_r8, FeSurf, -300.0_r8, FeDeep, GRID(ng)%z_r(i,j,k))
 # endif
             ! Nitrate: depth-dependant linear-capped profile
             
-            t(i,j,k,1,iNO3) = CalcLinearCapped(-100, 18.0_r8, -300, 30.0_r8, GRID(ng)%z_r(i,j,k))
+            t(i,j,k,1,iNO3) = CalcLinearCapped(-100.0_r8, 18.0_r8, -300.0_r8, 30.0_r8, GRID(ng)%z_r(i,j,k))
             
             ! NH4: 0
             
@@ -70,7 +70,7 @@
             ! placed in the top 5 layers (regardless of model resolution).
 
 	     		  if (z_r(i,j,1) .le. -400.0_r8) then 
-	            if(z_r(i,j,k).le.-400.and.z_r(i,j,k).ge.-800)THEN
+	            if (z_r(i,j,k).le.-400.and.z_r(i,j,k).ge.-800) THEN
                 t(i,j,k,1,iNCaO) = 0.1_r8
 	            endif
 	     		  elseif (z_r(i,j,1) .ge. -200.0_r8) then 
@@ -93,7 +93,7 @@
 # ifdef JELLY
             ! Jellyfish: depth-dependant linear-capped profile
             
-            t(i,j,k,1,iJel) = CalcLinearCapped(-100, 0.1_r8, -300, eps, GRID(ng)%z_r(i,j,k))
+            t(i,j,k,1,iJel) = CalcLinearCapped(-100.0_r8, 0.1_r8, -300.0_r8, eps, GRID(ng)%z_r(i,j,k))
 # endif
 
             ! Detritus: nearly nothing
@@ -104,7 +104,7 @@
 
           END DO
 # ifdef BENTHIC
-          DO k = 1:NBL(ng)
+          DO k = 1,NBL(ng)
             
             ! Benthos: start high (note: due to a missing check for analytical conditions, 
             ! these were overrided by input file initial conditions in most earlier 
@@ -150,7 +150,7 @@
 
       DO i=IstrR,IendR
         DO j=JstrR,JendR
-          DO k=1:N(ng)
+          DO k=1,N(ng)
             DO is=1,NBT
               itrc=idbio(is)
               t(i,j,k,1,itrc) = MAX(t(i,j,k,1,itrc),eps)
