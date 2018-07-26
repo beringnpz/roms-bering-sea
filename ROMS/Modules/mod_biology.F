@@ -1303,6 +1303,10 @@
       real(r8) :: ksnut1, ksnut2, mu0, R0i
       real(r8) :: rg0, rg, annit
       real(r8) :: aidz
+      
+      ! Functions (contained below)
+      
+      real(r8) :: CalcLinearCapped
 
 #  ifdef FEAST
 
