@@ -21,6 +21,84 @@
 ! state
 !-----------------------------------------------------------------------
 !
+
+      DO i=IstrR,IendR
+        DO j=JstrR,JendR
+          
+# ifdef IRON_LIMIT
+          ! Iron top/bottom values set based on bottom (matches nudging)
+          FeSurf = CalcLinearCapped(Feinh, Feinlo, Feoffh, Feofflo, GRID(ng)%h(i,j))
+          FeDeep = CalcLinearCapped(Feinh, Feinhi, Feoffh, Feoffhi, GRID(ng)%h(i,j))
+# endif
+          
+          DO k=1,N(ng)
+# ifdef IRON_LIMIT
+
+            ! Iron: depth-dependant linear-capped profile (same as nudging)
+            
+            t(i,j,k,1,iFe) = CalcLinearCapped(-50.0_r8, FeSurf, -300.0_r8, FeDeep, GRID(ng)%z_r(i,j,k))
+# endif
+            ! Nitrate: depth-dependant linear-capped profile (0 above 100, 30 below 300)
+            
+            t(i,j,k,1,iNO3) = CalcLinearCapped(-100.0_r8, 0.0_r8, -300.0_r8, 30.0_r8, GRID(ng)%z_r(i,j,k))
+            
+            ! NH4: 0
+            
+            t(i,j,k,1,iNH4) = 0.0_r8
+            
+            ! Phytoplankton and zooplankton: constant seed
+            
+            t(i,j,k,1,iPhS)  = eps
+            t(i,j,k,1,iPhL)  = eps
+            t(i,j,k,1,iMZS)  = 0.0_r8
+            t(i,j,k,1,iMZL)  = eps
+            t(i,j,k,1,iCop)  = eps
+            t(i,j,k,1,iNCaS) = eps
+            t(i,j,k,1,iNCaO) = eps
+            t(i,j,k,1,iEupS) = eps
+            t(i,j,k,1,iEupO) = eps
+# ifdef JELLY
+            t(i,j,k,1,iJel) = eps
+# endif
+
+            ! Detritus: nothing
+            
+            t(i,j,k,1,iDet) =  0.0_r8
+	          t(i,j,k,1,iDetF) =  0.0_r8
+
+          END DO
+# ifdef BENTHIC
+          DO k = 1,NBL(ng)
+            
+            ! Benthos
+            
+            bt(i,j,k,1,iBen) = eps
+            
+            ! Benthic detritus
+            
+		        bt(i,j,k,1,iDetBen) = 0.0_r8
+            
+          END DO
+# endif        
+# ifdef ICE_BIO
+
+          ! Ice: start with no-ice conditions
+          
+#  ifdef CLIM_ICE_1D
+          it(i,j,1,iIcePhL)  =  0.0_r8      
+          it(i,j,1,iIceNO3)  =  0.0_r8      
+          it(i,j,1,iIceNH4)  =  0.0_r8      
+		      itL(i,j,1,iIceLog) = -1.0_r8    
+#  elif defined BERING_10K
+          IcePhL(i,j,1) =  0.0_r8
+          IceNO3(i,j,1) =  0.0_r8
+          IceNH4(i,j,1) =  0.0_r8
+          IceLog(i,j,1) = -1.0_r8
+#  endif
+# endif
+
+        END DO
+      END DO
       
 
 #else
@@ -153,7 +231,7 @@
           DO k=1,N(ng)
             DO is=1,NBT
               itrc=idbio(is)
-              t(i,j,k,1,itrc) = MAX(t(i,j,k,1,itrc),eps)
+!               t(i,j,k,1,itrc) = MAX(t(i,j,k,1,itrc),eps)
               t(i,j,k,2,itrc) = t(i,j,k,1,itrc)
             END DO
           END DO
