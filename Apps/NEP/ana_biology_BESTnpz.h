@@ -9,7 +9,7 @@
 
 
 
-#ifdef BARRENSTART
+#ifdef SPINUP
 
 !
 !-----------------------------------------------------------------------
@@ -38,9 +38,11 @@
             
             t(i,j,k,1,iFe) = CalcLinearCapped(-50.0_r8, FeSurf, -300.0_r8, FeDeep, GRID(ng)%z_r(i,j,k))
 # endif
-            ! Nitrate: depth-dependant linear-capped profile (0 above 100, 30 below 300)
+            ! Nitrate: depth-dependant linear-capped profile (0 above 100, 40 below 300
+            ! based very roughly on World Ocean Atlas 2013 January climatological values 
+            ! at bottom depth in the Bering Sea) 
             
-            t(i,j,k,1,iNO3) = CalcLinearCapped(-100.0_r8, 0.0_r8, -300.0_r8, 30.0_r8, GRID(ng)%z_r(i,j,k))
+            t(i,j,k,1,iNO3) = CalcLinearCapped(-100.0_r8, 0.0_r8, -300.0_r8, 40.0_r8, GRID(ng)%z_r(i,j,k))
             
             ! NH4: 0
             
