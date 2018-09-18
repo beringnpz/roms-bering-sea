@@ -83,46 +83,36 @@
      &                   OCEAN(ng) % W, OCEAN(ng) % wvel,               &
      &                   OCEAN(ng) % t,                                 &
 #  ifdef BEST_NPZ
-#    ifdef STATIONARY
-
+#   ifdef STATIONARY
      &                   OCEAN(ng) % st,                                &
-#    endif
-#    ifdef STATIONARY2
-
+#   endif
+#   ifdef STATIONARY2
      &                   OCEAN(ng) % st2,                               &
-#    endif
-#    ifdef PROD3
-
+#   endif
+#   ifdef PROD3
      &                   OCEAN(ng) % pt3,                               &
-#    endif
-#    ifdef PROD2
-
+#   endif
+#   ifdef PROD2
      &                   OCEAN(ng) % pt2,                               &
-#    endif
-#    ifdef BENTHIC
+#   endif
+#   ifdef BENTHIC
      &                   OCEAN(ng) % bt,                                &
-#    endif
-#    ifdef ICE_BIO
-#     ifdef CLIM_ICE_1D
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
      &                   OCEAN(ng) % it,                               &
-
-
-#  elif defined BERING_10K
+#    elif defined BERING_10K
      
      &                   ICE(ng) % IcePhL ,                             &
      &                   ICE(ng) % IceNO3 ,                             &
      &                   ICE(ng) % IceNH4 ,                             &
      &                   ICE(ng) % IceLog ,                             &
-     
-     
-#     endif
 #    endif
-#    ifdef BIOFLUX
-
+#   endif
+#   ifdef BIOFLUX
      &                   OCEAN(ng) % bflx,                              &
-#    endif
+#   endif
 #  endif
-
 #  ifdef BIO_GOANPZ
      &                   OCEAN(ng) % st,                                &
 #  endif
@@ -228,40 +218,39 @@
      &                   AVERAGE(ng) % avgwvel,                         &
      &                   AVERAGE(ng) % avgt,                            &
 
-# ifdef BEST_NPZ
-#  ifdef STATIONARY
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
      &                   AVERAGE(ng) % avgst,                           &
-#  endif
-#  ifdef STATIONARY2
+#   endif
+#   ifdef STATIONARY2
      &                   AVERAGE(ng) % avgst2,                          &
-#  endif
-#  ifdef PROD3
+#   endif
+#   ifdef PROD3
      &                   AVERAGE(ng) % avgpt3,                          &
-#  endif
-#  ifdef PROD2
+#   endif
+#   ifdef PROD2
      &                   AVERAGE(ng) % avgpt2,                          &
-#  endif
-#  ifdef BENTHIC
+#   endif
+#   ifdef BENTHIC
      &                   AVERAGE(ng) % avgbt,                           &
-#  endif
-#  ifdef ICE_BIO
-#   if defined CLIM_ICE_1D
+#   endif
+#   ifdef ICE_BIO
+#    if defined CLIM_ICE_1D
      &                   AVERAGE(ng) % avgit,                           &
-#   elif defined BERING_10K     
+#    elif defined BERING_10K     
      &                   AVERAGE(ng) % avgIPhL,                         &
      &                   AVERAGE(ng) % avgINO3,                         &
      &                   AVERAGE(ng) % avgINH4,                         & 
      &                   AVERAGE(ng) % avgILog,                         &     
-#  endif
-#  endif
-#  ifdef BIOFLUX
+#    endif
+#   endif
+#   ifdef BIOFLUX
      &                   AVERAGE(ng) % avgbflx,                         &
+#   endif
 #  endif
-# endif
-
-# ifdef BIO_GOANPZ
+#  ifdef BIO_GOANPZ
      &                   AVERAGE(ng) % avgst,                           &
-# endif
+#  endif
      &                   AVERAGE(ng) % avgrho,                          &
 #  ifdef AVERAGES_NEARSHORE
      &                   AVERAGE(ng) % avgu3Sd,                         &
@@ -392,44 +381,40 @@
 #  endif
      &                         u, v,                                    &
      &                         W, wvel, t,                              &
-# ifdef BEST_NPZ
-#  ifdef STATIONARY
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
      &                         st,                                      &
-#  endif
-#  ifdef STATIONARY2
+#   endif
+#   ifdef STATIONARY2
      &                         st2,                                     &
-#  endif
-#  ifdef PROD3
+#   endif
+#   ifdef PROD3
      &                         pt3,                                     &
-#  endif
-#  ifdef PROD2
+#   endif
+#   ifdef PROD2
      &                         pt2,                                     &
-#  endif
-#  ifdef BENTHIC
+#   endif
+#   ifdef BENTHIC
      &                         bt,                                      &
-#  endif
-
-#  ifdef ICE_BIO
-#  ifdef CLIM_ICE_1D
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
      &                         it,                                     &
-#  elif defined BERING_10K     
+#    elif defined BERING_10K     
      
      &                            IcePhL,                              &
      &                            IceNO3,                              &
      &                            IceNH4,                              &
      &                            IceLog,                              &
-#  endif
-#  endif
-
-
-
-#  ifdef BIOFLUX
+#    endif
+#   endif
+#   ifdef BIOFLUX
      &                         bflx,                                    &
+#   endif
 #  endif
-# endif
-# ifdef BIO_GOANPZ
+#  ifdef BIO_GOANPZ
      &                         st,                                      &
-# endif
+#  endif
      &                         rho,                                     &
 #  ifdef AVERAGES_NEARSHORE
      &                         u_stokes, v_stokes,                      &
@@ -498,42 +483,39 @@
      &                         avgu3d, avgv3d,                          &
      &                         avgw3d, avgwvel,                         &
      &                         avgt,                                    &
-# ifdef BEST_NPZ
-#  ifdef STATIONARY
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
      &                         avgst,                                   &
-#  endif
-#  ifdef STATIONARY2
+#   endif
+#   ifdef STATIONARY2
      &                         avgst2,                                  &
-#  endif
-#  ifdef PROD3
+#   endif
+#   ifdef PROD3
     &                         avgpt3,                                   &
-#  endif
-#  ifdef PROD2
+#   endif
+#   ifdef PROD2
     &                         avgpt2,                                   &
-#  endif
-#  ifdef BENTHIC
+#   endif
+#   ifdef BENTHIC
      &                         avgbt,                                   &
-#  endif
-#  ifdef ICE_BIO
-#   ifdef CLIM_ICE_1D
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
         &                         avgit,                                &
-#   elif defined BERING_10K     
+#    elif defined BERING_10K     
      &                    avgIPhL,                         &
      &                    avgINO3,                         &
      &                    avgINH4,                         &
      &                    avgILog,                         &
-#  endif     
-#  endif     
-     
-
-#  ifdef BIOFLUX
+#    endif     
+#   endif     
+#   ifdef BIOFLUX
      &                         avgbflx,                                 &
+#   endif
 #  endif
-# endif
-
-# ifdef BIO_GOANPZ
+#  ifdef BIO_GOANPZ
      &                         avgst,                                   &
-# endif
+#  endif
      &                         avgrho,                                  &
 #  ifdef AVERAGES_NEARSHORE
      &                         avgu3Sd, avgv3Sd,                        &
@@ -639,47 +621,40 @@
       real(r8), intent(in) :: W(LBi:,LBj:,0:)
       real(r8), intent(in) :: wvel(LBi:,LBj:,0:)
       real(r8), intent(in) :: t(LBi:,LBj:,:,:,:)
-# ifdef BEST_NPZ
-#   ifdef STATIONARY
+#   ifdef BEST_NPZ
+#    ifdef STATIONARY
       real(r8), intent(in) :: st(LBi:,LBj:,:,:,:)
-#   endif
-#   ifdef STATIONARY2
+#    endif
+#    ifdef STATIONARY2
       real(r8), intent(in) :: st2(LBi:,LBj:,:,:)
-#   endif
-#   ifdef PROD3
+#    endif
+#    ifdef PROD3
       real(r8), intent(in) :: pt3(LBi:,LBj:,:,:,:)
-#   endif
-#   ifdef PROD2
+#    endif
+#    ifdef PROD2
       real(r8), intent(in) :: pt2(LBi:,LBj:,:,:)
-#   endif
-#   ifdef BENTHIC   
+#    endif
+#    ifdef BENTHIC   
       real(r8), intent(in) :: bt(LBi:,LBj:,:,:,:)
-#   endif
-#   ifdef ICE_BIO  
-#    ifdef CLIM_ICE_1D 
-      real(r8), intent(in) :: it(LBi:,LBj:,:,:)
-      
-#elif defined BERING_10K
+#    endif
+#    ifdef ICE_BIO  
+#     ifdef CLIM_ICE_1D 
+      real(r8), intent(in) :: it(LBi:,LBj:,:,:)    
+#     elif defined BERING_10K
       real(r8), intent(inout) :: IcePhL(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNO3(LBi:,LBj:,:)
       real(r8), intent(inout) :: IceNH4(LBi:,LBj:,:)
-     real(r8), intent(inout) :: IceLog(LBi:,LBj:,:)
-#   endif       
-      
-      
-      
-#   endif  
-
-#   ifdef BIOFLUX
+      real(r8), intent(inout) :: IceLog(LBi:,LBj:,:)
+#     endif       
+#    endif  
+#    ifdef BIOFLUX
 !      real(r8), intent(in) :: bflx(LBi:,LBj:,:,:,:,:)
-
       real(r8), intent(in) :: bflx(:,:)
-#   endif    
-# endif      
-      
-# ifdef BIO_GOANPZ
+#    endif    
+#   endif      
+#   ifdef BIO_GOANPZ
       real(r8), intent(in) :: st(LBi:,LBj:,:,:,:)
-# endif
+#   endif
       real(r8), intent(in) :: rho(LBi:,LBj:,:)
 #   ifdef AVERAGES_NEARSHORE
       real(r8), intent(in) :: u_stokes(LBi:,LBj:,:)
@@ -799,41 +774,39 @@
       real(r8), intent(inout) :: avgw3d(LBi:,LBj:,0:)
       real(r8), intent(inout) :: avgwvel(LBi:,LBj:,0:)
       real(r8), intent(inout) :: avgt(LBi:,LBj:,:,:)
-
-# ifdef BEST_NPZ
-#   ifdef STATIONARY
+#   ifdef BEST_NPZ
+#    ifdef STATIONARY
       real(r8), intent(inout) :: avgst(LBi:,LBj:,:,:)
-#   endif
-#   ifdef STATIONARY2
+#    endif
+#    ifdef STATIONARY2
       real(r8), intent(inout) :: avgst2(LBi:,LBj:,:)
-#   endif
-#   ifdef PROD3
+#    endif
+#    ifdef PROD3
       real(r8), intent(inout) :: avgpt3(LBi:,LBj:,:,:)
-#   endif
-#   ifdef PROD2
+#    endif
+#    ifdef PROD2
       real(r8), intent(inout) :: avgpt2(LBi:,LBj:,:)
-#   endif
-#   ifdef BENTHIC
+#    endif
+#    ifdef BENTHIC
       real(r8), intent(inout) :: avgbt(LBi:,LBj:,:,:)
-#   endif
-#ifdef ICE_BIO
-# ifdef CLIM_ICE_1D
+#    endif
+#    ifdef ICE_BIO
+#     ifdef CLIM_ICE_1D
       real(r8), intent(inout) :: avgit(LBi:,LBj:,:)
-# elif defined BERING_10K  
+#     elif defined BERING_10K  
       real(r8), intent(inout) :: avgINO3(LBi:,LBj:)
       real(r8), intent(inout) :: avgINH4(LBi:,LBj:)
       real(r8), intent(inout) :: avgIPhL(LBi:,LBj:)
       real(r8), intent(inout) :: avgILog(LBi:,LBj:)
-#  endif
-#endif
-#   ifdef BIOFLUX
+#     endif
+#    endif
+#    ifdef BIOFLUX
        real(r8), intent(inout) :: avgbflx(:,:)
+#    endif
 #   endif
-# endif
-
-# ifdef BIO_GOANPZ
+#   ifdef BIO_GOANPZ
       real(r8), intent(inout) :: avgst(LBi:,LBj:,:,:)
-# endif
+#   endif
       real(r8), intent(inout) :: avgrho(LBi:,LBj:,:)
 #   ifdef AVERAGES_NEARSHORE
       real(r8), intent(inout) :: avgu3Sd(LBi:,LBj:,:)
@@ -970,40 +943,36 @@
       real(r8), intent(in) :: wvel(LBi:UBi,LBj:UBj,0:N(ng))
       real(r8), intent(in) :: t(LBi:UBi,LBj:UBj,N(ng),3,NT(ng))
 
-# ifdef BEST_NPZ
-#     ifdef STATIONARY
-       real(r8), intent(in) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
-#     endif
-#     ifdef STATIONARY2
-       real(r8), intent(in) :: st2(LBi:UBi,LBj:UBj,3,NTS2(ng))
-#     endif
-#     ifdef PROD3
-       real(r8), intent(in) :: pt3(LBi:UBi,LBj:UBj,N(ng),3,NPT3(ng))
-#     endif
-#     ifdef PROD2
-       real(r8), intent(in) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
-#     endif
-#     ifdef BENTHIC
-       real(r8), intent(in) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
-#     endif
-#     ifdef ICE_BIO
-# ifdef CLIM_ICE_1D
-       real(r8), intent(in) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
-
-#elif defined BERING_10K
+#   ifdef BEST_NPZ
+#    ifdef STATIONARY
+      real(r8), intent(in) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
+#    endif
+#    ifdef STATIONARY2
+      real(r8), intent(in) :: st2(LBi:UBi,LBj:UBj,3,NTS2(ng))
+#    endif
+#    ifdef PROD3
+      real(r8), intent(in) :: pt3(LBi:UBi,LBj:UBj,N(ng),3,NPT3(ng))
+#    endif
+#    ifdef PROD2
+      real(r8), intent(in) :: pt2(LBi:UBi,LBj:UBj,3,NPT2(ng))
+#    endif
+#    ifdef BENTHIC
+      real(r8), intent(in) :: bt(LBi:UBi,LBj:UBj,NBL(ng),3,NBeT(ng))
+#    endif
+#    ifdef ICE_BIO
+#     ifdef CLIM_ICE_1D
+      real(r8), intent(in) :: it(LBi:UBi,LBj:UBj,3,NIceT(ng))
+#     elif defined BERING_10K
       real(r8), intent(in) :: IcePhL(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: IceNO3(LBi:UBi,LBj:UBj,2)
       real(r8), intent(in) :: IceNH4(LBi:UBi,LBj:UBj,2)
-    real(r8), intent(in) :: IceLog(LBi:UBi,LBj:UBj,2)
-#   endif  
-
-#     endif
-#     ifdef BIOFLUX
+      real(r8), intent(in) :: IceLog(LBi:UBi,LBj:UBj,2)
+#     endif  
+#    endif
+#    ifdef BIOFLUX
       real(r8), intent(in)::bflx(NT(ng),NT(ng))
-#     endif
-
-# endif
-
+#    endif
+#   endif
 #   ifdef BIO_GOANPZ
       real(r8), intent(in) :: st(LBi:UBi,LBj:UBj,N(ng),3,NTS(ng))
 #   endif
@@ -1130,34 +1099,32 @@
       real(r8), intent(inout) :: avgw3d(LBi:UBi,LBj:UBj,0:N(ng))
       real(r8), intent(inout) :: avgwvel(LBi:UBi,LBj:UBj,0:N(ng))
       real(r8), intent(inout) :: avgt(LBi:UBi,LBj:UBj,N(ng),NT(ng))
-#  ifdef BEST_NPZ
-#   ifdef STATIONARY
+#   ifdef BEST_NPZ
+#    ifdef STATIONARY
       real(r8), intent(inout) :: avgst(LBi:UBi,LBJ:UBj,N(ng),NTS(ng))
-#   endif
-#   ifdef STATIONARY2
+#    endif
+#    ifdef STATIONARY2
       real(r8), intent(inout) :: avgst2(LBi:UBi,LBJ:UBj,NTS2(ng))
-#   endif
-#   ifdef PROD3
+#    endif
+#    ifdef PROD3
       real(r8), intent(inout) :: avgpt3(LBi:UBi,LBJ:UBj,N(ng),NPT3(ng))
-#   endif
-#   ifdef PROD2
+#    endif
+#    ifdef PROD2
       real(r8), intent(inout) :: avgpt2(LBi:UBi,LBJ:UBj,NPT2(ng))
-#   endif
-#   ifdef BENTHIC
+#    endif
+#    ifdef BENTHIC
       real(r8), intent(inout) :: avgbt(LBi:UBi,LBj:UBj,NBL(ng),NBeT(ng))
-#   endif
-#   ifdef ICE_BIO
+#    endif
+#    ifdef ICE_BIO
       real(r8), intent(inout) :: avgit(LBi:UBi,LBj:UBj,NIceT(ng))
-#   endif
-#   ifdef BIOFLUX
+#    endif
+#    ifdef BIOFLUX
       real(r8), intent(inout) :: avgbflx(NT(ng),NT(ng))
+#    endif
 #   endif
-#  endif
-
-
-#  ifdef BIO_GOANPZ
+#   ifdef BIO_GOANPZ
       real(r8), intent(inout) :: avgst(LBi:UBi,LBJ:UBj,N(ng),NTS(ng))
-#  endif
+#   endif
       real(r8), intent(inout) :: avgrho(LBi:UBi,LBj:UBj,N(ng))
 #   ifdef AVERAGES_NEARSHORE
       real(r8), intent(inout) :: avgu3Sd(LBi:UBi,LBj:UBj,N(ng))
@@ -1543,8 +1510,8 @@
           END IF
 #  endif
         END DO
-#ifdef BEST_NPZ
-#  ifdef STATIONARY
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
         DO itrc=1,NTS(ng)
           DO k=1,N(ng)
             DO j=JstrR,JendR
@@ -1554,8 +1521,8 @@
             END DO
           END DO
         END DO
-#  endif
-#  ifdef PROD3
+#   endif
+#   ifdef PROD3
         DO itrc=1,NPT3(ng)
           DO k=1,N(ng)
             DO j=JstrR,JendR
@@ -1565,8 +1532,8 @@
             END DO
           END DO
         END DO
-#  endif
-#  ifdef PROD2
+#   endif
+#   ifdef PROD2
         DO itrc=1,NPT2(ng)
 
             DO j=JstrR,JendR
@@ -1576,8 +1543,8 @@
             END DO
 
         END DO
-#  endif
-#  ifdef STATIONARY2
+#   endif
+#   ifdef STATIONARY2
         DO itrc=1,NTS2(ng)
             DO j=JstrR,JendR
               DO i=IstrR,IendR
@@ -1585,8 +1552,8 @@
               END DO
             END DO
         END DO
-#  endif
-#  ifdef BENTHIC
+#   endif
+#   ifdef BENTHIC
            DO itrc=1,NBeT(ng)
              DO k=1,NBL(ng)
                DO j=JstrR,JendR
@@ -1598,33 +1565,26 @@
                END DO
              END DO
           END DO
-#  endif
-#  ifdef ICE_BIO
+#   endif
+#   ifdef ICE_BIO
            DO itrc=1,NIceT(ng)
-
                DO j=JstrR,JendR
                  DO i=IstrR,IendR
-#ifdef CLIM_ICE_1D
+#    ifdef CLIM_ICE_1D
                    avgit(i,j,itrc)=it(i,j,Nout,itrc)
-
-#endif
-
-
+#    endif
                  END DO
-
              END DO
           END DO
-#  endif
-#  ifdef BIOFLUX
+#   endif
+#   ifdef BIOFLUX
         DO itrc=1,NT(ng)
         DO itrc2=1,NT(ng)
                 avgbflx(itrc,itrc2)=bflx(itrc,itrc2)
           END DO
         END DO
+#   endif
 #  endif
-#endif
-
-
 #  ifdef BIO_GOANPZ
         DO itrc=1,NTS(ng)
           DO k=1,N(ng)
@@ -1898,118 +1858,102 @@
 ! values are accumulated in the bestnpz.h file
 ! so do not sum them here
 !--------------------------------------------
-#ifdef STATIONARY
-         DO itrc=1,NTS(ng)
-           DO k=1,N(ng)
-             DO j=JstrR,JendR
-               DO i=IstrR,IendR
-                 avgst(i,j,k,itrc)=st(i,j,k,Nout,itrc)
-               END DO
-             END DO
-           END DO
-         END DO
-#endif
-#ifdef PROD3
-         DO itrc=1,NPT3(ng)
-           DO k=1,N(ng)
-             DO j=JstrR,JendR
-               DO i=IstrR,IendR
-                 avgpt3(i,j,k,itrc)=pt3(i,j,k,Nout,itrc)
-               END DO
-             END DO
-           END DO
-         END DO
-#endif
-#ifdef PROD2
-         DO itrc=1,NPT2(ng)
-
-             DO j=JstrR,JendR
-               DO i=IstrR,IendR
-                 avgpt2(i,j,itrc)=pt2(i,j,Nout,itrc)
-               END DO
-             END DO
-
-         END DO
-#endif
-#ifdef STATIONARY2
-         DO itrc=1,NTS2(ng)
-!          DO k=1,N(ng)
-             DO j=JstrR,JendR
-               DO i=IstrR,IendR
-                 avgst2(i,j,itrc)=st2(i,j,Nout,itrc)
-               END DO
-             END DO
-!          END DO
-         END DO
-#endif
-#ifdef BENTHIC
-          DO itrc=1,NBeT(ng)
-            DO k=1,NBL(ng)
-              DO j=JstrR,JendR
-                DO i=IstrR,IendR
-                  avgbt(i,j,k,itrc)=avgbt(i,j,k,itrc)+bt(i,j,k,Nout,itrc)
-!         if(i.eq.144.and.j.eq.144) THEN
-!          print*,'setAvg'
-!          print*,'avgbt(i,j,k,itrc)=', avgbt(i,j,k,itrc)
-!          
-!          print*,'bt(i,j,k,Nout,1)=', bt(i,j,k,Nout,1)
-!          print*,''
-!          end if 
-                END DO
+#   ifdef STATIONARY
+        DO itrc=1,NTS(ng)
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgst(i,j,k,itrc)=st(i,j,k,Nout,itrc)
               END DO
             END DO
           END DO
-
-#endif
-#ifdef ICE_BIO
-          DO itrc=1,NIceT(ng)
-
-              DO j=JstrR,JendR
-                DO i=IstrR,IendR
-		
-# ifdef CLIM_ICE_1D
-          avgit(i,j,itrc)=avgit(i,j,itrc)+it(i,j,Nout,itrc)
-      
-
-#elif defined BERING_10K
-      
-      
-!		avgit(i,j,1)=avgit(i,j,itrc)+IcePhL(i,j,Nout)
-!		avgit(i,j,2)=avgit(i,j,itrc)+IceNO3(i,j,Nout)
-!                avgit(i,j,3)=avgit(i,j,itrc)+IceNH4(i,j,Nout)
-#endif
-                END DO
+        END DO
+#   endif
+#   ifdef PROD3
+        DO itrc=1,NPT3(ng)
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgpt3(i,j,k,itrc)=pt3(i,j,k,Nout,itrc)
               END DO
-
+            END DO
           END DO
-
-
-#endif
-#ifdef BIOFLUX
-         DO itrc=1,NT(ng)
-         DO itrc2=1,NT(ng)
+        END DO
+#   endif
+#   ifdef PROD2
+        DO itrc=1,NPT2(ng)
+          DO j=JstrR,JendR
+            DO i=IstrR,IendR
+              avgpt2(i,j,itrc)=pt2(i,j,Nout,itrc)
+            END DO
+          END DO
+        END DO
+#   endif
+#   ifdef STATIONARY2
+        DO itrc=1,NTS2(ng)
+!         DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgst2(i,j,itrc)=st2(i,j,Nout,itrc)
+              END DO
+            END DO
+!         END DO
+        END DO
+#   endif
+#   ifdef BENTHIC
+        DO itrc=1,NBeT(ng)
+          DO k=1,NBL(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgbt(i,j,k,itrc)=avgbt(i,j,k,itrc)+bt(i,j,k,Nout,itrc)
+!               if(i.eq.144.and.j.eq.144) THEN
+!                 print*,'setAvg'
+!                 print*,'avgbt(i,j,k,itrc)=', avgbt(i,j,k,itrc)
+!                 print*,'bt(i,j,k,Nout,1)=', bt(i,j,k,Nout,1)
+!                 print*,''
+!               end if 
+              END DO
+            END DO
+          END DO
+        END DO
+#   endif
+#   ifdef ICE_BIO
+        DO itrc=1,NIceT(ng)
+          DO j=JstrR,JendR
+            DO i=IstrR,IendR	
+#    ifdef CLIM_ICE_1D
+              avgit(i,j,itrc)=avgit(i,j,itrc)+it(i,j,Nout,itrc)
+#    elif defined BERING_10K
+!		          avgit(i,j,1)=avgit(i,j,itrc)+IcePhL(i,j,Nout)
+!		          avgit(i,j,2)=avgit(i,j,itrc)+IceNO3(i,j,Nout)
+!             avgit(i,j,3)=avgit(i,j,itrc)+IceNH4(i,j,Nout)
+#    endif
+            END DO
+          END DO
+        END DO
+#   endif
+#   ifdef BIOFLUX
+        DO itrc=1,NT(ng)
+          DO itrc2=1,NT(ng)
             avgbflx(itrc,itrc2)=bflx(itrc,itrc2)
-           END DO
-         END DO
-#endif
+          END DO
+        END DO
+#   endif
 #  endif
-
-
-
 #  ifdef BIO_GOANPZ
 !--------------------------------------------
 ! values are accumulated in the goanpz.h file
 ! so do not sum them here
 !--------------------------------------------
-         DO itrc=1,NTS(ng)
-           DO k=1,N(ng)
-             DO j=JstrR,JendR
-               DO i=IstrR,IendR
-                 avgst(i,j,k,itrc)=st(i,j,k,Nout,itrc)
-               END DO
-             END DO
-           END DO
-         END DO
+        DO itrc=1,NTS(ng)
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgst(i,j,k,itrc)=st(i,j,k,Nout,itrc)
+              END DO
+            END DO
+          END DO
+        END DO
 #  endif
 !
 !  Accumulate fields at W-points.
@@ -2371,73 +2315,59 @@
 !          END DO
 !        END DO
 !#  endif
-
 #  ifdef BEST_NPZ
-# ifdef BENTHIC
-         DO itrc=1,NBeT(ng)
-            DO k=1,NBL(ng)
-              DO j=JstrR,JendR
-                DO i=IstrR,IendR
-                  avgbt(i,j,k,itrc)=fac*avgbt(i,j,k,itrc)
-
-                END DO
+#   ifdef BENTHIC
+        DO itrc=1,NBeT(ng)
+          DO k=1,NBL(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgbt(i,j,k,itrc)=fac*avgbt(i,j,k,itrc)
               END DO
             END DO
-         END DO
-# endif
-# ifdef ICE_BIO
-# ifdef CLIM_ICE_1D
-         DO itrc=1,NIceT(ng)
-
-              DO j=JstrR,JendR
-                DO i=IstrR,IendR
-                  avgit(i,j,itrc)=fac*avgit(i,j,itrc)
-
-                END DO
-              END DO
-
-         END DO
-# endif
-# endif
-# ifdef STATIONARY
+          END DO
+        END DO
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
+        DO itrc=1,NIceT(ng)
+          DO j=JstrR,JendR
+            DO i=IstrR,IendR
+              avgit(i,j,itrc)=fac*avgit(i,j,itrc)
+            END DO
+          END DO
+        END DO
+#    endif
+#   endif
+#   ifdef STATIONARY
         DO itrc=1,NTS(ng)
-         DO k=1,N(ng)
-           DO j=JstrR,JendR
-             DO i=IstrR,IendR
-               avgst(i,j,k,itrc)=fac*avgst(i,j,k,itrc)
-             END DO
-           END DO
-         END DO
-       END DO
-#  endif
-
-# ifdef STATIONARY2
+          DO k=1,N(ng)
+            DO j=JstrR,JendR
+              DO i=IstrR,IendR
+                avgst(i,j,k,itrc)=fac*avgst(i,j,k,itrc)
+              END DO
+            END DO
+          END DO
+        END DO
+#   endif
+#   ifdef STATIONARY2
         DO itrc=1,NTS2(ng)
-           DO j=JstrR,JendR
-             DO i=IstrR,IendR
-               avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
-             END DO
-           END DO
-       END DO
+          DO j=JstrR,JendR
+            DO i=IstrR,IendR
+              avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
+            END DO
+          END DO
+        END DO
+#   endif
 #  endif
-
-#  endif
-
-
-!        DO itrc=1,NTS(ng)
-!          DO k=1,N(ng)
-!            DO j-JstrR,JendR
-!              DO i-IstrR,IendR
-!                anvst(i,j,k,itrc)=fac*avgt(i,j,k,itrc)
-!              END DO
-!            END DO
-!          END DO
-!        END DO
-!#  endif
-
-!#  endif
-
-
+!       DO itrc=1,NTS(ng)
+!         DO k=1,N(ng)
+!           DO j-JstrR,JendR
+!             DO i-IstrR,IendR
+!               anvst(i,j,k,itrc)=fac*avgt(i,j,k,itrc)
+!             END DO
+!           END DO
+!         END DO
+!       END DO
 
 !
 !  Process fields at W-points.

@@ -710,11 +710,11 @@
           END IF
         END DO
 
-# ifdef BEST_NPZ
-#ifdef STATIONARY
-!-------------------------
-!3D Stationary Variable Array
-!--------------------------
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
+!
+!  Define 3D stationary diagnostic variables
+!
         DO itrc=1,NBTS
           IF (Hout(idTSvar(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idTSvar(itrc))
@@ -729,11 +729,11 @@
      &                     NF_FOUT,nvd4,t3dgrd,Aval,Vinfo,ncname)
           END IF
         END DO
-#endif
-#ifdef STATIONARY2
-!-------------------------
-!2D Stationary Array
-!--------------------------
+#   endif
+#   ifdef STATIONARY2
+!
+!  Define 2D stationary diagnostic variables
+!
         DO itrc=1,NBTS2
           IF (Hout(idTS2var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idTS2var(itrc))
@@ -748,32 +748,28 @@
      &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
           END IF
         END DO
-#endif
-#ifdef BIOFLUX
-!-------------------------
-!bioflux Array
-!--------------------------
-!        DO itrc=1,NT(ng)
-!	 DO itrc2=1,NT(ng)
-          IF (Hout(idTBFvar(iBF),ng)) THEN
-            Vinfo( 1)=Vname(1,idTBFvar(iBF))
-            WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
-     &                                   TRIM(Vname(2,idTBFvar(iBF)))
-            Vinfo( 3)=Vname(3,idTBFvar(iBF))
-            Vinfo(14)=Vname(4,idTBFvar(iBF))
-            Vinfo(16)=Vname(1,idtime)
-            Vinfo(22)='coordinates'
-            Aval(5)=REAL(r2dvar,r8)
-            status=def_var(ng, model,ncAVGid(ng),avgTBFid(iBF,ng),     &
-     &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
-          END IF
-!        END DO
-!	END DO
-#endif
-#ifdef PROD3
-!-------------------------------
-!3D Production variables
-!-------------------------------
+#   endif
+#   ifdef BIOFLUX
+!
+!  Define bioflux variables
+!
+        IF (Hout(idTBFvar(iBF),ng)) THEN
+          Vinfo( 1)=Vname(1,idTBFvar(iBF))
+          WRITE (Vinfo( 2),'(a,1x,a)') Prefix,                        &
+     &                               TRIM(Vname(2,idTBFvar(iBF)))
+          Vinfo( 3)=Vname(3,idTBFvar(iBF))
+          Vinfo(14)=Vname(4,idTBFvar(iBF))
+          Vinfo(16)=Vname(1,idtime)
+          Vinfo(22)='coordinates'
+          Aval(5)=REAL(r2dvar,r8)
+          status=def_var(ng, model,ncAVGid(ng),avgTBFid(iBF,ng),     &
+     &                   NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
+        END IF
+#   endif
+#   ifdef PROD3
+!
+!  Define 3D production variables
+!
         DO itrc=1,NPT3(ng)
           IF (Hout(idPT3var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idPT3var(itrc))
@@ -788,11 +784,11 @@
      &                    NF_FOUT,nvd4,t3dgrd,Aval,Vinfo,ncname)
           END IF
         END DO
-#endif
-#ifdef PROD2
-!-------------------------------
-!2D Production variables
-!-------------------------------
+#   endif
+#   ifdef PROD2
+!
+!  Define 2D production variables
+!
         DO itrc=1,NPT2(ng)
           IF (Hout(idPT2var(itrc),ng)) THEN
             Vinfo( 1)=Vname(1,idPT2var(itrc))
@@ -807,11 +803,11 @@
      &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
           END IF
         END DO
-#endif
-!------------------
-!benthic bio variables
-!-------------------
-#  if defined BENTHIC
+#   endif
+#   if defined BENTHIC
+!
+!  Define benthic variables
+!
         DO itrc=1,NBeT(ng)
          IF (Hout(idBvar(itrc),ng)) THEN
              Vinfo( 1)=Vname(1,idBvar(itrc))
@@ -822,23 +818,23 @@
          Vinfo( 2)=Vname(2,idBvar(itrc))
          Vinfo(3)=Vname(3,idBvar(itrc))
          Vinfo(14)=Vname(4,idBvar(itrc))
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif
           Vinfo(22)='coordinates'
-	  
+
          Vinfo(16)=Vname(1,idtime)
-	 Aval(5)=REAL(r2dvar,r8)
+   Aval(5)=REAL(r2dvar,r8)
          status=def_var(ng, model,ncavgid(ng),avgBid(itrc,ng),NF_FOUT,  &
      &                     nvd3,t2dgrd,Aval,Vinfo,ncname)
               END IF
            END DO
-#  endif
-!------------------
-!ice bio variables
-!-------------------
-#if defined ICE_BIO
-#   ifdef CLIM_ICE_1D
+#    endif
+#   if defined ICE_BIO
+#    ifdef CLIM_ICE_1D
+!
+!  Define ice variables (climatological ice only)
+!
            DO itrc=1,NIceT(ng)
              IF (Hout(idIceBvar(itrc),ng)) THEN
              Vinfo( 1)=Vname(1,idIceBvar(itrc))
@@ -848,101 +844,93 @@
              Vinfo(3)=Vname(3,idIceBvar(itrc))
              Vinfo(14)=Vname(4,idIceBvar(itrc))
              Vinfo(16)=Vname(1,idtime)
-	     Aval(5)=REAL(r2dvar,r8)
+       Aval(5)=REAL(r2dvar,r8)
               status=def_var(ng, model,ncavgid(ng),avgIceBid(itrc,ng),   &
       &                     NF_FOUT,nvd3,t2dgrd,Aval,Vinfo,ncname)
                  END IF
              END DO
-	     
-#elif defined BERING_10K 	     
-!       
+
+#    elif defined BERING_10K
+!
 !  Define ice algae.
-!  
+!
         IF (Hout(idIcePhL,ng)) THEN
           Vinfo( 1)=Vname(1,idIcePhL)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idIcePhL))
           Vinfo( 3)=Vname(3,idIcePhL)
           Vinfo(14)=Vname(4,idIcePhL)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIcePhL,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idIcePhL,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF         
-		 
-		 
-       
+        END IF
+!
 !  Define ice nitrate.
-!  
+!
         IF (Hout(idIceNO3,ng)) THEN
           Vinfo( 1)=Vname(1,idIceNO3)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idIceNO3))
           Vinfo( 3)=Vname(3,idIceNO3)
           Vinfo(14)=Vname(4,idIceNO3)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIceNO3,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idIceNO3,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF  
-	
-	
-	
-       
+        END IF
+!
 !  Define ice ammonium.
-!  
+!
         IF (Hout(idIceNH4,ng)) THEN
           Vinfo( 1)=Vname(1,idIceNH4)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idIceNH4))
           Vinfo( 3)=Vname(3,idIceNH4)
           Vinfo(14)=Vname(4,idIceNH4)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIceNH4,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idIceNH4,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF  			 
-		
-		
-		
-		       
+        END IF
+!
 !  Define ice log.
-!  
+!
         IF (Hout(idIceLog,ng)) THEN
           Vinfo( 1)=Vname(1,idIceLog)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idIceLog))
           Vinfo( 3)=Vname(3,idIceLog)
           Vinfo(14)=Vname(4,idIceLog)
           Vinfo(16)=Vname(1,idtime)
-#  if defined WRITE_WATER && defined MASKING
+#    if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#    endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIceLog,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idIceLog,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF   
-		     
-#endif 	     
-#endif     
-                
+        END IF
+
+#   endif
+#  endif
+
 # endif
 # ifdef BIO_GOANPZ
         DO itrc=1,NTS(ng)
@@ -1657,10 +1645,10 @@
           IF (exit_flag.ne.NoError) RETURN
         END IF
 # endif
-# ifdef ICE_MODEL      
-! 
+# ifdef ICE_MODEL
+!
 !  Define 2D ice momentum in the XI-direction.
-! 
+!
         IF (Hout(idUice,ng)) THEN
           Vinfo( 1)=Vname(1,idUice)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idUice))
@@ -1669,7 +1657,7 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_u'
-#  endif 
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idUice,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
@@ -1677,7 +1665,7 @@
      &                   nvd3, u2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
         END IF
-! 
+!
 !  Define 2D ice momentum in the ETA-direction.
 !
         IF (Hout(idVice,ng)) THEN
@@ -1695,10 +1683,10 @@
      &                   avgVid(idVice,ng), NF_FOUT,                    &
      &                   nvd3, v2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF  
-! 
+        END IF
+!
 !  Define ice concentration.
-!  
+!
         IF (Hout(idAice,ng)) THEN
           Vinfo( 1)=Vname(1,idAice)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idAice))
@@ -1707,7 +1695,7 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idAice,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
@@ -1715,9 +1703,9 @@
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
         END IF
-!       
+!
 !  Define ice average thickness.
-!  
+!
         IF (Hout(idHice,ng)) THEN
           Vinfo( 1)=Vname(1,idHice)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idHice))
@@ -1726,17 +1714,17 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idHice,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idHice,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice/snow surface temperature.
-!  
+!
         IF (Hout(idTice,ng)) THEN
           Vinfo( 1)=Vname(1,idTice)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idTice))
@@ -1745,17 +1733,17 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idTice,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idTice,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define snow thickness.
-!  
+!
         IF (Hout(idHsno,ng)) THEN
           Vinfo( 1)=Vname(1,idHsno)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idHsno))
@@ -1764,17 +1752,17 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idHsno,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idHsno,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define surface water (on ice) thickness.
-! 
+!
         IF (Hout(idSfwat,ng)) THEN
           Vinfo( 1)=Vname(1,idSfwat)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idSfwat))
@@ -1783,17 +1771,17 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idSfwat,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idSfwat,ng), NF_FOUT,                   &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice age.
-! 
+!
         IF (Hout(idAgeice,ng)) THEN
           Vinfo( 1)=Vname(1,idAgeice)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idAgeice))
@@ -1802,17 +1790,17 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idAgeice,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idAgeice,ng), NF_FOUT,                  &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice-ocean mass flux
-!  
+!
         IF (Hout(idIomflx,ng)) THEN
         Vinfo( 1)=Vname(1,idIomflx)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idIomflx))
@@ -1821,36 +1809,36 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idIomflx,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idIomflx,ng), NF_FOUT,                  &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define internal ice temperature.
-!  
+!
         IF (Hout(idTimid,ng)) THEN
           Vinfo( 1)=Vname(1,idTimid)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idTimid))
           Vinfo( 3)=Vname(3,idTimid)
           Vinfo(14)=Vname(4,idTimid)
-          Vinfo(16)=Vname(1,idtime) 
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idTimid,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idTimid,ng), NF_FOUT,                   &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define internal ice stress component 11.
-!  
+!
         IF (Hout(idSig11,ng)) THEN
           Vinfo( 1)=Vname(1,idSig11)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idSig11))
@@ -1859,17 +1847,17 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idSig11,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idSig11,ng), NF_FOUT,                   &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define internal ice stress component 12.
-!  
+!
         IF (Hout(idSig11,ng)) THEN
           Vinfo( 1)=Vname(1,idSig12)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idSig12))
@@ -1878,17 +1866,17 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idSig12,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idSig12,ng), NF_FOUT,                   &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define internal ice stress component 22.
-!  
+!
         IF (Hout(idSig22,ng)) THEN
           Vinfo( 1)=Vname(1,idSig22)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idSig22))
@@ -1897,186 +1885,186 @@
           Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idSig22,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idSig22,ng), NF_FOUT,                   &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice-water friction velocity.
-!  
+!
         IF (Hout(idTauiw,ng)) THEN
           Vinfo( 1)=Vname(1,idTauiw)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idTauiw))
           Vinfo( 3)=Vname(3,idTauiw)
-          Vinfo(14)=Vname(4,idTauiw) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idTauiw)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idTauiw,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idTauiw,ng), NF_FOUT,                   &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice-water momentum transfer coefficient.
-!  
+!
         IF (Hout(idChuiw,ng)) THEN
           Vinfo( 1)=Vname(1,idChuiw)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idChuiw))
           Vinfo( 3)=Vname(3,idChuiw)
           Vinfo(14)=Vname(4,idChuiw)
-          Vinfo(16)=Vname(1,idtime) 
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif     
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idChuiw,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idChuiw,ng), NF_FOUT,                   &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define temperature of molecular sublayer under ice.
-!  
+!
         IF (Hout(idT0mk,ng)) THEN
           Vinfo( 1)=Vname(1,idT0mk)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idT0mk))
           Vinfo( 3)=Vname(3,idT0mk)
-          Vinfo(14)=Vname(4,idT0mk) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idT0mk)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idT0mk,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idT0mk,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define salinity of molecular sublayer under ice.
-!  
+!
         IF (Hout(idS0mk,ng)) THEN
           Vinfo( 1)=Vname(1,idS0mk)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idS0mk))
           Vinfo( 3)=Vname(3,idS0mk)
-          Vinfo(14)=Vname(4,idS0mk) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idS0mk)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idS0mk,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idS0mk,ng), NF_FOUT,                    &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define frazil ice growth rate.
-!  
+!
         IF (Hout(idWfr,ng)) THEN
           Vinfo( 1)=Vname(1,idWfr)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idWfr))
           Vinfo( 3)=Vname(3,idWfr)
-          Vinfo(14)=Vname(4,idWfr) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idWfr)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idWfr,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idWfr,ng), NF_FOUT,                     &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice growth/melt rate.
-!  
+!
         IF (Hout(idWai,ng)) THEN
           Vinfo( 1)=Vname(1,idWai)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idWai))
           Vinfo( 3)=Vname(3,idWai)
-          Vinfo(14)=Vname(4,idWai) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idWai)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idWfr,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idWai,ng), NF_FOUT,                     &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice growth/melt rate.
-!  
+!
         IF (Hout(idWao,ng)) THEN
           Vinfo( 1)=Vname(1,idWao)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idWao))
           Vinfo( 3)=Vname(3,idWao)
-          Vinfo(14)=Vname(4,idWao) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idWao)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idWao,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idWao,ng), NF_FOUT,                     &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice growth/melt rate.
-!  
+!
         IF (Hout(idWio,ng)) THEN
           Vinfo( 1)=Vname(1,idWio)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idWio))
           Vinfo( 3)=Vname(3,idWio)
-          Vinfo(14)=Vname(4,idWio) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idWio)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idWio,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idWio,ng), NF_FOUT,                     &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-!       
+        END IF
+!
 !  Define ice melt runoff rate.
-!  
+!
         IF (Hout(idWro,ng)) THEN
           Vinfo( 1)=Vname(1,idWro)
           WRITE (Vinfo( 2),'(a,1x,a)') Prefix, TRIM(Vname(2,idWro))
           Vinfo( 3)=Vname(3,idWro)
-          Vinfo(14)=Vname(4,idWro) 
-          Vinfo(16)=Vname(1,idtime)  
+          Vinfo(14)=Vname(4,idWro)
+          Vinfo(16)=Vname(1,idtime)
 #  if defined WRITE_WATER && defined MASKING
           Vinfo(20)='mask_rho'
-#  endif   
+#  endif
           Vinfo(22)='coordinates'
           Aval(5)=REAL(Iinfo(1,idWro,ng),r8)
           status=def_var(ng, model, ncAVGid(ng),                        &
      &                   avgVid(idWro,ng), NF_FOUT,                     &
      &                   nvd3, t2dgrd, Aval, Vinfo, ncname)
           IF (exit_flag.ne.NoError) RETURN
-        END IF           
-# endif 
+        END IF
+# endif
 # ifdef AVERAGES_NEARSHORE
 !
 !  Define 2D radiation stress Sxx.
@@ -2728,7 +2716,7 @@
              got_var(idTvar(itrc))=.TRUE.
              avgTid(itrc,ng)=var_id(i)
             END IF
-          END DO 
+          END DO
 #  ifdef AVERAGES_QUADRATIC
           DO itrc=1,NAT
             IF (TRIM(var_name(i)).eq.TRIM(Vname(1,iHUTav(itrc)))) THEN

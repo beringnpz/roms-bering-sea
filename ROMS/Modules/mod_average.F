@@ -119,42 +119,38 @@
 # ifdef SOLVE3D
           real(r8), pointer :: avgrho(:,:,:)
           real(r8), pointer :: avgt(:,:,:,:)
-
-# ifdef BEST_NPZ
-#ifdef STATIONARY
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
           real(r8), pointer :: avgst(:,:,:,:)
-#endif
-#ifdef STATIONARY2
+#   endif
+#   ifdef STATIONARY2
           real(r8), pointer :: avgst2(:,:,:)
-#endif
-#ifdef PROD3  
+#   endif
+#   ifdef PROD3
           real(r8), pointer :: avgpt3(:,:,:,:)
-#endif
-#ifdef PROD2  
+#   endif
+#   ifdef PROD2
           real(r8), pointer :: avgpt2(:,:,:)
-#endif
-#ifdef BENTHIC    
+#   endif
+#   ifdef BENTHIC
           real(r8), pointer :: avgbt(:,:,:,:)
-#endif
-#ifdef ICE_BIO 
-# ifdef CLIM_ICE_1D   
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
           real(r8), pointer :: avgit(:,:,:)
-# elif defined BERING_10K
+#    elif defined BERING_10K
       real(r8), pointer :: avgIPhL(:,:)
       real(r8),pointer:: avgINO3(:,:)
       real(r8), pointer :: avgINH4(:,:)
       real(r8), pointer :: avgILog(:,:)
-# endif  
-#endif
+#    endif
+#   endif
 #  if defined BIOFLUX
-        real(r8), pointer :: avgbflx(:,:) 
-#  endif      
-
+        real(r8), pointer :: avgbflx(:,:)
+#  endif
 # endif
-
-
 # ifdef BIO_GOANPZ
-	  real(r8), pointer :: avgst(:,:,:,:)
+    real(r8), pointer :: avgst(:,:,:,:)
 # endif
           real(r8), pointer :: avgu3d(:,:,:)
           real(r8), pointer :: avgv3d(:,:,:)
@@ -312,39 +308,37 @@
       allocate ( AVERAGE(ng) % avgrho(LBi:UBi,LBj:UBj,N(ng)) )
       allocate ( AVERAGE(ng) % avgt(LBi:UBi,LBj:UBj,N(ng),NT(ng)) )
 
-#ifdef BEST_NPZ
-# ifdef STATIONARY
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
       allocate ( AVERAGE(ng) % avgst(LBi:UBi,LBj:UBj,N(ng),NTS(ng)) )
-# endif
-# ifdef STATIONARY2
+#   endif
+#   ifdef STATIONARY2
       allocate ( AVERAGE(ng) % avgst2(LBi:UBi,LBj:UBj,NTS2(ng)) )
-# endif
-# ifdef PROD3
+#   endif
+#   ifdef PROD3
       allocate ( AVERAGE(ng) % avgpt3(LBi:UBi,LBj:UBj,N(ng),NPT3(ng)) )
-# endif
-# ifdef PROD2
+#   endif
+#   ifdef PROD2
       allocate ( AVERAGE(ng) % avgpt2(LBi:UBi,LBj:UBj,NPT2(ng)) )
-# endif
-# ifdef BENTHIC
+#   endif
+#   ifdef BENTHIC
        allocate ( AVERAGE(ng) % avgbt(LBi:UBi,LBj:UBj,NBL(ng),NBeT(ng)) )
-# endif
-# ifdef ICE_BIO
-#   ifdef CLIM_ICE_1D
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
 
        allocate ( AVERAGE(ng) % avgit(LBi:UBi,LBj:UBj,NIceT(ng)) )
-#   elif defined BERING_10K
-        allocate ( AVERAGE(ng) % avgINO3(LBi:UBi,LBj:UBj) )
-	allocate ( AVERAGE(ng) % avgIPhL(LBi:UBi,LBj:UBj) )
-	allocate ( AVERAGE(ng) % avgINH4(LBi:UBi,LBj:UBj) )
-	allocate ( AVERAGE(ng) % avgILog(LBi:UBi,LBj:UBj) )
+#    elif defined BERING_10K
+       allocate ( AVERAGE(ng) % avgINO3(LBi:UBi,LBj:UBj) )
+       allocate ( AVERAGE(ng) % avgIPhL(LBi:UBi,LBj:UBj) )
+       allocate ( AVERAGE(ng) % avgINH4(LBi:UBi,LBj:UBj) )
+       allocate ( AVERAGE(ng) % avgILog(LBi:UBi,LBj:UBj) )
+#    endif
 #   endif
-#   endif
-# ifdef BIOFLUX
+#  ifdef BIOFLUX
         allocate ( AVERAGE(ng) % avgbflx(NAT+NBT,NAT+NBT) )
+#  endif
 # endif
-#endif
-
-
 # ifdef BIO_GOANPZ
       allocate ( AVERAGE(ng) % avgst(LBi:UBi,LBj:UBj,N(ng),NTS(ng)) )
 # endif
@@ -635,8 +629,8 @@
           END DO
         END DO
 
-#ifdef BEST_NPZ
-# ifdef STATIONARY
+#  ifdef BEST_NPZ
+#   ifdef STATIONARY
         DO itrc=1,NTS(ng)
           DO k=1,N(ng)
             DO i=Imin,Imax
@@ -644,15 +638,15 @@
             END DO
           END DO
         END DO
-# endif
-# ifdef STATIONARY2
+#   endif
+#   ifdef STATIONARY2
         DO itrc=1,NTS2(ng)
             DO i=Imin,Imax
               AVERAGE(ng) % avgst2(i,j,itrc) = IniVal
             END DO
         END DO
-# endif
-# ifdef PROD3
+#   endif
+#   ifdef PROD3
         DO itrc=1,NPT3(ng)
           DO k=1,N(ng)
             DO i=Imin,Imax
@@ -660,17 +654,15 @@
             END DO
           END DO
         END DO
-# endif
-# ifdef PROD2
+#   endif
+#   ifdef PROD2
         DO itrc=1,NPT2(ng)
-
             DO i=Imin,Imax
               AVERAGE(ng) % avgpt2(i,j,itrc) = IniVal
             END DO
-
         END DO
-# endif
-# ifdef BENTHIC
+#   endif
+#   ifdef BENTHIC
        DO itrc=1,NBeT(ng)
           DO k=1,NBL(ng)
             DO i=Imin,Imax
@@ -678,42 +670,41 @@
               END DO
           END DO
         END DO
-# endif
-# ifdef ICE_BIO
-# ifdef CLIM_ICE_1D
+#   endif
+#   ifdef ICE_BIO
+#    ifdef CLIM_ICE_1D
        DO itrc=1,NIceT(ng)
             DO i=Imin,Imax
               AVERAGE(ng) % avgit(i,j,itrc) = IniVal
             END DO
         END DO
-#elif defined BERING_10K	
-	 DO i=Imin,Imax
-	AVERAGE(ng) % avgINO3(i,j) = IniVal
-	AVERAGE(ng) % avgINH4(i,j) = IniVal
-	AVERAGE(ng) % avgIPhL(i,j) = IniVal
-	AVERAGE(ng) % avgILog(i,j) = IniVal
-	END DO
-# endif
-# endif
-# ifdef BIOFLUX
+#    elif defined BERING_10K
+       DO i=Imin,Imax
+         AVERAGE(ng) % avgINO3(i,j) = IniVal
+         AVERAGE(ng) % avgINH4(i,j) = IniVal
+         AVERAGE(ng) % avgIPhL(i,j) = IniVal
+         AVERAGE(ng) % avgILog(i,j) = IniVal
+       END DO
+#    endif
+#   endif
+#   ifdef BIOFLUX
         DO itrc=1,NT(ng)
          DO itrc2=1,NT(ng)
             AVERAGE(ng) % avgbflx(itrc,itrc2) = IniVal
           END DO
         END DO
-# endif
-
-#endif
+#   endif
+#  endif
 
 
 # ifdef BIO_GOANPZ
-	DO itrc=1,NTS(ng)
-	  DO k=1,N(ng)
-	    DO i=Imin,Imax
-	      AVERAGE(ng) % avgst(i,j,k,itrc) = IniVal
-	    END DO
-	  END DO
-	END DO
+  DO itrc=1,NTS(ng)
+    DO k=1,N(ng)
+      DO i=Imin,Imax
+        AVERAGE(ng) % avgst(i,j,k,itrc) = IniVal
+      END DO
+    END DO
+  END DO
 # endif
 #  ifdef AVERAGES_QUADRATIC
         DO itrc=1,NAT
