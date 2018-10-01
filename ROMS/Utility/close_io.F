@@ -272,6 +272,8 @@
         IF (Master) WRITE (stdout,120)
       ELSE IF (exit_flag.eq.8) THEN
         IF (Master) WRITE (stdout,130)
+      ELSE IF (exit_flag.eq.9) THEN
+          IF (Master) WRITE (stdout,60) ! Make ice frazil cause blowup
       END IF
 !
  10   FORMAT (/,' ROMS/TOMS - Output NetCDF summary for Grid ',         &
