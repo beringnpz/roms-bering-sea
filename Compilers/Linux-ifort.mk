@@ -58,11 +58,12 @@ endif
 # computer-specific at the moment, designed so code will work on mox with 
 # two files (HOSTNAME is eithermox1.hyak.local or mox2.hyak.local) or 
 # beast or cluster1 with a single file.
-ifeq ($(shell echo $(HOSTNAME) | head -c 3), mox)
-             LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf
-else
-             LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
-endif
+#ifeq ($(shell echo $(HOSTNAME) | head -c 3), mox)
+#             LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf
+#else
+#             LIBS := -L$(NETCDF_LIBDIR) -lnetcdf
+#endif
+LIBS := -L$(NETCDF_LIBDIR) -lnetcdff -lnetcdf
 ifdef USE_NETCDF4
              LIBS += -L$(HDF5_LIBDIR) -lhdf5_hl -lhdf5 -lz
 endif

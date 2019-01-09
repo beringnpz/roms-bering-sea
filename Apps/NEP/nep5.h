@@ -33,7 +33,7 @@
 # undef SPLINES
 #endif
 #undef FLOATS
-#define STATIONS
+#undef STATIONS
 #undef WET_DRY
 
 #undef T_PASSIVE
@@ -320,7 +320,7 @@
 # define TCLM_NUDGING      /* Nudging of tracer climatology for iron */
 # define ANA_TCLIMA        /* analytical tracers climatology for iron */
 # define TCLIMATOLOGY      /* Processing of tracer climatology for iron */
-# define STATIONARY
+# undef STATIONARY
 # undef STATIONARY2
 # undef PROD3 
 # undef PROD2
