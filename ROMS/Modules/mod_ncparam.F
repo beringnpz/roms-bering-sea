@@ -332,6 +332,13 @@
         integer  :: idZtlf        ! Free-surface impulse forcing
 
         integer  :: idRunoff       ! Surface freshwater runoff rate
+# ifdef CARBON
+        integer  :: idpCO2air     ! Atmospheric pCO2
+# endif
+# ifdef CARBON_FLUX
+        integer  :: idTAFlux       ! ALK input with runoff
+        integer  :: idDICFlux       ! DIC input with runoff
+# endif
         integer  :: idIcec         ! observed (NCEP) ice concentration
         integer  :: idSkt          ! observed (NCEP) skin temperature
         integer  :: idUnms         ! surface U-momentum stress (NCEP)
@@ -3185,6 +3192,41 @@
               CASE ('idTclm(iFe)')
                 idTclm(iFe)=varid
 #  endif
+# ifdef CARBON
+!              CASE ('idRtrc(iTIC_)')
+!                idRtrc(iTIC_)=varid
+!              CASE ('idRtrc(iTAlk)')
+!                idRtrc(iTAlk)=varid
+              CASE ('idpCO2air')
+                idpCO2air = varid
+              CASE ('idTvar(iTIC_)')
+                idTvar(iTIC_)=varid
+              CASE ('idTvar(iTAlk)')
+                idTvar(iTAlk)=varid
+              CASE ('idTbry(iwest,iTIC_)')
+                idTbry(iwest,iTIC_)=varid
+              CASE ('idTbry(ieast,iTIC_)')
+                idTbry(ieast,iTIC_)=varid
+              CASE ('idTbry(isouth,iTIC_)')
+                idTbry(isouth,iTIC_)=varid
+              CASE ('idTbry(inorth,iTIC_)')
+                idTbry(inorth,iTIC_)=varid
+              CASE ('idTbry(iwest,iTAlk)')
+                idTbry(iwest,iTAlk)=varid
+              CASE ('idTbry(ieast,iTAlk)')
+                idTbry(ieast,iTAlk)=varid
+              CASE ('idTbry(isouth,iTAlk)')
+                idTbry(isouth,iTAlk)=varid
+              CASE ('idTbry(inorth,iTAlk)')
+                idTbry(inorth,iTAlk)=varid
+
+# endif
+# ifdef CARBON_FLUX
+              CASE ('idTAFlux')
+                idTAFlux = varid
+              CASE ('idDICFlux')
+                idDICFlux = varid
+# endif
 
 # ifdef BENTHIC
               CASE ('idBvar(iBen)')

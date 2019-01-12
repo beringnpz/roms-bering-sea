@@ -227,6 +227,10 @@
 # ifdef IRON_LIMIT
         integer :: iFe                ! Iron
 # endif
+#ifdef CARBON
+        integer :: iTIC_              ! Total inorganic carbon
+        integer :: iTAlk              ! Total alkalinity
+#endif
 # ifdef BENTHIC
          integer, pointer :: idben(:)  ! Benthic tracers
          integer :: iBen
@@ -2316,6 +2320,11 @@
 # ifdef IRON_LIMIT
       iFe=ic+1
       ic=ic+1
+# endif
+# ifdef CARBON
+      iTIC_=ic+1
+      iTAlk=ic+2
+      ic=ic+2
 # endif
 # ifdef CLIM_ICE_1D
       i1CI=ic+1
