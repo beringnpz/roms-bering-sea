@@ -873,6 +873,10 @@
 #ifdef IRON_LIMIT
             Bio3d(i,k,iiFe  ) = t(i,j,k,nstp,iFe)
 #endif
+#ifdef CARBON
+            Bio3d(i,k,iiTIC ) = t(i,j,k,nstp,iTIC)
+            Bio3d(i,k,iiTAlk ) = t(i,j,k,nstp,iTAlk)
+#endif
             DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
@@ -2634,6 +2638,50 @@
      &                        + Gpp_INH4_IPhL                           &
      &                        - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
 
+#ifdef CARBON
+          DBio(:,:,iiTIC   ) = (Res_PhS_NH4                             &
+     &                       +  Res_PhL_NH4                             &
+     &                       +  Res_MZL_NH4                             &
+     &                       +  Res_Cop_NH4                             &
+     &                       +  Res_NCaS_NH4                            &
+     &                       +  Res_NCaO_NH4                            &
+     &                       +  Res_EupS_NH4                            &
+     &                       +  Res_EupO_NH4                            &
+     &                       +  Res_Jel_NH4                             &
+     &                       +  Rem_Det_NH4                             &
+     &                       +  Rem_DetF_NH4                            &
+     &                       +  Exc_Ben_NH4                             &
+     &                       +  Res_Ben_NH4                             &
+     &                       +  Rem_DetBen_NH4                          &
+     &                       -  Gpp_NO3_PhS                             &
+     &                       -  Gpp_NO3_PhL                             &
+     &                       -  Gpp_NH4_PhS                             &
+     &                       -  Gpp_NH4_PhL)*dtdays/12._r8 ! mmolC m^-2
+
+          DBio(:,:,iiTAlk   ) = (Gpp_NO3_PhS                            &
+     &                       +  Gpp_NO3_PhL                             &
+     &                       +  Res_PhS_NH4                             &
+     &                       +  Res_PhL_NH4                             &
+     &                       +  Res_MZL_NH4                             &
+     &                       +  Res_Cop_NH4                             &
+     &                       +  Res_NCaS_NH4                            &
+     &                       +  Res_NCaO_NH4                            &
+     &                       +  Res_EupS_NH4                            &
+     &                       +  Res_EupO_NH4                            &
+     &                       +  Res_Jel_NH4                             &
+     &                       +  Rem_Det_NH4                             &
+     &                       +  Rem_DetF_NH4                            &
+     &                       +  Exc_Ben_NH4                             &
+     &                       +  Res_Ben_NH4                             &
+     &                       +  Rem_DetBen_NH4                          &
+     &                       +  Twi_INH4_NH4                            &
+     &                       -  (2.0_r8*Nit_NH4_NO3)                    &
+     &                       -  Twi_INO3_NO3                            &
+     &                       -  Gpp_NH4_PhS                             &
+     &                       -  Gpp_NH4_PhL)*xi*dtdays ! NO3: mmolN m^-2
+
+
+#endif
           ! Add DBio terms to existing biomass
 
           Bio2d = Bio2d + DBio
@@ -3067,6 +3115,10 @@
             t(i,j,k,nnew,iFe  ) = t(i,j,k,nnew,iFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  ))
             t(i,j,k,nnew,iMZS ) = t(i,j,k,nnew,iMZS ) + 0.0_r8
 
+#ifdef CARBON
+            t(i,j,k,nnew,iTIC ) = t(i,j,k,nnew,iTIC ) + (Bio2d(i,k,iiTIC ) - Bio_bak(i,k,iiTIC ))
+	    t(i,j,k,nnew,iTAlk ) = t(i,j,k,nnew,iTAlk ) + (Bio2d(i,k,iiTAlk ) - Bio_bak(i,k,iiTAlk ))
+#endif
             ! Check for negatives and NaNs (for debugging)
 
 !             do itrc = iNO3,size(t,5)
