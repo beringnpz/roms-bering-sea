@@ -1313,8 +1313,14 @@
               ! (SNPP VIRRS absorption due to gelbstoff and detritus @ 443nm, 
               ! entire-mission composite 2012-2018)
             
-              !katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)
-              katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2
+              if (k_sed2 .lt. -9990.0_r8) then
+                ! Lazy way to allow old sediment function without recompiling 
+                ! (k_sed1 = old k_shallow here) (<-9990 just to avoid any floating point 
+                ! issues w/ -9999 equivalence)
+                katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*exp(z_w(i,j,0)*0.05)
+              else
+                katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2 
+              endif
                   
               ! Calculate light at depth levels relevant for Simpson's 
               ! rule integration      
