@@ -308,6 +308,12 @@
 # endif
 
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
+#if defined CARBON || defined OXYGEN 
+!      integer, parameter :: Nsink = 4
+      real(r8) :: u10squ
+#else
+!      integer, parameter :: Nsink = 4
+#endif
 
 #else
 
@@ -478,8 +484,11 @@
       integer  :: iiNCaS,   iiNCaO,   iiEupS, iiEupO, iiDet, iiDetF
       integer  :: iiJel,    iiFe,     iiBen,  iiDetBen
       integer  :: iiIcePhL, iiIceNO3, iiIceNH4
-      real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, Bio_bak, DBio
-      real(r8), dimension(IminS:ImaxS,N(ng),20) :: extrabio
+#ifdef CARBON
+      integer  :: iiTIC_, iiTAlk
+#endif
+      real(r8), dimension(IminS:ImaxS,N(ng),22) :: Bio3d, Bio2d, Bio_bak, DBio
+      real(r8), dimension(IminS:ImaxS,N(ng),22) :: extrabio
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Temp, Salt
 
       ! Intermediate fluxes
@@ -839,6 +848,8 @@
         iiIcePhL = 18
         iiIceNO3 = 19
         iiIceNH4 = 20
+        iiTIC_   = 21
+        iiTAlk   = 22
 
         ! All state variables will be saved in two different versions:
         ! mass m^-3 (Bio3d) and mass m^-2 (Bio2d).  This redundancy
@@ -874,7 +885,7 @@
             Bio3d(i,k,iiFe  ) = t(i,j,k,nstp,iFe)
 #endif
 #ifdef CARBON
-            Bio3d(i,k,iiTIC ) = t(i,j,k,nstp,iTIC)
+            Bio3d(i,k,iiTIC_ ) = t(i,j,k,nstp,iTIC_)
             Bio3d(i,k,iiTAlk ) = t(i,j,k,nstp,iTAlk)
 #endif
             DO itrc = iiNO3,iiFe
@@ -935,8 +946,8 @@
 #ifdef CARBON
         DO k=1,N(ng)
           DO i=Istr,Iend
-            Bio(i,k,iTIC_)=MIN(Bio(i,k,iTIC_),3000.0_r8)
-            Bio(i,k,iTIC_)=MAX(Bio(i,k,iTIC_),400.0_r8)
+            Bio3d(i,k,iiTIC_)=MIN(Bio3d(i,k,iiTIC_),3000.0_r8)
+            Bio3d(i,k,iiTIC_)=MAX(Bio3d(i,k,iiTIC_),400.0_r8)
           END DO
         END DO
 #endif
@@ -2285,8 +2296,9 @@
 #  ifdef MASKING
      &                        rmask,                                    &
 #  endif
-     &                        Bio(IminS:,k,itemp), Bio(IminS:,k,isalt), &
-     &                        Bio(IminS:,k,iTIC_), Bio(IminS:,k,iTAlk), &
+     &                        Temp(IminS:,k), Salt(IminS:,k),           &
+     &                        Bio3d(IminS:,k,iiTIC_),                   &
+     &                        Bio3d(IminS:,k,iiTAlk),                   &
      &                        pH, pCO2)
 # else
           CALL pCO2_water (Istr, Iend, LBi, UBi, LBj, UBj,              &
@@ -2294,8 +2306,9 @@
 #  ifdef MASKING
      &                     rmask,                                       &
 #  endif
-     &                     Bio(IminS:,k,itemp), Bio(IminS:,k,isalt),    &
-     &                     Bio(IminS:,k,iTIC_), Bio(IminS:,k,iTAlk),    &
+     &                     Temp(IminS:,k), Salt(IminS:,k),              &
+     &                     Bio3d(IminS:,k,iiTIC_),                      &
+     &                     Bio3d(IminS:,k,iiTAlk),                      &
      &                     0.0_r8, 0.0_r8, pH, pCO2)
 # endif
 !
@@ -2319,18 +2332,18 @@
      &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
 # endif
             SchmidtN=Acoef-                                             &
-     &               Bio(i,k,itemp)*(Bcoef-                             &
-     &                               Bio(i,k,itemp)*(Ccoef-             &
-     &                               Bio(i,k,itemp)*Dcoef))
+     &               Bio3d(i,k,itemp)*(Bcoef-                             &
+     &                               Temp(i,k)*(Ccoef-             &
+     &                               Temp(i,k)*Dcoef))
             cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN)
 !
 !  Calculate CO2 solubility [mol/(kg.atm)] using Weiss (1974) formula.
 !
-            TempK=0.01_r8*(Bio(i,k,itemp)+273.15_r8)
+            TempK=0.01_r8*(Temp(i,k)+273.15_r8)
             CO2_sol=EXP(A1+                                             &
      &                  A2/TempK+                                       &
      &                  A3*LOG(TempK)+                                  &
-     &                  Bio(i,k,isalt)*(B1+TempK*(B2+B3*TempK)))
+     &                  Salt(i,k)*(B1+TempK*(B2+B3*TempK)))
 !
 !  Add in CO2 gas exchange.
 !
@@ -2353,8 +2366,8 @@
                   CO2_Flux = 0.0_r8
             endif
 !!CO2_Flux=cff3*CO2_sol*(pCO2air-pCO2(i))
-            Bio(i,k,iTIC_)=Bio(i,k,iTIC_)+                              &
-     &                     CO2_Flux*Hz_inv(i,k)
+!            Bio3d(i,k,iTIC_)=Bio3d(i,k,iTIC_)+                              &
+!     &                     CO2_Flux*Hz_inv(i,k)
 # ifdef CARBON_DEBUG
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN
@@ -2639,7 +2652,7 @@
      &                        - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
 
 #ifdef CARBON
-          DBio(:,:,iiTIC   ) = (Res_PhS_NH4                             &
+          DBio(:,:,iiTIC_   ) = (Res_PhS_NH4                             &
      &                       +  Res_PhL_NH4                             &
      &                       +  Res_MZL_NH4                             &
      &                       +  Res_Cop_NH4                             &
@@ -2653,6 +2666,7 @@
      &                       +  Exc_Ben_NH4                             &
      &                       +  Res_Ben_NH4                             &
      &                       +  Rem_DetBen_NH4                          &
+     &                       +  CO2_Flux                                &
      &                       -  Gpp_NO3_PhS                             &
      &                       -  Gpp_NO3_PhL                             &
      &                       -  Gpp_NH4_PhS                             &
@@ -3116,7 +3130,7 @@
             t(i,j,k,nnew,iMZS ) = t(i,j,k,nnew,iMZS ) + 0.0_r8
 
 #ifdef CARBON
-            t(i,j,k,nnew,iTIC ) = t(i,j,k,nnew,iTIC ) + (Bio2d(i,k,iiTIC ) - Bio_bak(i,k,iiTIC ))
+            t(i,j,k,nnew,iTIC_ ) = t(i,j,k,nnew,iTIC_ ) + (Bio2d(i,k,iiTIC_ ) - Bio_bak(i,k,iiTIC_ ))
 	    t(i,j,k,nnew,iTAlk ) = t(i,j,k,nnew,iTAlk ) + (Bio2d(i,k,iiTAlk ) - Bio_bak(i,k,iiTAlk ))
 #endif
             ! Check for negatives and NaNs (for debugging)

@@ -320,6 +320,8 @@
 # define TCLM_NUDGING      /* Nudging of tracer climatology for iron */
 # define ANA_TCLIMA        /* analytical tracers climatology for iron */
 # define TCLIMATOLOGY      /* Processing of tracer climatology for iron */
+# define CARBON		   /* Carbonate chemistry package */
+# define CARBON_FLUX       /* For river fluxes of DIC,TA */
 # undef STATIONARY
 # undef STATIONARY2
 # undef PROD3 
