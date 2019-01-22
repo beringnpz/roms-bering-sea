@@ -2320,7 +2320,7 @@
 !  Compute surface CO2 gas exchange.
 !
           cff1=rho0*550.0_r8
-          cff2=dtdays*0.31_r8*24.0_r8/100.0_r8
+          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
           DO i=Istr,Iend
 !
 !  Compute CO2 transfer velocity : u10squared (u10 in m/s)
@@ -2332,7 +2332,7 @@
      &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
 # endif
             SchmidtN=Acoef-                                             &
-     &               Bio3d(i,k,itemp)*(Bcoef-                             &
+     &               Temp(i,k)*(Bcoef-                             &
      &                               Temp(i,k)*(Ccoef-             &
      &                               Temp(i,k)*Dcoef))
             cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN)
@@ -2365,9 +2365,11 @@
             else
                   CO2_Flux = 0.0_r8
             endif
-!!CO2_Flux=cff3*CO2_sol*(pCO2air-pCO2(i))
-!            Bio3d(i,k,iTIC_)=Bio3d(i,k,iTIC_)+                              &
-!     &                     CO2_Flux*Hz_inv(i,k)
+# ifdef STATIONARY2
+          st2(i,j,nstp,  1) = CO2_Flux
+          st2(i,j,nstp,  2) = pCO2(i) 
+#endif
+
 # ifdef CARBON_DEBUG
                 IF (j.EQ.20.0_r8) THEN
                    IF (i.EQ.20.0_r8) THEN

@@ -3298,6 +3298,8 @@
              !-----------------------------
               CASE ('idTS2var(i2Stat1)')
                 idTS2var(i2Stat1) = varid
+              CASE ('idTS2var(i2Stat2)')
+                idTS2var(i2Stat2) = varid
 # endif
 # ifdef PROD3
              !-----------------------------

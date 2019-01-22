@@ -550,7 +550,7 @@
       !------------------------------------
 
         integer, dimension(Ngrids) :: NTS2
-        integer, parameter :: NBTS2 = 1
+        integer, parameter :: NBTS2 = 2
 # endif
 # ifdef PROD2
       !------------------------------------

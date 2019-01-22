@@ -255,6 +255,7 @@
 # ifdef STATIONARY2
         integer, pointer :: idbio2(:)
         integer :: i2Stat1
+        integer :: i2Stat2
 # endif
 # ifdef PROD2
         integer, pointer :: idbioP2(:)
@@ -2351,12 +2352,6 @@
       END DO
       i2Stat1 = 1
       i2Stat2 = 2
-      i2Stat3 = 3
-      i2Stat4 = 4
-      i2Stat5 = 5
-      i2Stat6 = 6
-      i2Stat7 = 7
-      i2Stat8 = 8
 # endif
 # ifdef PROD3
 
