@@ -1581,7 +1581,7 @@
               ! ajh only nudge for iron or nitrate or ammonium
               ! (KAK: Turning off NO3 and NH4 nudging for now)
 
-              if (itrc.eq.iFe) then
+              if (itrc.eq.iFe) .and. (k.eq.1) then
 !             if (itrc.eq.iFe.or.itrc.eq.iNO3.or.itrc.eq.iNH4) then
                 t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc)+                &
      &                               dt(ng)*Tnudgcof(i,j,itrc)*         &
