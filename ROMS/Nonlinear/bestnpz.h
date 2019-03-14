@@ -1285,7 +1285,7 @@
               PmaxL = (2.0_r8 ** DrateL - 1.0_r8 )   ! mg C production (mg C biomass)^-1 d^-1
               
               PmaxSs = PmaxS*ccr    ! mg C (mg chl)^-1 d^-1
-              PmaxLs = PmaxL*ccrPhl ! mg C (mg chl)^-1 d^-1
+              PmaxLs = PmaxL*ccrPhL ! mg C (mg chl)^-1 d^-1
               
               ! chl-a in layer
               
