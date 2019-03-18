@@ -2290,6 +2290,7 @@
 !  surface.
 !
           k=N(ng)
+
 # ifdef pCO2_RZ
           CALL pCO2_water_RZ (Istr, Iend, LBi, UBi, LBj, UBj,           &
      &                        IminS, ImaxS, j, DoNewton,                &
@@ -2306,15 +2307,17 @@
 #  ifdef MASKING
      &                     rmask,                                       &
 #  endif
-     &                     Temp(IminS:,k), Salt(IminS:,k),              &
+     &                     t(IminS:,j,k,nstp,itemp),                    &
+     &                     t(IminS:,j,k,nstp,isalt),                    &
      &                     Bio3d(IminS:,k,iiTIC_),                      &
      &                     Bio3d(IminS:,k,iiTAlk),                      &
      &                     0.0_r8, 0.0_r8, pH, pCO2)
 # endif
+
 !
-!   if(pCO2(i).lt.0.0_r8)then
-!       print *, 'pco2', pCO2(i), 'TEMP',Bio(i,k,itemp),               &
-!     &   Bio(i,k,isalt), 'ALK',Bio(i,k,iTAlk), 'TIC',Bio(i,k,iTIC_)
+!   if(pCO2(i).lt.120.0_r8)then
+!       print *, 'pco2', pCO2(i), 'TEMP',Temp(i,k), 'SALT',            &
+!     &   Salt(i,k), 'ALK',Bio3d(i,k,iiTAlk), 'TIC',Bio3d(i,k,iiTIC_)
 !      endif
 
 !  Compute surface CO2 gas exchange.
@@ -2366,7 +2369,7 @@
                   CO2_Flux = 0.0_r8
             endif
 # ifdef STATIONARY2
-          st2(i,j,nstp,  1) = CO2_Flux
+          st2(i,j,nstp,  1) = st2(i,j,nstp,  1) + CO2_Flux
           st2(i,j,nstp,  2) = pCO2(i) 
 #endif
 
@@ -4185,6 +4188,15 @@
 #  ifdef MASKING
         IF (rmask(i,j).gt.0.0_r8) THEN
 #  endif
+!      IF (j.EQ.92.0_r8) THEN
+!          IF (i.EQ.31.0_r8) THEN
+!               print *, 'Temp_post', T(i)
+!               print *, 'TIC_post', TIC(i)
+!                print *, "shape(T)_post = ", shape(T)
+!                print *, "shape(TIC)_post = ", shape(TIC) 
+!          END IF
+!      END IF
+
         Tk=T(i)+273.15_r8
         centiTk=0.01_r8*Tk
         invTk=1.0_r8/Tk
@@ -4519,6 +4531,7 @@
 !  Add two output arguments for storing pCO2surf.
 !
         pCO2(i)=CO2star*1000000.0_r8/ff
+
 
 #  ifdef MASKING
       ELSE
