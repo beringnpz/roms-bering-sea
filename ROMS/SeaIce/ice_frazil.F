@@ -81,6 +81,7 @@
 #endif
 # ifdef DISTRIBUTE
       USE mp_exchange_mod
+      USE distribute_mod, ONLY : mp_reduce
 # endif
 !
       implicit none
