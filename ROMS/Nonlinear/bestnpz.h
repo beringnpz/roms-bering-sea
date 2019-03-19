@@ -891,6 +891,10 @@
             DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
+#ifdef CARBON
+            Bio2d(i,k,iiTIC_) = Bio3d(i,k,iiTIC_)*Hz(i,j,k)
+            Bio2d(i,k,iiTAlk) = Bio3d(i,k,iiTAlk)*Hz(i,j,k)
+#endif
 
 #ifdef STATIONARY
             ! Rate of change due to processes outside this subroutine
@@ -946,8 +950,8 @@
 #ifdef CARBON
         DO k=1,N(ng)
           DO i=Istr,Iend
-            Bio3d(i,k,iiTIC_)=MIN(Bio3d(i,k,iiTIC_),3000.0_r8)
-            Bio3d(i,k,iiTIC_)=MAX(Bio3d(i,k,iiTIC_),400.0_r8)
+            Bio2d(i,k,iiTIC_)=MIN(Bio2d(i,k,iiTIC_),3000.0_r8)
+            Bio2d(i,k,iiTIC_)=MAX(Bio2d(i,k,iiTIC_),400.0_r8)
           END DO
         END DO
 #endif
@@ -2726,9 +2730,13 @@
 
           DO i=Istr,Iend
             DO k = 1,N(ng)
-              DO itrc = 1,NBT+NBEN ! Pelagic (and benthic, for bookkeeping)
+              DO itrc = 1,17 ! Pelagic (and benthic, for bookkeeping)
                 Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/Hz(i,j,k)
               END DO
+#ifdef CARBON
+               Bio3d(i,k,iiTIC_) = Bio2d(i,k,iiTIC_)/Hz(i,j,k) 
+               Bio3d(i,k,iiTAlk) = Bio2d(i,k,iiTAlk)/Hz(i,j,k)
+#endif
               DO itrc = 18,20 ! Ice
                 Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/aidz
               END DO
@@ -2961,9 +2969,13 @@
           DO i=Istr,Iend
             ! Sync pelagic (3D modified in sinking portion of code)
             DO k = 1,N(ng)
-              DO itrc = 1,NBT ! Pelagic
+              DO itrc = 1,iiFe ! Pelagic
                 Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
               END DO
+#ifdef CARBON
+             Bio2d(i,k,iiTIC_) = Bio3d(i,k,iiTIC_)*Hz(i,j,k) 
+             Bio2d(i,k,iiTAlk) = Bio3d(i,k,iiTAlk)*Hz(i,j,k)
+#endif
             END DO
             ! Sync benthic (2D modified in sinking portion of code)
             Bio3d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen)/Hz(i,j,1)
@@ -4188,14 +4200,6 @@
 #  ifdef MASKING
         IF (rmask(i,j).gt.0.0_r8) THEN
 #  endif
-!      IF (j.EQ.92.0_r8) THEN
-!          IF (i.EQ.31.0_r8) THEN
-!               print *, 'Temp_post', T(i)
-!               print *, 'TIC_post', TIC(i)
-!                print *, "shape(T)_post = ", shape(T)
-!                print *, "shape(TIC)_post = ", shape(TIC) 
-!          END IF
-!      END IF
 
         Tk=T(i)+273.15_r8
         centiTk=0.01_r8*Tk

@@ -2411,15 +2411,16 @@
        END DO
 #  endif
 
-# ifdef STATIONARY2
-        DO itrc=1,NTS2(ng)
-           DO j=JstrR,JendR
-             DO i=IstrR,IendR
-               avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
-             END DO
-           END DO
-       END DO
-#  endif
+
+!# ifdef STATIONARY2
+!        DO itrc=1,NTS2(ng)
+!           DO j=JstrR,JendR
+!             DO i=IstrR,IendR
+!               avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
+!             END DO
+!           END DO
+!       END DO
+!#  endif
 
 #  endif
 

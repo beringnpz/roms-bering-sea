@@ -987,7 +987,7 @@ contains
 !          print *, 'runoff', runoff(i,j)
 !          print *, 'Alk', t(i,j,N(ng),nrhs,iTAlk)
 !          print *, 'stalk', stflx(i,j,iTAlk)
-!          print *, 'stalk', stflx(i,j,iTIC_)
+!          print *, 'stdic', stflx(i,j,iTIC_)
 !                         END IF
 !               END IF 
 # endif
