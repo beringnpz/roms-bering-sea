@@ -131,6 +131,8 @@
 #  else
       logical :: NSperiodic=.FALSE.
 #  endif
+   real(r8), allocatable           :: buffer(:)
+   character (len=3), allocatable  :: op_handle(:)
 # endif
       integer :: i, j, k, itrc
 
@@ -187,7 +189,7 @@
                   print *, 'trouble in ice_frazil', i, j, k,            &
      &             t(i,j,k,nnew,itemp), t(i,j,k,nnew,isalt),            &
      &             t_fr, wfr(i,j), gamma_k, Hz(i,j,k)
-                  exit_flag = 9
+                  exit_flag = 1
                 END IF
                 wfr(i,j) = wfr(i,j) + gamma_k * Hz(i,j,k) *             &
      &                    (rho0 + rho(i,j,k) ) / ice_dens
@@ -238,10 +240,16 @@
      &                          LBi, UBi, LBj, UBj,                     &
      &                          wfr)
 #ifdef DISTRIBUTE
+      buffer(1) = exit_flag
+      op_handle(1) = 'MAX'
+      CALL mp_reduce (ng, iNLM, 1, buffer, op_handle)
+      exit_flag = int(buffer(1))
+      
       CALL mp_exchange2d (ng, tile, iNLM, 1,                            &
      &                    LBi, UBi, LBj, UBj,                           &
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    wfr)
+
 #endif
 # if defined EW_PERIODIC || defined NS_PERIODIC
 !

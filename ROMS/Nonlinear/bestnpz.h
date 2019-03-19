@@ -196,7 +196,6 @@
 
 # ifdef DISTRIBUTE
       USE mp_exchange_mod
-
 # endif
 
 #endif
@@ -473,6 +472,8 @@
 # else
       logical :: NSperiodic=.FALSE.
 # endif
+      real(r8), allocatable           :: buffer(:)
+      character (len=3), allocatable  :: op_handle(:)
 #endif
 
 #ifdef DIAPAUSE
@@ -3030,6 +3031,14 @@
      &                    NghostPoints, EWperiodic, NSperiodic,         &
      &                    st(:,:,:,nnew,:))
 #  endif
+
+      ! Deal with error flags (code uses Kate's branch, ice_frazil.F as example)
+      
+      buffer(1) = exit_flag
+      op_handle(1) = 'MAX'
+      CALL mp_reduce (ng, iNLM, 1, buffer, op_handle)
+      exit_flag = int(buffer(1))
+
 # endif
 
 # if defined ICE_BIO
