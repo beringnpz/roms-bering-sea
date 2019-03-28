@@ -461,6 +461,9 @@
       real(r8) :: grow1, GROWAice, fNO3, RAi0, RgAi
       real(r8) :: sb, gesi
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: ice_thick, ice_status
+#ifdef CARBON
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Frz_TIC, Frz_TAlk
+#endif
 #endif
 #ifdef CARBON
       real(r8), dimension(IminS:ImaxS) :: pCO2
@@ -1132,6 +1135,18 @@
             Bio2d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiIceNO3) * aidz
             Bio2d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiIceNH4) * aidz
 
+!#ifdef CARBON
+!            Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) + (hi(i,j,nnew) * 1650.0_r8 *dtdays)
+!
+!            Bio2d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) * Hz(i,j,N(ng)) 
+!            print *, 'Bio3d(TIC)', Bio3d(i,N(ng),iiTIC_)
+!            print *, 'hi',hi(i,j,nnew)
+!            print *, 'Hz', Hz(i,j,N(ng))  
+!            print *, 'dtdays', dtdays
+!            print *, 'added term', (hi(i,j,nnew) * 1650.0_r8 *dtdays)
+!            print *, 'Bio3d(TIC)_post', Bio3d(i,N(ng),iiTIC_)
+!            print *, 'Bio2d(TIC)_post', Bio2d(i,N(ng),iiTIC_)  
+!#endif
           elseif (ice_status(i,j) .le. 0.0) then ! should be <0, but sometimes bio w/o ice?
 
             ! If ice disappeared, biomass that was in the ice gets dumped
@@ -1169,7 +1184,58 @@
             Bio3d(i,N(ng),iiIcePhL) = 0.0_r8
             Bio3d(i,N(ng),iiIceNO3) = 0.0_r8
             Bio3d(i,N(ng),iiIceNH4) = 0.0_r8
-            
+
+!#ifdef CARBON
+!          Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) - (hi(i,j,nstp) * 1650.0_r8 *dtdays)
+!          
+!          Bio2d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) * Hz(i,j,N(ng)) 
+!          IF (Bio3d(i,N(ng),iiTIC_).gt.4000.0_r8) THEN
+!                       print *, 'hi(nstp)', hi(i,j,nstp)
+!                       print *, 'term', (hi(i,j,nstp) * 1650.0_r8 *dtdays)
+!                       print *, 'TIC', Bio3d(i,N(ng),iiTIC_) 
+!          END IF
+!
+!          elseif (ice_status(i,j) .eq. 2.0) then
+!
+!          if (hi(i,j,nnew).ge.hi(i,j,nstp)) then
+!           IF (j.EQ.228.0_r8) THEN
+!              IF (i.EQ.53.0_r8) THEN
+!                  print *, 'TIC_start', Bio3d(i,N(ng),iiTIC_)
+!              END IF
+!          END IF
+!            Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_)                 &
+!       &        + ((hi(i,j,nnew)-hi(i,j,nstp)) * 1650.0_r8 *dtdays)
+!!          print *, 'hi(nnew)', hi(i,j,nnew)
+!!          print *, 'hi(nstp)', hi(i,j,nstp) 
+!          IF (j.EQ.228.0_r8) THEN
+!              IF (i.EQ.53.0_r8) THEN
+!                  print *, 'TIC_mid', Bio3d(i,N(ng),iiTIC_) 
+!                  print *, 'added term', ((hi(i,j,nnew)-hi(i,j,nstp)) * 1650.0_r8 *dtdays)
+!              END IF
+!          END IF
+!          elseif (hi(i,j,nnew).lt.hi(i,j,nstp)) then
+!            Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_)                 & 
+!       &        - ((hi(i,j,nstp)-hi(i,j,nnew)) * 1650.0_r8 *dtdays)
+!          IF (j.EQ.228.0_r8) THEN
+!            IF (i.EQ.53.0_r8) THEN
+!              print *, 'subracted term', ((hi(i,j,nstp)-hi(i,j,nnew)) * 1650.0_r8 *dtdays) 
+!            END IF
+!          END IF      
+!          endif
+!
+!          Bio2d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) * Hz(i,j,N(ng)) 
+!!           print *, 'Bio3d(TIC)', Bio3d(i,N(ng),iiTIC_)
+!!           print *, 'Hz',  Hz(i,j,N(ng)) 
+!         IF (j.EQ.228.0_r8) THEN
+!                   IF (i.EQ.53.0_r8) THEN
+!                    print *, 'TIC_end', Bio3d(i,N(ng),iiTIC_)
+!                    print *, 'hi(nnew)', hi(i,j,nnew)
+!                    print *, 'hi(nstp)', hi(i,j,nstp)
+!                    print *, 'Hz', Hz(i,j,N(ng))
+!                   END IF
+!         END IF 
+!#endif  
+!
 !           elseif (ice_status(i,j) .eq. 0.0) then ! mostly debugging
 !
 !             if ((Bio3d(i,N(ng),iiIcePhL) .gt. 0) .or.                   &
@@ -1191,6 +1257,12 @@
 !               endif
 !             endif
           endif
+!        IF (j.EQ.228.0_r8) THEN
+!                   IF (i.EQ.53.0_r8) THEN
+!                    print *, 'TIC_finish', Bio3d(i,N(ng),iiTIC_)
+!                   END IF
+!         END IF
+
         END DO
 #endif
 
@@ -1366,7 +1438,10 @@
           Ver_NCaS_DetF  = 0.0_r8
           Ver_NCaS_DetBen = 0.0_r8
           Ver_NCaS_DetBen = 0.0_r8
-
+#ifdef CARBON
+          Frz_TIC        = 0.0_r8
+          Frz_TAlk       = 0.0_r8
+#endif
 
           !==============================================================
           !  Biological Source/Sink terms.
@@ -2281,6 +2356,11 @@
               Twi_INO3_NO3(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNO3) - Bio3d(i,N(ng),iiNO3))/xi ! mg C m^-2 d^-1
               Twi_INH4_NH4(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNH4) - Bio3d(i,N(ng),iiNH4))/xi ! mg C m^-2 d^-1
 
+#ifdef CARBON
+              Frz_TIC(i,N(ng)) = dhicedt*86400.0_r8*1650.0_r8*12.0_r8*Hz(i,j,N(ng))  ! convert to mg C for consistency w/ bio loop
+              Frz_TAlk(i,N(ng)) = dhicedt*86400.0_r8*1600.0_r8*Hz(i,j,N(ng))/xi  ! convert to mg for consistency w/ bio loop 
+#endif
+
             endif
           END DO
 #endif
@@ -2675,14 +2755,20 @@
      &                       +  Exc_Ben_NH4                             &
      &                       +  Res_Ben_NH4                             &
      &                       +  Rem_DetBen_NH4                          &
+     &                       +  Frz_TIC                                 &
+     &                       +  Res_IPhL_INH4                           &
+     &                       +  Mor_IPhL_INH4                           &
      &                       +  CO2_Flux                                &
      &                       -  Gpp_NO3_PhS                             &
      &                       -  Gpp_NO3_PhL                             &
      &                       -  Gpp_NH4_PhS                             &
-     &                       -  Gpp_NH4_PhL)*dtdays/12._r8 ! mmolC m^-2
+     &                       -  Gpp_NH4_PhL                             &
+     &                       -  Gpp_INO3_IPhL                           &
+     &                       -  Gpp_INH4_IPhL)*dtdays/12._r8 !mmolC m^-2
 
           DBio(:,:,iiTAlk   ) = (Gpp_NO3_PhS                            &
      &                       +  Gpp_NO3_PhL                             &
+     &                       +  Gpp_INO3_IPhL                           &
      &                       +  Res_PhS_NH4                             &
      &                       +  Res_PhL_NH4                             &
      &                       +  Res_MZL_NH4                             &
@@ -2697,11 +2783,14 @@
      &                       +  Exc_Ben_NH4                             &
      &                       +  Res_Ben_NH4                             &
      &                       +  Rem_DetBen_NH4                          &
-     &                       +  Twi_INH4_NH4                            &
+     &                       +  Frz_TAlk                                &
+     &                       +  Res_IPhL_INH4                           &
+     &                       +  Mor_IPhL_INH4                           & 
      &                       -  (2.0_r8*Nit_NH4_NO3)                    &
-     &                       -  Twi_INO3_NO3                            &
+     &                       -  (2.0_r8*Nit_INH4_INO3)                  &
      &                       -  Gpp_NH4_PhS                             &
-     &                       -  Gpp_NH4_PhL)*xi*dtdays ! NO3: mmolN m^-2
+     &                       -  Gpp_NH4_PhL                             &
+     &                       -  Gpp_INH4_IPhL)*xi*dtdays !NO3:mmolN m^-2
 
 
 #endif
