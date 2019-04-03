@@ -1257,25 +1257,17 @@
               IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS) ! unitless
               IronLimL = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL)
 #endif
+
               ! Nitrogen limitation
-              ! (Wroblewski 1977, Sarmiento & Gruber 2006, etc.)
+              ! (after COBALT, which uses Frost & Franzen, 1992)
               
-              NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4))
-              NHLimS = (Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))
-              NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4))
-              NHLimL = (Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4)))
-              NLimS = min(NOLimS + NHLimS, 1.0)
-              NLimL = min(NOLimL + NHLimL, 1.0)
-              if (NLimS .le. 0.0) then
-                fratioS = 0.0
-              else
-                fratioS = NHLimS/(NOLimS + NHLimS) ! Note: intentionally not using capped-at-1 NLim for denominator... want to keep the real ratio even if the cap applies
-              endif
-              if (NLimL .le. 0.0) then
-                fratioL = 0.0
-              else
-                fratioL = NHLimL/(NOLimL + NHLimL)
-              endif
+              NOLimS = Bio3d(i,k,iiNO3)/((k1PhS + Bio3d(i,k,iiNO3)) * (1.0_r8 + Bio3d(i,k,iiNH4)/k2PhS))
+              NHLimS = Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4))
+              NOLimL = Bio3d(i,k,iiNO3)/((k1PhL + Bio3d(i,k,iiNO3)) * (1.0_r8 + Bio3d(i,k,iiNH4)/k2PhL))
+              NHLimL = Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4))
+              
+              fratioS = NHLimS/(NOLimS + NHLimS)
+              fratioL = NHLimL/(NOLimL + NHLimL)
               
               ! Maximum uptake rate, carbon-specific and chl-specific
               ! (Frost 1987,  Mar Ecol Prog Ser, v39)
@@ -1394,32 +1386,49 @@
               
               I0 = I2
               
-              ! Total GPP, averaged over layer
+              ! Nitrate uptake, small
               
-              f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NLimS*IronLimS)
-              f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NLimS*IronLimS)
-              f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NLimS*IronLimS)
-
+              f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NOLimS, IronLimS)
+              f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NOLimS, IronLimS)
+              f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NOLimS, IronLimS)    
 # ifdef GPPMID
-              GppS = f1
+              Gpp_NO3_PhS(i,k) = f1 ! mg C m^-3 d^-1
 # else
-              GppS = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+              Gpp_NO3_PhS(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
 # endif
               
-              Gpp_NH4_PhS(i,k) = GppS * fratioS        ! mg C m^-3 d^-1
-              Gpp_NO3_PhS(i,k) = GppS * (1 - fratioS)  ! mg C m^-3 d^-1
+              ! Ammonium uptake, small
               
-              f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NLimL*IronLimL)
-              f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NLimL*IronLimL)
-              f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NLimL*IronLimL)
-
+              f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NHLimS)
+              f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NHLimS)
+              f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NHLimS)
 # ifdef GPPMID
-              GppL = f1
+              Gpp_NH4_PhS(i,k) = f1 ! mg C m^-3 d^-1
 # else
-              GppL = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+              Gpp_NH4_PhS(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
 # endif
-              Gpp_NH4_PhL(i,k) = GppL * fratioL       ! mg C m^-3 d^-1
-              Gpp_NO3_PhL(i,k) = GppL * (1 - fratioL) ! mg C m^-3 d^-1
+
+              ! Nitrate uptake, large
+              
+              f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NOLimL, IronLimL)
+              f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NOLimL, IronLimL)
+              f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NOLimL, IronLimL)    
+# ifdef GPPMID
+              Gpp_NO3_PhL(i,k) = f1 ! mg C m^-3 d^-1
+# else
+              Gpp_NO3_PhL(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
+# endif
+              
+              ! Ammonium uptake, large
+              
+              f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NHLimL)
+              f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NHLimL)
+              f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NHLimL)
+# ifdef GPPMID
+              Gpp_NH4_PhL(i,k) = f1 ! mg C m^-3 d^-1
+# else
+              Gpp_NH4_PhL(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
+# endif
 
               ! Convert intermediate fluxes from volumetric to per area
 
