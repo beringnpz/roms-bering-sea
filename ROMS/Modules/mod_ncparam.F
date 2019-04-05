@@ -3227,6 +3227,18 @@
               CASE ('idDICFlux')
                 idDICFlux = varid
 # endif
+# ifdef OXYGEN
+              CASE ('idTvar(iOxyg)')
+                idTvar(iOxyg)=varid
+              CASE ('idTbry(iwest,iOxyg)')
+                idTbry(iwest,iOxyg)=varid
+              CASE ('idTbry(ieast,iOxyg)')
+                idTbry(ieast,iOxyg)=varid
+              CASE ('idTbry(isouth,iOxyg)')
+                idTbry(isouth,iOxyg)=varid
+              CASE ('idTbry(inorth,iOxyg)')
+                idTbry(inorth,iOxyg)=varid
+# endif
 
 # ifdef BENTHIC
               CASE ('idBvar(iBen)')

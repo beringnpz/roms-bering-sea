@@ -475,6 +475,9 @@
                 print *, "                  TIC: ", maxbio(iTIC_-NAT,ng)
                 print *, "                  TAlk: ", maxbio(iTAlk-NAT,ng)
 #   endif
+#   ifdef OXYGEN
+                print *, "                  Oxyg: ", maxbio(iOxyg-NAT,ng)
+#endif
               END IF
 #  else
               IF (Master) print *, 'BIO trouble in DIAG ', maxbio(:,ng)

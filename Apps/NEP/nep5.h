@@ -322,6 +322,7 @@
 # define TCLIMATOLOGY      /* Processing of tracer climatology for iron */
 # define CARBON		   /* Carbonate chemistry package */
 # define CARBON_FLUX       /* For river fluxes of DIC,TA */
+# define OXYGEN            /* For oxygen cycling */
 # define STATIONARY
 # define STATIONARY2
 # undef PROD3 

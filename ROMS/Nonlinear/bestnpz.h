@@ -490,8 +490,11 @@
 #ifdef CARBON
       integer  :: iiTIC_, iiTAlk
 #endif
-      real(r8), dimension(IminS:ImaxS,N(ng),22) :: Bio3d, Bio2d, Bio_bak, DBio
-      real(r8), dimension(IminS:ImaxS,N(ng),22) :: extrabio
+#ifdef OXYGEN
+      integer  :: iiOxyg
+#endif
+      real(r8), dimension(IminS:ImaxS,N(ng),23) :: Bio3d, Bio2d, Bio_bak, DBio
+      real(r8), dimension(IminS:ImaxS,N(ng),23) :: extrabio
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Temp, Salt
 
       ! Intermediate fluxes
@@ -853,6 +856,7 @@
         iiIceNH4 = 20
         iiTIC_   = 21
         iiTAlk   = 22
+        iiOxyg   = 23
 
         ! All state variables will be saved in two different versions:
         ! mass m^-3 (Bio3d) and mass m^-2 (Bio2d).  This redundancy
@@ -891,12 +895,18 @@
             Bio3d(i,k,iiTIC_ ) = t(i,j,k,nstp,iTIC_)
             Bio3d(i,k,iiTAlk ) = t(i,j,k,nstp,iTAlk)
 #endif
+#ifdef OXYGEN
+            Bio3d(i,k,iiOxyg ) = t(i,j,k,nstp,iOxyg) 
+#endif
             DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
 #ifdef CARBON
             Bio2d(i,k,iiTIC_) = Bio3d(i,k,iiTIC_)*Hz(i,j,k)
             Bio2d(i,k,iiTAlk) = Bio3d(i,k,iiTAlk)*Hz(i,j,k)
+#endif
+#ifdef OXYGEN
+            Bio2d(i,k,iiOxyg) = Bio3d(i,k,iiOxyg)*Hz(i,j,k)
 #endif
 
 #ifdef STATIONARY
@@ -2357,13 +2367,68 @@
               Twi_INH4_NH4(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNH4) - Bio3d(i,N(ng),iiNH4))/xi ! mg C m^-2 d^-1
 
 #ifdef CARBON
-              Frz_TIC(i,N(ng)) = dhicedt*86400.0_r8*1650.0_r8*12.0_r8*Hz(i,j,N(ng))  ! convert to mg C for consistency w/ bio loop
-              Frz_TAlk(i,N(ng)) = dhicedt*86400.0_r8*1600.0_r8*Hz(i,j,N(ng))/xi  ! convert to mg for consistency w/ bio loop 
+              Frz_TIC(i,N(ng)) = dhicedt*86400.0_r8*1650.0_r8*12.0_r8  ! convert to mg C for consistency w/ bio loop
+              Frz_TAlk(i,N(ng)) = dhicedt*86400.0_r8*1600.0_r8/xi  ! convert to mg C for consistency w/ bio loop 
 #endif
 
             endif
           END DO
 #endif
+#ifdef OXYGEN
+!
+!-----------------------------------------------------------------------
+!  Surface O2 gas exchange.
+!-----------------------------------------------------------------------
+!
+!  Compute surface O2 gas exchange.
+!
+          cff1=rho0*550.0_r8
+          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
+          k=N(ng)
+          DO i=Istr,Iend
+!
+!  Compute O2 transfer velocity : u10squared (u10 in m/s)
+!
+# ifdef BULK_FLUXES
+            u10squ=Uwind(i,j)*Uwind(i,j)+Vwind(i,j)*Vwind(i,j)
+# else
+            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
+     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
+# endif
+
+!
+!  Calculate the Schmidt number for O2 in sea water (Wanninkhof, 1992).
+!
+            SchmidtN_Ox=1953.4_r8-                                      &
+     &                  Temp(i,k)*(128.0_r8-                       &
+     &                                  Temp(i,k)*                 &
+     &                                  (3.9918_r8-                     &
+     &                                   Temp(i,k)*0.050091_r8))
+
+            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN_Ox)
+!
+!  Calculate O2 saturation concentration using Garcia and Gordon
+!  L&O (1992) formula, (EXP(AA) is in ml/l).
+!
+            TS=LOG((298.15_r8-Temp(i,k))/                          &
+     &             (273.15_r8+Temp(i,k)))
+            AA=OA0+TS*(OA1+TS*(OA2+TS*(OA3+TS*(OA4+TS*OA5))))+          &
+     &             Salt(i,k)*(OB0+TS*(OB1+TS*(OB2+TS*OB3)))+       &
+     &             OC0*Salt(i,k)*Salt(i,k)
+!
+!  Convert from ml/l to mmol/m3.
+!
+            O2satu=l2mol*EXP(AA)
+!
+!  Add in O2 gas exchange.
+!
+            O2_Flux=cff3*(O2satu-Bio3d(i,k,iiOxyg))*(1.0_r8-ai(i,j,nstp))
+!            Bio(i,k,iOxyg)=Bio(i,k,iOxyg)+                              &
+!     &                     O2_Flux*Hz_inv(i,k)
+          END DO
+#endif
+
+
 #ifdef CARBON
 !
 !-----------------------------------------------------------------------
@@ -2444,7 +2509,7 @@
 !!          CO2_Flux=cff3*CO2_sol*(pCO2air_secular-pCO2(i))
              if(pCO2(i).gt.0.0_r8)then
                   CO2_Flux=cff3*CO2_sol*(pCO2air(i,j)-pCO2(i))*         &
-     &            (1.0_r8-ai(i,j,nstp))
+     &            (1.0_r8-ai(i,j,nstp))    ! mmolC/m^2
 !               if(ai(i,j,nstp).gt.0.8_r8)then
 !                 print *, 'pCO2air', pCO2air(i,j)
 !               else
@@ -2741,7 +2806,7 @@
      &                        - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
 
 #ifdef CARBON
-          DBio(:,:,iiTIC_   ) = (Res_PhS_NH4                             &
+          DBio(:,:,iiTIC_   ) = ((Res_PhS_NH4                           &
      &                       +  Res_PhL_NH4                             &
      &                       +  Res_MZL_NH4                             &
      &                       +  Res_Cop_NH4                             &
@@ -2764,7 +2829,8 @@
      &                       -  Gpp_NH4_PhS                             &
      &                       -  Gpp_NH4_PhL                             &
      &                       -  Gpp_INO3_IPhL                           &
-     &                       -  Gpp_INH4_IPhL)*dtdays/12._r8 !mmolC m^-2
+     &                       -  Gpp_INH4_IPhL)*dtdays/12._r8)           &
+     &                       +  (CO2_Flux*dtdays) ! mmolC m^-2
 
           DBio(:,:,iiTAlk   ) = (Gpp_NO3_PhS                            &
      &                       +  Gpp_NO3_PhL                             &
@@ -2793,6 +2859,37 @@
      &                       -  Gpp_INH4_IPhL)*xi*dtdays !NO3:mmolN m^-2
 
 
+#endif
+
+#ifdef OXYGEN
+          DBio(:,:,iiOxyg   ) = ((Gpp_NO3_PhS                           &
+     &                       +  Gpp_NO3_PhL                             &
+     &                       +  Gpp_INO3_IPhL)*xi*rOxNO3*dtdays)        &
+     &                       +  ((Gpp_NH4_PhS                           &
+     &                       +  Gpp_NH4_PhL                             &
+     &                       +  Gpp_INH4_IPhL                           &
+     &                       -  Res_PhS_NH4                             &
+     &                       -  Res_PhL_NH4                             &
+     &                       -  Res_MZL_NH4                             &
+     &                       -  Res_Cop_NH4                             &
+     &                       -  Res_NCaS_NH4                            &
+     &                       -  Res_NCaO_NH4                            &
+     &                       -  Res_EupS_NH4                            &
+     &                       -  Res_EupO_NH4                            &
+     &                       -  Res_Jel_NH4                             &
+     &                       -  Rem_Det_NH4                             &
+     &                       -  Rem_DetF_NH4                            &
+     &                       -  Exc_Ben_NH4                             &
+     &                       -  Res_Ben_NH4                             &
+     &                       -  Rem_DetBen_NH4                          &
+     &                       -  Exc_Ben_NH4                             &
+     &                       -  Res_Ben_NH4                             &
+     &                       -  Rem_DetBen_NH4                          &
+     &                       -  Res_IPhL_INH4                           &
+     &                       -  Mor_IPhL_INH4)*xi*rOxNH4*dtdays)        &
+     &                       -  (2.0_r8*Nit_NH4_NO3*xi*dtdays)          &
+     &                       -  (2.0_r8*Nit_INH4_INO3*xi*dtdays)        &
+     &                       +  (O2_Flux*dtdays)
 #endif
           ! Add DBio terms to existing biomass
 
@@ -2825,6 +2922,9 @@
 #ifdef CARBON
                Bio3d(i,k,iiTIC_) = Bio2d(i,k,iiTIC_)/Hz(i,j,k) 
                Bio3d(i,k,iiTAlk) = Bio2d(i,k,iiTAlk)/Hz(i,j,k)
+#endif
+#ifdef OXYGEN
+               Bio3d(i,k,iiOxyg) = Bio2d(i,k,iiOxyg)/Hz(i,j,k)
 #endif
               DO itrc = 18,20 ! Ice
                 Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/aidz
@@ -3065,6 +3165,9 @@
              Bio2d(i,k,iiTIC_) = Bio3d(i,k,iiTIC_)*Hz(i,j,k) 
              Bio2d(i,k,iiTAlk) = Bio3d(i,k,iiTAlk)*Hz(i,j,k)
 #endif
+#ifdef OXYGEN
+             Bio2d(i,k,iiOxyg) = Bio3d(i,k,iiOxyg)*Hz(i,j,k) 
+#endif
             END DO
             ! Sync benthic (2D modified in sinking portion of code)
             Bio3d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen)/Hz(i,j,1)
@@ -3238,6 +3341,9 @@
 #ifdef CARBON
             t(i,j,k,nnew,iTIC_ ) = t(i,j,k,nnew,iTIC_ ) + (Bio2d(i,k,iiTIC_ ) - Bio_bak(i,k,iiTIC_ ))
 	    t(i,j,k,nnew,iTAlk ) = t(i,j,k,nnew,iTAlk ) + (Bio2d(i,k,iiTAlk ) - Bio_bak(i,k,iiTAlk ))
+#endif
+#ifdef OXYGEN
+            t(i,j,k,nnew,iOxyg ) = t(i,j,k,nnew,iOxyg ) + (Bio2d(i,k,iiOxyg ) - Bio_bak(i,k,iiOxyg )) 
 #endif
             ! Check for negatives and NaNs (for debugging)
 
