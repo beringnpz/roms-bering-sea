@@ -259,6 +259,7 @@
         integer, pointer :: idbio2(:)
         integer :: i2Stat1
         integer :: i2Stat2
+        integer :: i2Stat3
 # endif
 # ifdef PROD2
         integer, pointer :: idbioP2(:)
@@ -2359,6 +2360,7 @@
       END DO
       i2Stat1 = 1
       i2Stat2 = 2
+      i2Stat3 = 3
 # endif
 # ifdef PROD3
 

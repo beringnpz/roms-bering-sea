@@ -516,6 +516,15 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_DetBen, Ver_PhS_Out, Ver_PhL_DetBen, Ver_PhL_Out, Ver_Det_DetBen, Ver_Det_Out, Ver_DetF_DetBen, Ver_DetF_Out, Ver_NCaO_DetBen, Ver_NCaS_DetF, Ver_NCaS_DetBen
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Frz_PhL_IPhL, Frz_NO3_INO3, Frz_NH4_INH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: prod_PhS, prod_PhL, prod_MZL, prod_Cop, prod_NCaS, prod_EupS, prod_NCaO, prod_EupO, prod_Jel, prod_Ben, prod_IcePhL
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: total_prod, total_resp, total_remin, ice_TIC, ice_alk 
+
+!#ifdef CARBON
+!      real(r8), dimension(IminS:ImaxS,N(ng)) :: CO2_Flux 
+!#endif
+
+!#ifdef OXYGEN
+!      real(r8), dimension(IminS:ImaxS,N(ng)) :: O2_Flux 
+!#endif
 
       ! Biological source/sinks
 
@@ -621,14 +630,6 @@
 #ifdef CARBON
       real(r8) :: C_Flux_RemineL, C_Flux_RemineS
       real(r8) :: CO2_Flux, CO2_sol, SchmidtN, TempK
-#endif
-#ifdef CARBON_DEBUG
-      real(r8) :: totalN,Graz1,Graz1_alk,Graz2,Graz_alk,nitrif_alk
-      real(r8) :: excretion,excretion_alk,ice_dic,ice_alk,ice_no3
-      real(r8) :: ice_alk_no3,ice_nh4,ice_alk_nh4,ice_init,ice_alk_init
-#ifdef JELLY
-      real(r8) :: Graz_jelly,Graz_alk_jelly
-#endif
 #endif
       
 #include "set_bounds.h"
@@ -960,14 +961,14 @@
           END DO
         END DO
 #endif
-#ifdef CARBON
-        DO k=1,N(ng)
-          DO i=Istr,Iend
-            Bio2d(i,k,iiTIC_)=MIN(Bio2d(i,k,iiTIC_),3000.0_r8)
-            Bio2d(i,k,iiTIC_)=MAX(Bio2d(i,k,iiTIC_),400.0_r8)
-          END DO
-        END DO
-#endif
+!#ifdef CARBON
+!        DO k=1,N(ng)
+!          DO i=Istr,Iend
+!            Bio2d(i,k,iiTIC_)=MIN(Bio2d(i,k,iiTIC_),3000.0_r8)
+!            Bio2d(i,k,iiTIC_)=MAX(Bio2d(i,k,iiTIC_),400.0_r8)
+!          END DO
+!        END DO
+!#endif
 #ifdef ICE_BIO
         ! Before we get to the ice variables, we'll collect some info
         ! about the ice itself: ice thickness, and status (i.e. whether
@@ -1451,6 +1452,11 @@
 #ifdef CARBON
           Frz_TIC        = 0.0_r8
           Frz_TAlk       = 0.0_r8
+          CO2_Flux       = 0.0_r8
+#endif
+
+#ifdef OXYGEN
+          O2_Flux        = 0.0_r8
 #endif
 
           !==============================================================
@@ -1491,26 +1497,18 @@
               IronLimS = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhS + Bio3d(i,k,iiFe))*(kfePhS + FeCritPS)/FeCritPS) ! unitless
               IronLimL = min(1.0_r8, eps + Bio3d(i,k,iiFe)/(kfePhL + Bio3d(i,k,iiFe))*(kfePhL + FeCritPL)/FeCritPL)
 #endif
+
               ! Nitrogen limitation
-              ! (Wroblewski 1977, Sarmiento & Gruber 2006, etc.)
-              
-              NOLimS = (Bio3d(i,k,iiNO3)/(k1PhS + Bio3d(i,k,iiNO3))) * exp(-psiS * Bio3d(i,k,iiNH4))
-              NHLimS = (Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4)))
-              NOLimL = (Bio3d(i,k,iiNO3)/(k1PhL + Bio3d(i,k,iiNO3))) * exp(-psiL * Bio3d(i,k,iiNH4))
-              NHLimL = (Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4)))
-              NLimS = min(NOLimS + NHLimS, 1.0)
-              NLimL = min(NOLimL + NHLimL, 1.0)
-              if (NLimS .le. 0.0) then
-                fratioS = 0.0
-              else
-                fratioS = NHLimS/(NOLimS + NHLimS) ! Note: intentionally not using capped-at-1 NLim for denominator... want to keep the real ratio even if the cap applies
-              endif
-              if (NLimL .le. 0.0) then
-                fratioL = 0.0
-              else
-                fratioL = NHLimL/(NOLimL + NHLimL)
-              endif
-              
+              ! (after COBALT, which uses Frost & Franzen, 1992)
+
+              NOLimS = Bio3d(i,k,iiNO3)/((k1PhS + Bio3d(i,k,iiNO3)) * (1.0_r8 + Bio3d(i,k,iiNH4)/k2PhS))
+	      NHLimS = Bio3d(i,k,iiNH4)/(k2PhS + Bio3d(i,k,iiNH4))
+	      NOLimL = Bio3d(i,k,iiNO3)/((k1PhL + Bio3d(i,k,iiNO3)) * (1.0_r8 + Bio3d(i,k,iiNH4)/k2PhL))
+              NHLimL = Bio3d(i,k,iiNH4)/(k2PhL + Bio3d(i,k,iiNH4))
+
+              fratioS = NHLimS/(NOLimS + NHLimS)
+              fratioL = NHLimL/(NOLimL + NHLimL)
+
               ! Maximum uptake rate, carbon-specific and chl-specific
               ! (Frost 1987,  Mar Ecol Prog Ser, v39)
               
@@ -1549,9 +1547,15 @@
               ! (SNPP VIRRS absorption due to gelbstoff and detritus @ 443nm, 
               ! entire-mission composite 2012-2018)
             
-              !katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)
-              katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2
-                  
+              if (k_sed2 .lt. -9990.0_r8) then
+                ! Lazy way to allow old sediment function without recompiling
+                ! (k_sed1 = old k_shallow here) (<-9990 just to avoid any floating point
+                ! issues w/ -9999 equivalence)
+                katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*exp(z_w(i,j,0)*0.05)
+              else
+                katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2
+              endif
+    
               ! Calculate light at depth levels relevant for Simpson's 
               ! rule integration      
 
@@ -1622,32 +1626,50 @@
               
               I0 = I2
               
-              ! Total GPP, averaged over layer
-              
-              f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NLimS*IronLimS)
-              f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NLimS*IronLimS)
-              f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NLimS*IronLimS)
+              ! Nitrate uptake, small
+
+              f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NOLimS, IronLimS)
+              f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NOLimS, IronLimS)
+              f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NOLimS, IronLimS)
 
 # ifdef GPPMID
-              GppS = f1
+              Gpp_NO3_PhS(i,k) = f1 ! mg C m^-3 d^-1
 # else
-              GppS = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+              Gpp_NO3_PhS(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
 # endif
               
-              Gpp_NH4_PhS(i,k) = GppS * fratioS        ! mg C m^-3 d^-1
-              Gpp_NO3_PhS(i,k) = GppS * (1 - fratioS)  ! mg C m^-3 d^-1
-              
-              f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NLimL*IronLimL)
-              f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NLimL*IronLimL)
-              f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NLimL*IronLimL)
+              ! Ammonium uptake, small
 
+              f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NHLimS)
+              f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NHLimS)
+              f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NHLimS)
 # ifdef GPPMID
-              GppL = f1
+              Gpp_NH4_PhS(i,k) = f1 ! mg C m^-3 d^-1
 # else
-              GppL = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2)
+              Gpp_NH4_PhS(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
 # endif
-              Gpp_NH4_PhL(i,k) = GppL * fratioL       ! mg C m^-3 d^-1
-              Gpp_NO3_PhL(i,k) = GppL * (1 - fratioL) ! mg C m^-3 d^-1
+
+              ! Nitrate uptake, large
+
+              f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NOLimL, IronLimL)
+              f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NOLimL, IronLimL)
+              f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NOLimL, IronLimL)
+# ifdef GPPMID
+              Gpp_NO3_PhL(i,k) = f1 ! mg C m^-3 d^-1
+# else
+              Gpp_NO3_PhL(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
+# endif
+
+              ! Ammonium uptake, large
+
+              f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NHLimL)
+              f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NHLimL)
+              f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NHLimL)
+# ifdef GPPMID
+              Gpp_NH4_PhL(i,k) = f1 ! mg C m^-3 d^-1
+# else
+              Gpp_NH4_PhL(i,k) = ((z0-z1)/3 * (f0 + 4*f1 + f2))/(z0-z2) ! mg C m^-3 d^-1
+# endif  
 
               ! Convert intermediate fluxes from volumetric to per area
 
@@ -2374,164 +2396,6 @@
             endif
           END DO
 #endif
-#ifdef OXYGEN
-!
-!-----------------------------------------------------------------------
-!  Surface O2 gas exchange.
-!-----------------------------------------------------------------------
-!
-!  Compute surface O2 gas exchange.
-!
-          cff1=rho0*550.0_r8
-          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
-          k=N(ng)
-          DO i=Istr,Iend
-!
-!  Compute O2 transfer velocity : u10squared (u10 in m/s)
-!
-# ifdef BULK_FLUXES
-            u10squ=Uwind(i,j)*Uwind(i,j)+Vwind(i,j)*Vwind(i,j)
-# else
-            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
-     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
-# endif
-
-!
-!  Calculate the Schmidt number for O2 in sea water (Wanninkhof, 1992).
-!
-            SchmidtN_Ox=1953.4_r8-                                      &
-     &                  Temp(i,k)*(128.0_r8-                       &
-     &                                  Temp(i,k)*                 &
-     &                                  (3.9918_r8-                     &
-     &                                   Temp(i,k)*0.050091_r8))
-
-            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN_Ox)
-!
-!  Calculate O2 saturation concentration using Garcia and Gordon
-!  L&O (1992) formula, (EXP(AA) is in ml/l).
-!
-            TS=LOG((298.15_r8-Temp(i,k))/                          &
-     &             (273.15_r8+Temp(i,k)))
-            AA=OA0+TS*(OA1+TS*(OA2+TS*(OA3+TS*(OA4+TS*OA5))))+          &
-     &             Salt(i,k)*(OB0+TS*(OB1+TS*(OB2+TS*OB3)))+       &
-     &             OC0*Salt(i,k)*Salt(i,k)
-!
-!  Convert from ml/l to mmol/m3.
-!
-            O2satu=l2mol*EXP(AA)
-!
-!  Add in O2 gas exchange.
-!
-            O2_Flux=cff3*(O2satu-Bio3d(i,k,iiOxyg))*(1.0_r8-ai(i,j,nstp))
-!            Bio(i,k,iOxyg)=Bio(i,k,iOxyg)+                              &
-!     &                     O2_Flux*Hz_inv(i,k)
-          END DO
-#endif
-
-
-#ifdef CARBON
-!
-!-----------------------------------------------------------------------
-!  Surface CO2 gas exchange.
-!-----------------------------------------------------------------------
-!
-!  Compute equilibrium partial pressure inorganic carbon (ppmv) at the
-!  surface.
-!
-          k=N(ng)
-
-# ifdef pCO2_RZ
-          CALL pCO2_water_RZ (Istr, Iend, LBi, UBi, LBj, UBj,           &
-     &                        IminS, ImaxS, j, DoNewton,                &
-#  ifdef MASKING
-     &                        rmask,                                    &
-#  endif
-     &                        Temp(IminS:,k), Salt(IminS:,k),           &
-     &                        Bio3d(IminS:,k,iiTIC_),                   &
-     &                        Bio3d(IminS:,k,iiTAlk),                   &
-     &                        pH, pCO2)
-# else
-          CALL pCO2_water (Istr, Iend, LBi, UBi, LBj, UBj,              &
-     &                     IminS, ImaxS, j, DoNewton,                   &
-#  ifdef MASKING
-     &                     rmask,                                       &
-#  endif
-     &                     t(IminS:,j,k,nstp,itemp),                    &
-     &                     t(IminS:,j,k,nstp,isalt),                    &
-     &                     Bio3d(IminS:,k,iiTIC_),                      &
-     &                     Bio3d(IminS:,k,iiTAlk),                      &
-     &                     0.0_r8, 0.0_r8, pH, pCO2)
-# endif
-
-!
-!   if(pCO2(i).lt.120.0_r8)then
-!       print *, 'pco2', pCO2(i), 'TEMP',Temp(i,k), 'SALT',            &
-!     &   Salt(i,k), 'ALK',Bio3d(i,k,iiTAlk), 'TIC',Bio3d(i,k,iiTIC_)
-!      endif
-
-!  Compute surface CO2 gas exchange.
-!
-          cff1=rho0*550.0_r8
-          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
-          DO i=Istr,Iend
-!
-!  Compute CO2 transfer velocity : u10squared (u10 in m/s)
-!
-# ifdef BULK_FLUXES
-            u10squ=Uwind(i,j)**2+Vwind(i,j)**2
-# else
-            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
-     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
-# endif
-            SchmidtN=Acoef-                                             &
-     &               Temp(i,k)*(Bcoef-                             &
-     &                               Temp(i,k)*(Ccoef-             &
-     &                               Temp(i,k)*Dcoef))
-            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN)
-!
-!  Calculate CO2 solubility [mol/(kg.atm)] using Weiss (1974) formula.
-!
-            TempK=0.01_r8*(Temp(i,k)+273.15_r8)
-            CO2_sol=EXP(A1+                                             &
-     &                  A2/TempK+                                       &
-     &                  A3*LOG(TempK)+                                  &
-     &                  Salt(i,k)*(B1+TempK*(B2+B3*TempK)))
-!
-!  Add in CO2 gas exchange.
-!
-!            CALL caldate (r_date, tdays(ng), year, yday, month, iday,   &
-!     &                    hour)
-!            pmonth=2003.0_r8-1951.0_r8+yday/365.0_r8
-!!          pCO2air_secular=D0+D1*pmonth*12.0_r8+                       &
-!!   &                         D2*SIN(pi2*pmonth+D3)+                   &
-!!   &                         D4*SIN(pi2*pmonth+D5)+                   &
-!!   &                         D6*SIN(pi2*pmonth+D7)
-!!          CO2_Flux=cff3*CO2_sol*(pCO2air_secular-pCO2(i))
-             if(pCO2(i).gt.0.0_r8)then
-                  CO2_Flux=cff3*CO2_sol*(pCO2air(i,j)-pCO2(i))*         &
-     &            (1.0_r8-ai(i,j,nstp))    ! mmolC/m^2
-!               if(ai(i,j,nstp).gt.0.8_r8)then
-!                 print *, 'pCO2air', pCO2air(i,j)
-!               else
-!               endif
-            else
-                  CO2_Flux = 0.0_r8
-            endif
-# ifdef STATIONARY2
-          st2(i,j,nstp,  1) = st2(i,j,nstp,  1) + CO2_Flux
-          st2(i,j,nstp,  2) = pCO2(i) 
-#endif
-
-# ifdef CARBON_DEBUG
-                IF (j.EQ.20.0_r8) THEN
-                   IF (i.EQ.20.0_r8) THEN
-                 print *, 'degas', CO2_Flux*Hz_inv(i,k)
-                 print *, 'loc', i, j, k
-                  END IF
-                END IF
-#endif
-          END DO
-#endif
 
           !------------------------------
           ! Combine bio source/sinks
@@ -2805,6 +2669,28 @@
      &                        + Gpp_INH4_IPhL                           &
      &                        - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
 
+          total_prod          = Gpp_NO3_PhS                             &
+     &                        + Gpp_NO3_PhL                             &
+     &                        + Gpp_NH4_PhS                             &
+     &                        + Gpp_NH4_PhL                             &
+     &                        + Gpp_INO3_IPhL                           &
+     &                        + Gpp_INH4_IPhL  ! mg C m^-2 d^-1
+
+          total_resp          = Res_MZL_NH4                             &
+     &                        + Res_Cop_NH4                             &
+     &                        + Res_NCaS_NH4                            &
+     &                        + Res_NCaO_NH4                            &
+     &                        + Res_EupS_NH4                            &
+     &                        + Res_EupO_NH4                            &
+     &                        + Res_Jel_NH4                             &
+     &                        + Res_Ben_NH4                             &
+     &                        + Mor_IPhL_INH4  ! mg C m^-2 d^-1 
+
+          total_remin         = Rem_Det_NH4                             &
+     &                        + Rem_DetF_NH4                            & 
+     &                        + Rem_DetBen_NH4                          &
+     &                        + Exc_Ben_NH4    ! mg C m^-2 d^-1
+
 #ifdef CARBON
           DBio(:,:,iiTIC_   ) = ((Res_PhS_NH4                           &
      &                       +  Res_PhL_NH4                             &
@@ -2823,14 +2709,12 @@
      &                       +  Frz_TIC                                 &
      &                       +  Res_IPhL_INH4                           &
      &                       +  Mor_IPhL_INH4                           &
-     &                       +  CO2_Flux                                &
      &                       -  Gpp_NO3_PhS                             &
      &                       -  Gpp_NO3_PhL                             &
      &                       -  Gpp_NH4_PhS                             &
      &                       -  Gpp_NH4_PhL                             &
      &                       -  Gpp_INO3_IPhL                           &
-     &                       -  Gpp_INH4_IPhL)*dtdays/12._r8)           &
-     &                       +  (CO2_Flux*dtdays) ! mmolC m^-2
+     &                       -  Gpp_INH4_IPhL)*dtdays/12._r8)           
 
           DBio(:,:,iiTAlk   ) = (Gpp_NO3_PhS                            &
      &                       +  Gpp_NO3_PhL                             &
@@ -2858,7 +2742,6 @@
      &                       -  Gpp_NH4_PhL                             &
      &                       -  Gpp_INH4_IPhL)*xi*dtdays !NO3:mmolN m^-2
 
-
 #endif
 
 #ifdef OXYGEN
@@ -2882,14 +2765,11 @@
      &                       -  Exc_Ben_NH4                             &
      &                       -  Res_Ben_NH4                             &
      &                       -  Rem_DetBen_NH4                          &
-     &                       -  Exc_Ben_NH4                             &
-     &                       -  Res_Ben_NH4                             &
-     &                       -  Rem_DetBen_NH4                          &
      &                       -  Res_IPhL_INH4                           &
      &                       -  Mor_IPhL_INH4)*xi*rOxNH4*dtdays)        &
      &                       -  (2.0_r8*Nit_NH4_NO3*xi*dtdays)          &
-     &                       -  (2.0_r8*Nit_INH4_INO3*xi*dtdays)        &
-     &                       +  (O2_Flux*dtdays)
+     &                       -  (2.0_r8*Nit_INH4_INO3*xi*dtdays)        
+
 #endif
           ! Add DBio terms to existing biomass
 
@@ -3153,6 +3033,157 @@
           END DO
 #endif
 
+#ifdef OXYGEN
+!
+!-----------------------------------------------------------------------
+!  Surface O2 gas exchange.
+!-----------------------------------------------------------------------
+!
+!  Compute surface O2 gas exchange.
+!
+          cff1=rho0*550.0_r8
+          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
+          k=N(ng)
+          DO i=Istr,Iend
+!
+!  Compute O2 transfer velocity : u10squared (u10 in m/s)
+!
+# ifdef BULK_FLUXES
+            u10squ=Uwind(i,j)*Uwind(i,j)+Vwind(i,j)*Vwind(i,j)
+# else
+            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
+     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
+# endif
+!
+!  Calculate the Schmidt number for O2 in sea water (Wanninkhof, 1992).
+!
+            SchmidtN_Ox=1953.4_r8-                                      &
+     &                  t(i,j,k,nstp,itemp)*(128.0_r8-                  &
+     &                          t(i,j,k,nstp,itemp)*                    &
+     &                                (3.9918_r8-                       &
+     &                                 t(i,j,k,nstp,itemp)*0.050091_r8))
+
+            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN_Ox)
+!
+!  Calculate O2 saturation concentration using Garcia and Gordon
+!  L&O (1992) formula, (EXP(AA) is in ml/l).
+!
+            TS=LOG((298.15_r8-t(i,j,k,nstp,itemp))/                     &
+     &             (273.15_r8+t(i,j,k,nstp,itemp)))
+            AA=OA0+TS*(OA1+TS*(OA2+TS*(OA3+TS*(OA4+TS*OA5))))+          &
+     &             t(i,j,k,nstp,isalt)*(OB0+TS*(OB1+TS*(OB2+TS*OB3)))+  &
+     &             OC0*t(i,j,k,nstp,isalt)*t(i,j,k,nstp,isalt)
+!
+!  Convert from ml/l to mmol/m3.
+!
+            O2satu=l2mol*EXP(AA)
+!
+!  Add in O2 gas exchange.
+!
+            O2_Flux=cff3*(O2satu-Bio3d(i,k,iiOxyg))*                    &
+      &         (1.0_r8-ai(i,j,nstp))
+            Bio3d(i,k,iiOxyg)=Bio3d(i,k,iiOxyg)+                        &
+      &         O2_Flux*Hz_inv(i,k)
+#ifdef STATIONARY2
+           st2(i,j,nstp,  3) = st2(i,j,nstp,  3) + O2_Flux
+#endif
+          END DO
+#endif
+
+
+#ifdef CARBON
+!
+!-----------------------------------------------------------------------
+!  Surface CO2 gas exchange.
+!-----------------------------------------------------------------------
+!
+!  Compute equilibrium partial pressure inorganic carbon (ppmv) at the
+!  surface.
+!
+          k=N(ng)
+
+# ifdef pCO2_RZ
+          CALL pCO2_water_RZ (Istr, Iend, LBi, UBi, LBj, UBj,           &
+     &                        IminS, ImaxS, j, DoNewton,                &
+#  ifdef MASKING
+     &                        rmask,                                    &
+#  endif
+     &                        Temp(IminS:,k), Salt(IminS:,k),           &
+     &                        Bio3d(IminS:,k,iiTIC_),                   &
+     &                        Bio3d(IminS:,k,iiTAlk),                   &
+     &                        pH, pCO2)
+# else
+          CALL pCO2_water (Istr, Iend, LBi, UBi, LBj, UBj,              &
+     &                     IminS, ImaxS, j, DoNewton,                   &
+#  ifdef MASKING
+     &                     rmask,                                       &
+#  endif
+     &                     t(IminS:,j,k,nstp,itemp),                    &
+     &                     t(IminS:,j,k,nstp,isalt),                    &
+     &                     Bio3d(IminS:,k,iiTIC_),                      &
+     &                     Bio3d(IminS:,k,iiTAlk),                      &
+     &                     0.0_r8, 0.0_r8, pH, pCO2)
+# endif
+
+!
+!   if(pCO2(i).lt.120.0_r8)then
+!       print *, 'pco2', pCO2(i), 'TEMP',Temp(i,k), 'SALT',            &
+!     &   Salt(i,k), 'ALK',Bio3d(i,k,iiTAlk), 'TIC',Bio3d(i,k,iiTIC_)
+!      endif
+
+!  Compute surface CO2 gas exchange.
+!
+          cff1=rho0*550.0_r8
+          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
+          DO i=Istr,Iend
+!
+!  Compute CO2 transfer velocity : u10squared (u10 in m/s)
+!
+# ifdef BULK_FLUXES
+            u10squ=Uwind(i,j)**2+Vwind(i,j)**2
+# else
+            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
+     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
+# endif
+            SchmidtN=Acoef-                                             &
+     &               t(i,j,k,nstp,itemp)*(Bcoef-                        &
+     &                      t(i,j,k,nstp,itemp)*(Ccoef-                 &
+     &                      t(i,j,k,nstp,itemp)*Dcoef))
+            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN)
+
+
+!
+!  Calculate CO2 solubility [mol/(kg.atm)] using Weiss (1974) formula.
+!
+            TempK=0.01_r8*(t(i,j,k,nstp,itemp)+273.15_r8)
+            CO2_sol=EXP(A1+                                             &
+     &                  A2/TempK+                                       &
+     &                  A3*LOG(TempK)+                                  &
+     &                  t(i,j,k,nstp,isalt)*(B1+TempK*(B2+B3*TempK)))
+!
+!  Add in CO2 gas exchange.
+!
+             if(pCO2(i).gt.0.0_r8)then
+                CO2_Flux=cff3*CO2_sol*(pCO2air(i,j)-pCO2(i))*           &
+     &            (1.0_r8-ai(i,j,nstp))    ! mmolC/m^2
+!               if(ai(i,j,nstp).gt.0.8_r8)then
+!                 print *, 'pCO2air', pCO2air(i,j)
+!               else
+!               endif
+            else
+                  CO2_Flux = 0.0_r8
+            endif
+            Bio3d(i,k,iiTIC_)=Bio3d(i,k,iiTIC_)+                        &
+     &            CO2_Flux*Hz_inv(i,k)
+
+# ifdef STATIONARY2
+          st2(i,j,nstp,  1) = st2(i,j,nstp,  1) + CO2_Flux
+          st2(i,j,nstp,  2) = pCO2(i)
+#endif
+
+          END DO
+#endif
+
           ! Sync 2d arrays to 3d again
 
           DO i=Istr,Iend
@@ -3299,6 +3330,12 @@
               st(i,j,k,nstp,114) = prod_Jel(i,k)
               st(i,j,k,nstp,115) = prod_Ben(i,k)
               st(i,j,k,nstp,116) = prod_IcePhL(i,k)
+
+              st(i,j,k,nstp,146) = total_prod(i,k)
+              st(i,j,k,nstp,147) = total_resp(i,k)
+              st(i,j,k,nstp,148) = total_remin(i,k)
+              st(i,j,k,nstp,149) = Frz_TIC(i,k)/12.0_r8
+              st(i,j,k,nstp,150) = Frz_TAlk(i,k)*xi
 
             END DO
           END DO

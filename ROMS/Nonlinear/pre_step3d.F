@@ -385,16 +385,15 @@
       DO j=Jstr,Jend
         DO i=Istr,Iend
           
-          ! This method accounts for nonlinear light profiles within 
-          ! a single layer. The nonlinearity arises in models with 
-          ! coarse vertical resolution.  The effect of this 
-          ! nonlinearity is probably insignificant when looking at the 
-          ! affect on heat content, so it's likely overkill here.
-          ! But the nonlinearity can significantly reduce primary 
-          ! production in surface layers over deep water; we replicate 
-          ! the light attenuation calculations used in the biological 
-          ! module here to maintain internal consistency.
-          
+         ! The use of Simpson's rule here for integration over the layer  accounts for  
+         ! nonlinear light profiles within a single layer. The nonlinearity arises in
+         ! models with coarse vertical resolution.  The effect of this nonlinearity is
+         ! probably insignificant when looking at the affect on heat content, so it's
+         ! likely overkill here. But the nonlinearity can significantly reduce primary
+         ! production in surface layers over deep water; we replicate the light
+         ! attenuation calculations used in the biological module here to maintain
+         ! internal consistency.
+
           Ifrac = 1
           DO k=N(ng),1,-1
           
@@ -407,14 +406,21 @@
             ! chlorophyll, and optionally other organics/sediment/etc.
             ! See bestnpz.h code for further details on these parameters.
             
-            !katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_shallow*exp(z_w(i,j,0)*0.05)
-            katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2      
-            
+            if (k_sed2 .lt. -9990.0_r8) then
+              ! Lazy way to allow old sediment function without recompiling 
+              ! (k_sed1 = old k_shallow here) (<-9990 just to avoid any floating point
+              ! issues w/ -9999 equivalence)
+              katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*exp(z_w(i,j,0)*0.05)
+            else
+              katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2
+            endif
+           
             ! Fraction of light in layer (averaged over layer using 
             ! Simpson's rule).  Attenuation uses Jerlov water type 
             ! equation, following Paulson and Simpson (1977, J. Phys. 
             ! Oceanogr. v7:6) (same as lmd_swfrac_tile), but applies 
-            ! attenuation due to chlorophyll, etc. first.
+            ! attenuation due to chlorophyll, etc. for the deeper-penetrating wavelength
+            ! band
 
             z0 = 0 ! m, measured from top of layer
             z2 = z_w(i,j,k-1) - z_w(i,j,k)

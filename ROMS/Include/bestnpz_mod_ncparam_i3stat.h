@@ -286,7 +286,6 @@
                  idTSvar(i3Stat143) = varid
                CASE ('idTSvar(i3Stat144)')
                  idTSvar(i3Stat144) = varid
-#  ifdef FEAST
                CASE ('idTSvar(i3Stat145)')
                  idTSvar(i3Stat145) = varid
                CASE ('idTSvar(i3Stat146)')
@@ -295,6 +294,23 @@
                  idTSvar(i3Stat147) = varid
                CASE ('idTSvar(i3Stat148)')
                  idTSvar(i3Stat148) = varid
+# ifdef CARBON
                CASE ('idTSvar(i3Stat149)')
                  idTSvar(i3Stat149) = varid
+               CASE ('idTSvar(i3Stat150)')
+                 idTSvar(i3Stat150) = varid
+# endif
+
+#  ifdef FEAST
+               CASE ('idTSvar(i3Stat151)')
+                 idTSvar(i3Stat151) = varid
+               CASE ('idTSvar(i3Stat152)')
+                 idTSvar(i3Stat152) = varid
+               CASE ('idTSvar(i3Stat153)')
+                 idTSvar(i3Stat153) = varid
+               CASE ('idTSvar(i3Stat154)')
+                 idTSvar(i3Stat154) = varid
+               CASE ('idTSvar(i3Stat155)')
+                 idTSvar(i3Stat155) = varid
 #  endif
+

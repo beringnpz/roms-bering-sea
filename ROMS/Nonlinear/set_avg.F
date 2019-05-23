@@ -1416,15 +1416,14 @@
             avgutau_iw(i,j)=utau_iw(i,j)
             avgchu_iw(i,j)=chu_iw(i,j)
 #  endif
-#ifdef ICE_BIO 
-#ifdef BERING_10K
-                  
-            avgINO3(i,j)=IceNO3(i,j,Iout) 
-	    avgIPhL(i,j)=IcePhL(i,j,Iout)
-	    avgINH4(i,j)=IceNH4(i,j,Iout) 
-	    avgILog(i,j)=IceLog(i,j,Iout)   
-#endif
-#endif 
+#  ifdef ICE_BIO
+#   ifdef BERING_10K
+            avgINO3(i,j)=IceNO3(i,j,Iout) ! this is BEST_NPZ-specific... should be moved and wrapped in the proper comp flags
+                  avgIPhL(i,j)=IcePhL(i,j,Iout)
+                  avgINH4(i,j)=IceNH4(i,j,Iout)
+                  avgILog(i,j)=IceLog(i,j,Iout)
+#   endif
+#  endif
 #  ifdef AVERAGES_FLUXES
             avgstf(i,j)=stflx(i,j,itemp)
             avgswf(i,j)=stflx(i,j,isalt)
@@ -1759,16 +1758,14 @@
             avgchu_iw(i,j)=avgchu_iw(i,j)+chu_iw(i,j)
 #  endif
 
-#ifdef ICE_BIO
-#if defined BERING_10K
-      
-      
+#  ifdef ICE_BIO
+#   if defined BERING_10K  
             avgIPhL(i,j)=avgIPhL(i,j)+IcePhL(i,j,Iout)
-	    avgINO3(i,j)=avgINO3(i,j)+IceNO3(i,j,Iout)
+                  avgINO3(i,j)=avgINO3(i,j)+IceNO3(i,j,Iout)
             avgINH4(i,j)=avgINH4(i,j)+IceNH4(i,j,Iout)
-	    avgILog(i,j)=avgILog(i,j)+IceLog(i,j,Iout)
-#endif
-#endif
+                  avgILog(i,j)=avgILog(i,j)+IceLog(i,j,Iout)
+#   endif
+#  endif
 #  ifdef AVERAGES_FLUXES
             avgstf(i,j)=avgstf(i,j)+stflx(i,j,itemp)
             avgswf(i,j)=avgswf(i,j)+stflx(i,j,isalt)
@@ -1894,16 +1891,12 @@
 #  endif
         END DO
 #  ifdef BEST_NPZ
-!--------------------------------------------
-! values are accumulated in the bestnpz.h file
-! so do not sum them here
-!--------------------------------------------
 #ifdef STATIONARY
          DO itrc=1,NTS(ng)
            DO k=1,N(ng)
              DO j=JstrR,JendR
                DO i=IstrR,IendR
-                 avgst(i,j,k,itrc)=st(i,j,k,Nout,itrc)
+                avgst(i,j,k,itrc)=avgst(i,j,k,itrc)+st(i,j,k,Nout,itrc)
                END DO
              END DO
            END DO
@@ -1914,7 +1907,7 @@
            DO k=1,N(ng)
              DO j=JstrR,JendR
                DO i=IstrR,IendR
-                 avgpt3(i,j,k,itrc)=pt3(i,j,k,Nout,itrc)
+                avgpt3(i,j,k,itrc)=avgpt3(i,j,k,itrc)+pt3(i,j,k,Nout,itrc)
                END DO
              END DO
            END DO
@@ -1925,7 +1918,7 @@
 
              DO j=JstrR,JendR
                DO i=IstrR,IendR
-                 avgpt2(i,j,itrc)=pt2(i,j,Nout,itrc)
+                 avgpt2(i,j,itrc)=avgpt2(i,j,itrc)+pt2(i,j,Nout,itrc)
                END DO
              END DO
 
@@ -1936,7 +1929,7 @@
 !          DO k=1,N(ng)
              DO j=JstrR,JendR
                DO i=IstrR,IendR
-                 avgst2(i,j,itrc)=st2(i,j,Nout,itrc)
+                avgst2(i,j,itrc)=st2(i,j,Nout,itrc)
                END DO
              END DO
 !          END DO
@@ -1969,15 +1962,11 @@
 		
 # ifdef CLIM_ICE_1D
           avgit(i,j,itrc)=avgit(i,j,itrc)+it(i,j,Nout,itrc)
-      
-
-#elif defined BERING_10K
-      
-      
-!		avgit(i,j,1)=avgit(i,j,itrc)+IcePhL(i,j,Nout)
-!		avgit(i,j,2)=avgit(i,j,itrc)+IceNO3(i,j,Nout)
-!                avgit(i,j,3)=avgit(i,j,itrc)+IceNH4(i,j,Nout)
-#endif
+# elif defined BERING_10K
+!               avgit(i,j,1)=avgit(i,j,itrc)+IcePhL(i,j,Nout)
+!               avgit(i,j,2)=avgit(i,j,itrc)+IceNO3(i,j,Nout)
+!               avgit(i,j,3)=avgit(i,j,itrc)+IceNH4(i,j,Nout)
+# endif
                 END DO
               END DO
 
