@@ -13,7 +13,7 @@
 # you will see them accessed via {{ site.title }}, {{ site.email }}, and so on.
 # You can create any custom variable you would like, and they will be accessible
 # in the templates via {{ site.myvariable }}.
-title: roms-bering-sea supplementary material
+title: roms-bering-sea
 email: 
 description: >- # this means to ignore newlines until "baseurl:"
   An informal collection of material related to the roms-bering-sea 
@@ -60,7 +60,7 @@ plugins:
 
 author:
   name   : "The Bering10K ROMS domain"
-  avatar : "/assets/images/bio-photo.jpg"
+  avatar : "/assets/images/b10k.png"
   bio    : "The Bering10K ROMS domain and associated biological modules"
   links:
     # - label: "Website"
