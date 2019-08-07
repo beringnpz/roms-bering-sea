@@ -516,7 +516,7 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_DetBen, Ver_PhS_Out, Ver_PhL_DetBen, Ver_PhL_Out, Ver_Det_DetBen, Ver_Det_Out, Ver_DetF_DetBen, Ver_DetF_Out, Ver_NCaO_DetBen, Ver_NCaS_DetF, Ver_NCaS_DetBen
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Frz_PhL_IPhL, Frz_NO3_INO3, Frz_NH4_INH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: prod_PhS, prod_PhL, prod_MZL, prod_Cop, prod_NCaS, prod_EupS, prod_NCaO, prod_EupO, prod_Jel, prod_Ben, prod_IcePhL
-      real(r8), dimension(IminS:ImaxS,N(ng)) :: total_prod, total_resp, total_remin, ice_TIC, ice_alk 
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: total_prod, total_resp, total_remin
 
 !#ifdef CARBON
 !      real(r8), dimension(IminS:ImaxS,N(ng)) :: CO2_Flux 
@@ -1146,18 +1146,6 @@
             Bio2d(i,N(ng),iiIceNO3) = Bio3d(i,N(ng),iiIceNO3) * aidz
             Bio2d(i,N(ng),iiIceNH4) = Bio3d(i,N(ng),iiIceNH4) * aidz
 
-!#ifdef CARBON
-!            Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) + (hi(i,j,nnew) * 1650.0_r8 *dtdays)
-!
-!            Bio2d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) * Hz(i,j,N(ng)) 
-!            print *, 'Bio3d(TIC)', Bio3d(i,N(ng),iiTIC_)
-!            print *, 'hi',hi(i,j,nnew)
-!            print *, 'Hz', Hz(i,j,N(ng))  
-!            print *, 'dtdays', dtdays
-!            print *, 'added term', (hi(i,j,nnew) * 1650.0_r8 *dtdays)
-!            print *, 'Bio3d(TIC)_post', Bio3d(i,N(ng),iiTIC_)
-!            print *, 'Bio2d(TIC)_post', Bio2d(i,N(ng),iiTIC_)  
-!#endif
           elseif (ice_status(i,j) .le. 0.0) then ! should be <0, but sometimes bio w/o ice?
 
             ! If ice disappeared, biomass that was in the ice gets dumped
@@ -1196,57 +1184,6 @@
             Bio3d(i,N(ng),iiIceNO3) = 0.0_r8
             Bio3d(i,N(ng),iiIceNH4) = 0.0_r8
 
-!#ifdef CARBON
-!          Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) - (hi(i,j,nstp) * 1650.0_r8 *dtdays)
-!          
-!          Bio2d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) * Hz(i,j,N(ng)) 
-!          IF (Bio3d(i,N(ng),iiTIC_).gt.4000.0_r8) THEN
-!                       print *, 'hi(nstp)', hi(i,j,nstp)
-!                       print *, 'term', (hi(i,j,nstp) * 1650.0_r8 *dtdays)
-!                       print *, 'TIC', Bio3d(i,N(ng),iiTIC_) 
-!          END IF
-!
-!          elseif (ice_status(i,j) .eq. 2.0) then
-!
-!          if (hi(i,j,nnew).ge.hi(i,j,nstp)) then
-!           IF (j.EQ.228.0_r8) THEN
-!              IF (i.EQ.53.0_r8) THEN
-!                  print *, 'TIC_start', Bio3d(i,N(ng),iiTIC_)
-!              END IF
-!          END IF
-!            Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_)                 &
-!       &        + ((hi(i,j,nnew)-hi(i,j,nstp)) * 1650.0_r8 *dtdays)
-!!          print *, 'hi(nnew)', hi(i,j,nnew)
-!!          print *, 'hi(nstp)', hi(i,j,nstp) 
-!          IF (j.EQ.228.0_r8) THEN
-!              IF (i.EQ.53.0_r8) THEN
-!                  print *, 'TIC_mid', Bio3d(i,N(ng),iiTIC_) 
-!                  print *, 'added term', ((hi(i,j,nnew)-hi(i,j,nstp)) * 1650.0_r8 *dtdays)
-!              END IF
-!          END IF
-!          elseif (hi(i,j,nnew).lt.hi(i,j,nstp)) then
-!            Bio3d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_)                 & 
-!       &        - ((hi(i,j,nstp)-hi(i,j,nnew)) * 1650.0_r8 *dtdays)
-!          IF (j.EQ.228.0_r8) THEN
-!            IF (i.EQ.53.0_r8) THEN
-!              print *, 'subracted term', ((hi(i,j,nstp)-hi(i,j,nnew)) * 1650.0_r8 *dtdays) 
-!            END IF
-!          END IF      
-!          endif
-!
-!          Bio2d(i,N(ng),iiTIC_) = Bio3d(i,N(ng),iiTIC_) * Hz(i,j,N(ng)) 
-!!           print *, 'Bio3d(TIC)', Bio3d(i,N(ng),iiTIC_)
-!!           print *, 'Hz',  Hz(i,j,N(ng)) 
-!         IF (j.EQ.228.0_r8) THEN
-!                   IF (i.EQ.53.0_r8) THEN
-!                    print *, 'TIC_end', Bio3d(i,N(ng),iiTIC_)
-!                    print *, 'hi(nnew)', hi(i,j,nnew)
-!                    print *, 'hi(nstp)', hi(i,j,nstp)
-!                    print *, 'Hz', Hz(i,j,N(ng))
-!                   END IF
-!         END IF 
-!#endif  
-!
 !           elseif (ice_status(i,j) .eq. 0.0) then ! mostly debugging
 !
 !             if ((Bio3d(i,N(ng),iiIcePhL) .gt. 0) .or.                   &
@@ -1268,11 +1205,6 @@
 !               endif
 !             endif
           endif
-!        IF (j.EQ.228.0_r8) THEN
-!                   IF (i.EQ.53.0_r8) THEN
-!                    print *, 'TIC_finish', Bio3d(i,N(ng),iiTIC_)
-!                   END IF
-!         END IF
 
         END DO
 #endif
