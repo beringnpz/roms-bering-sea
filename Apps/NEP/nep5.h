@@ -329,12 +329,13 @@
 # undef CORRECT_TEMP_BIAS  /* corrects ROMS temp for biology only */
 #endif
 
-#undef  OFFLINE_BIOLOGY    /* define if offline simulation of bio tracers */
+/*
+#undef  OFFLINE_BIOLOGY     define if offline simulation of bio tracers 
 #if defined OFFLINE_BIOLOGY
-# define AKSCLIMATOLOGY    /* Processing of AKS climatology */
-# undef ANA_AKSCLIMA       /* Processing of AKS climatology */
+# define AKSCLIMATOLOGY     Processing of AKS climatology 
+# undef ANA_AKSCLIMA        Processing of AKS climatology 
 #endif
-
+*/
 
 /* Here's the new stuff for feast*/
 
