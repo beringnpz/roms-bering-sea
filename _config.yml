@@ -23,7 +23,7 @@ twitter_username:
 github_username: kakearney
 minimal_mistakes_skin: default
 search: true
-repository: kakearney/roms-bering-sea
+repository: beringnpz/roms-bering-sea
 
 # Build settings
 markdown: kramdown
@@ -71,7 +71,7 @@ author:
     #   url: "https://twitter.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/kakearney/roms-bering-sea"
+      url: "https://github.com/beringnpz/roms-bering-sea"
     # - label: "Instagram"
     #   icon: "fab fa-fw fa-instagram"
     #   url: "https://instagram.com/"
@@ -83,7 +83,7 @@ footer:
     #   url: "https://twitter.com/"
     - label: "GitHub"
       icon: "fab fa-fw fa-github"
-      url: "https://github.com/kakearney/roms-bering-sea"
+      url: "https://github.com/beringnpz/roms-bering-sea"
     # - label: "Instagram"
     #   icon: "fab fa-fw fa-instagram"
     #   url: "https://instagram.com/"
