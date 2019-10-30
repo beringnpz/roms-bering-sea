@@ -2868,20 +2868,44 @@
 #endif
 
 #ifdef UNIMAK
+            ! Age tracer sources are hard-coded for now; the 5 units m^-3 d^-1 is pretty 
+            ! arbitrary, but seems to work
+
+            ! Dye tracer 1-2: Unimak Pass and Amukta Pass sources
+
+            if (((j .eq. 57) .and. (i .eq. 75)) .or. ((j .eq. 82) .and. (i .eq. 45))) then
+              itrc = inert(1)
+              t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays 
+            endif
+
+            ! Dye tracer 3-4: Along shelf break source
+
+            if ((z_w(i,j,0) .lt. -250.0_r8) .and.  (z_w(i,j,0) .gt. -350.0_r8)) then
+              itrc = inert(3)
+              t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays 
+            endif
+
+            ! Dye tracer 5-6: M2 source
+
+            if ((j .eq. 62) .and. (i .eq. 99)) then
+              itrc = inert(5)
+              t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays 
+            endif
+
             ! Age tracer dye source, 5 units m^-3 d^-1 (kinda arbitrary value)
 
-# ifdef DYESOURCE1
-            if ((j .eq. 57) .and. (i .eq. 75)) then ! Unimak Pass only
-# elif defined DYESOURCE2
-            if ((j .eq. 82) .and. (i .eq. 45)) then ! Amukta Pass only
-# elif defined DYESOURCE3
-            if (((j .eq. 57) .and. (i .eq. 75)) .or. ((j .eq. 82) .and. (i .eq. 45))) then ! both
-# endif
-              DO ip=1,NPT,2
-                itrc=inert(ip)
-                t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays 
-              END DO
-            endif
+! # ifdef DYESOURCE1
+!             if ((j .eq. 57) .and. (i .eq. 75)) then ! Unimak Pass only
+! # elif defined DYESOURCE2
+!             if ((j .eq. 82) .and. (i .eq. 45)) then ! Amukta Pass only
+! # elif defined DYESOURCE3
+!             if (((j .eq. 57) .and. (i .eq. 75)) .or. ((j .eq. 82) .and. (i .eq. 45))) then ! both
+! # endif
+!               DO ip=1,NPT,2
+!                 itrc=inert(ip)
+!                 t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays
+!               END DO
+!             endif
 #endif
 
           END DO
