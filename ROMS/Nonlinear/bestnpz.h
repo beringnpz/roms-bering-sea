@@ -2880,10 +2880,10 @@
 
             ! Dye tracer 3-4: Along shelf break source
 
-            if ((z_w(i,j,0) .lt. -250.0_r8) .and.  (z_w(i,j,0) .gt. -350.0_r8)) then
-              itrc = inert(3)
-              t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays 
-            endif
+!             if ((z_w(i,j,0) .lt. -250.0_r8) .and.  (z_w(i,j,0) .gt. -350.0_r8)) then
+!               itrc = inert(3)
+!               t(i,j,k,nnew,itrc) = t(i,j,k,nnew,itrc) + 5.0_r8*Hz(i,j,k)*dtdays
+!             endif
 
             ! Dye tracer 5-6: M2 source
 
