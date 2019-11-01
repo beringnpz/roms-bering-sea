@@ -465,9 +465,9 @@
 #   else
        integer, parameter :: NBT = 10
 #   endif
-# endif
 # elif defined UNIMAK
        integer, parameter :: NBT = 0
+# endif
 #else
         integer, parameter :: NBT = 0
 #endif
