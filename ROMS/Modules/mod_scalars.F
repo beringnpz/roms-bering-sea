@@ -293,6 +293,9 @@
 #  endif
 # endif
 #endif
+#ifdef UNIMAK
+        integer, pointer :: idbio(:)  ! Biological tracers
+#endif
 
 
 #ifdef BIO_GOANPZ
