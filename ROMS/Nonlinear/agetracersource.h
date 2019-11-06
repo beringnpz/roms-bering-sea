@@ -150,7 +150,7 @@
 !
 !  Set time-stepping according to the number of iterations.
 !
-      dtdays=dt(ng)*sec2day/REAL(BioIter(ng),r8)
+      dtdays=dt(ng)*sec2day ! Note- hard-coding BioIter(ng) = 1
 
 !
 !  Compute inverse thickness to avoid repeated divisions.
