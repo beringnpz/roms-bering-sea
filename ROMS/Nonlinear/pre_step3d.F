@@ -348,6 +348,10 @@
       integer :: kk
       real(r8) :: PhSsum,PhLsum,PhSave,PhLave
       real(r8) :: cffa1,cffa2,cffa3
+      
+# if defined MEANAGE && defined T_PASSIVE
+      integer :: iage
+# endif
 
 # include "set_bounds.h"
 
@@ -674,6 +678,33 @@
           END DO
         END DO K_LOOP
       END DO T_LOOP1
+      
+#  if (defined MEANAGE && defined T_PASSIVE) && !defined TS_MPDATA
+      !
+      !  If inert passive tracer and Mean Age, compute age concentration (even
+      !  inert index) forced by the right-hand-side term that is concentration
+      !  of an associated conservative passive tracer (odd inert index).
+      !  Implemented and tested by W.G. Zhang and J. Wilkin. (m Tunits)
+      !
+            IF (iic(ng).eq.ntfirst(ng)) THEN
+              cff=0.5_r8*dt(ng)
+            ELSE
+              cff=(1.0_r8-Gamma)*dt(ng)
+            END IF
+      !
+            DO itrc=1,NPT,2
+              iage=inert(itrc+1)                     ! even inert tracer index
+              DO k=1,N(ng)
+                DO j=Jstr,Jend
+                  DO i=Istr,Iend
+                    t(i,j,k,3,iage)=t(i,j,k,3,iage)+                          &
+           &                        cff*Hz(i,j,k)*                            &
+           &                        t(i,j,k,nnew,inert(itrc))
+                  END DO
+                END DO
+              END DO
+            END DO
+#  endif
 !
 !  Compute artificial continuity equation (same for all tracers) and
 !  load it into private array DC (1/m). Notice pipelined J-loop.
