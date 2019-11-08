@@ -358,13 +358,8 @@
 
 #ifdef MEANAGE
 # define T_PASSIVE
-# define ANA_PASSIVE
 # define ANA_BPFLUX
 # define ANA_SPFLUX
-# undef ANA_PSOURCE
-# undef TS_PSOURCE
-# undef UV_PSOURCE
-# undef Q_PSOURCE
 #endif
 
 
