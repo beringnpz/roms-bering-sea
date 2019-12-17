@@ -357,5 +357,13 @@
 # undef FEAST_NOEXCHANGE
 #endif
 
+/* Some extras if running the mean-age-tracer option */
+
+#ifdef MEANAGE
+# define T_PASSIVE
+# define ANA_BPFLUX
+# define ANA_SPFLUX
+#endif
+
 
 

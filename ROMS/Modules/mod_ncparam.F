@@ -3805,7 +3805,7 @@
 !
 !  Adjust information for all inert passive tracers.
 ! 
-#ifdef FEAST
+# if (defined FEAST || defined MEANAGE)
               SELECT CASE (TRIM(ADJUSTL(Vinfo(6))))
                 CASE ('idTvar(inert(i))')
                   IF (NPT.gt.0) THEN

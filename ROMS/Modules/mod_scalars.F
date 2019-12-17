@@ -302,6 +302,9 @@
 #  endif
 # endif
 #endif
+#ifdef MEANAGE
+        integer, pointer :: idbio(:)  ! Biological tracers
+#endif
 
 
 #ifdef BIO_GOANPZ
