@@ -43,8 +43,10 @@ Build
 ocean?
 oceanM_*
 oceanG_*
+buildbering10k.sh
 core*
 .svn*
 Compilers/make_macros.mk
+Compilers/Linux-ifort.mk
 *~
 *.h.gch

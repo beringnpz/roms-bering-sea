@@ -142,10 +142,18 @@
       i3Stat142 = 142
       i3Stat143 = 143
       i3Stat144 = 144
-#  ifdef FEAST
       i3Stat145 = 145
       i3Stat146 = 146
       i3Stat147 = 147
       i3Stat148 = 148
+# ifdef CARBON
       i3Stat149 = 149
+      i3Stat150 = 150
+# endif
+#  ifdef FEAST
+      i3Stat151 = 151
+      i3Stat152 = 152
+      i3Stat153 = 153
+      i3Stat154 = 154
+      i3Stat155 = 155
 #  endif

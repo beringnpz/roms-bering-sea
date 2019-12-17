@@ -440,21 +440,72 @@
 !
 !  Number of tracers for the Bering Sea ecosystem model.
 !
-#  if defined JELLY
-#    if defined IRON_LIMIT
-        integer, parameter :: NBT = 15
-#    else
-        integer, parameter :: NBT = 14
-#    endif
-#  else
+#  if defined CARBON
+#    if defined JELLY
+#     if defined OXYGEN 
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 18
+#      else
+          integer, parameter :: NBT = 17
+#      endif
+#     else
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 17
+#      else
+          integer, parameter :: NBT = 16
+#      endif
+#     endif 
 
-#    if defined IRON_LIMIT
-        integer, parameter :: NBT = 14
 #    else
-        integer, parameter :: NBT = 13
+#     if defined OXYGEN 
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 17
+#      else
+          integer, parameter :: NBT = 16
+#      endif
+#     else
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 16
+#      else
+          integer, parameter :: NBT = 15
+#      endif
+#     endif  
+#    endif
+
+#  else
+#    if defined JELLY
+#     if defined OXYGEN
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 16
+#      else
+          integer, parameter :: NBT = 15
+#      endif
+#     else
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 15
+#      else
+          integer, parameter :: NBT = 14
+#      endif
+#     endif
+
+#    else
+#     if defined OXYGEN
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 15
+#      else
+          integer, parameter :: NBT = 14
+#      endif
+#     else
+#      if defined IRON_LIMIT
+          integer, parameter :: NBT = 14
+#      else
+          integer, parameter :: NBT = 13
+#      endif
+#     endif
 #    endif
 
 #  endif
+
 # elif defined BIO_GOANPZ
 !
 !  Number of tracers for the Gulf of Alaska ecosystem model.
@@ -499,7 +550,7 @@
       !------------------------------------
 
         integer, dimension(Ngrids) :: NTS2
-        integer, parameter :: NBTS2 = 1
+        integer, parameter :: NBTS2 = 3
 # endif
 # ifdef PROD2
       !------------------------------------

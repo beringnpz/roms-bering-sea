@@ -33,7 +33,7 @@
 # undef SPLINES
 #endif
 #undef FLOATS
-#define STATIONS
+#undef STATIONS
 #undef WET_DRY
 
 #undef T_PASSIVE
@@ -320,8 +320,11 @@
 # define TCLM_NUDGING      /* Nudging of tracer climatology for iron */
 # define ANA_TCLIMA        /* analytical tracers climatology for iron */
 # define TCLIMATOLOGY      /* Processing of tracer climatology for iron */
+# define CARBON		   /* Carbonate chemistry package */
+# define CARBON_FLUX       /* For river fluxes of DIC,TA */
+# define OXYGEN            /* For oxygen cycling */
 # define STATIONARY
-# undef STATIONARY2
+# define STATIONARY2
 # undef PROD3 
 # undef PROD2
 # undef SINKVAR            /* for variable sinking rate*/

@@ -142,10 +142,18 @@
        integer :: i3Stat142
        integer :: i3Stat143
        integer :: i3Stat144
-#  ifdef FEAST
        integer :: i3Stat145
        integer :: i3Stat146
        integer :: i3Stat147
        integer :: i3Stat148
+# ifdef CARBON
        integer :: i3Stat149
+       integer :: i3Stat150
+# endif
+#  ifdef FEAST
+       integer :: i3Stat151
+       integer :: i3Stat152
+       integer :: i3Stat153
+       integer :: i3Stat154
+       integer :: i3Stat155
 #  endif

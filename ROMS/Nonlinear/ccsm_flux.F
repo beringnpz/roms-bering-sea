@@ -99,6 +99,10 @@ contains
 # endif
 # ifdef RUNOFF
      &                     FORCES(ng) % runoff,                         &
+# ifdef CARBON_FLUX
+     &                     FORCES(ng) % TAFlux,                         &
+     &                     FORCES(ng) % DICFlux,                        &
+# endif
 # endif
      &                     FORCES(ng) % rain,                           &
      &                     FORCES(ng) % lhflx,                          &
@@ -182,6 +186,9 @@ contains
 # endif
 # ifdef RUNOFF
      &                           runoff,                                &
+# ifdef CARBON_FLUX
+     &                           TAFlux, DICFlux,                       &
+# endif
 # endif
      &                           rain, lhflx, lrflx, shflx,             &
      &                           srflx, stflx,                          &
@@ -281,6 +288,10 @@ contains
       real(r8), intent(in) :: rain(LBi:,LBj:)
 #  ifdef RUNOFF
       real(r8), intent(in) :: runoff(LBi:,LBj:)
+#  ifdef CARBON_FLUX
+      real(r8), intent(in) :: TAFlux(LBi:,LBj:)
+      real(r8), intent(in) :: DICFlux(LBi:,LBj:)
+# endif
 #  endif
 
       real(r8), intent(inout) :: lhflx(LBi:,LBj:)
@@ -366,6 +377,10 @@ contains
       real(r8), intent(in) :: rain(LBi:UBi,LBj:UBj)
 #  ifdef RUNOFF
       real(r8), intent(in) :: runoff(LBi:UBi,LBj:UBj)
+#  ifdef CARBON_FLUX
+      real(r8), intent(in) :: TAFlux(LBi:UBi,LBj:UBj)
+      real(r8), intent(in) :: DICFlux(LBi:UBi,LBj:UBj)
+#  endif
 #  endif
 
       real(r8), intent(inout) :: lhflx(LBi:UBi,LBj:UBj)
@@ -958,8 +973,36 @@ contains
 # ifdef RUNOFF
           stflx(i,j,isalt) = stflx(i,j,isalt) -                         &
      &                        cff*runoff(i,j)
+# ifdef CARBON_FLUX
+          stflx(i,j,iTAlk) = (stflx(i,j,iTAlk) + cff*TAFlux(i,j)        &
+     &         + (1._r8 - (cff*runoff(i,j)))*t(i,j,N(ng),nrhs,iTAlk))   &
+     &         - t(i,j,N(ng),nrhs,iTAlk)
+          stflx(i,j,iTIC_) = (stflx(i,j,iTIC_) + cff*DICFlux(i,j)       &
+     &         + (1._r8 - (cff*runoff(i,j)))*t(i,j,N(ng),nrhs,iTIC_))   &
+     &         - t(i,j,N(ng),nrhs,iTIC_)
+!               IF (j.EQ.95.0_r8) THEN
+!                         IF (i.EQ.144.0_r8) THEN
+!          print *, 'cff', cff
+!          print *, 'TAflux', TAFlux(i,j)
+!          print *, 'runoff', runoff(i,j)
+!          print *, 'Alk', t(i,j,N(ng),nrhs,iTAlk)
+!          print *, 'stalk', stflx(i,j,iTAlk)
+!          print *, 'stdic', stflx(i,j,iTIC_)
+!                         END IF
+!               END IF 
+# endif
 #  ifdef MASKING
           stflx(i,j,isalt)=stflx(i,j,isalt)*rmask(i,j)
+# ifdef CARBON_FLUX
+          stflx(i,j,iTAlk)=stflx(i,j,iTAlk)*rmask(i,j)
+          stflx(i,j,iTIC_)=stflx(i,j,iTIC_)*rmask(i,j)
+!               IF (j.EQ.95.0_r8) THEN
+!                         IF (i.EQ.144.0_r8) THEN
+!          print *, 'sttic', stflx(i,j,iTIC_)
+!          print *, 'stalk', stflx(i,j,iTAlk)
+!                         END IF
+!               END IF
+# endif
 #  endif
 # endif
 

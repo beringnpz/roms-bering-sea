@@ -393,7 +393,7 @@
           ! production in surface layers over deep water; we replicate the light 
           ! attenuation calculations used in the biological module here to maintain 
           ! internal consistency.
-          
+
           Ifrac = 1
           DO k=N(ng),1,-1
           
@@ -414,7 +414,6 @@
             else
               katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2 
             endif
-            
             ! Fraction of light in layer (averaged over layer using 
             ! Simpson's rule).  Attenuation uses Jerlov water type 
             ! equation, following Paulson and Simpson (1977, J. Phys. 

@@ -1883,13 +1883,13 @@
 #   endif
 #   ifdef STATIONARY2
         DO itrc=1,NTS2(ng)
-!         DO k=1,N(ng)
+!           DO k=1,N(ng)
             DO j=JstrR,JendR
               DO i=IstrR,IendR
-                avgst2(i,j,itrc)=avgst2(i,j,itrc)+st2(i,j,Nout,itrc)
+                avgst2(i,j,itrc)=st2(i,j,Nout,itrc)
               END DO
             END DO
-!         END DO
+!           END DO
         END DO
 #   endif
 #   ifdef BENTHIC
@@ -1898,12 +1898,13 @@
             DO j=JstrR,JendR
               DO i=IstrR,IendR
                 avgbt(i,j,k,itrc)=avgbt(i,j,k,itrc)+bt(i,j,k,Nout,itrc)
-!               if(i.eq.144.and.j.eq.144) THEN
-!                 print*,'setAvg'
-!                 print*,'avgbt(i,j,k,itrc)=', avgbt(i,j,k,itrc)
-!                 print*,'bt(i,j,k,Nout,1)=', bt(i,j,k,Nout,1)
-!                 print*,''
-!               end if 
+!         if(i.eq.144.and.j.eq.144) THEN
+!          print*,'setAvg'
+!          print*,'avgbt(i,j,k,itrc)=', avgbt(i,j,k,itrc)
+!          
+!          print*,'bt(i,j,k,Nout,1)=', bt(i,j,k,Nout,1)
+!          print*,''
+!          end if 
               END DO
             END DO
           END DO
@@ -1912,7 +1913,8 @@
 #   ifdef ICE_BIO
         DO itrc=1,NIceT(ng)
           DO j=JstrR,JendR
-            DO i=IstrR,IendR	
+            DO i=IstrR,IendR
+
 #    ifdef CLIM_ICE_1D
               avgit(i,j,itrc)=avgit(i,j,itrc)+it(i,j,Nout,itrc)
 #    elif defined BERING_10K
@@ -1920,6 +1922,7 @@
 !               avgit(i,j,2)=avgit(i,j,itrc)+IceNO3(i,j,Nout)
 !               avgit(i,j,3)=avgit(i,j,itrc)+IceNH4(i,j,Nout)
 #    endif
+              END DO
             END DO
           END DO
         END DO
@@ -2341,14 +2344,14 @@
           END DO
         END DO
 #   endif
-#   ifdef STATIONARY2
-        DO itrc=1,NTS2(ng)
-          DO j=JstrR,JendR
-            DO i=IstrR,IendR
-              avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
-            END DO
-          END DO
-        END DO
+! #   ifdef STATIONARY2
+!         DO itrc=1,NTS2(ng)
+!           DO j=JstrR,JendR
+!             DO i=IstrR,IendR
+!               avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
+!             END DO
+!           END DO
+!         END DO
 #   endif
 #  endif
 !       DO itrc=1,NTS(ng)
