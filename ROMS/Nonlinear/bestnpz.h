@@ -856,9 +856,11 @@
         iiIcePhL = 18
         iiIceNO3 = 19
         iiIceNH4 = 20
+#ifdef CARBON
         iiTIC_   = 21
         iiTAlk   = 22
         iiOxyg   = 23
+#endif
 
         ! All state variables will be saved in two different versions:
         ! mass m^-3 (Bio3d) and mass m^-2 (Bio2d).  This redundancy
