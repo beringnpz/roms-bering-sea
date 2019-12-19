@@ -2162,13 +2162,13 @@
             avgchu_iw(i,j)=fac*avgchu_iw(i,j)
 #  endif
 
-#ifdef ICE_BIO 
-# ifdef BERING_10K
+#  ifdef ICE_BIO 
+#   ifdef BERING_10K
             avgINO3(i,j)=fac*avgINO3(i,j)
 	    avgINH4(i,j)=fac*avgINH4(i,j)
 	    avgIPhL(i,j)=fac*avgIPhL(i,j)
             avgILog(i,j)=fac*avgILog(i,j)
-#  endif
+#   endif
 #  endif
 
 #  ifdef AVERAGES_FLUXES
@@ -2352,7 +2352,6 @@
 !             END DO
 !           END DO
 !         END DO
-#   endif
 #  endif
 !       DO itrc=1,NTS(ng)
 !         DO k=1,N(ng)
