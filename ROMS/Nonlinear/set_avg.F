@@ -1922,7 +1922,6 @@
 !               avgit(i,j,2)=avgit(i,j,itrc)+IceNO3(i,j,Nout)
 !               avgit(i,j,3)=avgit(i,j,itrc)+IceNH4(i,j,Nout)
 #    endif
-              END DO
             END DO
           END DO
         END DO
