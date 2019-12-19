@@ -33,7 +33,7 @@
 # undef SPLINES
 #endif
 #undef FLOATS
-#undef STATIONS
+#define STATIONS
 #undef WET_DRY
 
 #undef T_PASSIVE
@@ -308,9 +308,9 @@
 
 # undef LIMIT_BIO_AKT
 # if !defined(NEWSHADE) && !defined(NEWSHADESHALLOW) && !defined(COKELET)
-#   define COKELET           /* updated light attenuation, based on  */
+#   define COKELET         /* updated light attenuation, based on  */
 # endif
-# undef KODIAK_IRAD        /* Generate irradiance with curve matching Kodiak data
+# undef KODIAK_IRAD        /* Generate irradiance with curve matching Kodiak data 
                               Else use Sarah Hinckly originl code   */
 # define JELLY
 # define IRON_LIMIT        /* Add iron  */
@@ -320,11 +320,13 @@
 # define TCLM_NUDGING      /* Nudging of tracer climatology for iron */
 # define ANA_TCLIMA        /* analytical tracers climatology for iron */
 # define TCLIMATOLOGY      /* Processing of tracer climatology for iron */
-# define CARBON		   /* Carbonate chemistry package */
-# define CARBON_FLUX       /* For river fluxes of DIC,TA */
-# define OXYGEN            /* For oxygen cycling */
+// # define CARBON         /* Carbonate chemistry package */
+# if defined CARBON
+#  define CARBON_FLUX      /* For river fluxes of DIC,TA */
+#  define OXYGEN           /* For oxygen cycling */
+#  define STATIONARY2
+# endif
 # define STATIONARY
-# define STATIONARY2
 # undef PROD3 
 # undef PROD2
 # undef SINKVAR            /* for variable sinking rate*/
@@ -355,14 +357,6 @@
 # define ANA_BPFLUX
 # define ANA_SPFLUX
 # undef FEAST_NOEXCHANGE
-#endif
-
-/* Some extras if running the mean-age-tracer option */
-
-#ifdef MEANAGE
-# define T_PASSIVE
-# define ANA_BPFLUX
-# define ANA_SPFLUX
 #endif
 
 
