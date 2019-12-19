@@ -3268,8 +3268,10 @@
               st(i,j,k,nstp,146) = total_prod(i,k)
               st(i,j,k,nstp,147) = total_resp(i,k)
               st(i,j,k,nstp,148) = total_remin(i,k)
+# ifdef CARBON
               st(i,j,k,nstp,149) = Frz_TIC(i,k)/12.0_r8
               st(i,j,k,nstp,150) = Frz_TAlk(i,k)*xi
+# endif
 
             END DO
           END DO
