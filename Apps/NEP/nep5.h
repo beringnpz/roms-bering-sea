@@ -147,13 +147,18 @@
 # define BULK_FLUXES
 # define CCSM_FLUXES
 # if defined BULK_FLUXES || defined CCSM_FLUXES
-#  define LONGWAVE_OUT
 #  define  DIURNAL_SRFLUX 
 #  define EMINUSP
 #  undef ANA_SRFLUX
 #  undef ALBEDO
 #  define ALBEDO_CURVE  
-#  undef LONGWAVE
+#  if defined NETLONGWAVE /* A B10K-specific option, to keep LONGWAVE_OUT the default */
+#   undef LONGWAVE_OUT
+#   undef LONGWAVE
+#  else
+#   define LONGWAVE_OUT
+#   undef LONGWAVE
+#  endif
 # endif
 #endif
  
