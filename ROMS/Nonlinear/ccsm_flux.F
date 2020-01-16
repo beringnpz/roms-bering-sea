@@ -863,7 +863,8 @@ contains
 #   endif
 !
 ! Short-wave radiation to ice
-          qswi = (1._r8-albs)*SRad(i,j)
+!wei          qswi = (1._r8-albs)*SRad(i,j)
+          qswi = SRad(i,j)
 ! Already in W/m**2
           RHS_Ice(i,j) = RHS_Ice(i,j) + qswi
 
@@ -928,7 +929,8 @@ contains
 !also test increasing albedo by 2x
           caw_curve = 1._r8-2.*(0.069_r8 - 0.011_r8*cos(2*deg2rad*latr(i,j)))
 !          caw_curve = 1._r8-(0.069_r8 - 0.011_r8*cos(2*deg2rad*latr(i,j)))
-          srflx(i,j) = srflx(i,j)*caw_curve
+!wei          srflx(i,j) = srflx(i,j)*caw_curve
+          srflx(i,j) = srflx(i,j)!*caw_curve
 # endif
 # endif
 # if defined LONGWAVE_OUT || defined LONGWAVE
