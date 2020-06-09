@@ -1,17 +1,17 @@
 ---
-title: "Supplemental material: Kearney et al, 2019"
+title: "Supplemental material: Kearney et al, 2020"
 tags:
   - supplement
 ---
 
 
-Supplementary material for Kearney et al., 2019: A coupled pelagic-benthic-sympagic biogeochemical model for the Bering Sea: documentation and validation of the BESTNPZ model within a high-resolution regional ocean model.
+Supplementary material for Kearney et al., 2020: A coupled pelagic-benthic-sympagic biogeochemical model for the Bering Sea: documentation and validation of the BESTNPZ model (v2019.08.23) within a high-resolution regional ocean model
 
 
 Full citation:
 
 
-Kearney, K, Hermann, A, Cheng, W, Ortiz, I, Aydin, K. A coupled pelagic-benthic-sympagic biogeochemical model for the Bering Sea: documentation and validation of the BESTNPZ model within a high-resolution regional ocean model. In prep for Geosci. Model. Dev.
+Kearney K, Hermann A, Cheng W, Ortiz I, Aydin K (2020) A coupled pelagic-benthic-sympagic biogeochemical model for the Bering Sea: documentation and validation of the BESTNPZ model (v2019.08.23) within a high-resolution regional ocean model. Geosci Model Dev 13:597-650. [DOI:10.5194/gmd-13-597-2020](https://doi.org/10.5194/gmd-13-597-2020) 
 
 
 
