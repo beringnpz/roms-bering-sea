@@ -9,6 +9,9 @@ For a detailed description of the Bering Sea ROMS model, please see the followin
 
 - Hermann AJ, Gibson GA, Bond NA, Curchitser EN, Hedstrom K, Cheng W, Wang M, Stabeno PJ, Eisner L, Cieciel KD (2013) A multivariate analysis of observed and modeled biophysical variability on the Bering Sea shelf: Multidecadal hindcasts (1970-2009) and forecasts (2010-2040). Deep Res Part II Top Stud Oceanogr 94:121–139 [link](http://doi.org/10.1016/j.dsr2.2013.04.007)
 - Hermann AJ, Curchitser EN, Hedstrom K, Cheng W, Bond NA, Wang M, Aydin K, Stabeno PJ, Cokelet ED, Gibson GA (2016) Projected future biophysical states of the Bering Sea. Deep Sea Res Part II Top Stud Oceanogr 134:30–47 [link](http://doi.org/10.1016/j.dsr2.2015.11.001)
+- Kearney K, Hermann A, Cheng W, Ortiz I, Aydin K (2020) A coupled pelagic-benthic-sympagic biogeochemical model for the Bering Sea: documentation and validation of the BESTNPZ model (v2019.08.23) within a high-resolution regional ocean model. Geosci Model Dev 13:597--650 [link](http://dx.doi.org/10.5194/gmd-13-597-2020)
+
+Each of these 3 paper use a slightly different version of the model; the Kearney et al., 2020 paper includes a brief history of the changes that have been implemented between each publication.
 
 ### The Northeast Pacific (NEP) model
 
@@ -21,4 +24,4 @@ The Bering Sea ROMS model was derived from the larger Northeast Pacific (NEP5) R
 The lower trophic level BESTNPZ model is described here:
 
 - Gibson GA, Spitz YH (2011) Impacts of biological parameterization, initial conditions, and environmental forcing on parameter sensitivity and uncertainty in a marine ecosystem model for the Bering Sea. J Mar Syst 88:214–231 [link](http://dx.doi.org/10.1016/j.jmarsys.2011.04.008)
-- Kearney KA, Hermann A, Cheng W, Ortiz I, Aydin K (in prep) A coupled pelagic-benthic-sympagic biogeochemical model for the Bering Sea: documentation and validation of the BESTNPZ model within a high-resolution regional ocean model.
+- Kearney K, Hermann A, Cheng W, Ortiz I, Aydin K (2020) A coupled pelagic-benthic-sympagic biogeochemical model for the Bering Sea: documentation and validation of the BESTNPZ model (v2019.08.23) within a high-resolution regional ocean model. Geosci Model Dev 13:597--650 [link](http://dx.doi.org/10.5194/gmd-13-597-2020)
