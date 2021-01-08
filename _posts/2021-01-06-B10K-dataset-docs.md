@@ -14,8 +14,8 @@ Model source code is available on GitHub: [beringnpz/roms-bering-sea](https://gi
 
 A few guides for working with the Bering10K output dataset:
 
-- [`Bering10K_readme.pdf`](https://drive.google.com/file/d/1uG4IF5deEmIvAxEGNYjTRh9p6Y8IB5v7/view?usp=sharing): Provides an overview of the simulation variants, including different base model versions, parent model forcing datasets, and biological modules.
-- [`Bering10K_ROMS_coordinates.pdf`](https://drive.google.com/file/d/1WZTrnG9WXQwM4zXO6n9G345P5eRpkSUW/view?usp=sharing): A tutorial on working with the curvilinear, sigma-coordinate ROMS spatial grid, aimed at those whos will be working data on the native grid.
+- [`Bering10K_readme.pdf`](https://drive.google.com/file/d/1uG4IF5deEmIvAxEGNYjTRh9p6Y8IB5v7/view?usp=sharing): This provides an overview of the simulation variants, including different base model versions, parent model forcing datasets, and biological modules.  It also explains the naming scheme of output files.
+- [`Bering10K_ROMS_coordinates.pdf`](https://drive.google.com/file/d/1WZTrnG9WXQwM4zXO6n9G345P5eRpkSUW/view?usp=sharing): A tutorial on working with the curvilinear, sigma-coordinate ROMS spatial grid, aimed at those who will be working with data on the native grid.
 - [`Bering10K_simulation_variables.xlsx`](https://drive.google.com/file/d/1C1FCxRMBm0uBv2wEKwrGfHmLnjt_gFvG/view?usp=sharing): A list of all simulations and the archived output variables associated with each, updated periodically as new simulations are run or new variables are made available.
 
 Please also see the [Literature page](../literature.md) for a list scientific publications related to the model, including model description and skill assessment.
