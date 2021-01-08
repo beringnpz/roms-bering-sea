@@ -18,7 +18,7 @@ A few guides for working with the Bering10K output dataset:
 - [`Bering10K_ROMS_coordinates.pdf`](https://drive.google.com/file/d/1WZTrnG9WXQwM4zXO6n9G345P5eRpkSUW/view?usp=sharing): A tutorial on working with the curvilinear, sigma-coordinate ROMS spatial grid, aimed at those who will be working with data on the native grid.
 - [`Bering10K_simulation_variables.xlsx`](https://drive.google.com/file/d/1C1FCxRMBm0uBv2wEKwrGfHmLnjt_gFvG/view?usp=sharing): A list of all simulations and the archived output variables associated with each, updated periodically as new simulations are run or new variables are made available.
 
-Please also see the [Literature page](../literature.md) for a list scientific publications related to the model, including model description and skill assessment.
+Please also see the [Literature page](../literature) for a list scientific publications related to the model, including model description and skill assessment.
 
 ## The output data
 
