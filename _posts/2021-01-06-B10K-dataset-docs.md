@@ -26,7 +26,7 @@ Please also see the [Literature page](../literature) for a list scientific publi
 
 The following simulations are available for public download on the PMEL server via either [THREDDS](https://data.pmel.noaa.gov/aclim/thredds/), [ERDDAP](https://data.pmel.noaa.gov/aclim/erddap/), or the [Live Action Server](https://data.pmel.noaa.gov/aclim/las/):
 
-- Hindcast simulations
+- Hindcast simulations: K20 operational variant and H16 variant from ACLIM Phase 1
 - ACLIM Phase 1 long-term forecasts: CMIP5-forced simulations using the H16 model variant
 
 The remaining output data is stored on the University of Washington hyak-mox computer cluster, and is accessible to collaborators only.  If interested in beginning a collaboration, please [contact](mailto:kelly.kearney@noaa.gov) the Bering10K team.
