@@ -29,5 +29,7 @@ The following simulations are available for public download on the PMEL server v
 - Hindcast simulations: K20 operational variant and H16 variant from ACLIM Phase 1
 - ACLIM Phase 1 long-term forecasts: CMIP5-forced simulations using the H16 model variant
 
+These data portals are currently in a testing phase, and the data files may not match the above documentation.  Updated documentation encompassing these data portals will be made available soon.
+
 The remaining output data is stored on the University of Washington hyak-mox computer cluster, and is accessible to collaborators only.  If interested in beginning a collaboration, please [contact](mailto:kelly.kearney@noaa.gov) the Bering10K team.
 
