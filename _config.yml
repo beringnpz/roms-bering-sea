@@ -59,9 +59,9 @@ plugins:
   - jekyll-include-cache
 
 author:
-  name   : "The Bering10K ROMS domain"
+  name   : "The Bering10K ROMS configuration"
   avatar : "/assets/images/b10k.png"
-  bio    : "The Bering10K ROMS domain and associated biological modules"
+  bio    : "The Bering10K ROMS configuration, including associated biological modules (research conducted through the University of Washington, CICOES)"
   links:
     # - label: "Website"
     #   icon: "fas fa-fw fa-link"
