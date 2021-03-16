@@ -31,5 +31,7 @@ The following simulations are available for public download on the PMEL server v
 
 Note that these data portals are currently in a testing phase, and documentation related to data access is being actively added to the [the Bering10K Dataset documentation](https://drive.google.com/file/d/1GlITTIvbs2gRBMNIxdDI15cZU6mH4ckg/view?usp=sharing) on an ongoing basis.
 
+As part of the [ACLIM project](https://www.fisheries.noaa.gov/alaska/ecosystems/alaska-climate-integrated-modeling-project), a suite of R tools have been developed to assist with accessing, subsetting, and manipulating the Bering10K model data.  You can find these [on GitHub in the kholsman/ACLIM2 repository](https://github.com/kholsman/ACLIM2).
+
 The remaining output data is stored on the University of Washington hyak-mox computer cluster, and is accessible to collaborators only.  If interested in beginning a collaboration, please [contact](mailto:kelly.kearney@noaa.gov) the Bering10K team.
 
