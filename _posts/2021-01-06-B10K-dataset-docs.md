@@ -54,13 +54,8 @@ Due to size restrictions, only the Level 3 regional and survey-replicated indice
 All simulation output data, including the data mirrored on the PMEL server and Google Drive, is stored on the University of Washington hyak-mox computer cluster, and is accessible to collaborators only. If you are a current collaborator who needs access to this data, or are interested in beginning a collaboration, please [contact](mailto:kelly.kearney@noaa.gov) the Bering10K team.
 
 
-
-**Data access tools**
-
-
-
+## The tools
 
 As part of the [ACLIM project](https://www.fisheries.noaa.gov/alaska/ecosystems/alaska-climate-integrated-modeling-project), a suite of R tools have been developed to assist with accessing, subsetting, and manipulating the Bering10K model data.  You can find these [on GitHub in the kholsman/ACLIM2 repository](https://github.com/kholsman/ACLIM2).
 
-The remaining output data is stored on the University of Washington hyak-mox computer cluster, and is accessible to collaborators only.  If interested in beginning a collaboration, please [contact](mailto:kelly.kearney@noaa.gov) the Bering10K team.
 
