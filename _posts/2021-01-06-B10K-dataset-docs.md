@@ -24,12 +24,41 @@ Please also see the [Literature page](../literature) for a list scientific publi
 
 ## The output data
 
-The following simulations are available for public download on the PMEL server via either [THREDDS](https://data.pmel.noaa.gov/aclim/thredds/), [ERDDAP](https://data.pmel.noaa.gov/aclim/erddap/), or the [Live Action Server](https://data.pmel.noaa.gov/aclim/las/):
+The Bering10K simulation output data is available in a few different locations, depending on the status of the project they are associated with.
+
+**The PMEL server**
+
+This server hosts all data from completed projects, as well as for ongoing projects where the underlying model setup has been used in published papers.  As of this time, this includes:
 
 - Hindcast simulations: K20 operational variant and H16 variant from ACLIM Phase 1
 - ACLIM Phase 1 long-term forecasts: CMIP5-forced simulations using the H16 model variant
 
-Note that these data portals are currently in a testing phase, and documentation related to data access is being actively added to the [the Bering10K Dataset documentation](https://drive.google.com/file/d/1GlITTIvbs2gRBMNIxdDI15cZU6mH4ckg/view?usp=sharing) on an ongoing basis.
+The data can be accessed through three different front-ends:
+
+- [THREDDS](https://data.pmel.noaa.gov/aclim/thredds/): Catalog listing where data and metadata can be accessed and/or downloaded
+- [Live Action Server](https://data.pmel.noaa.gov/aclim/las/): An interactive web interface with plotting and mapping capabilities, primarily for data exploration (though some limited download can be achieved from here)
+- [ERDDAP](https://data.pmel.noaa.gov/aclim/erddap/): Web interface to access and download tabular data.  Note that only a small subset of the model output (primarily Level 3 indices) is able to be formatted for access through this interface.
+
+Note that these data portals are currently in a testing phase, and documentation related to data access is being actively added to the [the Bering10K Dataset documentation](https://zenodo.org/record/4586950/files/Bering10K_dataset_documentation.pdf) on an ongoing basis.
+
+**Google Drive (via NOAA's G Suite)**
+
+Some data associated with the ongoing ACLIM 2.0 project has been uploaded to the ACLIM project folder on Google Drive.  This is accessible to participants in the ACLIM study, who have/will receive access to the relevant folder (`00_ACLIM_shared`) directly.  Data is in the following subfolder:
+
+`00_ACLIM_shared/02_Data/Newest/ACLIM_ROMS_indices/roms_for_aclim/`
+
+Due to size restrictions, only the Level 3 regional and survey-replicated indices data (Level 3) are included in this location.  For Level 1-2, see the hyak-mox option. 
+
+**UW hyak mox computer**
+
+All simulation output data, including the data mirrored on the PMEL server and Google Drive, is stored on the University of Washington hyak-mox computer cluster, and is accessible to collaborators only. If you are a current collaborator who needs access to this data, or are interested in beginning a collaboration, please [contact](mailto:kelly.kearney@noaa.gov) the Bering10K team.
+
+
+
+**Data access tools**
+
+
+
 
 As part of the [ACLIM project](https://www.fisheries.noaa.gov/alaska/ecosystems/alaska-climate-integrated-modeling-project), a suite of R tools have been developed to assist with accessing, subsetting, and manipulating the Bering10K model data.  You can find these [on GitHub in the kholsman/ACLIM2 repository](https://github.com/kholsman/ACLIM2).
 
