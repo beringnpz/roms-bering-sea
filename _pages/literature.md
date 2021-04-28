@@ -46,5 +46,5 @@ This paper describes an updated version of the BESTNPZ model, along with biophys
 
 Many end users of the Bering10K model focus on its ability to simulate bottom temperature on the eastern Bering Sea shelf, and how the hindcast simulation compares to data collected annually across the shelf in support of fisheries management.  This report provides a deep dive into the metrics use to compare these two datasets, with a focus on surface and bottom temperature.
 
-<span style="font-variant:small-caps;">Kearney K </span>(2021). Temperature data from the eastern Bering Sea continental shelf bottom trawl survey as used for hydrodynamic model validation and comparison. U.S. Dep. Commer., NOAA Tech. Memo. NMFS-AFSC-415, 40 p. [link](../assets/DRAFT_NOAA-TM-AFSC-415.pdf). (Note: pre-publication draft; citation details subject to change)
+<span style="font-variant:small-caps;">Kearney K </span>(2021). Temperature data from the eastern Bering Sea continental shelf bottom trawl survey as used for hydrodynamic model validation and comparison. U.S. Dep. Commer., NOAA Tech. Memo. NMFS-AFSC-415, 40 p. [link](https://repository.library.noaa.gov/view/noaa/28763).
 
