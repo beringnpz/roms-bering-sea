@@ -38,6 +38,8 @@
 #  include <bio_UMAINE.h>
 # elif defined BIO_GOANPZ
 #  include <goanpz.h>
+# elif defined MEANAGE
+#  include <agetracersource.h>
 # else
       SUBROUTINE biology(ng, tile)
       integer ng, tile

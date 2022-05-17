@@ -450,12 +450,12 @@
      &                    v(i-1,j  ,N(ng),nrhs)+                        &
      &                    v(i-1,j+1,N(ng),nrhs))
             cff2=SQRT(u(i,j,N(ng),nrhs)*u(i,j,N(ng),nrhs)+cff1*cff1)
-#ifdef RDRG_GRID
+#    ifdef RDRG_GRID
             sustr(i,j)=-0.5_r8*(rdrg_grid(i,j)+rdrg_grid(i-1,j))*       &
      &                  u(i,j,N(ng),nrhs)*cff2
-#else
+#    else
             sustr(i,j)=-rdrg2(ng)*u(i,j,N(ng),nrhs)*cff2
-#endif
+#    endif
           END IF
         END DO
       END DO
@@ -467,12 +467,12 @@
      &                    u(i  ,j-1,N(ng),nrhs)+                        &
      &                    u(i+1,j-1,N(ng),nrhs))
             cff2=SQRT(cff1*cff1+v(i,j,N(ng),nrhs)*v(i,j,N(ng),nrhs))
-#ifdef RDRG_GRID
+#    ifdef RDRG_GRID
             svstr(i,j)=-0.5_r8*(rdrg_grid(i,j)+rdrg_grid(i,j-1))*       &
      &                  v(i,j,N(ng),nrhs)*cff2
-#else
+#    else
             svstr(i,j)=-rdrg2(ng)*v(i,j,N(ng),nrhs)*cff2
-#endif
+#    endif
           END IF
         END DO
       END DO
@@ -483,24 +483,24 @@
       DO j=Jstr,Jend
         DO i=IstrU,Iend
           IF (zice(i,j)*zice(i-1,j).ne.0.0_r8) THEN
-#ifdef RDRG_GRID
+#    ifdef RDRG_GRID
             sustr(i,j)=-0.5_r8*(rdrg_grid(i,j)+rdrg_grid(i-1,j))*       &
      &                  u(i,j,N(ng),nrhs)
-#else
+#    else
             sustr(i,j)=-rdrg(ng)*u(i,j,N(ng),nrhs)
-#endif
+#    endif
           END IF
         END DO
       END DO
       DO j=JstrV,Jend
         DO i=Istr,Iend
           IF (zice(i,j)*zice(i,j-1).ne.0.0_r8) THEN
-#ifdef RDRG_GRID
+#    ifdef RDRG_GRID
             svstr(i,j)=-0.5_r8*(rdrg_grid(i,j)+rdrg_grid(i,j-1))*       &
      &                  v(i,j,N(ng),nrhs)
-#else
+#    else
             svstr(i,j)=-rdrg(ng)*v(i,j,N(ng),nrhs)
-#endif
+#    endif
           END IF
         END DO
       END DO

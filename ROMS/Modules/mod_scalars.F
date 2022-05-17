@@ -227,6 +227,13 @@
 # ifdef IRON_LIMIT
         integer :: iFe                ! Iron
 # endif
+#ifdef CARBON
+        integer :: iTIC_              ! Total inorganic carbon
+        integer :: iTAlk              ! Total alkalinity
+#endif
+# ifdef OXYGEN
+        integer :: iOxyg              ! Dissolved oxygen concentration
+# endif
 # ifdef BENTHIC
          integer, pointer :: idben(:)  ! Benthic tracers
          integer :: iBen
@@ -251,6 +258,8 @@
 # ifdef STATIONARY2
         integer, pointer :: idbio2(:)
         integer :: i2Stat1
+        integer :: i2Stat2
+        integer :: i2Stat3
 # endif
 # ifdef PROD2
         integer, pointer :: idbioP2(:)
@@ -292,6 +301,9 @@
         integer :: iFishEight
 #  endif
 # endif
+#endif
+#ifdef MEANAGE
+        integer, pointer :: idbio(:)  ! Biological tracers
 #endif
 
 
@@ -2317,6 +2329,15 @@
       iFe=ic+1
       ic=ic+1
 # endif
+# ifdef CARBON
+      iTIC_=ic+1
+      iTAlk=ic+2
+      ic=ic+2
+# endif
+# ifdef OXYGEN
+      iOxyg=ic+1
+      ic=ic+1
+# endif 
 # ifdef CLIM_ICE_1D
       i1CI=ic+1
       ic=ic+1
@@ -2343,11 +2364,6 @@
       i2Stat1 = 1
       i2Stat2 = 2
       i2Stat3 = 3
-      i2Stat4 = 4
-      i2Stat5 = 5
-      i2Stat6 = 6
-      i2Stat7 = 7
-      i2Stat8 = 8
 # endif
 # ifdef PROD3
 

@@ -1883,13 +1883,13 @@
 #   endif
 #   ifdef STATIONARY2
         DO itrc=1,NTS2(ng)
-!         DO k=1,N(ng)
+!           DO k=1,N(ng)
             DO j=JstrR,JendR
               DO i=IstrR,IendR
-                avgst2(i,j,itrc)=avgst2(i,j,itrc)+st2(i,j,Nout,itrc)
+                avgst2(i,j,itrc)=st2(i,j,Nout,itrc)
               END DO
             END DO
-!         END DO
+!           END DO
         END DO
 #   endif
 #   ifdef BENTHIC
@@ -1898,12 +1898,13 @@
             DO j=JstrR,JendR
               DO i=IstrR,IendR
                 avgbt(i,j,k,itrc)=avgbt(i,j,k,itrc)+bt(i,j,k,Nout,itrc)
-!               if(i.eq.144.and.j.eq.144) THEN
-!                 print*,'setAvg'
-!                 print*,'avgbt(i,j,k,itrc)=', avgbt(i,j,k,itrc)
-!                 print*,'bt(i,j,k,Nout,1)=', bt(i,j,k,Nout,1)
-!                 print*,''
-!               end if 
+!         if(i.eq.144.and.j.eq.144) THEN
+!          print*,'setAvg'
+!          print*,'avgbt(i,j,k,itrc)=', avgbt(i,j,k,itrc)
+!          
+!          print*,'bt(i,j,k,Nout,1)=', bt(i,j,k,Nout,1)
+!          print*,''
+!          end if 
               END DO
             END DO
           END DO
@@ -1912,7 +1913,8 @@
 #   ifdef ICE_BIO
         DO itrc=1,NIceT(ng)
           DO j=JstrR,JendR
-            DO i=IstrR,IendR	
+            DO i=IstrR,IendR
+
 #    ifdef CLIM_ICE_1D
               avgit(i,j,itrc)=avgit(i,j,itrc)+it(i,j,Nout,itrc)
 #    elif defined BERING_10K
@@ -2159,13 +2161,13 @@
             avgchu_iw(i,j)=fac*avgchu_iw(i,j)
 #  endif
 
-#ifdef ICE_BIO 
-# ifdef BERING_10K
+#  ifdef ICE_BIO 
+#   ifdef BERING_10K
             avgINO3(i,j)=fac*avgINO3(i,j)
 	    avgINH4(i,j)=fac*avgINH4(i,j)
 	    avgIPhL(i,j)=fac*avgIPhL(i,j)
             avgILog(i,j)=fac*avgILog(i,j)
-#  endif
+#   endif
 #  endif
 
 #  ifdef AVERAGES_FLUXES
@@ -2341,15 +2343,14 @@
           END DO
         END DO
 #   endif
-#   ifdef STATIONARY2
-        DO itrc=1,NTS2(ng)
-          DO j=JstrR,JendR
-            DO i=IstrR,IendR
-              avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
-            END DO
-          END DO
-        END DO
-#   endif
+! #   ifdef STATIONARY2
+!         DO itrc=1,NTS2(ng)
+!           DO j=JstrR,JendR
+!             DO i=IstrR,IendR
+!               avgst2(i,j,itrc)=fac*avgst2(i,j,itrc)
+!             END DO
+!           END DO
+!         END DO
 #  endif
 !       DO itrc=1,NTS(ng)
 !         DO k=1,N(ng)

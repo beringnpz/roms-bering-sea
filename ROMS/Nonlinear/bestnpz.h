@@ -71,6 +71,19 @@
      &                   ,GRID(ng) % latr                               &
      &                   ,FORCES(ng) % srflx                            &
      &                   ,OCEAN(ng) % t                                 &
+# if defined CARBON || defined OXYGEN 
+# ifdef BULK_FLUXES
+     &                   ,FORCES(ng) % Uwind                            &
+     &                   ,FORCES(ng) % Vwind                            &
+# else
+     &                   ,FORCES(ng) % sustr                            &
+     &                   ,FORCES(ng) % svstr                            &
+# endif
+# endif
+# ifdef CARBON 
+     &                   ,OCEAN(ng) % pH                                &
+     &                   ,FORCES(ng) % pCO2air                          &
+#endif
 #if defined BENTHIC
      &                   ,OCEAN(ng) % bt                                &
 #endif
@@ -130,6 +143,19 @@
      &                         ,lat                                     &
      &                         ,srflx                                   &
      &                         ,t                                       &
+#if defined CARBON || defined OXYGEN
+#ifdef BULK_FLUXES
+     &                         ,Uwind                                   &
+     &                         ,Vwind                                   &
+# else
+     &                         ,sustr                                   &
+     &                         ,svstr                                   &
+#endif
+#endif
+#ifdef CARBON
+     &                         ,pH                                      &
+     &                         ,pCO2air                                 &
+#endif
 #if defined BENTHIC
      &                         ,bt                                      &
 #endif
@@ -234,6 +260,19 @@
       real(r8), intent(in)    :: lat(LBi:,LBj:)
       real(r8), intent(in)    :: srflx(LBi:,LBj:)
       real(r8), intent(inout) :: t(LBi:,LBj:,:,:,:)
+#if defined CARBON || defined OXYGEN  
+#  ifdef BULK_FLUXES
+      real(r8), intent(in) :: Uwind(LBi:,LBj:)
+      real(r8), intent(in) :: Vwind(LBi:,LBj:)
+#  else
+      real(r8), intent(in) :: sustr(LBi:,LBj:)
+      real(r8), intent(in) :: svstr(LBi:,LBj:)
+#endif
+#endif
+# ifdef CARBON
+      real(r8), intent(in) :: pCO2air(LBi:,LBj:)
+      real(r8), intent(inout) :: pH(LBi:,LBj:)
+#endif
 
 # ifdef STATIONARY
       real(r8), intent(inout) :: st(LBi:,LBj:,:,:,:)
@@ -268,6 +307,12 @@
 # endif
 
       real(r8), intent(inout) :: Akt(LBi:,LBj:,0:,:) ! TODO why is this passed in?  Never used?
+#if defined CARBON || defined OXYGEN 
+!      integer, parameter :: Nsink = 4
+      real(r8) :: u10squ
+#else
+!      integer, parameter :: Nsink = 4
+#endif
 
 #else
 
@@ -281,6 +326,19 @@
       real(r8), intent(in)    :: lat(LBi:UBi,LBj:UBj)
       real(r8), intent(in)    :: srflx(LBi:UBi,LBj:UBj)
       real(r8), intent(inout) :: t(LBi:UBi,LBj:UBj,UBk,3,UBt)
+# if defined CARBON  || defined OXYGEN 
+#  ifdef BULK_FLUXES
+      real(r8), intent(in) :: Uwind(LBi:UBi,LBj:UBj)
+      real(r8), intent(in) :: Vwind(LBi:UBi,LBj:UBj)
+#  else
+      real(r8), intent(in) :: sustr(LBi:UBi,LBj:UBj)
+      real(r8), intent(in) :: svstr(LBi:UBi,LBj:UBj)
+#  endif
+# endif
+# ifdef CARBON
+      real(r8), intent(in) :: pCO2air(LBi:UBi,LBj:UBj)
+      real(r8), intent(inout) :: pH(LBi:UBi,LBj:UBj)
+#endif
 # ifdef STATIONARY
       real(r8), intent(inout) :: st(LBi:UBi,LBj:UBj,UBk,3,UBst)
 # endif
@@ -313,6 +371,13 @@
       real(r8), intent(in)    :: vi(LBi:UBi,LBj:UBj,2)
 #  endif
 # endif
+#if defined CARBON || defined OXYGEN 
+!      integer, parameter :: Nsink = 4
+      real(r8) :: u10squ
+#else
+!      integer, parameter :: Nsink = 4
+#endif
+
       real(r8), intent(inout) :: Akt(LBi:UBi,LBj:UBj,0:N(ng),NAT)
 #endif
 
@@ -395,6 +460,12 @@
       real(r8) :: grow1, GROWAice, fNO3, RAi0, RgAi
       real(r8) :: sb, gesi
       real(r8), dimension(IminS:ImaxS,JminS:JmaxS) :: ice_thick, ice_status
+#ifdef CARBON
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: Frz_TIC, Frz_TAlk
+#endif
+#endif
+#ifdef CARBON
+      real(r8), dimension(IminS:ImaxS) :: pCO2
 #endif
 
       ! Setup
@@ -415,8 +486,14 @@
       integer  :: iiNCaS,   iiNCaO,   iiEupS, iiEupO, iiDet, iiDetF
       integer  :: iiJel,    iiFe,     iiBen,  iiDetBen
       integer  :: iiIcePhL, iiIceNO3, iiIceNH4
-      real(r8), dimension(IminS:ImaxS,N(ng),20) :: Bio3d, Bio2d, Bio_bak, DBio
-      real(r8), dimension(IminS:ImaxS,N(ng),20) :: extrabio
+#ifdef CARBON
+      integer  :: iiTIC_, iiTAlk
+#endif
+#ifdef OXYGEN
+      integer  :: iiOxyg
+#endif
+      real(r8), dimension(IminS:ImaxS,N(ng),23) :: Bio3d, Bio2d, Bio_bak, DBio
+      real(r8), dimension(IminS:ImaxS,N(ng),23) :: extrabio
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Temp, Salt
 
       ! Intermediate fluxes
@@ -438,6 +515,15 @@
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Ver_PhS_DetBen, Ver_PhS_Out, Ver_PhL_DetBen, Ver_PhL_Out, Ver_Det_DetBen, Ver_Det_Out, Ver_DetF_DetBen, Ver_DetF_Out, Ver_NCaO_DetBen, Ver_NCaS_DetF, Ver_NCaS_DetBen
       real(r8), dimension(IminS:ImaxS,N(ng)) :: Frz_PhL_IPhL, Frz_NO3_INO3, Frz_NH4_INH4
       real(r8), dimension(IminS:ImaxS,N(ng)) :: prod_PhS, prod_PhL, prod_MZL, prod_Cop, prod_NCaS, prod_EupS, prod_NCaO, prod_EupO, prod_Jel, prod_Ben, prod_IcePhL
+      real(r8), dimension(IminS:ImaxS,N(ng)) :: total_prod, total_resp, total_remin
+
+!#ifdef CARBON
+!      real(r8), dimension(IminS:ImaxS,N(ng)) :: CO2_Flux 
+!#endif
+
+!#ifdef OXYGEN
+!      real(r8), dimension(IminS:ImaxS,N(ng)) :: O2_Flux 
+!#endif
 
       ! Biological source/sinks
 
@@ -491,6 +577,61 @@
       ! comes from Thimijan and Heins (1983, HortScience, vol 18(6)), 
       ! estimate for the 400-700 nm band with a light source of "sun & 
       ! sky, daylight"
+
+#ifdef CARBON
+      integer, parameter :: DoNewton = 0            ! pCO2 solver
+
+      real(r8), parameter :: Acoef = 2073.1_r8      ! Schmidt
+      real(r8), parameter :: Bcoef = 125.62_r8      ! number
+      real(r8), parameter :: Ccoef = 3.6276_r8      ! transfer
+      real(r8), parameter :: Dcoef = 0.043219_r8    ! coefficients
+
+      real(r8), parameter :: A1 = -60.2409_r8       ! surface
+      real(r8), parameter :: A2 = 93.4517_r8        ! CO2
+      real(r8), parameter :: A3 = 23.3585_r8        ! solubility
+      real(r8), parameter :: B1 = 0.023517_r8       ! coefficients
+      real(r8), parameter :: B2 = -0.023656_r8
+      real(r8), parameter :: B3 = 0.0047036_r8
+
+!      real(r8) :: pmonth                         ! months since Jan 1951
+!      real(r8) :: year, yday, month, iday, hour
+
+      real(r8), parameter :: pi2 = 6.2831853071796_r8
+!      real(r8), parameter :: pCO2air = 400.0_r8
+      real(r8), parameter :: D0 = 282.6_r8          ! coefficients
+      real(r8), parameter :: D1 = 0.125_r8          ! to calculate
+      real(r8), parameter :: D2 =-7.18_r8           ! secular trend in
+      real(r8), parameter :: D3 = 0.86_r8           ! atmospheric pCO2
+      real(r8), parameter :: D4 =-0.99_r8
+      real(r8), parameter :: D5 = 0.28_r8
+      real(r8), parameter :: D6 =-0.80_r8
+      real(r8), parameter :: D7 = 0.06_r8
+      real(r8), parameter :: P2CN = 6.625_r8 ! Phyto C:N ratio [mole_C/mole_N]
+#endif
+#ifdef OXYGEN
+      real(r8), parameter :: OA0 = 2.00907_r8       ! Oxygen
+      real(r8), parameter :: OA1 = 3.22014_r8       ! saturation
+      real(r8), parameter :: OA2 = 4.05010_r8       ! coefficients
+      real(r8), parameter :: OA3 = 4.94457_r8
+      real(r8), parameter :: OA4 =-0.256847_r8
+      real(r8), parameter :: OA5 = 3.88767_r8
+      real(r8), parameter :: OB0 =-0.00624523_r8
+      real(r8), parameter :: OB1 =-0.00737614_r8
+      real(r8), parameter :: OB2 =-0.0103410_r8
+      real(r8), parameter :: OB3 =-0.00817083_r8
+      real(r8), parameter :: OC0 =-0.000000488682_r8
+      real(r8), parameter :: rOxNO3= 8.625_r8       ! 138/16
+      real(r8), parameter :: rOxNH4= 6.625_r8       ! 106/16
+      real(r8) :: l2mol = 1000.0_r8/22.9316_r8      ! liter to mol
+#endif
+#ifdef OXYGEN
+      real(r8) :: SchmidtN_Ox, O2satu, O2_Flux
+      real(r8) :: TS, AA
+#endif
+#ifdef CARBON
+      real(r8) :: C_Flux_RemineL, C_Flux_RemineS
+      real(r8) :: CO2_Flux, CO2_sol, SchmidtN, TempK
+#endif
       
 #include "set_bounds.h"
 
@@ -715,6 +856,11 @@
         iiIcePhL = 18
         iiIceNO3 = 19
         iiIceNH4 = 20
+#ifdef CARBON
+        iiTIC_   = 21
+        iiTAlk   = 22
+        iiOxyg   = 23
+#endif
 
         ! All state variables will be saved in two different versions:
         ! mass m^-3 (Bio3d) and mass m^-2 (Bio2d).  This redundancy
@@ -749,9 +895,23 @@
 #ifdef IRON_LIMIT
             Bio3d(i,k,iiFe  ) = t(i,j,k,nstp,iFe)
 #endif
+#ifdef CARBON
+            Bio3d(i,k,iiTIC_ ) = t(i,j,k,nstp,iTIC_)
+            Bio3d(i,k,iiTAlk ) = t(i,j,k,nstp,iTAlk)
+#endif
+#ifdef OXYGEN
+            Bio3d(i,k,iiOxyg ) = t(i,j,k,nstp,iOxyg) 
+#endif
             DO itrc = iiNO3,iiFe
               Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
             END DO
+#ifdef CARBON
+            Bio2d(i,k,iiTIC_) = Bio3d(i,k,iiTIC_)*Hz(i,j,k)
+            Bio2d(i,k,iiTAlk) = Bio3d(i,k,iiTAlk)*Hz(i,j,k)
+#endif
+#ifdef OXYGEN
+            Bio2d(i,k,iiOxyg) = Bio3d(i,k,iiOxyg)*Hz(i,j,k)
+#endif
 
 #ifdef STATIONARY
             ! Rate of change due to processes outside this subroutine
@@ -804,7 +964,14 @@
           END DO
         END DO
 #endif
-
+!#ifdef CARBON
+!        DO k=1,N(ng)
+!          DO i=Istr,Iend
+!            Bio2d(i,k,iiTIC_)=MIN(Bio2d(i,k,iiTIC_),3000.0_r8)
+!            Bio2d(i,k,iiTIC_)=MAX(Bio2d(i,k,iiTIC_),400.0_r8)
+!          END DO
+!        END DO
+!#endif
 #ifdef ICE_BIO
         ! Before we get to the ice variables, we'll collect some info
         ! about the ice itself: ice thickness, and status (i.e. whether
@@ -1019,7 +1186,7 @@
             Bio3d(i,N(ng),iiIcePhL) = 0.0_r8
             Bio3d(i,N(ng),iiIceNO3) = 0.0_r8
             Bio3d(i,N(ng),iiIceNH4) = 0.0_r8
-            
+
 !           elseif (ice_status(i,j) .eq. 0.0) then ! mostly debugging
 !
 !             if ((Bio3d(i,N(ng),iiIcePhL) .gt. 0) .or.                   &
@@ -1041,6 +1208,7 @@
 !               endif
 !             endif
           endif
+
         END DO
 #endif
 
@@ -1216,7 +1384,15 @@
           Ver_NCaS_DetF  = 0.0_r8
           Ver_NCaS_DetBen = 0.0_r8
           Ver_NCaS_DetBen = 0.0_r8
+#ifdef CARBON
+          Frz_TIC        = 0.0_r8
+          Frz_TAlk       = 0.0_r8
+          CO2_Flux       = 0.0_r8
+#endif
 
+#ifdef OXYGEN
+          O2_Flux        = 0.0_r8
+#endif
 
           !==============================================================
           !  Biological Source/Sink terms.
@@ -1314,7 +1490,7 @@
               else
                 katten = k_ext + k_chlA*chl**k_chlB + k_chlC + k_sed1*(-z_w(i,j,0))**k_sed2 
               endif
-                  
+
               ! Calculate light at depth levels relevant for Simpson's 
               ! rule integration      
 
@@ -1397,7 +1573,7 @@
 # endif
               
               ! Ammonium uptake, small
-              
+
               f0 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS0, NHLimS)
               f1 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS1, NHLimS)
               f2 = Bio3d(i,k,iiPhS) * PmaxS * min(LightLimS2, NHLimS)
@@ -1408,7 +1584,7 @@
 # endif
 
               ! Nitrate uptake, large
-              
+
               f0 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL0, NOLimL, IronLimL)
               f1 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL1, NOLimL, IronLimL)
               f2 = Bio3d(i,k,iiPhL) * PmaxL * min(LightLimL2, NOLimL, IronLimL)    
@@ -2146,6 +2322,11 @@
               Twi_INO3_NO3(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNO3) - Bio3d(i,N(ng),iiNO3))/xi ! mg C m^-2 d^-1
               Twi_INH4_NH4(i,N(ng)) = twi * (Bio3d(i,N(ng),iiIceNH4) - Bio3d(i,N(ng),iiNH4))/xi ! mg C m^-2 d^-1
 
+#ifdef CARBON
+              Frz_TIC(i,N(ng)) = dhicedt*86400.0_r8*1650.0_r8*12.0_r8  ! convert to mg C for consistency w/ bio loop
+              Frz_TAlk(i,N(ng)) = dhicedt*86400.0_r8*1600.0_r8/xi  ! convert to mg C for consistency w/ bio loop 
+#endif
+
             endif
           END DO
 #endif
@@ -2422,6 +2603,108 @@
      &                        + Gpp_INH4_IPhL                           &
      &                        - Res_IPhL_INH4  ! IcePhL: mg C m^-2 d^-1
 
+          total_prod          = Gpp_NO3_PhS                             &
+     &                        + Gpp_NO3_PhL                             &
+     &                        + Gpp_NH4_PhS                             &
+     &                        + Gpp_NH4_PhL                             &
+     &                        + Gpp_INO3_IPhL                           &
+     &                        + Gpp_INH4_IPhL  ! mg C m^-2 d^-1
+
+          total_resp          = Res_MZL_NH4                             &
+     &                        + Res_Cop_NH4                             &
+     &                        + Res_NCaS_NH4                            &
+     &                        + Res_NCaO_NH4                            &
+     &                        + Res_EupS_NH4                            &
+     &                        + Res_EupO_NH4                            &
+     &                        + Res_Jel_NH4                             &
+     &                        + Res_Ben_NH4                             &
+     &                        + Mor_IPhL_INH4  ! mg C m^-2 d^-1 
+
+          total_remin         = Rem_Det_NH4                             &
+     &                        + Rem_DetF_NH4                            & 
+     &                        + Rem_DetBen_NH4                          &
+     &                        + Exc_Ben_NH4    ! mg C m^-2 d^-1
+
+#ifdef CARBON
+          DBio(:,:,iiTIC_   ) = ((Res_PhS_NH4                           &
+     &                       +  Res_PhL_NH4                             &
+     &                       +  Res_MZL_NH4                             &
+     &                       +  Res_Cop_NH4                             &
+     &                       +  Res_NCaS_NH4                            &
+     &                       +  Res_NCaO_NH4                            &
+     &                       +  Res_EupS_NH4                            &
+     &                       +  Res_EupO_NH4                            &
+     &                       +  Res_Jel_NH4                             &
+     &                       +  Rem_Det_NH4                             &
+     &                       +  Rem_DetF_NH4                            &
+     &                       +  Exc_Ben_NH4                             &
+     &                       +  Res_Ben_NH4                             &
+     &                       +  Rem_DetBen_NH4                          &
+     &                       +  Frz_TIC                                 &
+     &                       +  Res_IPhL_INH4                           &
+     &                       +  Mor_IPhL_INH4                           &
+     &                       -  Gpp_NO3_PhS                             &
+     &                       -  Gpp_NO3_PhL                             &
+     &                       -  Gpp_NH4_PhS                             &
+     &                       -  Gpp_NH4_PhL                             &
+     &                       -  Gpp_INO3_IPhL                           &
+     &                       -  Gpp_INH4_IPhL)*dtdays/12._r8)           
+
+          DBio(:,:,iiTAlk   ) = (Gpp_NO3_PhS                            &
+     &                       +  Gpp_NO3_PhL                             &
+     &                       +  Gpp_INO3_IPhL                           &
+     &                       +  Res_PhS_NH4                             &
+     &                       +  Res_PhL_NH4                             &
+     &                       +  Res_MZL_NH4                             &
+     &                       +  Res_Cop_NH4                             &
+     &                       +  Res_NCaS_NH4                            &
+     &                       +  Res_NCaO_NH4                            &
+     &                       +  Res_EupS_NH4                            &
+     &                       +  Res_EupO_NH4                            &
+     &                       +  Res_Jel_NH4                             &
+     &                       +  Rem_Det_NH4                             &
+     &                       +  Rem_DetF_NH4                            &
+     &                       +  Exc_Ben_NH4                             &
+     &                       +  Res_Ben_NH4                             &
+     &                       +  Rem_DetBen_NH4                          &
+     &                       +  Frz_TAlk                                &
+     &                       +  Res_IPhL_INH4                           &
+     &                       +  Mor_IPhL_INH4                           & 
+     &                       -  (2.0_r8*Nit_NH4_NO3)                    &
+     &                       -  (2.0_r8*Nit_INH4_INO3)                  &
+     &                       -  Gpp_NH4_PhS                             &
+     &                       -  Gpp_NH4_PhL                             &
+     &                       -  Gpp_INH4_IPhL)*xi*dtdays !NO3:mmolN m^-2
+
+#endif
+
+#ifdef OXYGEN
+          DBio(:,:,iiOxyg   ) = ((Gpp_NO3_PhS                           &
+     &                       +  Gpp_NO3_PhL                             &
+     &                       +  Gpp_INO3_IPhL)*xi*rOxNO3*dtdays)        &
+     &                       +  ((Gpp_NH4_PhS                           &
+     &                       +  Gpp_NH4_PhL                             &
+     &                       +  Gpp_INH4_IPhL                           &
+     &                       -  Res_PhS_NH4                             &
+     &                       -  Res_PhL_NH4                             &
+     &                       -  Res_MZL_NH4                             &
+     &                       -  Res_Cop_NH4                             &
+     &                       -  Res_NCaS_NH4                            &
+     &                       -  Res_NCaO_NH4                            &
+     &                       -  Res_EupS_NH4                            &
+     &                       -  Res_EupO_NH4                            &
+     &                       -  Res_Jel_NH4                             &
+     &                       -  Rem_Det_NH4                             &
+     &                       -  Rem_DetF_NH4                            &
+     &                       -  Exc_Ben_NH4                             &
+     &                       -  Res_Ben_NH4                             &
+     &                       -  Rem_DetBen_NH4                          &
+     &                       -  Res_IPhL_INH4                           &
+     &                       -  Mor_IPhL_INH4)*xi*rOxNH4*dtdays)        &
+     &                       -  (2.0_r8*Nit_NH4_NO3*xi*dtdays)          &
+     &                       -  (2.0_r8*Nit_INH4_INO3*xi*dtdays)        
+
+#endif
           ! Add DBio terms to existing biomass
 
           Bio2d = Bio2d + DBio
@@ -2447,9 +2730,16 @@
 
           DO i=Istr,Iend
             DO k = 1,N(ng)
-              DO itrc = 1,NBT+NBEN ! Pelagic (and benthic, for bookkeeping)
+              DO itrc = 1,17 ! Pelagic (and benthic, for bookkeeping)
                 Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/Hz(i,j,k)
               END DO
+#ifdef CARBON
+               Bio3d(i,k,iiTIC_) = Bio2d(i,k,iiTIC_)/Hz(i,j,k) 
+               Bio3d(i,k,iiTAlk) = Bio2d(i,k,iiTAlk)/Hz(i,j,k)
+#endif
+#ifdef OXYGEN
+               Bio3d(i,k,iiOxyg) = Bio2d(i,k,iiOxyg)/Hz(i,j,k)
+#endif
               DO itrc = 18,20 ! Ice
                 Bio3d(i,k,itrc) = Bio2d(i,k,itrc)/aidz
               END DO
@@ -2677,14 +2967,172 @@
           END DO
 #endif
 
+#ifdef OXYGEN
+!
+!-----------------------------------------------------------------------
+!  Surface O2 gas exchange.
+!-----------------------------------------------------------------------
+!
+!  Compute surface O2 gas exchange.
+!
+          cff1=rho0*550.0_r8
+          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
+          k=N(ng)
+          DO i=Istr,Iend
+!
+!  Compute O2 transfer velocity : u10squared (u10 in m/s)
+!
+# ifdef BULK_FLUXES
+            u10squ=Uwind(i,j)*Uwind(i,j)+Vwind(i,j)*Vwind(i,j)
+# else
+            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
+     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
+# endif
+!
+!  Calculate the Schmidt number for O2 in sea water (Wanninkhof, 1992).
+!
+            SchmidtN_Ox=1953.4_r8-                                      &
+     &                  t(i,j,k,nstp,itemp)*(128.0_r8-                  &
+     &                          t(i,j,k,nstp,itemp)*                    &
+     &                                (3.9918_r8-                       &
+     &                                 t(i,j,k,nstp,itemp)*0.050091_r8))
+
+            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN_Ox)
+!
+!  Calculate O2 saturation concentration using Garcia and Gordon
+!  L&O (1992) formula, (EXP(AA) is in ml/l).
+!
+            TS=LOG((298.15_r8-t(i,j,k,nstp,itemp))/                     &
+     &             (273.15_r8+t(i,j,k,nstp,itemp)))
+            AA=OA0+TS*(OA1+TS*(OA2+TS*(OA3+TS*(OA4+TS*OA5))))+          &
+     &             t(i,j,k,nstp,isalt)*(OB0+TS*(OB1+TS*(OB2+TS*OB3)))+  &
+     &             OC0*t(i,j,k,nstp,isalt)*t(i,j,k,nstp,isalt)
+!
+!  Convert from ml/l to mmol/m3.
+!
+            O2satu=l2mol*EXP(AA)
+!
+!  Add in O2 gas exchange.
+!
+            O2_Flux=cff3*(O2satu-Bio3d(i,k,iiOxyg))*                    &
+      &         (1.0_r8-ai(i,j,nstp))
+            Bio3d(i,k,iiOxyg)=Bio3d(i,k,iiOxyg)+                        &
+      &         O2_Flux*Hz_inv(i,k)
+#ifdef STATIONARY2
+           st2(i,j,nstp,  3) = st2(i,j,nstp,  3) + O2_Flux
+#endif
+          END DO
+#endif
+
+
+#ifdef CARBON
+!
+!-----------------------------------------------------------------------
+!  Surface CO2 gas exchange.
+!-----------------------------------------------------------------------
+!
+!  Compute equilibrium partial pressure inorganic carbon (ppmv) at the
+!  surface.
+!
+          k=N(ng)
+
+# ifdef pCO2_RZ
+          CALL pCO2_water_RZ (Istr, Iend, LBi, UBi, LBj, UBj,           &
+     &                        IminS, ImaxS, j, DoNewton,                &
+#  ifdef MASKING
+     &                        rmask,                                    &
+#  endif
+     &                        Temp(IminS:,k), Salt(IminS:,k),           &
+     &                        Bio3d(IminS:,k,iiTIC_),                   &
+     &                        Bio3d(IminS:,k,iiTAlk),                   &
+     &                        pH, pCO2)
+# else
+          CALL pCO2_water (Istr, Iend, LBi, UBi, LBj, UBj,              &
+     &                     IminS, ImaxS, j, DoNewton,                   &
+#  ifdef MASKING
+     &                     rmask,                                       &
+#  endif
+     &                     t(IminS:,j,k,nstp,itemp),                    &
+     &                     t(IminS:,j,k,nstp,isalt),                    &
+     &                     Bio3d(IminS:,k,iiTIC_),                      &
+     &                     Bio3d(IminS:,k,iiTAlk),                      &
+     &                     0.0_r8, 0.0_r8, pH, pCO2)
+# endif
+
+!
+!   if(pCO2(i).lt.120.0_r8)then
+!       print *, 'pco2', pCO2(i), 'TEMP',Temp(i,k), 'SALT',            &
+!     &   Salt(i,k), 'ALK',Bio3d(i,k,iiTAlk), 'TIC',Bio3d(i,k,iiTIC_)
+!      endif
+
+!  Compute surface CO2 gas exchange.
+!
+          cff1=rho0*550.0_r8
+          cff2=dtdays*0.251_r8*24.0_r8/100.0_r8
+          DO i=Istr,Iend
+!
+!  Compute CO2 transfer velocity : u10squared (u10 in m/s)
+!
+# ifdef BULK_FLUXES
+            u10squ=Uwind(i,j)**2+Vwind(i,j)**2
+# else
+            u10squ=cff1*SQRT((0.5_r8*(sustr(i,j)+sustr(i+1,j)))**2+     &
+     &                       (0.5_r8*(svstr(i,j)+svstr(i,j+1)))**2)
+# endif
+            SchmidtN=Acoef-                                             &
+     &               t(i,j,k,nstp,itemp)*(Bcoef-                        &
+     &                      t(i,j,k,nstp,itemp)*(Ccoef-                 &
+     &                      t(i,j,k,nstp,itemp)*Dcoef))
+            cff3=cff2*u10squ*SQRT(660.0_r8/SchmidtN)
+
+
+!
+!  Calculate CO2 solubility [mol/(kg.atm)] using Weiss (1974) formula.
+!
+            TempK=0.01_r8*(t(i,j,k,nstp,itemp)+273.15_r8)
+            CO2_sol=EXP(A1+                                             &
+     &                  A2/TempK+                                       &
+     &                  A3*LOG(TempK)+                                  &
+     &                  t(i,j,k,nstp,isalt)*(B1+TempK*(B2+B3*TempK)))
+!
+!  Add in CO2 gas exchange.
+!
+             if(pCO2(i).gt.0.0_r8)then
+                CO2_Flux=cff3*CO2_sol*(pCO2air(i,j)-pCO2(i))*           &
+     &            (1.0_r8-ai(i,j,nstp))    ! mmolC/m^2
+!               if(ai(i,j,nstp).gt.0.8_r8)then
+!                 print *, 'pCO2air', pCO2air(i,j)
+!               else
+!               endif
+            else
+                  CO2_Flux = 0.0_r8
+            endif
+            Bio3d(i,k,iiTIC_)=Bio3d(i,k,iiTIC_)+                        &
+     &            CO2_Flux*Hz_inv(i,k)
+
+# ifdef STATIONARY2
+          st2(i,j,nstp,  1) = st2(i,j,nstp,  1) + CO2_Flux
+          st2(i,j,nstp,  2) = pCO2(i)
+#endif
+
+          END DO
+#endif
+
           ! Sync 2d arrays to 3d again
 
           DO i=Istr,Iend
             ! Sync pelagic (3D modified in sinking portion of code)
             DO k = 1,N(ng)
-              DO itrc = 1,NBT ! Pelagic
+              DO itrc = 1,iiFe ! Pelagic
                 Bio2d(i,k,itrc) = Bio3d(i,k,itrc)*Hz(i,j,k)
               END DO
+#ifdef CARBON
+             Bio2d(i,k,iiTIC_) = Bio3d(i,k,iiTIC_)*Hz(i,j,k) 
+             Bio2d(i,k,iiTAlk) = Bio3d(i,k,iiTAlk)*Hz(i,j,k)
+#endif
+#ifdef OXYGEN
+             Bio2d(i,k,iiOxyg) = Bio3d(i,k,iiOxyg)*Hz(i,j,k) 
+#endif
             END DO
             ! Sync benthic (2D modified in sinking portion of code)
             Bio3d(i,1,iiDetBen) = Bio2d(i,1,iiDetBen)/Hz(i,j,1)
@@ -2817,6 +3265,14 @@
               st(i,j,k,nstp,115) = prod_Ben(i,k)
               st(i,j,k,nstp,116) = prod_IcePhL(i,k)
 
+              st(i,j,k,nstp,146) = total_prod(i,k)
+              st(i,j,k,nstp,147) = total_resp(i,k)
+              st(i,j,k,nstp,148) = total_remin(i,k)
+# ifdef CARBON
+              st(i,j,k,nstp,149) = Frz_TIC(i,k)/12.0_r8
+              st(i,j,k,nstp,150) = Frz_TAlk(i,k)*xi
+# endif
+
             END DO
           END DO
 #endif
@@ -2855,6 +3311,13 @@
             t(i,j,k,nnew,iFe  ) = t(i,j,k,nnew,iFe  ) + (Bio2d(i,k,iiFe  ) - Bio_bak(i,k,iiFe  ))
             t(i,j,k,nnew,iMZS ) = t(i,j,k,nnew,iMZS ) + 0.0_r8
 
+#ifdef CARBON
+            t(i,j,k,nnew,iTIC_ ) = t(i,j,k,nnew,iTIC_ ) + (Bio2d(i,k,iiTIC_ ) - Bio_bak(i,k,iiTIC_ ))
+	    t(i,j,k,nnew,iTAlk ) = t(i,j,k,nnew,iTAlk ) + (Bio2d(i,k,iiTAlk ) - Bio_bak(i,k,iiTAlk ))
+#endif
+#ifdef OXYGEN
+            t(i,j,k,nnew,iOxyg ) = t(i,j,k,nnew,iOxyg ) + (Bio2d(i,k,iiOxyg ) - Bio_bak(i,k,iiOxyg )) 
+#endif
             ! Check for negatives and NaNs (for debugging)
 
 !             do itrc = iNO3,size(t,5)
@@ -3466,6 +3929,804 @@
       RETURN
       END SUBROUTINE BIOSINK
       
+#ifdef CARBON
+# ifdef pCO2_RZ
+      SUBROUTINE pCO2_water_RZ (Istr, Iend,                             &
+     &                          LBi, UBi, LBj, UBj, IminS, ImaxS,       &
+     &                          j, DoNewton,                            &
+#  ifdef MASKING
+     &                          rmask,                                  &
+#  endif
+     &                          T, S, TIC, TAlk, pH, pCO2)
+!
+!***********************************************************************
+!                                                                      !
+!  This routine computes equilibrium partial pressure of CO2 (pCO2)    !
+!  in the surface seawater.                                            !
+!                                                                      !
+!  On Input:                                                           !
+!                                                                      !
+!     Istr       Starting tile index in the I-direction.               !
+!     Iend       Ending   tile index in the I-direction.               !
+!     LBi        I-dimension lower bound.                              !
+!     UBi        I-dimension upper bound.                              !
+!     LBj        J-dimension lower bound.                              !
+!     UBj        J-dimension upper bound.                              !
+!     IminS      I-dimension lower bound for private arrays.           !
+!     ImaxS      I-dimension upper bound for private arrays.           !
+!     j          j-pipelined index.                                    !
+!     DoNewton   Iteration solver:                                     !
+!                  [0] Bracket and bisection.                          !
+!                  [1] Newton-Raphson method.                          !
+!     rmask      Land/Sea masking.                                     !
+!     T          Surface temperature (Celsius).                        !
+!     S          Surface salinity (PSS).                               !
+!     TIC        Total inorganic carbon (millimol/m3).                 !
+!     TAlk       Total alkalinity (milli-equivalents/m3).              !
+!     pH         Best pH guess.                                        !
+!                                                                      !
+!  On Output:                                                          !
+!                                                                      !
+!     pCO2       partial pressure of CO2 (ppmv).                       !
+!                                                                      !
+!  Check Value:  (T=24, S=36.6, TIC=2040, TAlk=2390, PO4=0,            !
+!                 SiO3=0, pH=8)                                        !
+!                                                                      !
+!                pcO2= ppmv  (DoNewton=0)                              !
+!                pCO2= ppmv  (DoNewton=1)                              !
+!                                                                      !
+!  This subroutine was adapted by Katja Fennel (Nov 2005) from         !
+!  Zeebe and Wolf-Gladrow (2001).                                      !
+!                                                                      !
+!  Reference:                                                          !
+!                                                                      !
+!    Zeebe, R.E. and D. Wolf-Gladrow,  2005:  CO2 in Seawater:         !
+!      Equilibrium, kinetics, isotopes, Elsevier Oceanographic         !
+!      Series, 65, pp 346.                                             !
+!                                                                      !
+!***********************************************************************
+!
+      USE mod_kinds
+!
+      implicit none
+!
+!  Imported variable declarations.
+!
+      integer,  intent(in) :: LBi, UBi, LBj, UBj, IminS, ImaxS
+      integer,  intent(in) :: Istr, Iend, j, DoNewton
+!
+#  ifdef ASSUMED_SHAPE
+#   ifdef MASKING
+      real(r8), intent(in) :: rmask(LBi:,LBj:)
+#   endif
+      real(r8), intent(in) :: T(IminS:)
+      real(r8), intent(in) :: S(IminS:)
+      real(r8), intent(in) :: TIC(IminS:)
+      real(r8), intent(in) :: TAlk(IminS:)
+      real(r8), intent(inout) :: pH(LBi:,LBj:)
+#  else
+#   ifdef MASKING
+      real(r8), intent(in) :: rmask(LBi:UBi,LBj:UBj)
+#   endif
+      real(r8), intent(in) :: T(IminS:ImaxS)
+      real(r8), intent(in) :: S(IminS:ImaxS)
+      real(r8), intent(in) :: TIC(IminS:ImaxS)
+      real(r8), intent(in) :: TAlk(IminS:ImaxS)
+      real(r8), intent(inout) :: pH(LBi:UBi,LBj:UBj)
+#  endif
+
+      real(r8), intent(out) :: pCO2(IminS:ImaxS)
+!
+!  Local variable declarations.
+!
+      integer, parameter :: InewtonMax = 10
+      integer, parameter :: IbrackMax = 30
+
+      integer :: Hstep, Ibrack, Inewton, i
+
+      real(r8) :: Tk, centiTk, invTk, logTk
+      real(r8) :: scl, sqrtS
+      real(r8) :: borate, alk, dic
+      real(r8) :: ff, K1, K2, K12, Kb, Kw
+      real(r8) :: p5, p4, p3, p2, p1, p0
+      real(r8) :: df, fn, fni(3), ftest
+      real(r8) :: deltaX, invX, invX2, X, X2, X3
+      real(r8) :: pH_guess, pH_hi, pH_lo
+      real(r8) :: X_guess, X_hi, X_lo, X_mid
+      real(r8) :: CO2star, Htotal, Htotal2
+!
+!=======================================================================
+!  Determine coefficients for surface carbon chemisty.  If land/sea
+!  masking, compute only on water points.
+!=======================================================================
+!
+      I_LOOP: DO i=Istr,Iend
+#  ifdef MASKING
+        IF (rmask(i,j).gt.0.0_r8) THEN
+#  endif
+        Tk=T(i)+273.15_r8
+        centiTk=0.01_r8*Tk
+        invTk=1.0_r8/Tk
+        logTk=LOG(Tk)
+        sqrtS=SQRT(S(i))
+        scl=S(i)/1.80655_r8
+
+        alk= TAlk(i)*0.000001_r8
+        dic = TIC(i)*0.000001_r8
+!
+!-----------------------------------------------------------------------
+!  Correction term for non-ideality, ff=k0*(1-pH2O). Equation 13 with
+!  table 6 values from Weiss and Price (1980, Mar. Chem., 8, 347-359).
+!-----------------------------------------------------------------------
+!
+        ff=EXP(-162.8301_r8+                                            &
+     &         218.2968_r8/centiTk+                                     &
+     &         LOG(centiTk)*90.9241_r8-                                 &
+     &         centiTk*centiTk*1.47696_r8+                              &
+     &         S(i)*(0.025695_r8-                                       &
+     &               centiTk*(0.025225_r8-                              &
+     &                        centiTk*0.0049867_r8)))
+!
+!-----------------------------------------------------------------------
+!  Compute first (K1) and second (K2) dissociation constant of carboinic
+!  acid:
+!
+!           K1 = [H][HCO3]/[H2CO3]
+!           K2 = [H][CO3]/[HCO3]
+!
+!  From Millero (1995; page 664) using Mehrbach et al. (1973) data on
+!  seawater scale.
+!-----------------------------------------------------------------------
+!
+        K1=10.0_r8**(62.008_r8-                                         &
+     &               invTk*3670.7_r8-                                   &
+     &               logTk*9.7944_r8+                                   &
+     &               S(i)*(0.0118_r8-                                   &
+     &                     S(i)*0.000116_r8))
+        K2=10.0_r8**(-4.777_r8-                                         &
+     &               invTk*1394.7_r8+                                   &
+     &               S(i)*(0.0184_r8-                                   &
+     &                     S(i)*0.000118_r8))
+!
+!-----------------------------------------------------------------------
+!  Compute dissociation constant of boric acid, Kb=[H][BO2]/[HBO2].
+!  From Millero (1995; page 669) using data from Dickson (1990).
+!-----------------------------------------------------------------------
+!
+        Kb=EXP(-invTk*(8966.90_r8+                                      &
+     &                 sqrtS*(2890.53_r8+                               &
+     &                        sqrtS*(77.942_r8-                         &
+     &                               sqrtS*(1.728_r8-                   &
+     &                                      sqrtS*0.0996_r8))))-        &
+     &         logTk*(24.4344_r8+                                       &
+     &                sqrtS*(25.085_r8+                                 &
+     &                       sqrtS*0.2474_r8))+                         &
+     &         Tk*(sqrtS*0.053105_r8)+                                  &
+     &         148.0248_r8+                                             &
+     &         sqrtS*(137.1942_r8+                                      &
+     &                sqrtS*1.62142_r8))
+!
+!-----------------------------------------------------------------------
+!  Compute ion product of whater, Kw = [H][OH].
+!  From Millero (1995; page 670) using composite data.
+!-----------------------------------------------------------------------
+!
+        Kw=EXP(148.9652_r8-                                             &
+     &         invTk*13847.26_r8-                                       &
+     &         logTk*23.6521_r8-                                        &
+     &         sqrtS*(5.977_r8-                                         &
+     &                invTk*118.67_r8-                                  &
+     &                logTk*1.0495_r8)-                                 &
+     &         S(i)*0.01615_r8)
+!
+!-----------------------------------------------------------------------
+! Calculate concentrations for borate (Uppstrom, 1974).
+!-----------------------------------------------------------------------
+!
+        borate=0.000232_r8*scl/10.811_r8
+!
+!=======================================================================
+!  Iteratively solver for computing hydrogen ions [H+] using either:
+!
+!    (1) Newton-Raphson method with fixed number of iterations,
+!        use previous [H+] as first guess, or
+!    (2) bracket and bisection
+!=======================================================================
+!
+!  Solve for h in fifth-order polynomial. First calculate
+!  polynomial coefficients.
+!
+        K12 = K1*K2
+
+        p5 = -1.0_r8;
+        p4 = -alk-Kb-K1;
+        p3 = dic*K1-alk*(Kb+K1)+Kb*borate+Kw-Kb*K1-K12
+        p2 = dic*(Kb*K1+2*K12)-alk*(Kb*K1+K12)+Kb*borate*K1             &
+     &       +(Kw*Kb+Kw*K1-Kb*K12)
+        p1 = 2.0_r8*dic*Kb*K12-alk*Kb*K12+Kb*borate*K12                 &
+     &       +Kw*Kb*K1+Kw*K12
+        p0 = Kw*Kb*K12;
+!
+!  Set first guess and brackets for [H+] solvers.
+!
+        pH_guess=pH(i,j)         ! Newton-Raphson
+        pH_hi=10.0_r8            ! high bracket/bisection
+        pH_lo=5.0_r8             ! low bracket/bisection
+!
+!  Convert to [H+].
+!
+        X_guess=10.0_r8**(-pH_guess)
+        X_lo=10.0_r8**(-pH_hi)
+        X_hi=10.0_r8**(-pH_lo)
+        X_mid=0.5_r8*(X_lo+X_hi)
+!
+!-----------------------------------------------------------------------
+!  Newton-Raphson method.
+!-----------------------------------------------------------------------
+!
+        IF (DoNewton.eq.1) THEN
+          X=X_guess
+!
+          DO Inewton=1,InewtonMax
+!
+!  Evaluate f([H+]) = p5*x^5+...+p1*x+p0
+!
+            fn=((((p5*X+p4)*X+p3)*X+p2)*X+p1)*X+p0
+!
+!  Evaluate derivative, fprime([H+]):
+!
+!     df= d(fn)/d(X)
+!
+            df=(((5*p5*X+4*p4)*X+3*p3)*X+2*p2)*X+p1
+!
+!  Evaluate increment in [H+].
+!
+            deltaX=-fn/df
+!
+!  Update estimate of [H+].
+!
+            X=X+deltaX
+          END DO
+!
+!-----------------------------------------------------------------------
+!  Bracket and bisection method.
+!-----------------------------------------------------------------------
+!
+        ELSE
+!
+!  If first step, use Bracket and Bisection method with fixed, large
+!  number of iterations
+!
+          BRACK_IT: DO Ibrack=1,IbrackMax
+            DO Hstep=1,3
+              IF (Hstep.eq.1) X=X_hi
+              IF (Hstep.eq.2) X=X_lo
+              IF (Hstep.eq.3) X=X_mid
+!
+!  Evaluate f([H+]) for bracketing and mid-value cases.
+!
+              fni(Hstep)=((((p5*X+p4)*X+p3)*X+p2)*X+p1)*X+p0
+            END DO
+!
+!  Now, bracket solution within two of three.
+!
+            IF (fni(3).eq.0) THEN
+               EXIT BRACK_IT
+            ELSE
+               ftest=fni(1)/fni(3)
+               IF (ftest.gt.0) THEN
+                 X_hi=X_mid
+               ELSE
+                 X_lo=X_mid
+               END IF
+               X_mid=0.5_r8*(X_lo+X_hi)
+            END IF
+          END DO BRACK_IT
+!
+! Last iteration gives value.
+!
+          X=X_mid
+        END IF
+!
+!-----------------------------------------------------------------------
+!  Determine pCO2.
+!-----------------------------------------------------------------------
+!
+!  Total Hydrogen ion concentration, Htotal = [H+].
+!
+        Htotal=X
+        Htotal2=Htotal*Htotal
+!
+!  Calculate [CO2*] (mole/m3) as defined in DOE Methods Handbook 1994
+!  Version 2, ORNL/CDIAC-74, Dickson and Goyet, Eds. (Chapter 2,
+!  page 10, Eq A.49).
+!
+        CO2star=dic*Htotal2/(Htotal2+K1*Htotal+K1*K2)
+!
+!  Save pH is used again outside this routine.
+!
+        pH(i,j)=-LOG10(Htotal)
+!
+!  Add two output arguments for storing pCO2surf.
+!
+        pCO2(i)=CO2star*1000000.0_r8/ff
+
+#  ifdef MASKING
+      ELSE
+        pH(i,j)=0.0_r8
+        pCO2(i)=0.0_r8
+      END IF
+#  endif
+
+      END DO I_LOOP
+
+      RETURN
+      END SUBROUTINE pCO2_water_RZ
+# else
+      SUBROUTINE pCO2_water (Istr, Iend,                                &
+     &                       LBi, UBi, LBj, UBj,                        &
+     &                       IminS, ImaxS, j, DoNewton,                 &
+#  ifdef MASKING
+     &                       rmask,                                     &
+#  endif
+     &                       T, S, TIC, TAlk, PO4, SiO3, pH, pCO2)
+!
+!***********************************************************************
+!                                                                      !
+!  This routine computes equilibrium partial pressure of CO2 (pCO2)    !
+!  in the surface seawater.                                            !
+!                                                                      !
+!  On Input:                                                           !
+!                                                                      !
+!     Istr       Starting tile index in the I-direction.               !
+!     Iend       Ending   tile index in the I-direction.               !
+!     LBi        I-dimension lower bound.                              !
+!     UBi        I-dimension upper bound.                              !
+!     LBj        J-dimension lower bound.                              !
+!     UBj        J-dimension upper bound.                              !
+!     IminS      I-dimension lower bound for private arrays.           !
+!     ImaxS      I-dimension upper bound for private arrays.           !
+!     j          j-pipelined index.                                    !
+!     DoNewton   Iteration solver:                                     !
+!                  [0] Bracket and bisection.                          !
+!                  [1] Newton-Raphson method.                          !
+!     rmask      Land/Sea masking.                                     !
+!     T          Surface temperature (Celsius).                        !
+!     S          Surface salinity (PSS).                               !
+!     TIC        Total inorganic carbon (millimol/m3).                 !
+!     TAlk       Total alkalinity (milli-equivalents/m3).              !
+!     PO4        Inorganic phosphate (millimol/m3).                    !
+!     SiO3       Inorganic silicate (millimol/m3).                     !
+!     pH         Best pH guess.                                        !
+!                                                                      !
+!  On Output:                                                          !
+!                                                                      !
+!     pCO2       partial pressure of CO2 (ppmv).                       !
+!                                                                      !
+!  Check Value:  (T=24, S=36.6, TIC=2040, TAlk=2390, PO4=0,            !
+!                 SiO3=0, pH=8)                                        !
+!                                                                      !
+!                pcO2=0.35074945E+03 ppmv  (DoNewton=0)                !
+!                pCO2=0.35073560E+03 ppmv  (DoNewton=1)                !
+!                                                                      !
+!  This subroutine was adapted by Mick Follows (Oct 1999) from OCMIP2  !
+!  code CO2CALC. Modified for ROMS by Hernan Arango (Nov 2003).        !
+!                                                                      !
+!***********************************************************************
+!
+      USE mod_kinds
+!
+      implicit none
+!
+!  Imported variable declarations.
+!
+      integer,  intent(in) :: LBi, UBi, LBj, UBj, IminS, ImaxS
+      integer,  intent(in) :: Istr, Iend, j, DoNewton
+!
+#  ifdef ASSUMED_SHAPE
+#   ifdef MASKING
+      real(r8), intent(in) :: rmask(LBi:,LBj:)
+#   endif
+      real(r8), intent(in) :: T(IminS:)
+      real(r8), intent(in) :: S(IminS:)
+      real(r8), intent(in) :: TIC(IminS:)
+      real(r8), intent(in) :: TAlk(IminS:)
+      real(r8), intent(inout) :: pH(LBi:,LBj:)
+#  else
+#   ifdef MASKING
+      real(r8), intent(in) :: rmask(LBi:UBi,LBj:UBj)
+#   endif
+      real(r8), intent(in) :: T(IminS:ImaxS)
+      real(r8), intent(in) :: S(IminS:ImaxS)
+      real(r8), intent(in) :: TIC(IminS:ImaxS)
+      real(r8), intent(in) :: TAlk(IminS:ImaxS)
+      real(r8), intent(inout) :: pH(LBi:UBi,LBj:UBj)
+#  endif
+      real(r8), intent(in) :: PO4
+      real(r8), intent(in) :: SiO3
+
+      real(r8), intent(out) :: pCO2(IminS:ImaxS)
+!
+!  Local variable declarations.
+!
+      integer, parameter :: InewtonMax = 10
+      integer, parameter :: IbrackMax = 30
+
+      integer :: Hstep, Ibrack, Inewton, i
+
+      real(r8) :: Tk, centiTk, invTk, logTk
+      real(r8) :: SO4, scl, sqrtS, sqrtSO4
+      real(r8) :: alk, dic, phos, sili
+      real(r8) :: borate, sulfate, fluoride
+      real(r8) :: ff, K1, K2, K1p, K2p, K3p, Kb, Kf, Ks, Ksi, Kw
+      real(r8) :: K12, K12p, K123p, invKb, invKs, invKsi
+      real(r8) :: A, A2, B, B2, C, dA, dB
+      real(r8) :: df, fn, fni(3), ftest
+      real(r8) :: deltaX, invX, invX2, X, X2, X3
+      real(r8) :: pH_guess, pH_hi, pH_lo
+      real(r8) :: X_guess, X_hi, X_lo, X_mid
+      real(r8) :: CO2star, Htotal, Htotal2
+!
+!=======================================================================
+!  Determine coefficients for surface carbon chemisty.  If land/sea
+!  masking, compute only on water points.
+!=======================================================================
+!
+      I_LOOP: DO i=Istr,Iend
+#  ifdef MASKING
+        IF (rmask(i,j).gt.0.0_r8) THEN
+#  endif
+
+        Tk=T(i)+273.15_r8
+        centiTk=0.01_r8*Tk
+        invTk=1.0_r8/Tk
+        logTk=LOG(Tk)
+        sqrtS=SQRT(S(i))
+        SO4=19.924_r8*S(i)/(1000.0_r8-1.005_r8*S(i))
+        sqrtSO4=SQRT(SO4)
+        scl=S(i)/1.80655_r8
+
+        alk=TAlk(i)*0.000001_r8
+        dic=TIC(i)*0.000001_r8
+        phos=PO4*0.000001_r8
+        sili=SiO3*0.000001_r8
+!
+!-----------------------------------------------------------------------
+!  Correction term for non-ideality, ff=k0*(1-pH2O). Equation 13 with
+!  table 6 values from Weiss and Price (1980, Mar. Chem., 8, 347-359).
+!-----------------------------------------------------------------------
+!
+        ff=EXP(-162.8301_r8+                                            &
+     &         218.2968_r8/centiTk+                                     &
+     &         LOG(centiTk)*90.9241_r8-                                 &
+     &         centiTk*centiTk*1.47696_r8+                              &
+     &         S(i)*(0.025695_r8-                                       &
+     &               centiTk*(0.025225_r8-                              &
+     &                        centiTk*0.0049867_r8)))
+!
+!-----------------------------------------------------------------------
+!  Compute first (K1) and second (K2) dissociation constant of carboinic
+!  acid:
+!
+!           K1 = [H][HCO3]/[H2CO3]
+!           K2 = [H][CO3]/[HCO3]
+!
+!  From Millero (1995; page 664) using Mehrbach et al. (1973) data on
+!  seawater scale.
+!-----------------------------------------------------------------------
+!
+        K1=10.0_r8**(62.008_r8-                                         &
+     &               invTk*3670.7_r8-                                   &
+     &               logTk*9.7944_r8+                                   &
+     &               S(i)*(0.0118_r8-                                   &
+     &                     S(i)*0.000116_r8))
+        K2=10.0_r8**(-4.777_r8-                                         &
+     &               invTk*1394.7_r8+                                   &
+     &               S(i)*(0.0184_r8-                                   &
+     &                     S(i)*0.000118_r8))
+!
+!-----------------------------------------------------------------------
+!  Compute dissociation constant of boric acid, Kb=[H][BO2]/[HBO2].
+!  From Millero (1995; page 669) using data from Dickson (1990).
+!-----------------------------------------------------------------------
+!
+        Kb=EXP(-invTk*(8966.90_r8+                                      &
+     &                 sqrtS*(2890.53_r8+                               &
+     &                        sqrtS*(77.942_r8-                         &
+     &                               sqrtS*(1.728_r8-                   &
+     &                                      sqrtS*0.0996_r8))))-        &
+     &         logTk*(24.4344_r8+                                       &
+     &                sqrtS*(25.085_r8+                                 &
+     &                       sqrtS*0.2474_r8))+                         &
+     &         Tk*(sqrtS*0.053105_r8)+                                  &
+     &         148.0248_r8+                                             &
+     &         sqrtS*(137.1942_r8+                                      &
+     &                sqrtS*1.62142_r8))
+!
+!-----------------------------------------------------------------------
+!  Compute first (K1p), second (K2p), and third (K3p) dissociation
+!  constant of phosphoric acid:
+!
+!           K1p = [H][H2PO4]/[H3PO4]
+!           K2p = [H][HPO4]/[H2PO4]
+!           K3p = [H][PO4]/[HPO4]
+!
+!  From DOE (1994) equations 7.2.20, 7.2.23, and 7.2.26, respectively.
+!  With footnote using data from Millero (1974).
+!-----------------------------------------------------------------------
+!
+        K1p=EXP(115.525_r8-                                             &
+     &          invTk*4576.752_r8-                                      &
+     &          logTk*18.453_r8+                                        &
+     &          sqrtS*(0.69171_r8-invTk*106.736_r8)-                    &
+     &          S(i)*(0.01844_r8+invTk*0.65643_r8))
+        K2p=EXP(172.0883_r8-                                            &
+     &          invTk*8814.715_r8-                                      &
+     &          logTk*27.927_r8+                                        &
+     &          sqrtS*(1.3566_r8-invTk*160.340_r8)-                     &
+     &          S(i)*(0.05778_r8-invTk*0.37335_r8))
+        K3p=EXP(-18.141_r8-                                             &
+     &          invTk*3070.75_r8+                                       &
+     &          sqrtS*(2.81197_r8+invTk*17.27039_r8)-                   &
+     &          S(i)*(0.09984_r8+invTk*44.99486_r8))
+!
+!-----------------------------------------------------------------------
+!  Compute dissociation constant of silica, Ksi=[H][SiO(OH)3]/[Si(OH)4].
+!  From Millero (1995; page 671) using data from Yao and Millero (1995).
+!-----------------------------------------------------------------------
+!
+        Ksi=EXP(117.385_r8-                                             &
+     &          invTk*8904.2_r8-                                        &
+     &          logTk*19.334_r8+                                        &
+     &          sqrtSO4*(3.5913_r8-invTk*458.79_r8)-                    &
+     &          SO4*(1.5998_r8-invTk*188.74_r8-                         &
+     &               SO4*(0.07871_r8-invTk*12.1652_r8))+                &
+     &          LOG(1.0_r8-0.001005_r8*S(i)))
+!
+!-----------------------------------------------------------------------
+!  Compute ion product of whater, Kw = [H][OH].
+!  From Millero (1995; page 670) using composite data.
+!-----------------------------------------------------------------------
+!
+        Kw=EXP(148.9652_r8-                                             &
+     &         invTk*13847.26_r8-                                       &
+     &         logTk*23.6521_r8-                                        &
+     &         sqrtS*(5.977_r8-                                         &
+     &                invTk*118.67_r8-                                  &
+     &                logTk*1.0495_r8)-                                 &
+     &         S(i)*0.01615_r8)
+!
+!------------------------------------------------------------------------
+!  Compute salinity constant of hydrogen sulfate, Ks = [H][SO4]/[HSO4].
+!  From Dickson (1990, J. chem. Thermodynamics 22, 113)
+!------------------------------------------------------------------------
+!
+        Ks=EXP(141.328_r8-                                              &
+     &         invTk*4276.1_r8-                                         &
+     &         logTk*23.093_r8+                                         &
+     &         sqrtSO4*(324.57_r8-invTk*13856.0_r8-logTk*47.986_r8-     &
+     &                  SO4*invTk*2698.0_r8)-                           &
+     &         SO4*(771.54_r8-invTk*35474.0_r8-logTk*114.723_r8-        &
+     &              SO4*invTk*1776.0_r8)+                               &
+     &         LOG(1.0_r8-0.001005_r8*S(i)))
+!
+!-----------------------------------------------------------------------
+!  Compute stability constant of hydrogen fluorid, Kf = [H][F]/[HF].
+!  From Dickson and Riley (1979) -- change pH scale to total.
+!-----------------------------------------------------------------------
+!
+        Kf=EXP(-12.641_r8+                                              &
+     &         invTk*1590.2_r8+                                         &
+     &         sqrtSO4*1.525_r8+                                        &
+     &         LOG(1.0_r8-0.001005_r8*S(i))+                            &
+     &         LOG(1.0_r8+0.1400_r8*scl/(96.062_r8*Ks)))
+!
+!-----------------------------------------------------------------------
+! Calculate concentrations for borate (Uppstrom, 1974), sulfate (Morris
+! and Riley, 1966), and fluoride (Riley, 1965).
+!-----------------------------------------------------------------------
+!
+        borate=0.000232_r8*scl/10.811_r8
+        sulfate=0.14_r8*scl/96.062_r8
+        fluoride=0.000067_r8*scl/18.9984_r8
+!
+!=======================================================================
+!  Iteratively solver for computing hydrogen ions [H+] using either:
+!
+!    (1) Newton-Raphson method with fixed number of iterations,
+!        use previous [H+] as first guess, or
+!    (2) bracket and bisection
+!=======================================================================
+!
+!  Set first guess and brackets for [H+] solvers.
+!
+        pH_guess=pH(i,j)         ! Newton-Raphson
+        pH_hi=10.0_r8            ! high bracket/bisection
+        pH_lo=5.0_r8             ! low bracket/bisection
+!
+!  Convert to [H+].
+!
+        X_guess=10.0_r8**(-pH_guess)
+        X_lo=10.0_r8**(-pH_hi)
+        X_hi=10.0_r8**(-pH_lo)
+        X_mid=0.5_r8*(X_lo+X_hi)
+!
+!-----------------------------------------------------------------------
+!  Newton-Raphson method.
+!-----------------------------------------------------------------------
+!
+        IF (DoNewton.eq.1) THEN
+          X=X_guess
+          K12=K1*K2
+          K12p=K1p*K2p
+          K123p=K12p*K3p
+          invKb=1.0_r8/Kb
+          invKs=1.0_r8/Ks
+          invKsi=1.0_r8/Ksi
+!
+          DO Inewton=1,InewtonMax
+!
+!  Set some common combinations of parameters used in the iterative [H+]
+!  solver.
+!
+            X2=X*X
+            X3=X2*X
+            invX=1.0_r8/X
+            invX2=1.0_r8/X2
+
+            A=X*(K12p+X*(K1p+X))
+            B=X*(K1+X)+K12
+            C=1.0_r8/(1.0_r8+sulfate*invKs)
+
+            A2=A*A
+            B2=B*B
+            dA=X*(2.0_r8*K1p+3.0_r8*X)+K12p
+            dB=2.0_r8*X+K1
+!
+!  Evaluate f([H+]):
+!
+!     fn=HCO3+CO3+borate+OH+HPO4+2*PO4+H3PO4+silicate+Hfree+HSO4+HF-TALK
+!
+            fn=dic*K1*(X+2.0_r8*K2)/B+                                  &
+     &         borate/(1.0_r8+X*invKb)+                                 &
+     &         Kw*invX+                                                 &
+     &         phos*(K12p*X+2.0_r8*K123p-X3)/A+                         &
+     &         sili/(1.0_r8+X*invKsi)-                                  &
+     &         X*C-                                                     &
+     &         sulfate/(1.0_r8+Ks*invX*C)-                              &
+     &         fluoride/(1.0_r8+Kf*invX)-                               &
+     &         alk
+!
+!  Evaluate derivative, f(prime)([H+]):
+!
+!     df= d(fn)/d(X)
+!
+            df=dic*K1*(B-dB*(X+2.0_r8*K2))/B2-                          &
+     &         borate/(invKb*(1.0+X*invKb)**2)-                         &
+     &         Kw*invX2+                                                &
+     &         phos*(A*(K12p-3.0_r8*X2)-dA*(K12p*X+2.0_r8*K123p-X3))/A2-&
+     &         sili/(invKsi*(1.0_r8+X*invKsi)**2)+                      &
+     &         C+                                                       &
+     &         sulfate*Ks*C*invX2/((1.0_r8+Ks*invX*C)**2)+              &
+     &         fluoride*Kf*invX2/((1.0_r8+Kf*invX)**2)
+!
+!  Evaluate increment in [H+].
+!
+            deltaX=-fn/df
+!
+!  Update estimate of [H+].
+!
+            X=X+deltaX
+          END DO
+!
+!-----------------------------------------------------------------------
+!  Bracket and bisection method.
+!-----------------------------------------------------------------------
+!
+        ELSE
+!
+!  If first step, use Bracket and Bisection method with fixed, large
+!  number of iterations
+!
+          K12=K1*K2
+          K12p=K1p*K2p
+          K123p=K12p*K3p
+          invKb=1.0_r8/Kb
+          invKs=1.0_r8/Ks
+          invKsi=1.0_r8/Ksi
+!
+          BRACK_IT: DO Ibrack=1,IbrackMax
+            DO Hstep=1,3
+              IF (Hstep.eq.1) X=X_hi
+              IF (Hstep.eq.2) X=X_lo
+              IF (Hstep.eq.3) X=X_mid
+!
+!  Set some common combinations of parameters used in the iterative [H+]
+!  solver.
+!
+              X2=X*X
+              X3=X2*X
+              invX=1.0_r8/X
+
+              A=X*(K12p+X*(K1p+X))+K123p
+              B=X*(K1+X)+K12
+              C=1.0_r8/(1.0_r8+sulfate*invKs)
+              A2=A*A
+              B2=B*B
+              dA=X*(K1p*2.0_r8+3.0_r8*X2)+K12p
+              dB=2.0_r8*X+K1
+!
+!  Evaluate f([H+]) for bracketing and mid-value cases.
+!
+              fni(Hstep)=dic*(K1*X+2.0_r8*K12)/B+                       &
+     &                   borate/(1.0_r8+X*invKb)+                       &
+     &                   Kw*invX+                                       &
+     &                   phos*(K12p*X+2.0_r8*K123p-X3)/A+               &
+     &                   sili/(1.0_r8+X*invKsi)-                        &
+     &                   X*C-                                           &
+     &                   sulfate/(1.0_r8+Ks*invX*C)-                    &
+     &                   fluoride/(1.0_r8+Kf*invX)-                     &
+     &                   alk
+            END DO
+!
+!  Now, bracket solution within two of three.
+!
+            IF (fni(3).eq.0.0_r8) THEN
+              EXIT BRACK_IT
+            ELSE
+              ftest=fni(1)/fni(3)
+              IF (ftest.gt.0.0) THEN
+                X_hi=X_mid
+              ELSE
+                X_lo=X_mid
+              END IF
+              X_mid=0.5_r8*(X_lo+X_hi)
+            END IF
+          END DO BRACK_IT
+!
+! Last iteration gives value.
+!
+          X=X_mid
+        END IF
+!
+!-----------------------------------------------------------------------
+!  Determine pCO2.
+!-----------------------------------------------------------------------
+!
+!  Total Hydrogen ion concentration, Htotal = [H+].
+!
+        Htotal=X
+        Htotal2=Htotal*Htotal
+!
+!  Calculate [CO2*] (mole/m3) as defined in DOE Methods Handbook 1994
+!  Version 2, ORNL/CDIAC-74, Dickson and Goyet, Eds. (Chapter 2,
+!  page 10, Eq A.49).
+!
+        CO2star=dic*Htotal2/(Htotal2+K1*Htotal+K1*K2)
+!
+!  Save pH is used again outside this routine.
+!
+        pH(i,j)=-LOG10(Htotal)
+!
+!  Add two output arguments for storing pCO2surf.
+!
+        pCO2(i)=CO2star*1000000.0_r8/ff
+
+
+#  ifdef MASKING
+      ELSE
+        pH(i,j)=0.0_r8
+        pCO2(i)=0.0_r8
+      END IF
+#  endif
+
+      END DO I_LOOP
+
+      RETURN
+      END SUBROUTINE pCO2_water
+# endif
+#endif
+
       
       
 
