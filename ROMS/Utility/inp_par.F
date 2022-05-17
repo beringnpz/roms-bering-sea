@@ -7632,7 +7632,7 @@
         ! Grid 0 for convenience
         
         IF (Lbiology(1)) THEN 
-          WRITE (out,40) 0
+          WRITE (out,40) 0.0_r8
           
           ! Light
           
