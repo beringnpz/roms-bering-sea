@@ -9,7 +9,7 @@ This following academic publications describe the configuration and performance 
 
 The Bering Sea ROMS model was derived from the larger Northeast Pacific (NEP5) ROMS model. Much of the preliminary parameter configuration and validation of that model, including sea ice and tidal dynamics, are equally applicable to the Bering Sea sub-domain, and are documented here.
 
-<style font-size=0.5em><span style="font-variant:small-caps;">Danielson S, Curchitser E, Hedstrom K, Weingartner T, Stabeno P</span> (2011) On ocean and sea ice modes of variability in the Bering Sea. *J Geophys Res Ocean* 116:1–24 [link](http://doi.org/10.1029/2011JC007389)</style>
+<span font-size="0.5em"><span style="font-variant:small-caps;">Danielson S, Curchitser E, Hedstrom K, Weingartner T, Stabeno P</span> (2011) On ocean and sea ice modes of variability in the Bering Sea. *J Geophys Res Ocean* 116:1–24 [link](http://doi.org/10.1029/2011JC007389)</span>
 
 #### Gibson & Spitz, 2011
 
