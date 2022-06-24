@@ -3,13 +3,13 @@ permalink: /literature/
 title: "Literature"
 ---
     
-This page describes and links to the primary academic publications that describe the configuration and performance of the Bering10K ROMS model and its associated biological modules.
+This following academic publications describe the configuration and performance of the Bering10K ROMS model and its associated biological modules.
 
 #### Danielson et al., 2011
 
 The Bering Sea ROMS model was derived from the larger Northeast Pacific (NEP5) ROMS model. Much of the preliminary parameter configuration and validation of that model, including sea ice and tidal dynamics, are equally applicable to the Bering Sea sub-domain, and are documented here.
 
-<span style="font-variant:small-caps;">Danielson S, Curchitser E, Hedstrom K, Weingartner T, Stabeno P</span> (2011) On ocean and sea ice modes of variability in the Bering Sea. *J Geophys Res Ocean* 116:1–24 [link](http://doi.org/10.1029/2011JC007389)
+<style font-size=0.5em><span style="font-variant:small-caps;">Danielson S, Curchitser E, Hedstrom K, Weingartner T, Stabeno P</span> (2011) On ocean and sea ice modes of variability in the Bering Sea. *J Geophys Res Ocean* 116:1–24 [link](http://doi.org/10.1029/2011JC007389)</style>
 
 #### Gibson & Spitz, 2011
 
@@ -25,7 +25,7 @@ The first paper detailing the Bering10K model in full, this includes a descripti
 
 #### Hermann et al., 2016
 
-This paper describes a series of long-term forecasts simulations that downscale three CMIP3 (AR4) global circulation models under the A1B emissions scenario. 
+This paper describes a series of long-term forecast simulations that downscale three CMIP3 (AR4) global circulation models under the A1B emissions scenario. 
 
 <span style="font-variant:small-caps;">Hermann AJ, Curchitser EN, Hedstrom K, Cheng W, Bond NA, Wang M, Aydin K, Stabeno PJ, Cokelet ED, Gibson GA</span> (2016) Projected future biophysical states of the Bering Sea. *Deep Sea Res Part II Top Stud Oceanogr* 134:30–47 [link](http://doi.org/10.1016/j.dsr2.2015.11.001)
 
@@ -33,8 +33,7 @@ This paper describes a series of long-term forecasts simulations that downscale 
 
 This paper describes the results of a hindcast simulation with the Bering10K and BESTNPZ models fully coupled to a spatially-explicit fisheries ecosystem model known as FEAST.
 
-<span style="font-variant:small-caps;">Ortiz I, Aydin K, Hermann AJ, Gibson GA, Punt AE, Wiese FK, Eisner LB, Ferm N, Buckley TW, Moffitt EA, Ianelli JN, Murphy J, Dalton M, Cheng W, Wang M, Hedstrom K, Bond NA, Curchitser EN, Boyd C</span> (2016) Climate to fish: Synthesizing field work, data and models in a 39-year retrospective analysis of seasonal processes on the eastern Bering Sea shelf and slope. *Deep Res Part II Top Stud Oceanogr* 134:390–412
-
+<span style="font-variant:small-caps;">Ortiz I, Aydin K, Hermann AJ, Gibson GA, Punt AE, Wiese FK, Eisner LB, Ferm N, Buckley TW, Moffitt EA, Ianelli JN, Murphy J, Dalton M, Cheng W, Wang M, Hedstrom K, Bond NA, Curchitser EN, Boyd C</span> (2016) Climate to fish: Synthesizing field work, data and models in a 39-year retrospective analysis of seasonal processes on the eastern Bering Sea shelf and slope. *Deep Res Part II Top Stud Oceanogr* 134:390–412 [link](http://doi.org/10.1016/j.dsr2.2016.07.009)
 
 #### Kearney et al., 2020
 
@@ -48,3 +47,8 @@ Many end users of the Bering10K model focus on its ability to simulate bottom te
 
 <span style="font-variant:small-caps;">Kearney K </span>(2021). Temperature data from the eastern Bering Sea continental shelf bottom trawl survey as used for hydrodynamic model validation and comparison. U.S. Dep. Commer., NOAA Tech. Memo. NMFS-AFSC-415, 40 p. [link](https://repository.library.noaa.gov/view/noaa/28763).
 
+##### Kearney et al., 2021
+
+This paper tests the seasonal-to-sub-seasonal forecast capabilities of the Bering10K model with respect to seasonal sea ice cover and bottom temperature.  These findings support the persistence forecast product that is presented each spring.
+
+<span style="font-variant:small-caps;">Kearney KA, Alexander M, Aydin K, Cheng W, Hermann AJ, Hervieux G, Ortiz I</span> (2021) Seasonal predictability of sea ice and bottom temperature across the eastern Bering Sea shelf. J Geophys Res Ocean 126:1–21 [link](http://dx.doi.org/10.1029/2021jc017545)
