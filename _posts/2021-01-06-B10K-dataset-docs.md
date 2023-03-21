@@ -4,7 +4,7 @@ tags:
   - documentation
 ---
 
-Numerous Bering 10K ROMS model simulations have been run to date, including hindcasts of the past few decades, long-term forecasts under CMIP5 and CMIP6 emissions scenarios, and seasonal retropective forecasts.  Data and metadata related to these simulations are held in a number of locations.  This page serves as a centralized hub for this data and metadata.
+Numerous Bering 10K ROMS model simulations have been run to date, including hindcasts of the past few decades, long-term forecasts under CMIP5 and CMIP6 emissions scenarios, and seasonal retrospective forecasts.  Data and metadata related to these simulations are held in a number of locations.  This page serves as a centralized hub for this data and metadata.
 
 ## The model
 
@@ -32,6 +32,7 @@ This server hosts all data from completed projects, as well as for ongoing proje
 
 - Hindcast simulations: K20 operational variant and H16 variant from ACLIM Phase 1
 - ACLIM Phase 1 long-term forecasts: CMIP5-forced simulations using the H16 model variant
+- ACLIM Phase 2 long-term forecasts: CMIP6-forced simulations using the K20P19 model variant
 
 The data can be accessed through three different front-ends:
 
