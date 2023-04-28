@@ -203,6 +203,7 @@ You can then modify your *local* copy of the build script (build_roms.bash) to p
 ```
 line 147 MY_PROJECT_DIR=/gscratch/bumblereem/[personalfolder]/[projectfolder]
 line 159 MY_ROMS_SRC=/gscratch/bumblereem/[personalfolder]/
+```
 
 Alternatively, you can keep the build script as is (with my paths as the default) and override those defaults with exported shell variables:
 
