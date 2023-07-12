@@ -82,6 +82,17 @@ $ git clone git@github.com:beringnpz/roms.git roms-kate-ice
 
 But that’s just a personal preference; rename or not as you wish.
 
+**branches**
+
+When you first clone this repository, you will find yourself on the default branch, `kate\_svn`.  Somewhat confusingly, this is _not_ the branch you want to use to compile and develop code; you want to work with the `main` branch.  (`kate_svn` instead mirrors the myroms.org code -- or at least it did until Kate stopped updating -- so it doesn't contain the most up to date ice and biology options, or any of our custom Alaksa-region stuff).  You should switch to the `main` branch to compile the primary stable version of our ROMS domains:
+
+```
+$ git checkout main
+```
+
+When developing, please use a feature branch workflow: create a new branch off of `main` to do your coding and testing, and only merge the changes back into `main` when you're confident it compiles cleanly, works as intended, and ideally doesn't introduce any conflicts with existing compiled versions.  If you're not familiar with git and git workflows, I refer you to the many online tutorials on the topic.
+
+
 ### Clone older ROMS source code
 
 The roms-bering-sea code holds the “old” version of ROMS (i.e. the K20P19) and BESTNPZ.  This is the version used for the operational hindcast, ACLIM, and FEAST.  If you need this one, clone as above:
