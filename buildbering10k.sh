@@ -136,9 +136,9 @@ export         USE_LARGE=on
 #    ;;
 #esac
 
-export   PATH=/gscratch/sw/intel-201703/compilers_and_libraries_2017.2.174/linux/mpi/intel64/bin/mpif90:$PATH
-export   NETCDF_INCDIR=/sw/netcdf-fortran+c-4.4.1.1_icc-17/include # netcdf include
-export   NETCDF_LIBDIR=/sw/netcdf-fortran+c-4.4.1.1_icc-17/lib     # netcdf lib
+# export   PATH=/gscratch/sw/intel-201703/compilers_and_libraries_2017.2.174/linux/mpi/intel64/bin/mpif90:$PATH
+# export   NETCDF_INCDIR=/sw/netcdf-fortran+c-4.4.1.1_icc-17/include # netcdf include
+# export   NETCDF_LIBDIR=/sw/netcdf-fortran+c-4.4.1.1_icc-17/lib     # netcdf lib
 
 
 
